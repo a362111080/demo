@@ -1,5 +1,7 @@
 package com.zero.egg.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,8 +14,14 @@ import java.util.Date;
  * @Date 2018/11/1 16:22
  **/
 @Data
-@TableName(value = "sms_eggtype_data")
+@TableName(value = "SMS_EggType_Data")
 public class EggType {
+
+    /**
+     * 主键id
+     */
+    @TableId(type = IdType.UUID)
+    private String id;
 
     /**
      * 鸡蛋类别编码
@@ -36,7 +44,7 @@ public class EggType {
     private String strCreateUser;
 
     /**
-     * 状态 0:停用 1:启用
+     * 状态 0:停用 1:启用(默认)
      */
-    private int LngState;
+    private Integer LngState = 1;
 }

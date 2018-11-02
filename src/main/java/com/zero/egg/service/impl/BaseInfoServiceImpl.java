@@ -7,6 +7,7 @@ import com.zero.egg.service.BaseInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @ClassName BaseInfoServiceImpl
@@ -23,9 +24,13 @@ public class BaseInfoServiceImpl implements BaseInfoService {
     private EggTypeMapper eggTypeMapper;
 
     @Override
+    @Transactional
     public void saveEggType(EggType eggType) {
-        //查询数据库中的数量,以便生成主键编号
-        int count = eggTypeMapper.selectCount(new QueryWrapper<EggType>());
-
+        try {
+            eggTypeMapper.insert(eggType);
+        } catch (Exception e) {
+            /** 坐等大佬斌写自定义异常 */
+            log.error("saveEggType Error!", e);
+        }
     }
 }
