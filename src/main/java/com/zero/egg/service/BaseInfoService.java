@@ -15,4 +15,18 @@ public interface BaseInfoService {
      * @Return void
      **/
     public void saveEggType(EggType eggType);
+
+    /**
+     * @Description 根据id删除鸡蛋类型
+     * @Param [eggType]
+     * @Return void
+     **/
+    public void deleteEggTypeById(EggType eggType);
+
+    /**
+     * @Description 批量删除鸡蛋类型
+     * @Param [eggType]
+     * @Return void
+     **/
+    public void batchDeleteEggType(EggType eggType);
 }

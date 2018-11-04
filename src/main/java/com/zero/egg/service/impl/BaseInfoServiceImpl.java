@@ -33,4 +33,22 @@ public class BaseInfoServiceImpl implements BaseInfoService {
             log.error("saveEggType Error!", e);
         }
     }
+
+    @Override
+    public void deleteEggTypeById(EggType eggType) {
+        try {
+            eggTypeMapper.deleteById(eggType.getId());
+        } catch (Exception e) {
+            log.error("deleteEggTypeById Error!", e);
+        }
+    }
+
+    @Override
+    public void batchDeleteEggType(EggType eggType) {
+        try {
+            eggTypeMapper.deleteBatchIds(eggType.getIds());
+        } catch (Exception e) {
+            log.error("batchDeleteEggType Error!", e);
+        }
+    }
 }

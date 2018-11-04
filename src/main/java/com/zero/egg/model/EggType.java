@@ -1,11 +1,13 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName EggType
@@ -47,4 +49,10 @@ public class EggType {
      * 状态 0:停用 1:启用(默认)
      */
     private Integer LngState = 1;
+
+    /**
+     * 前端传来的id数组
+     */
+    @TableField(exist = false)
+    private List<String> ids;
 }
