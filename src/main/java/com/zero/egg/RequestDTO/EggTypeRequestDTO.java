@@ -1,26 +1,28 @@
-package com.zero.egg.model;
+package com.zero.egg.RequestDTO;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.zero.egg.tool.PageDTO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
- * @ClassName EggType
- * @Description 鸡蛋类型
+ * 添加鸡蛋类型RequestDTO
+ *
+ * @ClassName saveEggTypeRequestDTO
  * @Author lyming
- * @Date 2018/11/1 16:22
+ * @Date 2018/11/6 16:25
  **/
 @Data
-@TableName(value = "SMS_EggType_Data")
-public class EggType {
+public class EggTypeRequestDTO extends PageDTO implements Serializable {
+
+
+    private static final long serialVersionUID = -1867113411973002512L;
 
     /**
      * 主键id
      */
-    @TableId(type = IdType.UUID)
     private String id;
 
     /**
@@ -47,4 +49,9 @@ public class EggType {
      * 状态 0:停用 1:启用(默认)
      */
     private Integer LngState = 1;
+
+    /**
+     * 前端传来的id数组(批量操作)
+     */
+    private List<String> ids;
 }

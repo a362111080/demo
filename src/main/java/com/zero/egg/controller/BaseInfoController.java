@@ -1,7 +1,9 @@
 package com.zero.egg.controller;
 
-import com.zero.egg.model.EggType;
+import com.zero.egg.RequestDTO.EggTypeRequestDTO;
 import com.zero.egg.service.BaseInfoService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,68 +24,98 @@ public class BaseInfoController {
     private BaseInfoService baseInfoService;
 
     /**
-     * @param eggType
+     * @param saveEggTypeRequestDTO
      * @return
      * @Description 添加鸡蛋类型
      */
     @RequestMapping(value = "/variety/add", method = RequestMethod.POST)
-    public String saveEggType(@RequestBody EggType eggType) {
-        //坐等大佬兵写自定义Json返回对象,暂时写String
-        String result = "sucess";
+    public Message saveEggType(@RequestBody EggTypeRequestDTO saveEggTypeRequestDTO) {
+        Message message = new Message();
         try {
-            if (null != eggType) {
+            if (null != saveEggTypeRequestDTO) {
                 //应该是从session里面获取,暂时写死
-                eggType.setStrCreateUser("老王");
-                baseInfoService.saveEggType(eggType);
+                saveEggTypeRequestDTO.setStrCreateUser("老王");
+                baseInfoService.saveEggType(saveEggTypeRequestDTO);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
-                result = "failed";
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
             }
-            return result;
+            return message;
         } catch (Exception e) {
-            result = "failed";
-            return result;
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
         }
     }
 
     /**
-     * @param eggType
+     * @param deleteEggTypeRequestDTO
      * @return
      * @Description 删除鸡蛋类型（单个删除）
      */
     @RequestMapping(value = "/variety/delete", method = RequestMethod.POST)
-    public String deleteEggTypeById(@RequestBody EggType eggType) {
-        String result = "sucess";
+    public Message deleteEggTypeById(@RequestBody EggTypeRequestDTO deleteEggTypeRequestDTO) {
+        Message message = new Message();
         try {
-            if (null != eggType.getId()) {
-                baseInfoService.deleteEggTypeById(eggType);
+            if (null != deleteEggTypeRequestDTO.getId()) {
+                baseInfoService.deleteEggTypeById(deleteEggTypeRequestDTO);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
-                result = "failed";
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
             }
-            return result;
+            return message;
         } catch (Exception e) {
-            result = "failed";
-            return result;
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
         }
     }
 
     /**
      * @Description 批量删除鸡蛋类型
-     * @Param [eggType]
+     * @Param [eggTypeRequestDTO]
      * @Return java.lang.String
      **/
     @RequestMapping(value = "/variety/batchDelete", method = RequestMethod.POST)
-    public String batchDeleteEggType(@RequestBody EggType eggType) {
-        String result = "success";
+    public Message batchDeleteEggType(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+        Message message = new Message();
         try {
-            if (null != eggType.getIds()) {
-                baseInfoService.batchDeleteEggType(eggType);
+            if (null != eggTypeRequestDTO.getIds()) {
+                baseInfoService.batchDeleteEggType(eggTypeRequestDTO);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
-                result = "请选择至少一种类型";
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.ATLEAST_ONE);
             }
-            return result;
+            return message;
         } catch (Exception e) {
-            result = "failed";
-            return result;
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
+     * 查询鸡蛋列表(带分页模糊查询)
+     *
+     * @Param [eggType]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @RequestMapping(value = "/variety/listEggType", method = RequestMethod.POST)
+    public Message SelectEggTypeList(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+        Message message = new Message();
+        try {
+            message = baseInfoService.listEggType(eggTypeRequestDTO);
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
         }
     }
 

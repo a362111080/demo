@@ -1,9 +1,16 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zero.egg.RequestDTO.EggTypeRequestDTO;
+import com.zero.egg.ResponseDTO.EggTypeListResponseDTO;
 import com.zero.egg.dao.EggTypeMapper;
 import com.zero.egg.model.EggType;
 import com.zero.egg.service.BaseInfoService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.TransferUtil;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,30 +32,68 @@ public class BaseInfoServiceImpl implements BaseInfoService {
 
     @Override
     @Transactional
-    public void saveEggType(EggType eggType) {
+    public void saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO) {
+        EggType eggType = new EggType();
         try {
+            TransferUtil.copyProperties(eggType, saveEggTypeRequestDTO);
             eggTypeMapper.insert(eggType);
         } catch (Exception e) {
-            /** 坐等大佬斌写自定义异常 */
             log.error("saveEggType Error!", e);
+            throw new ServiceException("saveEggType Error!");
         }
     }
 
     @Override
-    public void deleteEggTypeById(EggType eggType) {
+    public void deleteEggTypeById(EggTypeRequestDTO deleteEggTypeRequestDTO) {
         try {
-            eggTypeMapper.deleteById(eggType.getId());
+            eggTypeMapper.deleteById(deleteEggTypeRequestDTO.getId());
         } catch (Exception e) {
             log.error("deleteEggTypeById Error!", e);
+            throw new ServiceException("deleteEggTypeById Error!");
+        }
+    }
+
+    public void batchDeleteEggType(EggTypeRequestDTO batchDeleteEggTypeRequestDTO) {
+        try {
+            eggTypeMapper.deleteBatchIds(batchDeleteEggTypeRequestDTO.getIds());
+        } catch (Exception e) {
+            log.error("batchDeleteEggType Error!", e);
+            throw new ServiceException("batchDeleteEggType Error!");
         }
     }
 
     @Override
-    public void batchDeleteEggType(EggType eggType) {
+    public Message listEggType(EggTypeRequestDTO eggTypeRequestDTO) {
+        /**
+         * 如果前端传来了strEggTypeName,则认为是条件模糊查询
+         * 否则默认列出全部鸡蛋类型
+         */
+        Message message = new Message();
+        Page<EggType> page = new Page<>();
+        EggTypeListResponseDTO eggTypeListResponseDTO = new EggTypeListResponseDTO();
         try {
-            eggTypeMapper.deleteBatchIds(eggType.getIds());
+            page.setCurrent(eggTypeRequestDTO.getCurrent());
+            page.setSize(eggTypeRequestDTO.getSize());
+            if (null != eggTypeRequestDTO.getStrEggTypeName() && !"".equals(eggTypeRequestDTO.getStrEggTypeName())) {
+                page = (Page<EggType>) eggTypeMapper.selectPage(page, new QueryWrapper<EggType>()
+                        .like("strEggTypeName", eggTypeRequestDTO.getStrEggTypeName())
+                );
+            } else {
+                page = (Page<EggType>) eggTypeMapper.selectPage(page, null);
+            }
+            eggTypeListResponseDTO.setEggTypeList(page.getRecords());
+            eggTypeListResponseDTO.setCurrent(page.getCurrent());
+            eggTypeListResponseDTO.setPages(page.getPages());
+            eggTypeListResponseDTO.setTotal(page.getTotal());
+            eggTypeListResponseDTO.setSize(page.getSize());
+
+            message.setData(eggTypeListResponseDTO);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
-            log.error("batchDeleteEggType Error!", e);
+            log.error("listEggType Error!", e);
+            throw new ServiceException("listEggType Error!");
         }
+        return message;
     }
 }

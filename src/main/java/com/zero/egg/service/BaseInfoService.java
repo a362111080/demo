@@ -1,32 +1,45 @@
 package com.zero.egg.service;
 
-import com.zero.egg.model.EggType;
+import com.zero.egg.RequestDTO.EggTypeRequestDTO;
+import com.zero.egg.tool.Message;
 
 /**
- * @Description 基础模块Service
+ * 基础模块Service
+ *
  * @Author lyming
  * @Date 2018/11/1 19:25
  **/
 public interface BaseInfoService {
 
     /**
-     * @Description 新增鸡蛋类型
+     * 新增鸡蛋类型
+     *
      * @Param [eggType]
      * @Return void
      **/
-    public void saveEggType(EggType eggType);
+    public void saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO);
 
     /**
-     * @Description 根据id删除鸡蛋类型
+     * 根据id删除鸡蛋类型
+     *
      * @Param [eggType]
      * @Return void
      **/
-    public void deleteEggTypeById(EggType eggType);
+    public void deleteEggTypeById(EggTypeRequestDTO deleteEggTypeRequestDTO);
 
     /**
-     * @Description 批量删除鸡蛋类型
+     * 批量删除鸡蛋类型
+     *
      * @Param [eggType]
      * @Return void
      **/
-    public void batchDeleteEggType(EggType eggType);
+    public void batchDeleteEggType(EggTypeRequestDTO batchDeleteEggTypeRequestDTO);
+
+    /**
+     * 鸡蛋类型列表
+     *
+     * @Param [eggType]
+     * @Return com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.zero.egg.model.EggType>
+     **/
+    public Message listEggType(EggTypeRequestDTO eggTypeRequestDTO);
 }

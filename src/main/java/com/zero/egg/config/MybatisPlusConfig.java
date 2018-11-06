@@ -1,12 +1,13 @@
 package com.zero.egg.config;
 
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * MybatisPlus配置文件
  * @ClassName MybatisPlusConfig
- * @Description MybatisPlus配置文件
  * @Author lyming
  * @Date 2018/11/1 17:10
  **/
@@ -23,5 +24,15 @@ public class MybatisPlusConfig {
         /** 打印出SQL是否格式化 */
         performanceInterceptor.setFormat(true);
         return performanceInterceptor;
+    }
+
+    /**
+     * mybatis-plus分页插件,如果用其他的,例如PageHelper也可以
+     *
+     * @return
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
     }
 }
