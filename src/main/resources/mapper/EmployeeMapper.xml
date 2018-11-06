@@ -5,8 +5,8 @@
         
 <mapper namespace="com.zero.egg.dao.EmployeeMapper">
     <select id="getEmployee" parameterType="EmployeeQuery" resultType="com.zero.egg.model.Employee">SELECT * FROM SYS_EmpLoyee_Data 	　<where>　　　　　		
-			<if test="QueryCode != null" >strUserCode=#{QueryCode}</if>	
-			<if test="QueryStoreCode != null" > and strStoreCode=#{QueryStoreCode}</if>	
+			<if test="QueryCode != null" >strUserCode=#{QueryCode,jdbcType=VARCHAR}</if>	
+			<if test="QueryStoreCode != null" > and strStoreCode=#{QueryStoreCode,jdbcType=VARCHAR}</if>	
 　　　		　</where>
     </select>
     <update id="UpdateEmployee" parameterType="EmployeeQuery">

@@ -61,18 +61,14 @@ public class EmployeeManageController
  **/ 
  
  @RequestMapping(value = "/UpdateEmployee",method = RequestMethod.POST)
- public String UpdateEmployee(@RequestBody String QueryCode,Integer QueryLngState,HttpServletRequest httpRequest){	 
-	 	//员工编码
-	     QueryCode="U000002";
-		//员工状态
-		 QueryLngState=3;//测试数据  3
-		//查询店铺编码
-		String QueryStoreCode="SC00001";
-		
+ public String UpdateEmployee(String QueryCode,Integer QueryLngState,String QueryStoreCode){	 	
 		 try {  
 			 EmployeeQuery  updateModel=new EmployeeQuery();
+			//员工编码
 			updateModel.QueryCode =QueryCode;
+			//员工状态
 			updateModel.QueryLngState=QueryLngState;
+			//查询店铺编码
 			updateModel.QueryStoreCode=QueryStoreCode;
         	int strval=employeeService.UpdateEmployee(updateModel);
         	if (strval>0) {
