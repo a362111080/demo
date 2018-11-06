@@ -4,13 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zero.egg.dao.EmployeeMapper">
-    <select id="getEmployee" parameterType="EmployeeQuery" resultType="com.zero.egg.model.Employee">
-        SELECT * FROM SYS_EmpLoyee_Data k
-        <where>
-            <if test="QueryCode != null">
+    <select id="getEmployee" parameterType="EmployeeQuery" resultType="com.zero.egg.model.Employee">SELECT * FROM SYS_EmpLoyee_Data k left join SYS_User_Info b on k.strUserCode=b.strUserCode<where>
+            <if test="QueryCode != null and QueryCode !=''">
                 k.strUserCode=#{QueryCode,jdbcType=VARCHAR}
             </if>
-            <if test="QueryStoreCode != null">
+            <if test="QueryStoreCode != null and QueryStoreCode !=''">
                 and k.strStoreCode=#{QueryStoreCode,jdbcType=VARCHAR}
             </if>
         </where>
