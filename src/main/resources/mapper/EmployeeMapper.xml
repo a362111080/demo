@@ -16,6 +16,6 @@
         LngState = #{QueryLngState,jdbcType=INTEGER},
       </if>
     </set>
-    where strUserCode = #{QueryCode,jdbcType=BIGINT}
+    where strUserCode = #{QueryCode,jdbcType=VARCHAR}
   </update>
 </mapper>

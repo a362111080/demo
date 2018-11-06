@@ -1,6 +1,5 @@
 package com.zero.egg.model;
 
-import lombok.Data;
 /**
  * @ClassName 员工管理条件类
  * @Description 员工条件类
