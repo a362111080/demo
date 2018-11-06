@@ -3,11 +3,7 @@ package com.zero.egg.controller;
 
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,14 +20,13 @@ public class EmployeeManageController
 	@Autowired
     private EmployeeService employeeService;
 /**
- * @Description 获取员工信息
+ * @Description 获取员工信息（员工绩效相关信息待账单处理方式确认后补充）
  * @Param 
  * @Return 
  **/
- @RequestMapping("/getEmployee")
- public List<Employee>  get(){
+ @RequestMapping( value = "/getEmployee",method = RequestMethod.POST)
+ public List<Employee>  get(String QueryCode,String QueryStoreCode){
 	 
-	 	String QueryCode="U000002";
 	 	String QueryName="";
 		//查询员工状态  默认有效
 		int QueryLngState=1;
@@ -40,8 +35,7 @@ public class EmployeeManageController
 		//查询员工绩效结束时间
 		String  QueryEndTime="";
 		//查询店铺编码
-		String QueryStoreCode="SC00001";
-		
+		 QueryStoreCode="SC00001"; //测试使用
 		EmployeeQuery  query=new EmployeeQuery();
 		query.QueryCode=QueryCode;
 		query.QueryName=QueryName;
