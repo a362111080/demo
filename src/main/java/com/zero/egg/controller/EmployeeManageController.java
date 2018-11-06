@@ -4,7 +4,10 @@ package com.zero.egg.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,40 +59,33 @@ public class EmployeeManageController
  * @Param    员工管理条件类
  * @Return   是否成功
  **/ 
- @RequestMapping(value = "/UpdateEmployee", method = RequestMethod.POST)
- public String UpdateEmployee(){
-	    String QueryCode="U000002";
-		String QueryName="";
+ 
+ @RequestMapping(value = "/UpdateEmployee",method = RequestMethod.POST)
+ public String UpdateEmployee(@RequestBody String QueryCode,Integer QueryLngState,HttpServletRequest httpRequest){	 
+	 	//员工编码
+	     QueryCode="U000002";
 		//员工状态
-		int QueryLngState=3;//测试数据  3
-		//查询员工绩效开始时间
-		String  QueryBeginTime="";
-		//查询员工绩效结束时间
-		String  QueryEndTime="";
+		 QueryLngState=3;//测试数据  3
 		//查询店铺编码
 		String QueryStoreCode="SC00001";
-		EmployeeQuery  query=new EmployeeQuery();
-		query.QueryCode=QueryCode;
-		query.QueryName=QueryName;
-		query.QueryLngState=QueryLngState;
-		query.QueryStoreCode=QueryStoreCode;
-		query.QueryBeginTime=QueryBeginTime;
-		query.QueryEndTime=QueryEndTime;
-		String result = "sucess";
-		 try {         
-        	int strval=employeeService.UpdateEmployee(query);
+		
+		 try {  
+			 EmployeeQuery  updateModel=new EmployeeQuery();
+			updateModel.QueryCode =QueryCode;
+			updateModel.QueryLngState=QueryLngState;
+			updateModel.QueryStoreCode=QueryStoreCode;
+        	int strval=employeeService.UpdateEmployee(updateModel);
         	if (strval>0) {
-				return result;
+				return "sucess";
 			}
         	else
-        	{
-        		return "failed";
-	            	}
+        	{  return "failed"; }		 	 
 	            
-	        } catch (Exception e) {
+		 } catch (Exception e) {
 	            return e.getMessage();
-	        }
 		 }
+	        
+ }
 }
 
 
