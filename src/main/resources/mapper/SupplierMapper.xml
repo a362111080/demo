@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.SupplierMapper">
+    <insert id="AddSupplier" parameterType="Supplier">insert into SYS_Supplier_Data(id,strSupplierCode,strSupplierName,strSupplierShortName,strSupplierKindCode,strSupplierPhone,strSupplierPerSon,LngState,strSupplierDesc,strStoreCode,strSupplierTypeCode) values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from SYS_Supplier_Data),4,'0')) as spcode FROM DUAL) a),#{strSupplierName},#{strSupplierShortName},#{strSupplierKindCode},#{strSupplierPhone},#{strSupplierPerSon},#{LngState},#{strSupplierDesc},#{strStoreCode},#{strSupplierTypeCode})</insert>
+    <update id="UpdateSupplier" parameterType="Supplier">update SYS_Supplier_Data 
+    <set>
+        <if test="strSupplierName!= null and strSupplierName!=''">strSupplierName= #{strSupplierName,jdbcType=VARCHAR},</if>
+        <if test="strSupplierShortName!= null and strSupplierShortName!=''">strSupplierShortName= #{strSupplierShortName,jdbcType=VARCHAR},</if>
+        <if test="strSupplierKindCode!= null and strSupplierKindCode!=''">strSupplierKindCode= #{strSupplierKindCode,jdbcType=VARCHAR},</if>
+        <if test="strSupplierPerSon!= null and strSupplierPerSon!=''">strSupplierPerSon= #{strSupplierPerSon,jdbcType=VARCHAR},</if>
+        <if test="strSupplierDesc!= null and strSupplierDesc!=''">strSupplierDesc= #{strSupplierDesc,jdbcType=VARCHAR},</if>
+        <if test="strSupplierPhone!= null and strSupplierPhone!=''">strSupplierPhone= #{strSupplierPhone,jdbcType=VARCHAR},</if>
+        <if test="strSupplierTypeCode!= null and strSupplierTypeCode!=''">strSupplierTypeCode= #{strSupplierTypeCode,jdbcType=VARCHAR},</if>
+        <if test="LngState!= null and LngState !=''">LngState= #{LngState,jdbcType=INTEGER},</if>
+    </set>where strSupplierCode= #{strSupplierCode,jdbcType=VARCHAR} and strStoreCode= #{strStoreCode,jdbcType=VARCHAR}</update>
+</mapper>
