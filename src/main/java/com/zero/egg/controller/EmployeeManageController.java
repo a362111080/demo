@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zero.egg.model.Employee;
 import com.zero.egg.model.EmployeeQuery;
 import com.zero.egg.service.EmployeeService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
 
 
 @RestController
@@ -25,23 +27,21 @@ public class EmployeeManageController
  * @Return 
  **/
  @RequestMapping( value = "/getEmployee",method = RequestMethod.POST)
- public List<Employee>  get(String QueryCode,String QueryStoreCode){
-	 
-	 	String QueryName="";
-		//查询员工状态  默认有效
-		int QueryLngState=1;
-		//查询员工绩效开始时间
+ public List<Employee>  getEmployee(String QueryCode,String QueryStoreCode,String QueryName,int QueryLngState ){
 		String  QueryBeginTime="";
-		//查询员工绩效结束时间
 		String  QueryEndTime="";
-		//查询店铺编码
-		 QueryStoreCode="SC00001"; //测试使用
 		EmployeeQuery  query=new EmployeeQuery();
+		//员工编码
 		query.QueryCode=QueryCode;
+		//员工名称
 		query.QueryName=QueryName;
+		//查询员工状态
 		query.QueryLngState=QueryLngState;
+		//查询店铺编码
 		query.QueryStoreCode=QueryStoreCode;
+		//查询员工绩效开始时间
 		query.QueryBeginTime=QueryBeginTime;
+		//查询员工绩效结束时间
 		query.QueryEndTime=QueryEndTime;
 		List<Employee> Employee=employeeService.getEmployee(query);
         return  Employee;
@@ -55,8 +55,10 @@ public class EmployeeManageController
  **/ 
  
  @RequestMapping(value = "/UpdateEmployee",method = RequestMethod.POST)
- public String UpdateEmployee(String QueryCode,Integer QueryLngState,String QueryStoreCode){	 	
+ public Message UpdateEmployee(String QueryCode,Integer QueryLngState,String QueryStoreCode){	 
+	 	 Message message = new Message();
 		 try {  
+			 
 			 EmployeeQuery  updateModel=new EmployeeQuery();
 			//员工编码
 			updateModel.QueryCode =QueryCode;
@@ -66,16 +68,26 @@ public class EmployeeManageController
 			updateModel.QueryStoreCode=QueryStoreCode;
         	int strval=employeeService.UpdateEmployee(updateModel);
         	if (strval>0) {
-				return "sucess";
+        		 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}
         	else
-        	{  return "failed"; }		 	 
+        	{  
+        		  message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                  message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                 
+        	}	
+        	return message;
 	            
 		 } catch (Exception e) {
-	            return e.getMessage();
+			 	message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+	            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+	            return message;
 		 }
 	        
  }
+ 
+ 
 }
 
 
