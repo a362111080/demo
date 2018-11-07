@@ -52,6 +52,17 @@ public interface UtilConstants {
          * 至少选择一个选项
          */
         public static final String ATLEAST_ONE = "至少选择一条记录";
+
+
+        /**
+         * 有重复数据
+         */
+        public static final String DUPLACTED_DATA = "有重复数据";
+
+        /**
+         * 缺少参数
+         */
+        public static final String PARAM_MISSING = "缺少参数";
     }
 
 }

@@ -17,7 +17,7 @@ public interface BaseInfoService {
      * @Param [eggType]
      * @Return void
      **/
-    public void saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO);
+    public Message saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO);
 
     /**
      * 根据id删除鸡蛋类型

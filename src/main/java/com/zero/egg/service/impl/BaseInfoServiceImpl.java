@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @ClassName BaseInfoServiceImpl
  * @Description 基础信息模块ServiceImpl
@@ -32,11 +34,29 @@ public class BaseInfoServiceImpl implements BaseInfoService {
 
     @Override
     @Transactional
-    public void saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO) {
+    public Message saveEggType(EggTypeRequestDTO saveEggTypeRequestDTO) {
         EggType eggType = new EggType();
+        Message message = new Message();
+        /** 查重结果 */
+        List<EggType> resultList = null;
         try {
             TransferUtil.copyProperties(eggType, saveEggTypeRequestDTO);
-            eggTypeMapper.insert(eggType);
+            /** 插入数据前做查重操作
+             *  name和code不能重复
+             */
+            resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
+                    .eq("strEggTypeName", eggType.getStrEggTypeName())
+                    .or()
+                    .eq("strEggTypeCode", eggType.getStrEggTypeCode()));
+            if (null != resultList) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+            } else {
+                eggTypeMapper.insert(eggType);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
+            return message;
         } catch (Exception e) {
             log.error("saveEggType Error!", e);
             throw new ServiceException("saveEggType Error!");

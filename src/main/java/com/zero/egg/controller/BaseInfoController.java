@@ -30,20 +30,23 @@ public class BaseInfoController {
      */
     @RequestMapping(value = "/variety/add", method = RequestMethod.POST)
     public Message saveEggType(@RequestBody EggTypeRequestDTO saveEggTypeRequestDTO) {
-        Message message = new Message();
+        Message message;
         try {
-            if (null != saveEggTypeRequestDTO) {
+            /**
+             * 后期如果加验证方法,这里可以省略
+             */
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggTypeName() && null != saveEggTypeRequestDTO.getStrEggTypeCode()) {
                 //应该是从session里面获取,暂时写死
                 saveEggTypeRequestDTO.setStrCreateUser("老王");
-                baseInfoService.saveEggType(saveEggTypeRequestDTO);
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                message = baseInfoService.saveEggType(saveEggTypeRequestDTO);
             } else {
+                message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
             }
             return message;
         } catch (Exception e) {
+            message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
