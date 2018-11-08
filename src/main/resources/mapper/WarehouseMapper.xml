@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.zero.egg.dao.WarehouseMapper">
+
+    <select id="getWarehouseInfoById" parameterType="String" resultType="com.zero.egg.model.Warehouse">
+         SELECT * FROM SYS_Warehouse_Data WHERE id=#{id}
+    </select>
+    
+    <insert id="addWarehouse" parameterType="com.zero.egg.model.Warehouse" >
+     	insert into SYS_Warehouse_Data 
+     	(id,warehouse_code,warehouse_name,store_id,strdesc,lng_state) 
+     	value
+     	(#{id},#{warehouse_code},#{warehouse_name},#{store_id},#{strdesc},#{lng_state})
+    </insert>
+    
+    <update id="updateWarehouse" parameterType="com.zero.egg.model.Warehouse">
+    	update SYS_Warehouse_Data
+    	set
+    	<if test="warehouse_code !=null and warehouse_code !=''">
+    	warehouse_code=#{warehouse_code},
+    	</if>
+    	<if test="warehouse_name !=null and warehouse_name !=''">
+    	warehouse_name=#{warehouse_name},
+    	</if>
+    	<if test="store_id !=null and store_id !=''">
+    	store_id=#{store_id},
+    	</if>
+    	<if test="strdesc !=null and strdesc !=''">
+    	strdesc=#{strdesc},
+    	</if>
+    	<if test="lng_state !=null and lng_state !=''">
+    	lng_state=#{lng_state}
+    	</if>
+    	where id=#{id}
+    </update>
+    
+</mapper>
