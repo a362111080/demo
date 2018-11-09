@@ -18,4 +18,28 @@ public interface StandardDetlService {
      * @Return com.zero.egg.tool.Message
      **/
     public Message addStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO);
+
+    /**
+     * 修改方案细节
+     *
+     * @Param [standardDetlRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    public Message updateStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO);
+
+    /**
+     * 批量删除方案细节
+     *
+     * @Param [standardDetlRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    public Message batchDeleteStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO);
+
+    /**
+     * 根据StandDetlCode列出所属方案细节
+     *
+     * @Param [standardDetlRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    public Message listStandardDetlByStandDetlCode(StandardDetlRequestDTO standardDetlRequestDTO);
 }

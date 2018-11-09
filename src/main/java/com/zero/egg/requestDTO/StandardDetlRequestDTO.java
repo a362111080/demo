@@ -1,12 +1,16 @@
 package com.zero.egg.requestDTO;
 
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName StandardDetlRequestDTO
  * @Author lyming
  * @Date 2018/11/9 14:41
  **/
+@Data
 public class StandardDetlRequestDTO implements Serializable {
 
 
@@ -61,4 +65,9 @@ public class StandardDetlRequestDTO implements Serializable {
      * 状态 0:停用 1:启用(默认)
      */
     private Integer LngState = 1;
+
+    /**
+     * 前端传来的id数组(批量操作)
+     */
+    private List<String> ids;
 }

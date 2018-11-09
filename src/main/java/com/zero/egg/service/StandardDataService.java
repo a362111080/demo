@@ -19,4 +19,20 @@ public interface StandardDataService {
      * @return
      */
     public Message addStandardData(StandardDataRequestDTO standardDataRequestDTO);
+
+    /**
+     * 根据id删除方案
+     *
+     * @Param [standardDataRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    public Message deleteStandardDataById(StandardDataRequestDTO standardDataRequestDTO);
+
+    /**
+     * 列出选中品种下的所有方案和方案细节
+     *
+     * @Param [standardDataRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    public Message listDataAndDetl(StandardDataRequestDTO standardDataRequestDTO);
 }
