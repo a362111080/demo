@@ -1,7 +1,9 @@
 package com.zero.egg.controller;
 
 import com.zero.egg.RequestDTO.EggTypeRequestDTO;
-import com.zero.egg.service.BaseInfoService;
+import com.zero.egg.RequestDTO.StandardDataRequestDTO;
+import com.zero.egg.service.EggTypeService;
+import com.zero.egg.service.StandardDataService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class BaseInfoController {
 
     @Autowired
-    private BaseInfoService baseInfoService;
+    private EggTypeService eggTypeService;
+
+    @Autowired
+    private StandardDataService standardDataService;
 
     /**
      * @param saveEggTypeRequestDTO
@@ -38,7 +43,7 @@ public class BaseInfoController {
             if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggTypeName() && null != saveEggTypeRequestDTO.getStrEggTypeCode()) {
                 //应该是从session里面获取,暂时写死
                 saveEggTypeRequestDTO.setStrCreateUser("老王");
-                message = baseInfoService.saveEggType(saveEggTypeRequestDTO);
+                message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -63,7 +68,7 @@ public class BaseInfoController {
         Message message = new Message();
         try {
             if (null != deleteEggTypeRequestDTO.getId()) {
-                baseInfoService.deleteEggTypeById(deleteEggTypeRequestDTO);
+                eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
@@ -88,7 +93,7 @@ public class BaseInfoController {
         Message message = new Message();
         try {
             if (null != eggTypeRequestDTO.getIds()) {
-                baseInfoService.batchDeleteEggType(eggTypeRequestDTO);
+                eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
@@ -113,7 +118,33 @@ public class BaseInfoController {
     public Message SelectEggTypeList(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
         Message message = new Message();
         try {
-            message = baseInfoService.listEggType(eggTypeRequestDTO);
+            message = eggTypeService.listEggType(eggTypeRequestDTO);
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+
+    /**
+     * 新增方案
+     *
+     * @Param [standardDataRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @RequestMapping(value = "/standard/addStandardData", method = RequestMethod.POST)
+    public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName() && null != standardDataRequestDTO.getStrStandCode()) {
+                message = standardDataService.addStandardData(standardDataRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
             return message;
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

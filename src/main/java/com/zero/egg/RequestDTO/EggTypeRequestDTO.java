@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 添加鸡蛋类型RequestDTO
+ * 鸡蛋类型RequestDTO
  *
  * @ClassName saveEggTypeRequestDTO
  * @Author lyming

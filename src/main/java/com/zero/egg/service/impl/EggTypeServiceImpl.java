@@ -6,7 +6,7 @@ import com.zero.egg.RequestDTO.EggTypeRequestDTO;
 import com.zero.egg.ResponseDTO.EggTypeListResponseDTO;
 import com.zero.egg.dao.EggTypeMapper;
 import com.zero.egg.model.EggType;
-import com.zero.egg.service.BaseInfoService;
+import com.zero.egg.service.EggTypeService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TransferUtil;
@@ -20,13 +20,13 @@ import java.util.List;
 
 /**
  * @ClassName BaseInfoServiceImpl
- * @Description 基础信息模块ServiceImpl
+ * @Description 鸡蛋类型模块ServiceImpl
  * @Author lyming
  * @Date 2018/11/1 19:36
  **/
 @Service
 @Slf4j
-public class BaseInfoServiceImpl implements BaseInfoService {
+public class EggTypeServiceImpl implements EggTypeService {
 
 
     @Autowired

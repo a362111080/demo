@@ -4,12 +4,12 @@ import com.zero.egg.RequestDTO.EggTypeRequestDTO;
 import com.zero.egg.tool.Message;
 
 /**
- * 基础模块Service
+ * 鸡蛋类型Service
  *
  * @Author lyming
  * @Date 2018/11/1 19:25
  **/
-public interface BaseInfoService {
+public interface EggTypeService {
 
     /**
      * 新增鸡蛋类型
