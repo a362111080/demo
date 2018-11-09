@@ -1,5 +1,7 @@
 package com.zero.egg.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -112,6 +114,27 @@ public class SupplierManageController {
 		 	}
 		
 	  }
+	 
+	 
+	 @RequestMapping(value = "/GetSupplierList",method = RequestMethod.POST)
+	 public List<Supplier> GetSupplierList(String strStoreCode, String strSupplierCode, String strSupplierKindCode, String strSupplierShortName,String strSupplierTypeCode,Integer  LngState ) {
+		 
+		  Supplier model=new Supplier();
+		  //合作单位编码
+		  model.setStrSupplierCode(strSupplierCode);
+		  //合作单位类型: 上游供应商   下游合作商  根据页面对应固定写死
+		  model.setStrSupplierKindCode(strSupplierKindCode);
+		  //合作单位代号（简称）
+		  model.setStrSupplierShortName(strSupplierShortName);
+		  //下游合作商类型（固定客户、散户）  上游供应商无此属性
+		  model.setStrSupplierTypeCode(strSupplierTypeCode);
+		  //合作单位所属店铺
+		  model.setStrStoreCode(strStoreCode);
+		  //状态
+		  model.setLngState(LngState);
+		  List<Supplier> Supplier=supplierService.GetSupplierList(model);
+	      return  Supplier;
+	 }
 }
 
 

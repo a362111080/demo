@@ -74,6 +74,6 @@ public class Supplier {
 	    /**
 	     * 状态 0:停用 1:启用(默认)
 	     */
-	    private Integer LngState = 1;
+	    private Integer LngState;
 }
 
