@@ -1,7 +1,7 @@
 package com.zero.egg.controller;
 
-import com.zero.egg.RequestDTO.EggTypeRequestDTO;
-import com.zero.egg.RequestDTO.StandardDataRequestDTO;
+import com.zero.egg.requestDTO.EggTypeRequestDTO;
+import com.zero.egg.requestDTO.StandardDataRequestDTO;
 import com.zero.egg.service.EggTypeService;
 import com.zero.egg.service.StandardDataService;
 import com.zero.egg.tool.Message;

@@ -2,8 +2,8 @@ package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zero.egg.RequestDTO.EggTypeRequestDTO;
-import com.zero.egg.ResponseDTO.EggTypeListResponseDTO;
+import com.zero.egg.requestDTO.EggTypeRequestDTO;
+import com.zero.egg.responseDTO.EggTypeListResponseDTO;
 import com.zero.egg.dao.EggTypeMapper;
 import com.zero.egg.model.EggType;
 import com.zero.egg.service.EggTypeService;

@@ -1,4 +1,4 @@
-package com.zero.egg.ResponseDTO;
+package com.zero.egg.responseDTO;
 
 import com.zero.egg.model.EggType;
 import com.zero.egg.tool.PageDTO;

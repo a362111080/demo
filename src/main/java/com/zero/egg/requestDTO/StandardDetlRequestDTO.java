@@ -1,4 +1,4 @@
-package com.zero.egg.RequestDTO;
+package com.zero.egg.requestDTO;
 
 import java.io.Serializable;
 
@@ -43,9 +43,9 @@ public class StandardDetlRequestDTO implements Serializable {
     private String strReturnSign;
 
     /**
-     * 计重方式
+     * 计重方式(1:去皮 2:包)
      */
-    private String strModeType;
+    private Integer strModeType;
 
     /**
      * 数值（去皮对应的数值）

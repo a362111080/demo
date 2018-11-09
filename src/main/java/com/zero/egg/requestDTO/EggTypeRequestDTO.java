@@ -1,4 +1,4 @@
-package com.zero.egg.RequestDTO;
+package com.zero.egg.requestDTO;
 
 import com.zero.egg.tool.PageDTO;
 import lombok.Data;

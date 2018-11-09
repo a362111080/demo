@@ -1,6 +1,6 @@
 package com.zero.egg.service;
 
-import com.zero.egg.RequestDTO.StandardDataRequestDTO;
+import com.zero.egg.requestDTO.StandardDataRequestDTO;
 import com.zero.egg.tool.Message;
 
 /**
