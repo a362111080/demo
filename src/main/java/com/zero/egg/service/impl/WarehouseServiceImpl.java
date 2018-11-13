@@ -1,5 +1,7 @@
 package com.zero.egg.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,11 @@ public class WarehouseServiceImpl implements WarehouseService{
 	@Override
 	public int updateWarehouse(Warehouse warehouse) {
 		return warehouseMapper.updateWarehouse(warehouse);
+	}
+
+	@Override
+	public List<Warehouse> warehouseList() {
+		return warehouseMapper.warehouseList();
 	}
 	
 	

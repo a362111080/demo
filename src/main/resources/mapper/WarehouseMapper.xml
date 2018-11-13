@@ -7,6 +7,11 @@
          SELECT * FROM SYS_Warehouse_Data WHERE id=#{id}
     </select>
     
+    
+    <select id="warehouseList"  resultType="com.zero.egg.model.Warehouse">
+         SELECT * FROM SYS_Warehouse_Data 
+    </select>
+    
     <insert id="addWarehouse" parameterType="com.zero.egg.model.Warehouse" >
      	insert into SYS_Warehouse_Data 
      	(id,warehouse_code,warehouse_name,store_id,strdesc,lng_state) 

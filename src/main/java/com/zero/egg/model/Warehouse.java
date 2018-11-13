@@ -1,5 +1,7 @@
 package com.zero.egg.model;
 
+import java.util.Date;
+
 import lombok.Data;
 import lombok.ToString;
 
@@ -25,5 +27,9 @@ public class Warehouse {
 	private String strdesc;
 	//状态
 	private int lng_state;
+	//创建时间
+	private Date createdate;
+	//创建人
+	private String creater;
 	
 }

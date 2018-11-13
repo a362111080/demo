@@ -1,5 +1,8 @@
 package com.zero.egg.dao;
 
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +17,7 @@ public interface WarehouseMapper {
 	int addWarehouse(Warehouse warehouse);
 	
 	int updateWarehouse(Warehouse warehouse);
+	
+	List<Warehouse> warehouseList();
 
 }

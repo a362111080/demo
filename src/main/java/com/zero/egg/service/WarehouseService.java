@@ -1,5 +1,7 @@
 package com.zero.egg.service;
 
+import java.util.List;
+
 import com.zero.egg.model.Warehouse;
 
 /**
@@ -18,6 +20,14 @@ public interface WarehouseService {
 	 * @return
 	 */
 	Warehouse getWarehouseInfoById(String Id);
+	
+	/**
+	 * 查询仓库信息
+	 *@title: warehouseList
+	 *@Description
+	 * @return
+	 */
+	List<Warehouse> warehouseList();
 	
 	/**
 	 * 添加仓库
