@@ -6,17 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.dao.EmployeeMapper;
 import com.zero.egg.model.Employee;
 import com.zero.egg.model.EmployeeQuery;
-import com.zero.egg.requestDTO.EmployeeRequestDTO;
-import com.zero.egg.responseDTO.EmployeeResponseDTO;
 import com.zero.egg.service.EmployeeService;
-import com.zero.egg.tool.Message;
-import com.zero.egg.tool.ServiceException;
-import com.zero.egg.tool.UtilConstants;
-
 @Service
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService {
@@ -30,29 +23,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    private EmployeeMapper mapper;
 
 		@Override
-	    public Message getEmployee(EmployeeRequestDTO employeeRequestDTO) {
-			
-			  Message message = new Message();
-		      Page<Employee> page = new Page<>();
-		   
-		      EmployeeResponseDTO  employeeResponseDTO=new EmployeeResponseDTO();
-		      try {
-		    	    page.setCurrent(employeeRequestDTO.getCurrent());
-		            page.setSize(employeeRequestDTO.getSize());
-		            page= (Page<Employee>)EmployeeMapper.getEmployee(employeeRequestDTO);         
-		            employeeResponseDTO.setEmployeeList(page.getRecords());
-		            employeeResponseDTO.setCurrent(page.getCurrent());
-		            employeeResponseDTO.setPages(page.getPages());
-		            employeeResponseDTO.setTotal(page.getTotal());
-		            employeeResponseDTO.setSize(page.getSize());
-		            message.setData(employeeResponseDTO);
-		            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			} catch (Exception e) {
-				
-	            throw new ServiceException("QueryEmployee Error!");
-			}
-		    return message;
+	    public List<Employee> getEmployee(EmployeeQuery query) {
+	    	return  mapper.getEmployee(query);
 	    }
 
 		@Override
