@@ -26,14 +26,14 @@ public class EmployeeManageController
  * @Return 
  **/
  @RequestMapping( value = "/getEmployee",method = RequestMethod.POST)
- public Message  getEmployee(@RequestBody(required=false) EmployeeRequestDTO  employeeRequestDTO ){
+ public Message  getEmployee(@RequestBody EmployeeRequestDTO  employeeRequestDTO ){
 	 	Message message = new Message();
 	 	 try {
 	 		 	message=employeeService.getEmployee(employeeRequestDTO);
 	            return message;
 	        } catch (Exception e) {
 	            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-	            message.setMessage(e.getMessage());
+	            message.setMessage(UtilConstants.ResponseMsg.FAILED);
 	            return message;
 	        }
         

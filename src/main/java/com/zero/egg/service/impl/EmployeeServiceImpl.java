@@ -34,7 +34,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 			
 			  Message message = new Message();
 		      Page<Employee> page = new Page<>();
-		   
 		      EmployeeResponseDTO  employeeResponseDTO=new EmployeeResponseDTO();
 		      try {
 		    	    page.setCurrent(employeeRequestDTO.getCurrent());
@@ -50,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			} catch (Exception e) {
 				
-	            throw new ServiceException(e.getMessage());
+	            throw new ServiceException(UtilConstants.ResponseMsg.FAILED);
 			}
 		    return message;
 	    }
