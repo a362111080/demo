@@ -7,10 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zero.egg.model.Employee;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.service.SupplierService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
+import com.zero.egg.tool.UtilConstants.ResponseCode;
+import com.zero.egg.tool.UtilConstants.ResponseMsg;
 @RestController
 @RequestMapping("/SupplierManage")
 public class SupplierManageController {
@@ -117,8 +122,8 @@ public class SupplierManageController {
 	 
 	 
 	 @RequestMapping(value = "/GetSupplierList",method = RequestMethod.POST)
-	 public List<Supplier> GetSupplierList(String strStoreCode, String strSupplierCode, String strSupplierKindCode, String strSupplierShortName,String strSupplierTypeCode,Integer  LngState ) {
-		 
+	 public Message GetSupplierList(int pageNum,int pageSize,String strStoreCode, String strSupplierCode, String strSupplierKindCode, String strSupplierShortName,String strSupplierTypeCode,Integer  LngState ) {
+		  Message ms = new Message();
 		  Supplier model=new Supplier();
 		  //合作单位编码
 		  model.setStrSupplierCode(strSupplierCode);
@@ -132,8 +137,15 @@ public class SupplierManageController {
 		  model.setStrStoreCode(strStoreCode);
 		  //状态
 		  model.setLngState(LngState);
+		  
+		  PageHelper.startPage(pageNum, pageSize);
 		  List<Supplier> Supplier=supplierService.GetSupplierList(model);
-	      return  Supplier;
+		  
+		  PageInfo<Supplier> pageInfo = new PageInfo<>(Supplier);
+		  ms.setData(pageInfo);
+		  ms.setState(ResponseCode.SUCCESS_HEAD);
+		  ms.setMessage(ResponseMsg.SUCCESS);
+	      return  ms;
 	 }
 }
 
