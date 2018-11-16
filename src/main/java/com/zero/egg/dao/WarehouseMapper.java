@@ -18,6 +18,6 @@ public interface WarehouseMapper {
 	
 	int updateWarehouse(Warehouse warehouse);
 	
-	List<Warehouse> warehouseList();
+	List<Warehouse> warehouseList(Warehouse warehouse);
 
 }

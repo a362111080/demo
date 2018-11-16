@@ -22,12 +22,12 @@ public interface WarehouseService {
 	Warehouse getWarehouseInfoById(String Id);
 	
 	/**
-	 * 查询仓库信息
+	 * 
 	 *@title: warehouseList
-	 *@Description
+	 *@Description 查询仓库信息(可条件查询)
 	 * @return
 	 */
-	List<Warehouse> warehouseList();
+	List<Warehouse> warehouseList(Warehouse warehouse);
 	
 	/**
 	 * 添加仓库

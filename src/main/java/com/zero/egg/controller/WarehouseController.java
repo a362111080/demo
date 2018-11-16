@@ -1,24 +1,25 @@
 package com.zero.egg.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.MethodWrapper;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.Warehouse;
 import com.zero.egg.service.WarehouseService;
-import com.zero.egg.service.impl.WarehouseServiceImpl;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.PageDTO;
 import com.zero.egg.tool.PageData;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
@@ -58,7 +59,7 @@ public class WarehouseController {
 	
 	/**
 	 *@title: warehouseList
-	 *@Description 查询仓库信息列表
+	 *@Description 查询仓库信息列表(包括所有查询)
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
@@ -66,10 +67,12 @@ public class WarehouseController {
 	@RequestMapping(value="/warehouselist")
 	public Message warehouseList(int pageNum,int pageSize) {
 		Message ms = new Message();
+		Warehouse warehouse = new Warehouse();
 		PageHelper.startPage(pageNum, pageSize);
-		PageHelper.orderBy("id*1 desc");
-		List<Warehouse> list = warehouseService.warehouseList();
-		ms.setData(list);
+		PageHelper.orderBy("warehouse_id*1 desc");
+		List<Warehouse> list = warehouseService.warehouseList(warehouse);
+		PageInfo<Warehouse> pageInfo = new PageInfo<Warehouse>(list);
+		ms.setData(pageInfo);
 		ms.setState(ResponseCode.SUCCESS_HEAD);
 		ms.setMessage(ResponseMsg.SUCCESS);
 		return ms;
@@ -84,8 +87,7 @@ public class WarehouseController {
 	@RequestMapping(value="/addwarehouse")
 	public Message addWarehouse(@RequestBody Warehouse warehouse,HttpServletRequest request) {
 		Message mg = new Message();
-		PageData pd = new PageData(request);
-		warehouse.setId(UuidUtil.get32UUID());
+		warehouse.setWarehouse_id(UuidUtil.get32UUID());
 		warehouse.setCreatedate(new Date());
 		int result = warehouseService.addWarehouse(warehouse);
 		if (result==1) {

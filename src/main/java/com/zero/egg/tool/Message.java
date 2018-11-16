@@ -29,4 +29,6 @@ public class Message {
 	 * 返回map
 	 */
 	private Map<String, Object> map;
+	
+	
 }

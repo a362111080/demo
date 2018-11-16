@@ -40,8 +40,8 @@ public class WarehouseServiceImpl implements WarehouseService{
 	}
 
 	@Override
-	public List<Warehouse> warehouseList() {
-		return warehouseMapper.warehouseList();
+	public List<Warehouse> warehouseList(Warehouse warehouse) {
+		return warehouseMapper.warehouseList(warehouse);
 	}
 	
 	
