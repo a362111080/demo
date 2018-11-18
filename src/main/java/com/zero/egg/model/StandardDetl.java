@@ -60,7 +60,7 @@ public class StandardDetl {
     /**
      * 是否预警
      */
-    private Integer LngWarNing;
+    private Integer lngWarNing;
 
     /**
      * 状态 0:停用 1:启用(默认)

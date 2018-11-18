@@ -2,8 +2,10 @@ package com.zero.egg.controller;
 
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
+import com.zero.egg.requestDTO.StandardDetlRequestDTO;
 import com.zero.egg.service.EggTypeService;
 import com.zero.egg.service.StandardDataService;
+import com.zero.egg.service.StandardDetlService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class BaseInfoController {
 
     @Autowired
     private StandardDataService standardDataService;
+
+    @Autowired
+    private StandardDetlService standardDetlService;
 
     /**
      * @param saveEggTypeRequestDTO
@@ -140,6 +145,101 @@ public class BaseInfoController {
         try {
             if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName() && null != standardDataRequestDTO.getStrStandCode()) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
+     * 删除方案
+     *
+     * @Param [standardDataRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @RequestMapping(value = "/standard/deleteStandardData", method = RequestMethod.POST)
+    public Message deleteStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
+                message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
+     * 列出所有方案及其细节
+     *
+     * @Param [standardDataRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @RequestMapping(value = "/standard/listStandarddDataAndDetl", method = RequestMethod.POST)
+    public Message listStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrEggTypeCode()) {
+                message = standardDataService.listDataAndDetl(standardDataRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
+     * 添加一条方案细节
+     *
+     * @Param [standardDetlRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @RequestMapping(value = "/standard/addStandardDetl", method = RequestMethod.POST)
+    public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode() && null != standardDetlRequestDTO.getStrStandDetlCode()) {
+                message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+
+    @RequestMapping(value = "/standard/listStandardDetel", method = RequestMethod.POST)
+    public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode()) {
+                message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

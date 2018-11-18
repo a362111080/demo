@@ -48,7 +48,7 @@ public class EggTypeServiceImpl implements EggTypeService {
                     .eq("strEggTypeName", eggType.getStrEggTypeName())
                     .or()
                     .eq("strEggTypeCode", eggType.getStrEggTypeCode()));
-            if (null != resultList) {
+            if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {

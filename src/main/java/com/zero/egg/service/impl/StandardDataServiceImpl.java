@@ -56,7 +56,7 @@ public class StandardDataServiceImpl implements StandardDataService {
                     .eq("strStandName", standardData.getStrStandName())
                     .or()
                     .eq("strStandCode", standardData.getStrStandCode()));
-            if (null != resultList) {
+            if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
