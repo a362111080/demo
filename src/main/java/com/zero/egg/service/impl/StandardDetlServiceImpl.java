@@ -26,6 +26,7 @@ import java.util.List;
  **/
 @Service
 @Slf4j
+@Transactional
 public class StandardDetlServiceImpl implements StandardDetlService {
 
     @Autowired
@@ -38,7 +39,6 @@ public class StandardDetlServiceImpl implements StandardDetlService {
      * @return
      */
     @Override
-    @Transactional
     public Message addStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         StandardDetl standardDetl = new StandardDetl();

@@ -30,6 +30,7 @@ import java.util.List;
  **/
 @Service
 @Slf4j
+@Transactional
 public class StandardDataServiceImpl implements StandardDataService {
 
     @Autowired
@@ -39,7 +40,6 @@ public class StandardDataServiceImpl implements StandardDataService {
     private StandardDetlMapper standardDetlMapper;
 
     @Override
-    @Transactional
     public Message addStandardData(StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         StandardData standardData = new StandardData();

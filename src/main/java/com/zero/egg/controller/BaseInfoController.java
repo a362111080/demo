@@ -234,6 +234,12 @@ public class BaseInfoController {
     }
 
 
+    /**
+     * 列出所有方案及其细节
+     *
+     * @param standardDetlRequestDTO
+     * @return
+     */
     @RequestMapping(value = "/standard/listStandardDetel", method = RequestMethod.POST)
     public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
@@ -253,5 +259,81 @@ public class BaseInfoController {
         }
     }
 
+    /**
+     * 更新方案细节
+     *
+     * @param standardDetlRequestDTO
+     * @return
+     */
+    @RequestMapping(value = "/standard/updateStandardDetl", method = RequestMethod.POST)
+    public Message updateStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getId()) {
+                message = standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+
+    }
+
+
+    /**
+     * 批量删除方案细节(单个删除也走批量的流程)
+     *
+     * @param standardDetlRequestDTO
+     * @return
+     */
+    @RequestMapping(value = "/standard/batchDeleteStandardDetl", method = RequestMethod.POST)
+    public Message batchDeleteStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getIds()) {
+                message = standardDetlService.batchDeleteStandardDetl(standardDetlRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
+     * 根据方案id删除方案及其方案细节
+     *
+     * @param standardDataRequestDTO
+     * @return
+     */
+    @RequestMapping(value = "/standard/deletStandardDateAndDetl", method = RequestMethod.POST)
+    public Message deleteStandardData(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = new Message();
+        try {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
+                message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
 
 }
