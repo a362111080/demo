@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.zero.egg.service.WhGoodsService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.PageData;
 import com.zero.egg.tool.UuidUtil;
+import com.zero.egg.tool.UtilConstants.GoodsState;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
 
@@ -100,13 +102,14 @@ public class WhGoodsController {
 	 * @return
 	 */
 	@RequestMapping(value="/addGoods")
-	public Message addGoods(@RequestBody WhGoods Goods,HttpServletRequest request) {
+	public Message addGoods(@RequestBody WhGoods goods,HttpServletRequest request) {
 		Message mg = new Message();
-		Goods.setGoods_id(UuidUtil.get32UUID());
-		Goods.setIndate(new Date());
-		int result = whGoodsService.addGoods(Goods);
+		goods.setGoods_id(UuidUtil.get32UUID());
+		goods.setIndate(new Date());
+		goods.setLng_state(GoodsState.inStore);
+		int result = whGoodsService.addGoods(goods);
 		if (result==1) {
-			mg.setData(Goods);
+			mg.setData(goods);
 			mg.setMessage(ResponseMsg.SUCCESS);
 			mg.setState(ResponseCode.SUCCESS_HEAD);
 		}else {
@@ -126,10 +129,17 @@ public class WhGoodsController {
 	 * @return
 	 */
 	@RequestMapping(value="/adddamagegoods")
+	@Transactional(rollbackFor=Exception.class)
 	public Message addDamageGoods(@RequestBody DamageGoods damageGoods,HttpServletRequest request) {
 		Message mg = new Message();
 		damageGoods.setGoods_id(UuidUtil.get32UUID());
 		damageGoods.setRecord_time(new Date());
+		WhGoods whGoods = new WhGoods();
+		//修改商品状态为损坏
+		whGoods.setGoods_id(damageGoods.getGoods_id());
+		whGoods.setLng_state(GoodsState.damage);
+		whGoodsService.updateGoods(whGoods);
+		//添加损坏信息
 		int result = whGoodsService.addDamageGoods(damageGoods);
 		if (result==1) {
 			mg.setData(damageGoods);

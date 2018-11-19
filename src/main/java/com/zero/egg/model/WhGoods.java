@@ -27,7 +27,7 @@ public class WhGoods implements Serializable {
 	private String warehous_id;
 	//净重
 	private BigDecimal strreal_weight;
-	//状态（1正常，2损坏，3已售）
+	//状态（1正常，-1损坏，2已售）
 	private int lng_state;
 	//入库时间
 	private Date indate;

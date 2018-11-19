@@ -7,6 +7,7 @@ package com.zero.egg.tool;
  * @Author lyming
  * @Date 2018/11/5 21:44
  **/
+
 public interface UtilConstants {
 
     /**
@@ -63,6 +64,45 @@ public interface UtilConstants {
          * 缺少参数
          */
         public static final String PARAM_MISSING = "缺少参数";
+    }
+    
+    /**
+     * @author hhf
+     *Title: WarehouseState
+     *@date 2018年11月19日 
+     *Description: 仓库状态
+     */
+    public static  class WarehouseState {
+    	/**
+    	 * 启用
+    	 */
+    	public static final int enabled = 1;
+    	/**
+    	 * 不启用
+    	 */
+    	public static final int disable = -1;
+	}
+    /**
+     * @author hhf
+     *Title: GoodsState
+     *@date 2018年11月19日 
+     *Description: 商品状态
+     */
+    public static class GoodsState{
+    	/**
+    	 * 正常库存商品
+    	 */
+    	public static final int inStore = 1;
+    	
+    	/**
+    	 * 损坏
+    	 */
+    	public static final int damage = -1;
+    	/**
+    	 * 已售
+    	 */
+    	public static final int sold = 2;
+    	
     }
 
 }

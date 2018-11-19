@@ -32,7 +32,7 @@ public class Warehouse  implements Serializable {
 	private String store_id;
 	//备注
 	private String strdesc;
-	//状态（1启用，0不启用）
+	//状态（1启用，-1不启用）
 	private int lng_state;
 	//创建时间
 	private Date createdate;

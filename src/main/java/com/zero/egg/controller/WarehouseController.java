@@ -23,6 +23,7 @@ import com.zero.egg.tool.PageDTO;
 import com.zero.egg.tool.PageData;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
+import com.zero.egg.tool.UtilConstants.WarehouseState;
 import com.zero.egg.tool.UuidUtil;
 
 
@@ -89,6 +90,7 @@ public class WarehouseController {
 		Message mg = new Message();
 		warehouse.setWarehouse_id(UuidUtil.get32UUID());
 		warehouse.setCreatedate(new Date());
+		warehouse.setLng_state(WarehouseState.enabled);
 		int result = warehouseService.addWarehouse(warehouse);
 		if (result==1) {
 			mg.setData(warehouse);
