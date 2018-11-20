@@ -105,4 +105,26 @@ public interface UtilConstants {
     	
     }
 
+    /**
+     * 设备状态
+     */
+    public static class DeviceState {
+
+        /**
+         * 运行中
+         */
+        public static final int RUNNING = 1;
+
+        /**
+         * 未连接(默认)
+         */
+        public static final int UNCONNECTED = 2;
+
+        /**
+         * 断开
+         */
+        public static final int DISCONNECT = 3;
+
+    }
+
 }
