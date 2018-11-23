@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zero.egg.model.Employee;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.service.SupplierService;
 import com.zero.egg.tool.Message;

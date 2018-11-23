@@ -38,6 +38,8 @@ public class Employee
 	  private String strProfession;
 	//员工入职时间
 	  private Date strEntryTime;
+	//员工使用设备  0：Android   1：iOS   
+	  private int strEquipmentSource;
 	//员工状态
 	  private Integer LngState;
 	  
