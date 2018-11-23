@@ -1,5 +1,11 @@
 package com.zero.egg.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
 import com.zero.egg.requestDTO.StandardDetlRequestDTO;
@@ -8,11 +14,6 @@ import com.zero.egg.service.StandardDataService;
 import com.zero.egg.service.StandardDetlService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @ClassName BaseInfoController
