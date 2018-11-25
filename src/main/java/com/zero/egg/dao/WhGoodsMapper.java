@@ -40,7 +40,7 @@ public interface WhGoodsMapper {
 	 *@Description 损坏商品列表
 	 * @return
 	 */
-	List<PageData> listDamageGoods(PageData pd);
+	List<PageData> listDamageGoods(DamageGoods damageGoods);
 	
 	/**
 	 *@title: addGoods

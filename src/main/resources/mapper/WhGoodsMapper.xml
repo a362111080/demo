@@ -2,15 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
         
 <mapper namespace="com.zero.egg.dao.WhGoodsMapper">
+
+	<resultMap type="com.zero.egg.model.WhGoods" id="goodsListMap">
+	<id column="goods_id" jdbcType="VARCHAR" property="goodsId"/>
+	<result column="stand_id" jdbcType="VARCHAR" property="standId"/>
+	<result column="warehous_id" jdbcType="VARCHAR" property="warehousId"/>
+	<result column="strreal_weight" jdbcType="DECIMAL" property="strrealWeight"/>
+	<result column="lng_state" jdbcType="INTEGER" property="lngState"/>
+	<result column="indate" jdbcType="DATE" property="indate"/>
+	<result column="resource_saler" jdbcType="VARCHAR" property="resourceSaler"/>
+	<association property="warehouse" column="warehouse_id" javaType="Warehouse" resultMap="warehouseResultMap"/>  
+	</resultMap>
+	<resultMap id="warehouseResultMap" type="Warehouse">  
+	    <id property="warehouseId" column="warehouse_id"/>  
+	    <result property="warehouseName" column="warehouse_name"/>  
+	</resultMap>  
+
+
 	<!-- 根据id查询商品信息 -->
     <select id="getGoodsInfoById" parameterType="String" resultType="com.zero.egg.model.WhGoods">
-         SELECT * FROM SYS_Warehouse_product WHERE goods_id=#{goods_id}
+         SELECT * FROM SYS_Warehouse_goods WHERE goods_id=#{goodsId}
     </select>
     
     <!-- 查询商品信息列表 -->
-    <select id="GoodsList"  resultType="com.zero.egg.model.WhGoods">
-         SELECT * FROM SYS_Warehouse_product 
-         left join 
+    <select id="GoodsList"  resultMap="goodsListMap">
+         SELECT * FROM SYS_Warehouse_goods p
+         left join SYS_Warehouse_Data w on w.warehouse_id = p.warehouse_id 
          where 1=1 
          <if test="searchValue !=null and searchValue !=''">
          and(
@@ -21,16 +38,16 @@
     </select>
     
     <!-- 查询损坏的商品信息 -->
-    <select id="listDamageGoods" parameterType ="com.zero.egg.tool.PageData"  resultType="com.zero.egg.tool.PageData">
+    <select id="listDamageGoods" parameterType ="DamageGoods"  resultType="com.zero.egg.tool.PageData">
     	select * from SYS_Warehouse_goods g
     	left join SYS_damaged_goods dg on g.goods_id = dg.goods_id
     	where 1=1
     	and lng_state = 3
     	<if test="damage_type !=null and damage_type !=''">
-    	and damage_type = #{damage_type}
+    	and damage_type = #{damageType}
     	</if>
     	<if test="warehouse_id !=null and warehouse_id !=''">
-    	and warehouse_id = #{warehouse_id}
+    	and warehouse_id = #{warehouseId}
     	</if>
     </select>
     
@@ -38,10 +55,10 @@
     
     <!-- 新增商品 -->
     <insert id="addGoods" parameterType="com.zero.egg.model.WhGoods" >
-     	insert into SYS_Warehouse_product 
+     	insert into SYS_Warehouse_goods 
      	(goods_id,stand_id,warehous_id,strreal_weight,lng_state,indate,resource_saler) 
      	value
-     	(#{goods_id},#{stand_id},#{warehous_id},#{strreal_weight},#{lng_state},#{indate},#{resource_saler})
+     	(#{goodsId},#{standId},#{warehousId},#{strrealWeight},#{lngState},#{indate},#{resourceSaler})
     </insert>
     
     <!-- 新增报损信息 -->
@@ -49,7 +66,7 @@
      	insert into SYS_damaged_goods 
      	(damage_id,goods_id,damaged_time,damaged_place,damaged_reason,recorder,record_time，damage_type) 
      	value
-     	(#{damage_id},#{goods_id},#{damaged_time},#{damaged_place},#{damaged_reason},#{recorder},#{record_time},#{damage_type})
+     	(#{damageId},#{goodsId},#{damagedTime},#{damagedPlace},#{damagedReason},#{recorder},#{recordTime},#{damageType})
     </insert>
     
     
@@ -58,24 +75,24 @@
     	update SYS_Warehouse_Data
     	set
     	<if test="stand_id !=null and stand_id !=''">
-    	stand_id=#{stand_id},
+    	stand_id=#{standId},
     	</if>
     	<if test="warehous_id !=null and warehous_id !=''">
-    	warehous_id=#{warehous_id},
+    	warehous_id=#{warehousId},
     	</if>
     	<if test="strreal_weight !=null and strreal_weight !=''">
-    	strreal_weight=#{strreal_weight},
+    	strreal_weight=#{strrealWeight},
     	</if>
     	<if test="lng_state !=null and lng_state !=''">
-    	lng_state=#{lng_state},
+    	lng_state=#{lngState},
     	</if>
     	<if test="indate !=null and indate !=''">
     	indate=#{indate}
     	</if>
     	<if test="resource_saler !=null and resource_saler !=''">
-    	resource_saler=#{resource_saler}
+    	resource_saler=#{resourceSaler}
     	</if>
-    	where goods_id=#{goods_id}
+    	where goods_id=#{goodsId}
     </update>
     
     

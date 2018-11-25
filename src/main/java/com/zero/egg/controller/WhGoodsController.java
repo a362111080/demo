@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageHelper;
@@ -20,6 +22,12 @@ import com.zero.egg.service.WhGoodsService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.PageData;
 import com.zero.egg.tool.UuidUtil;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 import com.zero.egg.tool.UtilConstants.GoodsState;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
@@ -31,6 +39,7 @@ import com.zero.egg.tool.UtilConstants.ResponseMsg;
  * @date 2018年11月13日
  */
 @RestController
+@Api(value="商品管理")
 @RequestMapping(value="/whgoods")
 public class WhGoodsController {
 
@@ -43,10 +52,12 @@ public class WhGoodsController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value="/getgoodsbyid")
-	public Message getGoodsById(String id) {
+	@ApiOperation(value="查询商品",notes="根据id查询")
+	@ApiImplicitParam(paramType="query",name="商品id",value="goodId",dataType="String")
+	@RequestMapping(value="/getgoodsbyid",method=RequestMethod.GET)
+	public Message getGoodsById(@RequestParam String goodId) {
 		Message mg = new Message();
-		WhGoods whGoods = whGoodsService.getGoodsInfoById(id);
+		WhGoods whGoods = whGoodsService.getGoodsInfoById(goodId);
 		mg.setData(whGoods);
 		mg.setMessage(ResponseMsg.SUCCESS);
 		mg.setState(ResponseCode.SUCCESS_HEAD);
@@ -61,8 +72,13 @@ public class WhGoodsController {
 	 * @param pageSize 页大小
 	 * @return
 	 */
-	@RequestMapping(value="/goodslist")
-	public Message goodsList(int pageNum,int pageSize) {
+	@ApiOperation(value="商品列表" ,notes="分页查询，条件查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
+		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
+	})
+	@RequestMapping(value="/goodslist",method=RequestMethod.POST)
+	public Message goodsList(@RequestParam int pageNum,@RequestParam int pageSize) {
 		Message mg = new Message();
 		PageHelper.startPage(pageNum, pageSize, "");
 		List<WhGoods> list = whGoodsService.GoodsList();
@@ -82,12 +98,16 @@ public class WhGoodsController {
 	 * @param pageSize 页大小
 	 * @return
 	 */
-	@RequestMapping(value="/damagegoodslist")
-	public Message DamageGoodsList( HttpServletRequest request,int pageNum,int pageSize) {
+	@ApiOperation(value="损坏商品列表" , notes="分页查询，条件查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
+		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
+	})
+	@RequestMapping(value="/damagegoodslist",method=RequestMethod.POST)
+	public Message DamageGoodsList( @RequestParam int pageNum,@RequestParam int pageSize,DamageGoods damageGoods) {
 		Message mg = new Message();
-		PageData pd = new PageData(request);
 		PageHelper.startPage(pageNum, pageSize, "");
-		List<PageData> list = whGoodsService.listDamageGoods(pd);
+		List<PageData> list = whGoodsService.listDamageGoods(damageGoods);
 		PageInfo<PageData> pageInfo = new PageInfo<PageData>(list);
 		mg.setData(pageInfo);
 		mg.setMessage(ResponseMsg.SUCCESS);
@@ -101,12 +121,13 @@ public class WhGoodsController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/addGoods")
-	public Message addGoods(@RequestBody WhGoods goods,HttpServletRequest request) {
+	@ApiOperation(value="添加商品",notes="goodsId,indate,lngState三个字段内容后台生成")
+	@RequestMapping(value="/addGoods",method=RequestMethod.POST)
+	public Message addGoods(@RequestBody WhGoods goods) {
 		Message mg = new Message();
-		goods.setGoods_id(UuidUtil.get32UUID());
+		goods.setGoodsId(UuidUtil.get32UUID());
 		goods.setIndate(new Date());
-		goods.setLng_state(GoodsState.inStore);
+		goods.setLngState(GoodsState.inStore);
 		int result = whGoodsService.addGoods(goods);
 		if (result==1) {
 			mg.setData(goods);
@@ -128,16 +149,17 @@ public class WhGoodsController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/adddamagegoods")
+	@ApiOperation(value="添加损坏商品",notes="damageId,recordTime两个字段内容后台生成")
+	@RequestMapping(value="/adddamagegoods",method=RequestMethod.POST)
 	@Transactional(rollbackFor=Exception.class)
-	public Message addDamageGoods(@RequestBody DamageGoods damageGoods,HttpServletRequest request) {
+	public Message addDamageGoods(@RequestBody DamageGoods damageGoods) {
 		Message mg = new Message();
-		damageGoods.setGoods_id(UuidUtil.get32UUID());
-		damageGoods.setRecord_time(new Date());
+		damageGoods.setDamageId(UuidUtil.get32UUID());
+		damageGoods.setRecordTime(new Date());
 		WhGoods whGoods = new WhGoods();
 		//修改商品状态为损坏
-		whGoods.setGoods_id(damageGoods.getGoods_id());
-		whGoods.setLng_state(GoodsState.damage);
+		whGoods.setGoodsId(damageGoods.getGoodsId());
+		whGoods.setLngState(GoodsState.damage);
 		whGoodsService.updateGoods(whGoods);
 		//添加损坏信息
 		int result = whGoodsService.addDamageGoods(damageGoods);
@@ -158,20 +180,20 @@ public class WhGoodsController {
 	
 	/**
 	 *@title: updateGoods
-	 *@Description 修改仓库信息
+	 *@Description 修改商品信息
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/updateGoods")
-	private Message updateGoods(@RequestBody WhGoods Goods, HttpServletRequest request) {
+	@ApiOperation(value="修改商品信息",notes="goodId必填")
+	@RequestMapping(value="/updateGoods",method=RequestMethod.POST)
+	private Message updateGoods(@RequestBody WhGoods goods) {
 		Message mg = new Message();
-		PageData pd = new PageData(request);
-		String id = pd.getString("id");
+		String id = goods.getGoodsId() ;
 		//判断是否有仓库id
 		if (StringUtils.isNotBlank(id)) {
-			int result = whGoodsService.updateGoods(Goods);
+			int result = whGoodsService.updateGoods(goods);
 			if (result==1) {
-				mg.setData(Goods);
+				mg.setData(goods);
 				mg.setMessage(ResponseMsg.SUCCESS);
 				mg.setState(ResponseCode.SUCCESS_HEAD);
 			}else {

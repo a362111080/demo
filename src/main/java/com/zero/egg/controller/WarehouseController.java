@@ -11,6 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.Page;
@@ -26,6 +28,11 @@ import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import com.zero.egg.tool.UtilConstants.WarehouseState;
 import com.zero.egg.tool.UuidUtil;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 
 /**
  * @author hhfeng
@@ -33,6 +40,7 @@ import com.zero.egg.tool.UuidUtil;
  * @Description:仓库管理控制器  
  * @date 2018年11月5日
  */
+@Api(value="仓库管理")
 @RestController
 @RequestMapping(value="/warehouse")
 public class WarehouseController {
@@ -47,10 +55,11 @@ public class WarehouseController {
 	 * @param mode
 	 * @return
 	 */
-	@RequestMapping(value="/getwarehouseinfo")
-	public Message getWarehouseInfoById(HttpServletRequest request) {
-		String id = request.getParameter("id");
-		Warehouse warehouse = warehouseService.getWarehouseInfoById(id);
+	@ApiOperation(value="获取仓库信息" ,notes="根据仓库id查询")
+	@ApiImplicitParam(paramType="query",name="warehouse_id",value="仓库id",required=true,dataType="String")
+	@RequestMapping(value="/getwarehouseinfo" ,method=RequestMethod.GET)
+	public Message getWarehouseInfoById(@RequestParam String warehouseId) {
+		Warehouse warehouse = warehouseService.getWarehouseInfoById(warehouseId);
 		Message ms = new Message();
 		ms.setState(ResponseCode.SUCCESS_HEAD);
 		ms.setMessage(ResponseMsg.SUCCESS);
@@ -65,10 +74,15 @@ public class WarehouseController {
 	 * @param pageSize
 	 * @return
 	 */
-	@RequestMapping(value="/warehouselist")
-	public Message warehouseList(int pageNum,int pageSize) {
+	@ApiOperation(value="查询仓库信息列表",notes="分页查询，各种条件查询")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
+		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
+	})
+	@RequestMapping(value="/warehouselist",method=RequestMethod.POST)
+	public Message warehouseList(@RequestParam int pageNum,@RequestParam int pageSize, Warehouse warehouse) {
 		Message ms = new Message();
-		Warehouse warehouse = new Warehouse();
+		//Warehouse warehouse = new Warehouse();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("warehouse_id*1 desc");
 		List<Warehouse> list = warehouseService.warehouseList(warehouse);
@@ -85,12 +99,13 @@ public class WarehouseController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/addwarehouse")
-	public Message addWarehouse(@RequestBody Warehouse warehouse,HttpServletRequest request) {
+	@ApiOperation(value="仓库信息添加",notes="warehouseId,createdate,lngState三个字段内容后台生成")
+	@RequestMapping(value="/addwarehouse",method=RequestMethod.POST)
+	public Message addWarehouse(@RequestBody Warehouse warehouse) {
 		Message mg = new Message();
-		warehouse.setWarehouse_id(UuidUtil.get32UUID());
+		warehouse.setWarehouseId(UuidUtil.get32UUID());
 		warehouse.setCreatedate(new Date());
-		warehouse.setLng_state(WarehouseState.enabled);
+		warehouse.setLngState(WarehouseState.enabled);
 		int result = warehouseService.addWarehouse(warehouse);
 		if (result==1) {
 			mg.setData(warehouse);
@@ -110,11 +125,11 @@ public class WarehouseController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/updatewarehouse")
-	private Message updateWarehouse(@RequestBody Warehouse warehouse, HttpServletRequest request) {
+	@ApiOperation(value="修改仓库信息",notes="warehouseId必填")
+	@RequestMapping(value="/updatewarehouse",method=RequestMethod.POST)
+	private Message updateWarehouse(@RequestBody Warehouse warehouse) {
 		Message mg = new Message();
-		PageData pd = new PageData(request);
-		String id = pd.getString("id");
+		String id = warehouse.getWarehouseId();
 		//判断是否有仓库id
 		if (StringUtils.isNotBlank(id)) {
 			int result = warehouseService.updateWarehouse(warehouse);

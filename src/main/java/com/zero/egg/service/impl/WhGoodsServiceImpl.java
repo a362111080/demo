@@ -48,8 +48,8 @@ public class WhGoodsServiceImpl implements WhGoodsService{
 	}
 
 	@Override
-	public List<PageData> listDamageGoods(PageData pd) {
-		return whGoodsMapper.listDamageGoods(pd);
+	public List<PageData> listDamageGoods(DamageGoods damageGoods) {
+		return whGoodsMapper.listDamageGoods(damageGoods);
 	}
 
 	@Override

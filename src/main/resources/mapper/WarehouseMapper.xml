@@ -3,25 +3,25 @@
         
 <mapper namespace="com.zero.egg.dao.WarehouseMapper">
 	<!-- 根据id查询仓库信息 -->
-    <select id="getWarehouseInfoById" parameterType="String" resultType="com.zero.egg.model.Warehouse">
-         SELECT * FROM SYS_Warehouse_Data WHERE warehouse_id=#{warehouse_id}
+    <select id="getWarehouseInfoById" parameterType="String" resultType="Warehouse">
+         SELECT * FROM SYS_Warehouse_Data WHERE warehouse_id=#{warehouseId}
     </select>
     
     <!-- 查询仓库信息列表 -->
-    <select id="warehouseList"  resultType="com.zero.egg.model.Warehouse">
+    <select id="warehouseList"  resultType="Warehouse">
          SELECT * FROM SYS_Warehouse_Data 
          where 1=1 
-         <if test="warehouse_code !=null and warehouse_code !=''">
-         	and	warehouse_code = #{warehouse_code}
+         <if test="warehouseCode !=null and warehouseCode !=''">
+         	and	warehouse_code = #{warehouseCode}
          </if>
-         <if test="warehouse_name !=null and warehouse_name !=''">
+         <if test="warehouseName !=null and warehouseName !=''">
          	and	warehouse_name = #{warehouse_name}
          </if>
-         <if test="store_id !=null and store_id !=''">
-         	and	store_id = #{store_id}
+         <if test="storeId !=null and storeId !=''">
+         	and	store_id = #{storeId}
          </if>
-         <if test="lng_state !=null and lng_state !=''">
-         	and	lng_state = #{lng_state}
+         <if test="lngState !=null and lngState !=''">
+         	and	lng_state = #{lngState}
          </if>
          <if test="createdate !=null and createdate !=''">
          	and	createdate = #{createdate}
@@ -42,7 +42,7 @@
      	insert into SYS_Warehouse_Data 
      	(warehouse_id,warehouse_code,warehouse_name,store_id,strdesc,lng_state) 
      	value
-     	(#{warehouse_id},#{warehouse_code},#{warehouse_name},#{store_id},#{strdesc},#{lng_state})
+     	(#{warehouseId},#{warehouseCode},#{warehouseName},#{storeId},#{strdesc},#{lngState})
     </insert>
     
     <!-- 修改仓库 -->
@@ -50,21 +50,21 @@
     	update SYS_Warehouse_Data
     	set
     	<if test="warehouse_code !=null and warehouse_code !=''">
-    	warehouse_code=#{warehouse_code},
+    	warehouse_code=#{warehouseCode},
     	</if>
     	<if test="warehouse_name !=null and warehouse_name !=''">
-    	warehouse_name=#{warehouse_name},
+    	warehouse_name=#{warehouseName},
     	</if>
     	<if test="store_id !=null and store_id !=''">
-    	store_id=#{store_id},
+    	store_id=#{storeId},
     	</if>
     	<if test="strdesc !=null and strdesc !=''">
     	strdesc=#{strdesc},
     	</if>
     	<if test="lng_state !=null and lng_state !=''">
-    	lng_state=#{lng_state}
+    	lng_state=#{lngState}
     	</if>
-    	where warehouse_id=#{warehouse_id}
+    	where warehouse_id=#{warehouseId}
     </update>
     
 </mapper>

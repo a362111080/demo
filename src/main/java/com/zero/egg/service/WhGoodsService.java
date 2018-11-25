@@ -36,7 +36,7 @@ public interface WhGoodsService {
 	 * @param pd
 	 * @return
 	 */
-	List<PageData> listDamageGoods(PageData pd);
+	List<PageData> listDamageGoods(DamageGoods damageGoods);
 	
 	/**
 	 *@title: addGoods
