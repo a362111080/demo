@@ -14,7 +14,7 @@ import lombok.Data;
  * @Date 2018/11/20 21:39
  **/
 @Data
-@TableName(value = "SMS_Device_Data")
+@TableName(value = "sms_device_data")
 public class DeviceData {
 
     /**

@@ -13,7 +13,7 @@ import lombok.Data;
  * @Date 2018/11/9 13:43
  **/
 @Data
-@TableName(value = "SMS_Standard_Data")
+@TableName(value = "sms_standard_data")
 public class StandardData {
     /**
      * 主键id
@@ -34,10 +34,10 @@ public class StandardData {
     /**
      * 品种编码
      */
-    private String strEggTypeCode;
+    private String strEggtypeCode;
 
     /**
      * 状态 0:停用 1:启用(默认)
      */
-    private Integer LngState = 1;
+    private Integer lngState = 1;
 }

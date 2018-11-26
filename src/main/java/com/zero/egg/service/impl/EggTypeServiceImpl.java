@@ -45,9 +45,9 @@ public class EggTypeServiceImpl implements EggTypeService {
              *  name和code不能重复
              */
             resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
-                    .eq("strEggTypeName", eggType.getStrEggTypeName())
+                    .eq("str_eggtype_name", eggType.getStrEggtypeName())
                     .or()
-                    .eq("strEggTypeCode", eggType.getStrEggTypeCode()));
+                    .eq("str_eggtype_code", eggType.getStrEggtypeCode()));
             if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
@@ -94,9 +94,9 @@ public class EggTypeServiceImpl implements EggTypeService {
         try {
             page.setCurrent(eggTypeRequestDTO.getCurrent());
             page.setSize(eggTypeRequestDTO.getSize());
-            if (null != eggTypeRequestDTO.getStrEggTypeName() && !"".equals(eggTypeRequestDTO.getStrEggTypeName())) {
+            if (null != eggTypeRequestDTO.getStrEggtypeName() && !"".equals(eggTypeRequestDTO.getStrEggtypeName())) {
                 page = (Page<EggType>) eggTypeMapper.selectPage(page, new QueryWrapper<EggType>()
-                        .like("strEggTypeName", eggTypeRequestDTO.getStrEggTypeName())
+                        .like("str_eggtype_name", eggTypeRequestDTO.getStrEggtypeName())
                 );
             } else {
                 page = (Page<EggType>) eggTypeMapper.selectPage(page, null);

@@ -51,9 +51,9 @@ public class BaseInfoController {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggTypeName() && null != saveEggTypeRequestDTO.getStrEggTypeCode()) {
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName() && null != saveEggTypeRequestDTO.getStrEggtypeCode()) {
                 //应该是从session里面获取,暂时写死
-                saveEggTypeRequestDTO.setStrCreateUser("老王");
+                saveEggTypeRequestDTO.setStrCreateuser("老王");
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -199,7 +199,7 @@ public class BaseInfoController {
     public Message listStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrEggTypeCode()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrEggtypeCode()) {
                 message = standardDataService.listDataAndDetl(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -224,7 +224,7 @@ public class BaseInfoController {
     public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode() && null != standardDetlRequestDTO.getStrStandDetlCode()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode() && null != standardDetlRequestDTO.getStrStanddetlCode()) {
                 message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
             } else {
                 message = new Message();

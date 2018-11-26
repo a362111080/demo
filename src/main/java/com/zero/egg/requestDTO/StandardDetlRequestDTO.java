@@ -24,7 +24,7 @@ public class StandardDetlRequestDTO implements Serializable {
     /**
      * 方案明细编码
      */
-    private String strStandDetlCode;
+    private String strStanddetlCode;
 
     /**
      * 方案主编码
@@ -59,12 +59,12 @@ public class StandardDetlRequestDTO implements Serializable {
     /**
      * 是否预警
      */
-    private Integer lngWarNing;
+    private Integer lngWarming;
 
     /**
      * 状态 0:停用 1:启用(默认)
      */
-    private Integer LngState = 1;
+    private Integer lngState = 1;
 
     /**
      * 前端传来的id数组(批量操作)

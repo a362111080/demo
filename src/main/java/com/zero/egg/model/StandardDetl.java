@@ -12,7 +12,7 @@ import lombok.Data;
  * @Author lyming
  * @Date 2018/11/9 14:32
  **/
-@TableName(value = "SMS_Standard_Detl")
+@TableName(value = "sms_standard_detl")
 @Data
 public class StandardDetl {
 
@@ -25,7 +25,7 @@ public class StandardDetl {
     /**
      * 方案明细编码
      */
-    private String strStandDetlCode;
+    private String strStanddetlCode;
 
     /**
      * 方案主编码
@@ -60,10 +60,10 @@ public class StandardDetl {
     /**
      * 是否预警
      */
-    private Integer lngWarNing;
+    private Integer lngWarming;
 
     /**
      * 状态 0:停用 1:启用(默认)
      */
-    private Integer LngState = 1;
+    private Integer lngState = 1;
 }

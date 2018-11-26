@@ -28,27 +28,27 @@ public class EggTypeRequestDTO extends PageDTO implements Serializable {
     /**
      * 鸡蛋类别编码
      */
-    private String strEggTypeCode;
+    private String strEggtypeCode;
 
     /**
      * 鸡蛋类别名称
      */
-    private String strEggTypeName;
+    private String strEggtypeName;
 
     /**
      * 类别创建时间
      */
-    private Date strTypeCreateTime;
+    private Date strTypeCreatetime;
 
     /**
      * 创建人
      */
-    private String strCreateUser;
+    private String strCreateuser;
 
     /**
      * 状态 0:停用 1:启用(默认)
      */
-    private Integer LngState = 1;
+    private Integer lngState = 1;
 
     /**
      * 前端传来的id数组(批量操作)

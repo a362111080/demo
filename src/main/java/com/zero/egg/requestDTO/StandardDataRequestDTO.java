@@ -34,10 +34,10 @@ public class StandardDataRequestDTO implements Serializable {
     /**
      * 品种编码
      */
-    private String strEggTypeCode;
+    private String strEggtypeCode;
 
     /**
      * 状态 0:停用 1:启用(默认)
      */
-    private Integer LngState = 1;
+    private Integer lngState = 1;
 }
