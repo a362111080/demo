@@ -4,22 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zero.egg.dao.EmployeeMapper">
-    <select id="getEmployee" parameterType="EmployeeQuery" resultType="com.zero.egg.model.Employee">SELECT * FROM SYS_EmpLoyee_Data k left join SYS_User_Info b on k.strUserCode=b.strUserCode<where>
+    <select id="getEmployee" parameterType="com.zero.egg.requestDTO.EmployeeRequestDTO" resultType="com.zero.egg.model.Employee">SELECT * FROM sys_employee_data k left join sys_user_info b on k.strusercode=b.strusercode<where>
             <if test="QueryCode != null and QueryCode !=''">
-                k.strUserCode=#{QueryCode,jdbcType=VARCHAR}
+                k.strusercode=#{QueryCode,jdbcType=VARCHAR}
             </if>
             <if test="QueryStoreCode != null and QueryStoreCode !=''">
-                and k.strStoreCode=#{QueryStoreCode,jdbcType=VARCHAR}
+                and k.strstorecode=#{QueryStoreCode,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
-    <update id="UpdateEmployee" parameterType="EmployeeQuery">
-        update SYS_EmpLoyee_Data
+    <update id="UpdateEmployee" parameterType="com.zero.egg.requestDTO.EmployeeRequestDTO">
+        update sys_employee_data
         <set>
             <if test="QueryLngState != null">
-                LngState = #{QueryLngState,jdbcType=INTEGER},
+                lngstate = #{QueryLngState,jdbcType=INTEGER},
             </if>
         </set>
-        where strUserCode = #{QueryCode,jdbcType=VARCHAR}
+        where strusercode = #{QueryCode,jdbcType=VARCHAR}
     </update>
 </mapper>

@@ -2,11 +2,11 @@ package com.zero.egg.dao;
 
 import java.util.List;
 
+import com.zero.egg.requestDTO.EmployeeRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.zero.egg.model.Employee;
-import com.zero.egg.model.EmployeeQuery;
 
 /**
  * @Description 员工管理mapper
@@ -19,7 +19,7 @@ import com.zero.egg.model.EmployeeQuery;
 @Repository
 public interface EmployeeMapper {
    
-	List<Employee> getEmployee(EmployeeQuery query);
+	List<Employee> getEmployee(EmployeeRequestDTO query);
 
-	int UpdateEmployee(EmployeeQuery query);
+	int UpdateEmployee(EmployeeRequestDTO query);
 }

@@ -1,24 +1,27 @@
 package com.zero.egg.controller;
 
 import java.util.List;
+
+import com.zero.egg.requestDTO.EmployeeRequestDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.Employee;
-import com.zero.egg.model.EmployeeQuery;
 import com.zero.egg.service.EmployeeService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
 
-
+@Api(value="员工管理")
 @RestController
-@RequestMapping("/EmployeeManage")
+@RequestMapping("/employeemanage")
 public class EmployeeManageController
 {
 	@Autowired
@@ -28,23 +31,15 @@ public class EmployeeManageController
  * @Param 
  * @Return 
  **/
- @RequestMapping( value = "/getEmployee",method = RequestMethod.POST)
- public Message  getEmployee(int pageNum,int pageSize,String QueryCode,String QueryStoreCode,String QueryName,Integer QueryLngState,String QueryBeginTime,String QueryEndTime ){
+@ApiOperation(value="查询员工列表",notes="分页查询，各种条件查询")
+@ApiImplicitParams({
+		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
+		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
+})
+ @RequestMapping( value = "/getemployee",method = RequestMethod.POST)
+ public Message  getEmployee(@RequestParam int pageNum,@RequestParam int pageSize, EmployeeRequestDTO query ){
 		Message ms = new Message();
-		EmployeeQuery  query=new EmployeeQuery();
 		PageHelper.startPage(pageNum, pageSize);
-		//员工编码
-		query.QueryCode=QueryCode;
-		//员工名称
-		query.QueryName=QueryName;
-		//查询员工状态
-		query.QueryLngState=QueryLngState;
-		//查询店铺编码
-		query.QueryStoreCode=QueryStoreCode;
-		//查询员工绩效开始时间
-		query.QueryBeginTime=QueryBeginTime;
-		//查询员工绩效结束时间
-		query.QueryEndTime=QueryEndTime;
 		List<Employee> Employee=employeeService.getEmployee(query);		
 		PageInfo<Employee> pageInfo = new PageInfo<>(Employee);
 		ms.setData(pageInfo);
@@ -58,20 +53,13 @@ public class EmployeeManageController
  * @Description 更新员工状态（可扩展其他字段更新）
  * @Param   员工编码,员工状态，员工所属店铺
  * @Return   是否成功
- **/ 
- 
- @RequestMapping(value = "/UpdateEmployee",method = RequestMethod.POST)
- public Message UpdateEmployee(String QueryCode,Integer QueryLngState,String QueryStoreCode){	 
+ **/
+
+@ApiOperation(value="修改员工信息")
+ @RequestMapping(value = "/updateemployee",method = RequestMethod.POST)
+ public Message UpdateEmployee(@RequestBody EmployeeRequestDTO updateModel ){
 	 	 Message message = new Message();
-		 try {  
-			 
-			 EmployeeQuery  updateModel=new EmployeeQuery();
-			//员工编码
-			updateModel.QueryCode =QueryCode;
-			//员工状态
-			updateModel.QueryLngState=QueryLngState;
-			//查询店铺编码
-			updateModel.QueryStoreCode=QueryStoreCode;
+		 try {
         	int strval=employeeService.UpdateEmployee(updateModel);
         	if (strval>0) {
         		 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

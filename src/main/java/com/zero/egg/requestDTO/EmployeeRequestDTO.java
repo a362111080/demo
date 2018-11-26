@@ -20,17 +20,17 @@ public class EmployeeRequestDTO extends PageDTO implements Serializable {/**
 	private static final long serialVersionUID = -5796039736965954691L;
 
 	//查询员工编码
-	private String QueryCode;
-	//查询店铺编码
-	private String QueryStoreCode;
+	public String QueryCode;
 	//查询员工名称
-	private String QueryName;
-	//查询员工状态
-	private int  QueryLngState;
-	//查询员工绩效开始
-	private String  QueryBeginTime;
+	public String QueryName;
+	//员工状态
+	public int QueryLngState;
+	//查询员工绩效开始时间
+	public String QueryBeginTime;
 	//查询员工绩效结束时间
-	private String  QueryEndTime;
+	public String QueryEndTime;
+	//当前店铺编码
+	public String QueryStoreCode;
 	
 
 }
