@@ -27,7 +27,7 @@ public interface WhGoodsService {
 	 *@Description 商品列表（可条件查询）
 	 * @return
 	 */
-	List<WhGoods> GoodsList();
+	List<WhGoods> GoodsList(WhGoods whGoods);
 	
 	/**
 	 * 

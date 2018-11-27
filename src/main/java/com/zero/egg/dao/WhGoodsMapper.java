@@ -32,7 +32,7 @@ public interface WhGoodsMapper {
 	 *@Description 商品列表
 	 * @return
 	 */
-	List<WhGoods> GoodsList();
+	List<WhGoods> GoodsList(WhGoods whGoods);
 	
 	/**
 	 * 

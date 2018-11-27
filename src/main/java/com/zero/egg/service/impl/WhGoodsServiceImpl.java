@@ -32,8 +32,8 @@ public class WhGoodsServiceImpl implements WhGoodsService{
 	}
 
 	@Override
-	public List<WhGoods> GoodsList() {
-		return whGoodsMapper.GoodsList();
+	public List<WhGoods> GoodsList(WhGoods whGoods) {
+		return whGoodsMapper.GoodsList(whGoods);
 	}
 
 	@Override

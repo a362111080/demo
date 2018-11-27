@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.DamageGoods;
+import com.zero.egg.model.Warehouse;
 import com.zero.egg.model.WhGoods;
 import com.zero.egg.service.WhGoodsService;
 import com.zero.egg.tool.Message;
@@ -26,7 +27,10 @@ import com.zero.egg.tool.UuidUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import com.zero.egg.tool.UtilConstants.GoodsState;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
@@ -78,10 +82,11 @@ public class WhGoodsController {
 		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
 	})
 	@RequestMapping(value="/goodslist",method=RequestMethod.POST)
-	public Message goodsList(@RequestParam int pageNum,@RequestParam int pageSize) {
+	public Message goodsList(@RequestParam int pageNum,@RequestParam int pageSize,@RequestBody @ApiParam(required=false,name="WhGoods",value="查询商品信息实体") WhGoods whGoods) {
 		Message mg = new Message();
+		Warehouse warehouse = whGoods.getWarehouse();
 		PageHelper.startPage(pageNum, pageSize, "");
-		List<WhGoods> list = whGoodsService.GoodsList();
+		List<WhGoods> list = whGoodsService.GoodsList(whGoods);
 		PageInfo<WhGoods> pageInfo = new PageInfo<WhGoods>(list);
 		mg.setData(pageInfo);
 		mg.setMessage(ResponseMsg.SUCCESS);
@@ -121,9 +126,10 @@ public class WhGoodsController {
 	 * @param request
 	 * @return
 	 */
+	
 	@ApiOperation(value="添加商品",notes="goodsId,indate,lngState三个字段内容后台生成")
 	@RequestMapping(value="/addGoods",method=RequestMethod.POST)
-	public Message addGoods(@RequestBody WhGoods goods) {
+	public Message addGoods(@RequestBody @ApiParam(value="只要whgoods对象数据")  WhGoods goods) {
 		Message mg = new Message();
 		goods.setGoodsId(UuidUtil.get32UUID());
 		goods.setIndate(new Date());
