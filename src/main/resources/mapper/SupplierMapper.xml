@@ -2,37 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.SupplierMapper">
-    <insert id="AddSupplier" parameterType="Supplier">insert into SYS_Supplier_Data(id,strSupplierCode,strSupplierName,strSupplierShortName,strSupplierKindCode,strSupplierPhone,strSupplierPerSon,LngState,strSupplierDesc,strStoreCode,strSupplierTypeCode) values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from SYS_Supplier_Data),4,'0')) as spcode FROM DUAL) a),#{strSupplierName},#{strSupplierShortName},#{strSupplierKindCode},#{strSupplierPhone},#{strSupplierPerSon},#{LngState},#{strSupplierDesc},#{strStoreCode},#{strSupplierTypeCode})</insert>
-    <update id="UpdateSupplier" parameterType="Supplier">update SYS_Supplier_Data 
+    <insert id="AddSupplier" parameterType="Supplier">insert into sys_supplier_data(id,strsuppliercode,strsuppliername,strsuppliershortname,strsupplierkindcode,strsupplierphone,strsupplierperson,lngstate,strsupplierdesc,strstorecode,strsuppliertypecode) values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from sys_supplier_data),4,'0')) as spcode FROM DUAL) a),#{strSupplierName},#{strSupplierShortName},#{strSupplierKindCode},#{strSupplierPhone},#{strSupplierPerSon},#{LngState},#{strSupplierDesc},#{strStoreCode},#{strSupplierTypeCode})</insert>
+    <update id="UpdateSupplier" parameterType="Supplier">update sys_supplier_data
     <set>
-        <if test="strSupplierName!= null and strSupplierName!=''">strSupplierName= #{strSupplierName,jdbcType=VARCHAR},</if>
-        <if test="strSupplierShortName!= null and strSupplierShortName!=''">strSupplierShortName= #{strSupplierShortName,jdbcType=VARCHAR},</if>
-        <if test="strSupplierKindCode!= null and strSupplierKindCode!=''">strSupplierKindCode= #{strSupplierKindCode,jdbcType=VARCHAR},</if>
-        <if test="strSupplierPerSon!= null and strSupplierPerSon!=''">strSupplierPerSon= #{strSupplierPerSon,jdbcType=VARCHAR},</if>
-        <if test="strSupplierDesc!= null and strSupplierDesc!=''">strSupplierDesc= #{strSupplierDesc,jdbcType=VARCHAR},</if>
-        <if test="strSupplierPhone!= null and strSupplierPhone!=''">strSupplierPhone= #{strSupplierPhone,jdbcType=VARCHAR},</if>
-        <if test="strSupplierTypeCode!= null and strSupplierTypeCode!=''">strSupplierTypeCode= #{strSupplierTypeCode,jdbcType=VARCHAR},</if>
-        <if test="LngState!= null and LngState !=''">LngState= #{LngState,jdbcType=INTEGER},</if>
-    </set>where strSupplierCode= #{strSupplierCode,jdbcType=VARCHAR} and strStoreCode= #{strStoreCode,jdbcType=VARCHAR}</update>
+        <if test="strSupplierName!= null and strSupplierName!=''">strsuppliername= #{strSupplierName,jdbcType=VARCHAR},</if>
+        <if test="strSupplierShortName!= null and strSupplierShortName!=''">strsuppliershortname= #{strSupplierShortName,jdbcType=VARCHAR},</if>
+        <if test="strSupplierKindCode!= null and strSupplierKindCode!=''">strsupplierkindcode= #{strSupplierKindCode,jdbcType=VARCHAR},</if>
+        <if test="strSupplierPerSon!= null and strSupplierPerSon!=''">strsupplierperson= #{strSupplierPerSon,jdbcType=VARCHAR},</if>
+        <if test="strSupplierDesc!= null and strSupplierDesc!=''">strsupplierdesc= #{strSupplierDesc,jdbcType=VARCHAR},</if>
+        <if test="strSupplierPhone!= null and strSupplierPhone!=''">strsupplierphone= #{strSupplierPhone,jdbcType=VARCHAR},</if>
+        <if test="strSupplierTypeCode!= null and strSupplierTypeCode!=''">strsuppliertypecode= #{strSupplierTypeCode,jdbcType=VARCHAR},</if>
+        <if test="LngState!= null and LngState !=''">lngstate= #{LngState,jdbcType=INTEGER},</if>
+    </set>where strsuppliercode= #{strSupplierCode,jdbcType=VARCHAR} and strstorecode= #{strStoreCode,jdbcType=VARCHAR}</update>
     <select id="GetSupplierList" parameterType="Supplier" resultType="com.zero.egg.model.Supplier">
-    		select * from SYS_Supplier_Data k <where>
+    		select * from sys_supplier_data k <where>
             <if test="strSupplierCode != null and strSupplierCode !=''">
-                k.strSupplierCode=#{strSupplierCode,jdbcType=VARCHAR}
+                k.strsuppliercode=#{strSupplierCode,jdbcType=VARCHAR}
             </if>
             <if test="strSupplierKindCode != null and strSupplierKindCode !=''">
-                and k.strSupplierKindCode=#{strSupplierKindCode,jdbcType=VARCHAR}
+                and k.strsupplierkindcode=#{strSupplierKindCode,jdbcType=VARCHAR}
             </if>
             <if test="strSupplierShortName != null and strSupplierShortName !=''">
-                and k.strSupplierShortName LIKE '%${strSupplierShortName}%'
+                and k.strsuppliershortname LIKE '%${strSupplierShortName}%'
             </if>
               <if test="strSupplierTypeCode != null and strSupplierTypeCode !='-1'">
-                and k.strSupplierTypeCode=#{strSupplierTypeCode,jdbcType=VARCHAR}
+                and k.strsuppliertypecode=#{strSupplierTypeCode,jdbcType=VARCHAR}
             </if>
               <if test="strStoreCode != null and strStoreCode !=''">
-                and k.strStoreCode=#{strStoreCode,jdbcType=VARCHAR}
+                and k.strstorecode=#{strStoreCode,jdbcType=VARCHAR}
             </if>
                <if test="LngState != null and LngState !='-1' and LngState !=''">
-                and k.LngState=#{LngState,jdbcType=INTEGER}
+                and k.lngstate=#{LngState,jdbcType=INTEGER}
             </if>
         </where>
     </select>
