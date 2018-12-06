@@ -71,9 +71,9 @@
          and w.warehouse_id = #{warehouse.warehouseId}
          </if>
          </if>
-         <if test="StandardData !=null">
-          <if test="StandardData.strStandCode !=null and StandardData.strStandCode !=''">
-         and sda.str_stand_code = #{StandardData.strStandCode}
+         <if test="standardData !=null">
+          <if test="standardData.strStandCode !=null and standardData.strStandCode !=''">
+         and sda.str_stand_code = #{standardData.strStandCode}
          </if>
          </if>
          <if test="eggType !=null">
