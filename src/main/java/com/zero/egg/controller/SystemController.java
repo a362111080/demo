@@ -18,11 +18,9 @@ public class SystemController {
     @RequestMapping( value = "/login",method = RequestMethod.POST)
     public Message checklogin(@RequestParam String strUserName,@RequestParam String passWord ){
         Message ms = new Message();
-        LoginInfo  info=new LoginInfo();
         try {
-        	info=systemService.checklogin(strUserName,passWord);
-        	
-            if (info.getStrstorecode()!="") {
+            LoginInfo info=systemService.checklogin(strUserName,passWord);
+            if (null != info.getStrstorecode()) {
                 ms.setData(info);
                 ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);

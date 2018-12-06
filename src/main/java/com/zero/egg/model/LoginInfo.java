@@ -28,6 +28,5 @@ public class LoginInfo {
 	  //店铺老板姓名
 	  private String strUserName;
 	  //店铺老板性别
-	  private String strUserSex;
-	
+	  private Integer strUserSex;
 }
