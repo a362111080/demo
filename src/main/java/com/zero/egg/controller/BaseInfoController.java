@@ -173,32 +173,6 @@ public class BaseInfoController {
     }
 
     /**
-     * 删除方案
-     *
-     * @Param [standardDataRequestDTO]
-     * @Return com.zero.egg.tool.Message
-     **/
-    @ApiOperation(value = "删除方案")
-    @RequestMapping(value = "/standard/deletestandarddata", method = RequestMethod.POST)
-    public Message deleteStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
-        Message message = new Message();
-        try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
-                message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
-            } else {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-            }
-            return message;
-        } catch (Exception e) {
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            return message;
-        }
-    }
-
-    /**
      * 列出所有方案及其细节
      *
      * @Param [standardDataRequestDTO]
@@ -332,17 +306,17 @@ public class BaseInfoController {
     }
 
     /**
-     * 根据方案id删除方案及其方案细节
+     * 根据方案id&code删除方案及其方案细节
      *
      * @param standardDataRequestDTO
      * @return
      */
-    @ApiOperation(value = "根据方案id删除方案及其方案细节")
+    @ApiOperation(value = "根据方案id&code删除方案及其方案细节")
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
     public Message deleteStandardData(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId() && null != standardDataRequestDTO.getStrStandCode()) {
                 message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
             } else {
                 message = new Message();

@@ -42,9 +42,9 @@ public class DeviceDataServiceImpl implements DeviceDataService {
              *  strSerialNumber和strDeviceName不能重复
              */
             resultList = deviceMapper.selectList(new QueryWrapper<DeviceData>()
-                    .eq("strSerialNumber", deviceData.getStrSerialNumber())
+                    .eq("str_serial_number", deviceData.getStrSerialNumber())
                     .or()
-                    .eq("strDeviceName", deviceData.getStrDeviceName()));
+                    .eq("str_device_name", deviceData.getStrDeviceName()));
             if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
@@ -99,7 +99,7 @@ public class DeviceDataServiceImpl implements DeviceDataService {
         List<DeviceData> deviceDataList = null;
         try {
             if ("" != deviceDataRequestDTO.getStrDeviceName() && null != deviceDataRequestDTO.getStrDeviceName()) {
-                deviceDataList = deviceMapper.selectList(new QueryWrapper<DeviceData>().like("strDeviceName", deviceDataRequestDTO.getStrDeviceName()));
+                deviceDataList = deviceMapper.selectList(new QueryWrapper<DeviceData>().like("str_device_name", deviceDataRequestDTO.getStrDeviceName()));
             } else {
                 deviceDataList = deviceMapper.selectList(null);
             }

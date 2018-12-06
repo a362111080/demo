@@ -86,7 +86,7 @@ public class StandardDataServiceImpl implements StandardDataService {
              * 1.先根据strStandId/strStandCode 删除所有所属方案细节
              * 2.根据id删除方案
              */
-            standardDetlMapper.delete(new QueryWrapper<StandardDetl>().eq("str_standdetl_code", standardDataRequestDTO.getStrEggtypeCode()));
+            standardDetlMapper.delete(new QueryWrapper<StandardDetl>().eq("str_stand_code", standardDataRequestDTO.getStrStandCode()));
             standardDataMapper.delete(new QueryWrapper<StandardData>().eq("id", standardDataRequestDTO.getId()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
