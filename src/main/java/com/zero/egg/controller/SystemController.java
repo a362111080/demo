@@ -1,4 +1,5 @@
 package com.zero.egg.controller;
+import com.zero.egg.model.LoginInfo;
 import com.zero.egg.service.SystemService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -14,14 +15,15 @@ public class SystemController {
 
     @Autowired
     private SystemService  systemService;
-    @RequestMapping( value = "/checklogin",method = RequestMethod.POST)
+    @RequestMapping( value = "/login",method = RequestMethod.POST)
     public Message checklogin(@RequestParam String strUserName,@RequestParam String passWord ){
-
         Message ms = new Message();
+        LoginInfo  info=new LoginInfo();
         try {
-            int strval=systemService.checklogin(strUserName,passWord);
-            if (strval>0) {
-                ms.setData("登录成功!");
+        	info=systemService.checklogin(strUserName,passWord);
+        	
+            if (info.getStrstorecode()!="") {
+                ms.setData(info);
                 ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }
