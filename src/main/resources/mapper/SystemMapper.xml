@@ -4,7 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zero.egg.dao.SystemMapper">
-    <select id="checklogin"  resultType="java.lang.Integer" parameterType="String">
-        SELECT count(1) FROM sys_user_info WHERE strUserName=#{strUserName} and  strPassWord=#{passWord} and LngIsBoss=1
+    <select id="checklogin"  resultType="LoginInfo" parameterType="String">
+        SELECT strstorecode,strstorename,strstoreaddress,strstorephone,a.strusercode,strUserName,strUserSex FROM sys_userstroes_info a
+        left join sys_user_info b on a.strusercode=b.strUserCode
+        WHERE trim(a.strpassname)=#{strUserName,jdbcType=VARCHAR} and  trim(a.strpassword)=#{passWord,jdbcType=VARCHAR} and b.LngIsBoss=1
     </select>
 </mapper>
