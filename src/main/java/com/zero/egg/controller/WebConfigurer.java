@@ -24,7 +24,7 @@ public class WebConfigurer implements WebMvcConfigurer {
 	}
 
 	/**
-	 * 添加静态资源--过滤swagger-api (开源的在线API文档)
+	 * 添加静态资源--过滤swagger-api
 	 * 
 	 * @param registry
 	 */
