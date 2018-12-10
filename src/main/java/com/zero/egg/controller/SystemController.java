@@ -16,7 +16,7 @@ public class SystemController {
     @Autowired
     private SystemService  systemService;
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public Message checklogin(@RequestParam("strUserName") String strUserName,@RequestParam("passWord") String passWord ){
+    public Message checklogin(@RequestParam String strUserName,@RequestParam String passWord ){
         Message ms = new Message();
         try {
             LoginInfo info=systemService.checklogin(strUserName,passWord);
