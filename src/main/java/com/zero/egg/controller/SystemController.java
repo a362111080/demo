@@ -16,10 +16,10 @@ public class SystemController {
     @Autowired
     private SystemService  systemService;
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public Message checklogin(@RequestParam String strUserName,@RequestParam String passWord ){
+    public Message checklogin(@RequestBody LoginInfo  requestLogin ){
         Message ms = new Message();
         try {
-            LoginInfo info=systemService.checklogin(strUserName,passWord);
+            LoginInfo info=systemService.checklogin(requestLogin.getStrPassName(),requestLogin.getStrPassword());
             if (null != info.getStrstorecode()) {
                 ms.setData(info);
                 ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

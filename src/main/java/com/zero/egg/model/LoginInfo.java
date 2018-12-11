@@ -15,6 +15,12 @@ import lombok.Data;
 @Data
 public class LoginInfo {
 
+      //登录验证码
+	  private String strVerificationCode;
+      //登录密码
+	  private String strPassword;
+	  //登录账号
+ 	  private String strPassName;
 	  //店铺编码
 	  private String strstorecode;
 	  //店铺名称
