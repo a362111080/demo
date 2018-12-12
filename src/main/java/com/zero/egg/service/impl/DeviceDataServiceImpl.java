@@ -79,11 +79,23 @@ public class DeviceDataServiceImpl implements DeviceDataService {
     public Message updateDeviceDataById(DeviceDataRequestDTO deviceDataRequestDTO) {
         Message message = new Message();
         DeviceData deviceData = new DeviceData();
+        /** 查重结果 */
+        /** 在更新之前也要查重 */
+        List<DeviceData> resultList = null;
         try {
             TransferUtil.copyProperties(deviceData, deviceDataRequestDTO);
-            deviceMapper.updateById(deviceData);
-            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            resultList = deviceMapper.selectList(new QueryWrapper<DeviceData>()
+                    .eq("str_serial_number", deviceData.getStrSerialNumber())
+                    .or()
+                    .eq("str_device_name", deviceData.getStrDeviceName()));
+            if (resultList.size() > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+            } else {
+                deviceMapper.updateById(deviceData);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
             return message;
         } catch (Exception e) {
             log.info("updateDeviceDataById error", e);
