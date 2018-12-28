@@ -55,7 +55,7 @@ public class BaseInfoController {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName() && null != saveEggTypeRequestDTO.getStrEggtypeCode()) {
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName()) {
                 //应该是从session里面获取,暂时写死
                 saveEggTypeRequestDTO.setStrCreateuser("老王");
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
@@ -157,7 +157,7 @@ public class BaseInfoController {
     public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName() && null != standardDataRequestDTO.getStrStandCode()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -173,17 +173,17 @@ public class BaseInfoController {
     }
 
     /**
-     * 列出所有方案及其细节
+     * 根据品种id列出所有方案及其细节
      *
      * @Param [standardDataRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
-    @ApiOperation(value = "列出所有方案及其细节")
+    @ApiOperation(value = "根据品种id列出所有方案及其细节")
     @RequestMapping(value = "/standard/liststandardddataanddetl", method = RequestMethod.POST)
     public Message listStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrEggtypeCode()) {
+            if (null != standardDataRequestDTO) {
                 message = standardDataService.listDataAndDetl(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -209,7 +209,7 @@ public class BaseInfoController {
     public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode() && null != standardDetlRequestDTO.getStrStanddetlCode()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
                 message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -226,17 +226,17 @@ public class BaseInfoController {
 
 
     /**
-     * 列出所有方案及其细节
+     * 根据方案id列出其下方案细节
      *
      * @param standardDetlRequestDTO
      * @return
      */
-    @ApiOperation(value = "列出所有方案及其细节")
+    @ApiOperation(value = "根据方案id列出其下方案细节")
     @RequestMapping(value = "/standard/liststandarddetel", method = RequestMethod.POST)
     public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandCode()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
                 message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -306,17 +306,17 @@ public class BaseInfoController {
     }
 
     /**
-     * 根据方案id&code删除方案及其方案细节
+     * 根据方案id删除方案及其方案细节
      *
      * @param standardDataRequestDTO
      * @return
      */
-    @ApiOperation(value = "根据方案id&code删除方案及其方案细节")
+    @ApiOperation(value = "根据方案id删除方案及其方案细节")
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
     public Message deleteStandardData(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId() && null != standardDataRequestDTO.getStrStandCode()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
                 message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
             } else {
                 message = new Message();

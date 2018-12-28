@@ -50,12 +50,10 @@ public class StandardDataServiceImpl implements StandardDataService {
         try {
             TransferUtil.copyProperties(standardData, standardDataRequestDTO);
             /**
-             * strStandName,strStandCode 不能重复
+             * strStandName不能重复
              */
             resultList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
-                    .eq("str_stand_name", standardData.getStrStandName())
-                    .or()
-                    .eq("str_stand_code", standardData.getStrStandCode()));
+                    .eq("str_stand_name", standardData.getStrStandName()));
             if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
@@ -83,10 +81,10 @@ public class StandardDataServiceImpl implements StandardDataService {
         Message message = new Message();
         try {
             /**
-             * 1.先根据strStandId/strStandCode 删除所有所属方案细节
+             * 1.先根据strStandId删除所有所属方案细节
              * 2.根据id删除方案
              */
-            standardDetlMapper.delete(new QueryWrapper<StandardDetl>().eq("str_stand_code", standardDataRequestDTO.getStrStandCode()));
+            standardDetlMapper.delete(new QueryWrapper<StandardDetl>().eq("str_stand_id", standardDataRequestDTO.getId()));
             standardDataMapper.delete(new QueryWrapper<StandardData>().eq("id", standardDataRequestDTO.getId()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -114,12 +112,12 @@ public class StandardDataServiceImpl implements StandardDataService {
         List<StandardDataListResponseDTO> standardDataListResponseDTOList = new ArrayList<>();
         try {
             /**
-             * 1.先根据strEggTypeId/strEggTypeCode 查询出所有方案
-             * 2.根据strStandId/strStandCode 查出所有方案细节
+             * 1.先根据strEggTypeId查询出所有方案
+             * 2.根据strStandId查出所有方案细节
              */
-            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>().eq("str_eggtype_code", standardDataRequestDTO.getStrEggtypeCode()));
+            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>().eq("str_eggtype_id", standardDataRequestDTO.getStrEggtypeId()));
             for (StandardData standardData : standardDataList) {
-                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_code", standardData.getStrStandCode()));
+                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_id", standardData.getId()));
                 standardDataListResponseDTO.setStandardDetlList(standardDetlList);
                 TransferUtil.copyProperties(standardDataListResponseDTO, standardData);
                 standardDataListResponseDTOList.add(standardDataListResponseDTO);

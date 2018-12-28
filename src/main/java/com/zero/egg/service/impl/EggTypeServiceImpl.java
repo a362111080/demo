@@ -42,12 +42,10 @@ public class EggTypeServiceImpl implements EggTypeService {
         try {
             TransferUtil.copyProperties(eggType, saveEggTypeRequestDTO);
             /** 插入数据前做查重操作
-             *  name和code不能重复
+             *  name不能重复
              */
             resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
-                    .eq("str_eggtype_name", eggType.getStrEggtypeName())
-                    .or()
-                    .eq("str_eggtype_code", eggType.getStrEggtypeCode()));
+                    .eq("str_eggtype_name", eggType.getStrEggtypeName()));
             if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);

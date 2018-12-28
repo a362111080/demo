@@ -98,7 +98,7 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     }
 
     /**
-     * 根据StandDetlCode/StandDetlId列出所属方案细节
+     * 根据StandDetlId列出所属方案细节
      * 不用分页
      *
      * @param standardDetlRequestDTO
@@ -110,7 +110,7 @@ public class StandardDetlServiceImpl implements StandardDetlService {
         StandardDetlResponseDTO standardDetlResponseDTO = new StandardDetlResponseDTO();
         List<StandardDetl> standardDetlList = null;
         try {
-            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_code", standardDetlRequestDTO.getStrStandCode()));
+            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_id", standardDetlRequestDTO.getStrStandId()));
             standardDetlResponseDTO.setStandardDetlList(standardDetlList);
             message.setData(standardDetlResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
