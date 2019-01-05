@@ -29,10 +29,10 @@ public class LoginInfo {
 	  private String strstoreaddress;
 	  //店铺电话
 	  private String strstorephone;
-	  //店铺老板对应用户编码
+	  //登录用户编码
 	  private String strusercode;
-	  //店铺老板姓名
+	  //登录姓名
 	  private String strUserName;
-	  //店铺老板性别
+	  //登录性别
 	  private Integer strUserSex;
 }

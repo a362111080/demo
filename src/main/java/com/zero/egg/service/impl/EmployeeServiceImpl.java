@@ -2,6 +2,7 @@ package com.zero.egg.service.impl;
 
 import java.util.List;
 
+import com.zero.egg.requestDTO.ActiveCodeRequestDTO;
 import com.zero.egg.requestDTO.EmployeeRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 			
 			return mapper.UpdateEmployee(query);
 		}
+
+    @Override
+    public int GetCertificatecode(String certificatecode) {
+
+		return mapper.getCertificatecode(certificatecode);
+    }
+
+	@Override
+	public int ActiveEmployee(ActiveCodeRequestDTO activeModel) {
+
+		return mapper.ActiveEmployee(activeModel);
+	}
 }
 
 

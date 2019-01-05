@@ -22,4 +22,24 @@
         </set>
         where strusercode = #{QueryCode,jdbcType=VARCHAR}
     </update>
+    <select id="getCertificatecode" parameterType="String" resultType="Integer">
+        select count(*) from sys_certificate_data  a
+        <where>
+        a.lngstate=1 and  a.certificatecode=#{certificatecode,jdbcType=VARCHAR}
+        </where>
+    </select>
+    <update id="ActiveEmployee" parameterType="com.zero.egg.requestDTO.ActiveCodeRequestDTO">
+        update sys_certificate_data a
+        <set>
+            <if test="active_usercode != null">
+                a.active_usercode = #{active_usercode,jdbcType=VARCHAR},
+            </if>
+            <if test="active_stroecode != null">
+                a.active_stroecode = #{active_stroecode,jdbcType=VARCHAR},
+            </if>
+                a.lngstate=2
+        </set>
+        where a.certificatecode = #{certificatecode,jdbcType=VARCHAR}
+    </update>
+
 </mapper>

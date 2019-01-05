@@ -2,6 +2,7 @@ package com.zero.egg.service.impl;
 
 import com.zero.egg.dao.SystemMapper;
 import com.zero.egg.model.LoginInfo;
+import com.zero.egg.responseDTO.EmployeeLoginResponseDTO;
 import com.zero.egg.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,5 +18,10 @@ public class SystemServiceImpl implements SystemService {
     public  LoginInfo checklogin(String strUserName,String passWord)
     {
         return  mapper.checklogin(strUserName,passWord);
+    }
+
+    @Override
+    public EmployeeLoginResponseDTO Mobilelogin(String strPassName, String strPassword) {
+        return  mapper.Mobilelogin(strPassName,strPassword);
     }
 }

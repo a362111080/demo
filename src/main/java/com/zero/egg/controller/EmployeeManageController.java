@@ -2,6 +2,7 @@ package com.zero.egg.controller;
 
 import java.util.List;
 
+import com.zero.egg.requestDTO.ActiveCodeRequestDTO;
 import com.zero.egg.requestDTO.EmployeeRequestDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -80,7 +81,55 @@ public class EmployeeManageController
 		 }
 	        
  	}
+
+
+
+	@RequestMapping( value = "/activeemployee",method = RequestMethod.POST)
+	public  Message  ActiveEmployee(@RequestBody ActiveCodeRequestDTO  activeModel)
+	{
+		Message message = new Message();
+		try{
+			if (null !=activeModel.getCertificatecode())
+			{
+				//验证激活码是否有效
+				int strVal=employeeService.GetCertificatecode(activeModel.getCertificatecode());
+				if (strVal>0)
+				{
+					//验证码可用,激活验证码
+					int activeVal=employeeService.ActiveEmployee(activeModel);
+					if (activeVal>0)
+					{
+						message.setData("激活成功!");
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}
+				}
+				else
+				{
+					message.setData("激活凭证无效!");
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.FAILED);
+				}
+			}
+			else
+			{
+				message.setData("激活凭证不能为空!");
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			}
+
+			return  message;
+		}
+		catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
+		}
+
+	}
 }
+
+
 
 
 
