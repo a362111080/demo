@@ -61,10 +61,6 @@ public class DamageGoods implements Serializable{/**
 	 */
 	@ApiModelProperty(name="damageType",dataType="int",value="损坏类型1自损 2报损")
 	private String damageType;
-	/**
-	 * 仓库id
-	 */
-	@ApiModelProperty(name="warehouseId",dataType="string",value="仓库Id（查询时用）")
-	private String warehouseId;
+	
 
 }

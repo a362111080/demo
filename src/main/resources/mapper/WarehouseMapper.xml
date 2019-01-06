@@ -49,19 +49,19 @@
     <update id="updateWarehouse" parameterType="com.zero.egg.model.Warehouse">
     	update warehouse_data
     	set
-    	<if test="warehouse_code !=null and warehouse_code !=''">
+    	<if test="warehouseCode !=null and warehouseCode !=''">
     	warehouse_code=#{warehouseCode},
     	</if>
-    	<if test="warehouse_name !=null and warehouse_name !=''">
+    	<if test="warehouseName !=null and warehouseName !=''">
     	warehouse_name=#{warehouseName},
     	</if>
-    	<if test="store_id !=null and store_id !=''">
+    	<if test="storeId !=null and storeId !=''">
     	store_id=#{storeId},
     	</if>
     	<if test="strdesc !=null and strdesc !=''">
     	strdesc=#{strdesc},
     	</if>
-    	<if test="lng_state !=null and lng_state !=''">
+    	<if test="lngState !=null and lngState !=''">
     	lng_state=#{lngState}
     	</if>
     	where warehouse_id=#{warehouseId}

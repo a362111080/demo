@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.zero.egg.model.DamageGoods;
 import com.zero.egg.model.WhGoods;
+import com.zero.egg.requestDTO.DamageGoodsDTO;
+import com.zero.egg.requestDTO.WhGoodsDTO;
 import com.zero.egg.tool.PageData;
 
 /**
@@ -32,7 +34,7 @@ public interface WhGoodsMapper {
 	 *@Description 商品列表
 	 * @return
 	 */
-	List<WhGoods> GoodsList(WhGoods whGoods);
+	List<WhGoodsDTO> GoodsList(WhGoodsDTO whGoodsDTO);
 	
 	/**
 	 * 
@@ -40,7 +42,7 @@ public interface WhGoodsMapper {
 	 *@Description 损坏商品列表
 	 * @return
 	 */
-	List<PageData> listDamageGoods(DamageGoods damageGoods);
+	List<DamageGoodsDTO> listDamageGoods(DamageGoodsDTO damageGoodsDTO);
 	
 	/**
 	 *@title: addGoods

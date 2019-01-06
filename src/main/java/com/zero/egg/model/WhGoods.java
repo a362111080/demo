@@ -25,9 +25,14 @@ public class WhGoods implements Serializable {
 	//商品id
 	@ApiModelProperty(name="goodsId",dataType="string",value="商品Id（新增时后台生成）")
 	private String goodsId;
+	//商品名
+	@ApiModelProperty(name="goodsName",dataType="string",value="商品名")
+	private String goodsName;
+	
 	//规格id
 	@ApiModelProperty(name="standId",dataType="string",value="规格id")
 	private String standId;
+	
 	//仓库id
 	@ApiModelProperty(name="warehouseId",dataType="string",value="仓库id")
 	private String warehouseId;
@@ -43,20 +48,7 @@ public class WhGoods implements Serializable {
 	//商品来源商贩
 	@ApiModelProperty(name="resourceSaler",dataType="string",value="商品来源商贩")
 	private String resourceSaler;
-	private String searchValue;
 	
-	//仓库实体
-	@ApiModelProperty(required=false,name="warehouse")
-	private Warehouse warehouse = new Warehouse();
-	//规格信息实体
-	@ApiModelProperty(required=false,name="standardDetl")
-	private StandardDetl standardDetl = new StandardDetl();
-	//规格类型实体
-	@ApiModelProperty(required=false,name="standardData")
-	private StandardData standardData = new StandardData();
-	//品种实体
-	@ApiModelProperty(required=false,name="eggType")
-	private EggType eggType = new EggType();
 	
 	
 	

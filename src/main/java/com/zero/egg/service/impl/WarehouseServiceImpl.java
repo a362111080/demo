@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zero.egg.dao.WarehouseMapper;
 import com.zero.egg.model.Warehouse;
+import com.zero.egg.requestDTO.WarehouseRequestDTO;
 import com.zero.egg.service.WarehouseService;
 
 /**
@@ -40,7 +41,7 @@ public class WarehouseServiceImpl implements WarehouseService{
 	}
 
 	@Override
-	public List<Warehouse> warehouseList(Warehouse warehouse) {
+	public List<Warehouse> warehouseList(WarehouseRequestDTO warehouse) {
 		return warehouseMapper.warehouseList(warehouse);
 	}
 	

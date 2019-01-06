@@ -19,6 +19,8 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.DamageGoods;
 import com.zero.egg.model.Warehouse;
 import com.zero.egg.model.WhGoods;
+import com.zero.egg.requestDTO.DamageGoodsDTO;
+import com.zero.egg.requestDTO.WhGoodsDTO;
 import com.zero.egg.service.WhGoodsService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.PageData;
@@ -77,17 +79,15 @@ public class WhGoodsController {
 	 * @return
 	 */
 	@ApiOperation(value="商品列表" ,notes="分页查询，条件查询")
-	@ApiImplicitParams({
-		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
-		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
-	})
 	@RequestMapping(value="/goodslist",method=RequestMethod.POST)
-	public Message goodsList(@RequestParam int pageNum,@RequestParam int pageSize,@RequestBody @ApiParam(required=false,name="WhGoods",value="查询商品信息实体") WhGoods whGoods) {
+	public Message goodsList(
+			@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
+			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
+			@RequestBody @ApiParam(required=false,name="whGoodsDTO",value="根据商品信息条件查询字段") WhGoodsDTO whGoodsDTO) {
 		Message mg = new Message();
-		Warehouse warehouse = whGoods.getWarehouse();
 		PageHelper.startPage(pageNum, pageSize, "");
-		List<WhGoods> list = whGoodsService.GoodsList(whGoods);
-		PageInfo<WhGoods> pageInfo = new PageInfo<WhGoods>(list);
+		List<WhGoodsDTO> list = whGoodsService.GoodsList(whGoodsDTO);
+		PageInfo<WhGoodsDTO> pageInfo = new PageInfo<WhGoodsDTO>(list);
 		mg.setData(pageInfo);
 		mg.setMessage(ResponseMsg.SUCCESS);
 		mg.setState(ResponseCode.SUCCESS_HEAD);
@@ -104,16 +104,15 @@ public class WhGoodsController {
 	 * @return
 	 */
 	@ApiOperation(value="损坏商品列表" , notes="分页查询，条件查询")
-	@ApiImplicitParams({
-		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
-		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
-	})
 	@RequestMapping(value="/damagegoodslist",method=RequestMethod.POST)
-	public Message DamageGoodsList( @RequestParam int pageNum,@RequestParam int pageSize,DamageGoods damageGoods) {
+	public Message DamageGoodsList(
+			@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
+			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
+			@RequestBody @ApiParam(required=false,name="whGoodsDTO",value="根据商品信息条件查询字段") DamageGoodsDTO damageGoodsDTO) {
 		Message mg = new Message();
 		PageHelper.startPage(pageNum, pageSize, "");
-		List<PageData> list = whGoodsService.listDamageGoods(damageGoods);
-		PageInfo<PageData> pageInfo = new PageInfo<PageData>(list);
+		List<DamageGoodsDTO> list = whGoodsService.listDamageGoods(damageGoodsDTO);
+		PageInfo<DamageGoodsDTO> pageInfo = new PageInfo<DamageGoodsDTO>(list);
 		mg.setData(pageInfo);
 		mg.setMessage(ResponseMsg.SUCCESS);
 		mg.setState(ResponseCode.SUCCESS_HEAD);
