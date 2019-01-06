@@ -22,19 +22,14 @@ public class StandardDataRequestDTO implements Serializable {
     private String id;
 
     /**
-     * 方案主表编码
-     */
-    private String strStandCode;
-
-    /**
      * 方案名称
      */
     private String strStandName;
 
     /**
-     * 品种编码
+     * 品种id
      */
-    private String strEggtypeCode;
+    private String strEggtypeId;
 
     /**
      * 状态 0:停用 1:启用(默认)

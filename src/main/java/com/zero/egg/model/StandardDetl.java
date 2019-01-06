@@ -23,14 +23,9 @@ public class StandardDetl {
     private String id;
 
     /**
-     * 方案明细编码
+     * 方案id
      */
-    private String strStanddetlCode;
-
-    /**
-     * 方案主编码
-     */
-    private String strStandCode;
+    private String strStandId;
 
     /**
      * 判定最小称重

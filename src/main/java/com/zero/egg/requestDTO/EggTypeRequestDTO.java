@@ -26,11 +26,6 @@ public class EggTypeRequestDTO extends PageDTO implements Serializable {
     private String id;
 
     /**
-     * 鸡蛋类别编码
-     */
-    private String strEggtypeCode;
-
-    /**
      * 鸡蛋类别名称
      */
     private String strEggtypeName;
