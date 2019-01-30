@@ -45,7 +45,9 @@ public class EggTypeServiceImpl implements EggTypeService {
              *  name不能重复
              */
             resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
-                    .eq("str_eggtype_name", eggType.getStrEggtypeName()));
+                    .eq("str_eggtype_name", eggType.getStrEggtypeName())
+                    .eq("shop_id", eggType.getShopId())
+                    .eq("enterprise_id", eggType.getEnterpriseId()));
             if (resultList.size() > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
@@ -57,7 +59,7 @@ public class EggTypeServiceImpl implements EggTypeService {
             return message;
         } catch (Exception e) {
             log.error("saveEggType Error!", e);
-            throw new ServiceException("saveEggType Error!");
+            throw new ServiceException("saveEggType Error!:" + e.toString());
         }
     }
 
@@ -71,6 +73,7 @@ public class EggTypeServiceImpl implements EggTypeService {
         }
     }
 
+    @Override
     public void batchDeleteEggType(EggTypeRequestDTO batchDeleteEggTypeRequestDTO) {
         try {
             eggTypeMapper.deleteBatchIds(batchDeleteEggTypeRequestDTO.getIds());

@@ -46,6 +46,16 @@ public class EggTypeRequestDTO extends PageDTO implements Serializable {
     private Integer lngState = 1;
 
     /**
+     * 所属店铺id
+     */
+    private String shopId;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String enterpriseId;
+
+    /**
      * 前端传来的id数组(批量操作)
      */
     private List<String> ids;
