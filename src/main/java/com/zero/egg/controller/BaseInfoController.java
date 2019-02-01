@@ -55,9 +55,9 @@ public class BaseInfoController {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName()) {
-                //应该是从session里面获取,暂时写死
-                saveEggTypeRequestDTO.setStrCreateuser("老王");
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName()
+                    && checkShopAndEnterpriseExist(saveEggTypeRequestDTO)) {
+                //应该是从session里面获取,暂时从依赖前端
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -72,6 +72,33 @@ public class BaseInfoController {
             return message;
         }
     }
+
+    @ApiOperation(value = "修改鸡蛋类型")
+    @RequestMapping(value = "/variety/modify", method = RequestMethod.POST)
+    public Message modifyEggType(@RequestBody EggTypeRequestDTO modifyEggTypeRequestDTO) {
+        Message message;
+        try {
+            /**
+             * 后期如果加验证方法,这里可以省略
+             */
+            if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getStrEggtypeName()
+                    && checkShopAndEnterpriseExist(modifyEggTypeRequestDTO)) {
+                //应该是从session里面获取,暂时从依赖前端
+                message = eggTypeService.modifyEggType(modifyEggTypeRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
 
     /**
      * @param deleteEggTypeRequestDTO
@@ -435,4 +462,15 @@ public class BaseInfoController {
             return message;
         }
     }
+
+    /**
+     * 检验shopId和enterpriseId是否为空
+     *
+     * @param eggTypeRequestDTO
+     * @return
+     */
+    private boolean checkShopAndEnterpriseExist(EggTypeRequestDTO eggTypeRequestDTO) {
+        return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getEnterpriseId()) ? true : false;
+    }
+
 }

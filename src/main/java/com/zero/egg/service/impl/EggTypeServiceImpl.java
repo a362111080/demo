@@ -1,11 +1,12 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zero.egg.requestDTO.EggTypeRequestDTO;
-import com.zero.egg.responseDTO.EggTypeListResponseDTO;
 import com.zero.egg.dao.EggTypeMapper;
 import com.zero.egg.model.EggType;
+import com.zero.egg.requestDTO.EggTypeRequestDTO;
+import com.zero.egg.responseDTO.EggTypeListResponseDTO;
 import com.zero.egg.service.EggTypeService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -44,11 +45,7 @@ public class EggTypeServiceImpl implements EggTypeService {
             /** 插入数据前做查重操作
              *  name不能重复
              */
-            resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
-                    .eq("str_eggtype_name", eggType.getStrEggtypeName())
-                    .eq("shop_id", eggType.getShopId())
-                    .eq("enterprise_id", eggType.getEnterpriseId()));
-            if (resultList.size() > 0) {
+            if (checkByName(resultList, eggType) > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
@@ -116,5 +113,46 @@ public class EggTypeServiceImpl implements EggTypeService {
             throw new ServiceException("listEggType Error!");
         }
         return message;
+    }
+
+    @Override
+    @Transactional
+    public Message modifyEggType(EggTypeRequestDTO modifyEggTypeRequestDTO) {
+        Message message = new Message();
+        EggType eggType = new EggType();
+        /** 查重结果 */
+        List<EggType> resultList = null;
+        try {
+            TransferUtil.copyProperties(eggType, modifyEggTypeRequestDTO);
+            /** str_eggtype_name 不能已经存在 */
+            if (checkByName(resultList, eggType) > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+            } else {
+                eggTypeMapper.update(eggType, new UpdateWrapper<EggType>()
+                        .eq("id", eggType.getId())
+                        .eq("shop_id", eggType.getShopId())
+                        .eq("enterprise_id", eggType.getEnterpriseId()));
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
+            return message;
+        } catch (Exception e) {
+            log.error("modifyEggType Error:" + e.toString());
+            throw new ServiceException("modifyEggType Error");
+        }
+    }
+
+    /**
+     * @param resultList
+     * @param eggType
+     * @return 查重得到的集合大小
+     */
+    private int checkByName(List<EggType> resultList, EggType eggType) {
+        resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
+                .eq("str_eggtype_name", eggType.getStrEggtypeName())
+                .eq("shop_id", eggType.getShopId())
+                .eq("enterprise_id", eggType.getEnterpriseId()));
+        return resultList.size();
     }
 }

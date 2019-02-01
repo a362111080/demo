@@ -20,6 +20,9 @@ public class BaseInfoServiceTest extends Apptest {
     private EggTypeService eggTypeService;
 
     @Test
+    /**
+     * 新增品种
+     */
     public void testAddEggType() {
         EggTypeRequestDTO saveEggTypeDTO = new EggTypeRequestDTO();
         saveEggTypeDTO.setStrEggtypeName("测试品种");
@@ -30,5 +33,22 @@ public class BaseInfoServiceTest extends Apptest {
         Message message = eggTypeService.saveEggType(saveEggTypeDTO);
 
         assertEquals(1, message.getState());
+    }
+
+    @Test
+    /**
+     * 修改品种
+     */
+    public void testModifyEggType() {
+        EggTypeRequestDTO modifyEggTypeDTO = new EggTypeRequestDTO();
+        modifyEggTypeDTO.setId("ce22c28f6a9146dab7ba26ed3dff9995");
+        modifyEggTypeDTO.setStrEggtypeName("测试品种2");
+        modifyEggTypeDTO.setEnterpriseId("1");
+        modifyEggTypeDTO.setShopId("1");
+        modifyEggTypeDTO.setStrCreateuser("老王222");
+
+        Message message = eggTypeService.modifyEggType(modifyEggTypeDTO);
+        assertEquals(1, message.getState());
+
     }
 }
