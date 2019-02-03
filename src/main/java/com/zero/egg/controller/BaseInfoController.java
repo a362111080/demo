@@ -49,7 +49,7 @@ public class BaseInfoController {
     @ApiOperation(value = "添加鸡蛋类型")
     @RequestMapping(value = "/variety/add", method = RequestMethod.POST)
     public Message saveEggType(@RequestBody EggTypeRequestDTO saveEggTypeRequestDTO) {
-        Message message;
+        Message message = null;
         try {
             /**
              * 后期如果加验证方法,这里可以省略
@@ -75,7 +75,7 @@ public class BaseInfoController {
     @ApiOperation(value = "修改鸡蛋类型")
     @RequestMapping(value = "/variety/modify", method = RequestMethod.POST)
     public Message modifyEggType(@RequestBody EggTypeRequestDTO modifyEggTypeRequestDTO) {
-        Message message;
+        Message message = null;
         try {
             /**
              * 后期如果加验证方法,这里可以省略
@@ -154,6 +154,31 @@ public class BaseInfoController {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
+        }
+    }
+
+    @ApiOperation(value = "按主键查询品种接口")
+    @RequestMapping(value = "/variety/queryeggtypebyid", method = RequestMethod.POST)
+    public Message queryEggTypeById(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setEnterpriseId("1");
+        try {
+            if (null != eggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
+                message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+            return message;
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+
         }
     }
 

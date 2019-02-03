@@ -81,4 +81,17 @@ public class BaseInfoServiceTest extends Apptest {
         batchDeleteDTO.setEnterpriseId("1");
         eggTypeService.batchDeleteEggType(batchDeleteDTO);
     }
+
+    /**
+     * 按主键查询品种接口
+     */
+    @Test
+    public void testSelectEggTypeById() {
+        EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
+        eggTypeRequestDTO.setId("0a23ecdfa4594197a3ff53144d7d5a5b");
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setEnterpriseId("1");
+        Message message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
+        System.out.println(message.getData());
+    }
 }

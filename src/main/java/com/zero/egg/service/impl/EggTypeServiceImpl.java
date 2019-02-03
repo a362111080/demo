@@ -86,6 +86,7 @@ public class EggTypeServiceImpl implements EggTypeService {
         }
     }
 
+
     @Override
     public Message listEggType(EggTypeRequestDTO eggTypeRequestDTO) {
         /**
@@ -149,7 +150,28 @@ public class EggTypeServiceImpl implements EggTypeService {
         }
     }
 
+    @Override
+    public Message selectEggTypeById(EggTypeRequestDTO eggTypeRequestDTO) throws ServiceException {
+        Message message = new Message();
+        EggType eggType = null;
+        try {
+            eggType = eggTypeMapper.selectOne(new QueryWrapper<EggType>()
+                    .eq("id", eggTypeRequestDTO.getId())
+                    .eq("shop_id", eggTypeRequestDTO.getShopId())
+                    .eq("enterprise_id", eggTypeRequestDTO.getEnterpriseId()));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(eggType);
+        } catch (Exception e) {
+            log.error("selectEggTypeById Error!:" + e.toString());
+            throw new ServiceException("selectEggTypeById Error!");
+        }
+        return message;
+    }
+
     /**
+     * 同个企业同个店铺只能存在独一无二的类型名
+     *
      * @param resultList
      * @param eggType
      * @return 查重得到的集合大小
