@@ -1,13 +1,5 @@
 package com.zero.egg.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zero.egg.requestDTO.DeviceDataRequestDTO;
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
@@ -18,6 +10,13 @@ import com.zero.egg.service.StandardDataService;
 import com.zero.egg.service.StandardDetlService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @ClassName BaseInfoController
@@ -109,8 +108,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/variety/delete", method = RequestMethod.POST)
     public Message deleteEggTypeById(@RequestBody EggTypeRequestDTO deleteEggTypeRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        deleteEggTypeRequestDTO.setShopId("1");
+        deleteEggTypeRequestDTO.setEnterpriseId("1");
         try {
-            if (null != deleteEggTypeRequestDTO.getId()) {
+            if (null != deleteEggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(deleteEggTypeRequestDTO)) {
                 eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -135,8 +137,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/variety/batchdelete", method = RequestMethod.POST)
     public Message batchDeleteEggType(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setEnterpriseId("1");
         try {
-            if (null != eggTypeRequestDTO.getIds()) {
+            if (null != eggTypeRequestDTO.getIds() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
                 eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

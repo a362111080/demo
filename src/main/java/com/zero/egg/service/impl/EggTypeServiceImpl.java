@@ -63,7 +63,10 @@ public class EggTypeServiceImpl implements EggTypeService {
     @Override
     public void deleteEggTypeById(EggTypeRequestDTO deleteEggTypeRequestDTO) {
         try {
-            eggTypeMapper.deleteById(deleteEggTypeRequestDTO.getId());
+            eggTypeMapper.delete(new QueryWrapper<EggType>()
+                    .eq("id", deleteEggTypeRequestDTO.getId())
+                    .eq("shop_id", deleteEggTypeRequestDTO.getShopId())
+                    .eq("enterprise_id", deleteEggTypeRequestDTO.getEnterpriseId()));
         } catch (Exception e) {
             log.error("deleteEggTypeById Error!", e);
             throw new ServiceException("deleteEggTypeById Error!");
@@ -73,7 +76,10 @@ public class EggTypeServiceImpl implements EggTypeService {
     @Override
     public void batchDeleteEggType(EggTypeRequestDTO batchDeleteEggTypeRequestDTO) {
         try {
-            eggTypeMapper.deleteBatchIds(batchDeleteEggTypeRequestDTO.getIds());
+            eggTypeMapper.delete(new QueryWrapper<EggType>()
+                    .in("id", batchDeleteEggTypeRequestDTO.getIds())
+                    .eq("shop_id", batchDeleteEggTypeRequestDTO.getShopId())
+                    .eq("enterprise_id", batchDeleteEggTypeRequestDTO.getEnterpriseId()));
         } catch (Exception e) {
             log.error("batchDeleteEggType Error!", e);
             throw new ServiceException("batchDeleteEggType Error!");

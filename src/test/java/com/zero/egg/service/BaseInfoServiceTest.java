@@ -6,6 +6,9 @@ import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -25,7 +28,7 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testAddEggType() {
         EggTypeRequestDTO saveEggTypeDTO = new EggTypeRequestDTO();
-        saveEggTypeDTO.setStrEggtypeName("测试品种");
+        saveEggTypeDTO.setStrEggtypeName("测试品种2");
         saveEggTypeDTO.setEnterpriseId("1");
         saveEggTypeDTO.setShopId("1");
         saveEggTypeDTO.setStrCreateuser("老王");
@@ -50,5 +53,32 @@ public class BaseInfoServiceTest extends Apptest {
         Message message = eggTypeService.modifyEggType(modifyEggTypeDTO);
         assertEquals(1, message.getState());
 
+    }
+
+    @Test
+    /**
+     * 删除单个品种
+     */
+    public void testDeleteById() {
+        EggTypeRequestDTO deleteEggTypeDTO = new EggTypeRequestDTO();
+        deleteEggTypeDTO.setId("ce22c28f6a9146dab7ba26ed3dff9995");
+        deleteEggTypeDTO.setShopId("1");
+        deleteEggTypeDTO.setEnterpriseId("1");
+        eggTypeService.deleteEggTypeById(deleteEggTypeDTO);
+    }
+
+    @Test
+    /**
+     * 批量删除品种
+     */
+    public void testBatchDeleteByIds() {
+        EggTypeRequestDTO batchDeleteDTO = new EggTypeRequestDTO();
+        List<String> ids = new ArrayList<>();
+        ids.add("2978dd4e3f00449fa4caaa23dff05cf9");
+        ids.add("0d4813042eb54475bd7cf525fd5c80de");
+        batchDeleteDTO.setIds(ids);
+        batchDeleteDTO.setShopId("1");
+        batchDeleteDTO.setEnterpriseId("1");
+        eggTypeService.batchDeleteEggType(batchDeleteDTO);
     }
 }
