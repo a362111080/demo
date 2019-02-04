@@ -99,13 +99,11 @@ public class EggTypeServiceImpl implements EggTypeService {
         try {
             page.setCurrent(eggTypeRequestDTO.getCurrent());
             page.setSize(eggTypeRequestDTO.getSize());
-            if (null != eggTypeRequestDTO.getStrEggtypeName() && !"".equals(eggTypeRequestDTO.getStrEggtypeName())) {
-                page = (Page<EggType>) eggTypeMapper.selectPage(page, new QueryWrapper<EggType>()
-                        .like("str_eggtype_name", eggTypeRequestDTO.getStrEggtypeName())
-                );
-            } else {
-                page = (Page<EggType>) eggTypeMapper.selectPage(page, null);
-            }
+            page = (Page<EggType>) eggTypeMapper.selectPage(page, new QueryWrapper<EggType>()
+                    .eq("shop_id", eggTypeRequestDTO.getShopId())
+                    .eq("enterprise_id", eggTypeRequestDTO.getEnterpriseId())
+                    .like(null != eggTypeRequestDTO.getStrEggtypeName() && !"".equals(eggTypeRequestDTO.getStrEggtypeName())
+                            , "str_eggtype_name", eggTypeRequestDTO.getStrEggtypeName()));
             eggTypeListResponseDTO.setEggTypeList(page.getRecords());
             eggTypeListResponseDTO.setCurrent(page.getCurrent());
             eggTypeListResponseDTO.setPages(page.getPages());

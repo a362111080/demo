@@ -191,11 +191,15 @@ public class BaseInfoController {
     @ApiOperation(value = "查询鸡蛋列表(带分页模糊查询)")
     @RequestMapping(value = "/variety/listeggtype", method = RequestMethod.POST)
     public Message SelectEggTypeList(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
-        Message message = new Message();
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setEnterpriseId("1");
         try {
             message = eggTypeService.listEggType(eggTypeRequestDTO);
             return message;
         } catch (Exception e) {
+            message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;

@@ -94,4 +94,19 @@ public class BaseInfoServiceTest extends Apptest {
         Message message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
         System.out.println(message.getData());
     }
+
+    @Test
+    /**
+     * 品种列表分页模糊查询
+     */
+    public void testListEggType() {
+        EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setEnterpriseId("1");
+        eggTypeRequestDTO.setStrEggtypeName("测试");
+        eggTypeRequestDTO.setCurrent(3L);
+        eggTypeRequestDTO.setSize(2L);
+        Message message = eggTypeService.listEggType(eggTypeRequestDTO);
+        System.out.println(message.getState());
+    }
 }

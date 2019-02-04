@@ -51,4 +51,13 @@ public interface EggTypeService {
      * @return
      */
     public Message modifyEggType(EggTypeRequestDTO modifyEggTypeRequestDTO) throws ServiceException;
+
+    /**
+     * 按主键查询品种接口
+     *
+     * @param eggTypeRequestDTO
+     * @return
+     * @throws ServiceException
+     */
+    public Message selectEggTypeById(EggTypeRequestDTO eggTypeRequestDTO) throws ServiceException;
 }
