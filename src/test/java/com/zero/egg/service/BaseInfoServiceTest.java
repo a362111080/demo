@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 import com.Apptest;
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
+import com.zero.egg.requestDTO.StandardDataRequestDTO;
 import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @ClassName BaseInfoServiceTest
- * @Description TODO
+ * @Description 基础模块测试类
  * @Author lyming
  * @Date 2019/1/30 10:12 PM
  **/
@@ -21,6 +22,12 @@ public class BaseInfoServiceTest extends Apptest {
 
     @Autowired
     private EggTypeService eggTypeService;
+
+    @Autowired
+    private StandardDataService standardDataService;
+
+    @Autowired
+    private StandardDetlService standardDetlService;
 
     @Test
     /**
@@ -108,5 +115,18 @@ public class BaseInfoServiceTest extends Apptest {
         eggTypeRequestDTO.setSize(2L);
         Message message = eggTypeService.listEggType(eggTypeRequestDTO);
         System.out.println(message.getState());
+    }
+
+    @Test
+    /**
+     * 新增方案
+     */
+    public void testAddStandard() {
+        StandardDataRequestDTO standardDataRequestDTO = new StandardDataRequestDTO();
+        standardDataRequestDTO.setStrStandName("测试方案");
+        standardDataRequestDTO.setStrEggtypeId("0366b402a8364d8f9a33f6b63660c470");
+        standardDataRequestDTO.setShopId("1");
+        standardDataRequestDTO.setEnterpriseId("1");
+        standardDataService.addStandardData(standardDataRequestDTO);
     }
 }

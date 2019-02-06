@@ -35,4 +35,14 @@ public class StandardDataRequestDTO implements Serializable {
      * 状态 0:停用 1:启用(默认)
      */
     private Integer lngState = 1;
+
+    /**
+     * 所属店铺id
+     */
+    private String shopId;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String enterpriseId;
 }

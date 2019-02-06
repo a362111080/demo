@@ -49,12 +49,8 @@ public class StandardDataServiceImpl implements StandardDataService {
         List<StandardData> resultList = null;
         try {
             TransferUtil.copyProperties(standardData, standardDataRequestDTO);
-            /**
-             * strStandName不能重复
-             */
-            resultList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
-                    .eq("str_stand_name", standardData.getStrStandName()));
-            if (resultList.size() > 0) {
+            /** 查重 */
+            if (checkByName(resultList, standardData) > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
@@ -131,5 +127,21 @@ public class StandardDataServiceImpl implements StandardDataService {
             log.info("listDataAndDetl error", e);
             throw new ServiceException("listDataAndDetl error");
         }
+    }
+
+    /**
+     * 同个企业同个店铺同一种类型只能存在独一无二的方案名
+     *
+     * @param resultList
+     * @param standardData
+     * @return 查重得到的集合大小
+     */
+    private int checkByName(List<StandardData> resultList, StandardData standardData) {
+        resultList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
+                .eq("str_eggtype_id", standardData.getStrEggtypeId())
+                .eq("str_stand_name", standardData.getStrStandName())
+                .eq("shop_id", standardData.getShopId())
+                .eq("enterprise_id", standardData.getEnterpriseId()));
+        return resultList.size();
     }
 }

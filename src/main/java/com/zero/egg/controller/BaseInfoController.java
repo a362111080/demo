@@ -216,9 +216,13 @@ public class BaseInfoController {
     @ApiOperation(value = "新增方案")
     @RequestMapping(value = "/standard/addstandarddata", method = RequestMethod.POST)
     public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
-        Message message = new Message();
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        standardDataRequestDTO.setShopId("1");
+        standardDataRequestDTO.setEnterpriseId("1");
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()
+                    && checkShopAndEnterpriseExist(standardDataRequestDTO)) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -227,6 +231,7 @@ public class BaseInfoController {
             }
             return message;
         } catch (Exception e) {
+            message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
@@ -505,6 +510,16 @@ public class BaseInfoController {
      */
     private boolean checkShopAndEnterpriseExist(EggTypeRequestDTO eggTypeRequestDTO) {
         return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getEnterpriseId()) ? true : false;
+    }
+
+    /**
+     * 检验shopId和enterpriseId是否为空
+     *
+     * @param standardDataRequestDTO
+     * @return
+     */
+    private boolean checkShopAndEnterpriseExist(StandardDataRequestDTO standardDataRequestDTO) {
+        return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getEnterpriseId()) ? true : false;
     }
 
 }
