@@ -66,7 +66,7 @@ public class EggTypeServiceImpl implements EggTypeService {
             eggTypeMapper.delete(new QueryWrapper<EggType>()
                     .eq("id", deleteEggTypeRequestDTO.getId())
                     .eq("shop_id", deleteEggTypeRequestDTO.getShopId())
-                    .eq("enterprise_id", deleteEggTypeRequestDTO.getEnterpriseId()));
+                    .eq("company_id", deleteEggTypeRequestDTO.getCompanyId()));
         } catch (Exception e) {
             log.error("deleteEggTypeById Error!", e);
             throw new ServiceException("deleteEggTypeById Error!");
@@ -79,7 +79,7 @@ public class EggTypeServiceImpl implements EggTypeService {
             eggTypeMapper.delete(new QueryWrapper<EggType>()
                     .in("id", batchDeleteEggTypeRequestDTO.getIds())
                     .eq("shop_id", batchDeleteEggTypeRequestDTO.getShopId())
-                    .eq("enterprise_id", batchDeleteEggTypeRequestDTO.getEnterpriseId()));
+                    .eq("company_id", batchDeleteEggTypeRequestDTO.getCompanyId()));
         } catch (Exception e) {
             log.error("batchDeleteEggType Error!", e);
             throw new ServiceException("batchDeleteEggType Error!");
@@ -101,9 +101,9 @@ public class EggTypeServiceImpl implements EggTypeService {
             page.setSize(eggTypeRequestDTO.getSize());
             page = (Page<EggType>) eggTypeMapper.selectPage(page, new QueryWrapper<EggType>()
                     .eq("shop_id", eggTypeRequestDTO.getShopId())
-                    .eq("enterprise_id", eggTypeRequestDTO.getEnterpriseId())
-                    .like(null != eggTypeRequestDTO.getStrEggtypeName() && !"".equals(eggTypeRequestDTO.getStrEggtypeName())
-                            , "str_eggtype_name", eggTypeRequestDTO.getStrEggtypeName()));
+                    .eq("company_id", eggTypeRequestDTO.getCompanyId())
+                    .like(null != eggTypeRequestDTO.getName() && !"".equals(eggTypeRequestDTO.getName())
+                            , "name", eggTypeRequestDTO.getName()));
             eggTypeListResponseDTO.setEggTypeList(page.getRecords());
             eggTypeListResponseDTO.setCurrent(page.getCurrent());
             eggTypeListResponseDTO.setPages(page.getPages());
@@ -137,7 +137,7 @@ public class EggTypeServiceImpl implements EggTypeService {
                 eggTypeMapper.update(eggType, new UpdateWrapper<EggType>()
                         .eq("id", eggType.getId())
                         .eq("shop_id", eggType.getShopId())
-                        .eq("enterprise_id", eggType.getEnterpriseId()));
+                        .eq("company_id", eggType.getCompanyId()));
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }
@@ -156,7 +156,7 @@ public class EggTypeServiceImpl implements EggTypeService {
             eggType = eggTypeMapper.selectOne(new QueryWrapper<EggType>()
                     .eq("id", eggTypeRequestDTO.getId())
                     .eq("shop_id", eggTypeRequestDTO.getShopId())
-                    .eq("enterprise_id", eggTypeRequestDTO.getEnterpriseId()));
+                    .eq("company_id", eggTypeRequestDTO.getCompanyId()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             message.setData(eggType);
@@ -176,9 +176,9 @@ public class EggTypeServiceImpl implements EggTypeService {
      */
     private int checkByName(List<EggType> resultList, EggType eggType) {
         resultList = eggTypeMapper.selectList(new QueryWrapper<EggType>()
-                .eq("str_eggtype_name", eggType.getStrEggtypeName())
+                .eq("name", eggType.getName())
                 .eq("shop_id", eggType.getShopId())
-                .eq("enterprise_id", eggType.getEnterpriseId()));
+                .eq("company_id", eggType.getCompanyId()));
         return resultList.size();
     }
 }

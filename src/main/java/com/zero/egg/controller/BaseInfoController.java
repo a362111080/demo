@@ -54,7 +54,7 @@ public class BaseInfoController {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName()
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getName()
                     && checkShopAndEnterpriseExist(saveEggTypeRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
@@ -80,7 +80,7 @@ public class BaseInfoController {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getStrEggtypeName()
+            if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getName()
                     && checkShopAndEnterpriseExist(modifyEggTypeRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
                 message = eggTypeService.modifyEggType(modifyEggTypeRequestDTO);
@@ -110,7 +110,7 @@ public class BaseInfoController {
         Message message = new Message();
         /** 从session中获取shopId和enterpriseId,暂时写死 */
         deleteEggTypeRequestDTO.setShopId("1");
-        deleteEggTypeRequestDTO.setEnterpriseId("1");
+        deleteEggTypeRequestDTO.setCompanyId("1");
         try {
             if (null != deleteEggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(deleteEggTypeRequestDTO)) {
                 eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
@@ -139,7 +139,7 @@ public class BaseInfoController {
         Message message = new Message();
         /** 从session中获取shopId和enterpriseId,暂时写死 */
         eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setEnterpriseId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         try {
             if (null != eggTypeRequestDTO.getIds() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
                 eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
@@ -163,7 +163,7 @@ public class BaseInfoController {
         Message message = null;
         /** 从session中获取shopId和enterpriseId,暂时写死 */
         eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setEnterpriseId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         try {
             if (null != eggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
                 message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
@@ -194,7 +194,7 @@ public class BaseInfoController {
         Message message = null;
         /** 从session中获取shopId和enterpriseId,暂时写死 */
         eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setEnterpriseId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         try {
             message = eggTypeService.listEggType(eggTypeRequestDTO);
             return message;
@@ -236,6 +236,20 @@ public class BaseInfoController {
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
         }
+    }
+
+    /**
+     * 修改方案名
+     *
+     * @param standardDataRequestDTO
+     * @return
+     */
+    @ApiOperation(value = "修改方案名")
+    @RequestMapping(value = "/standard/updatestandard", method = RequestMethod.POST)
+    public Message updateStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = null;
+
+        return message;
     }
 
     /**
@@ -505,17 +519,17 @@ public class BaseInfoController {
     /**
      * 检验shopId和enterpriseId是否为空
      *
-     * @param eggTypeRequestDTO
+     * @param eggTypeRequestDTO 鸡蛋类型Request
      * @return
      */
     private boolean checkShopAndEnterpriseExist(EggTypeRequestDTO eggTypeRequestDTO) {
-        return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getEnterpriseId()) ? true : false;
+        return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getCompanyId()) ? true : false;
     }
 
     /**
      * 检验shopId和enterpriseId是否为空
      *
-     * @param standardDataRequestDTO
+     * @param standardDataRequestDTO 方案信息Request
      * @return
      */
     private boolean checkShopAndEnterpriseExist(StandardDataRequestDTO standardDataRequestDTO) {

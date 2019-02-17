@@ -14,7 +14,7 @@ import java.util.Date;
  * @Date 2018/11/1 16:22
  **/
 @Data
-@TableName(value = "sms_eggtype_data")
+@TableName(value = "bd_category")
 public class EggType {
 
     /**
@@ -26,22 +26,28 @@ public class EggType {
     /**
      * 鸡蛋类别名称
      */
-    private String strEggtypeName;
-
-    /**
-     * 类别创建时间
-     */
-    private Date strTypeCreatetime;
+    private String name;
 
     /**
      * 创建人
      */
-    private String strCreateuser;
+    private String creator;
 
     /**
-     * 状态 0:停用 1:启用(默认)
+     * 类别创建时间
      */
-    private Integer lngState = 1;
+    private Date createtime;
+
+    /**
+     * 修改人
+     */
+    private String modifier;
+
+    /**
+     * 修改时间
+     */
+    private Date modifytime;
+
 
     /**
      * 所属店铺id
@@ -51,5 +57,10 @@ public class EggType {
     /**
      * 店铺所属企业id
      */
-    private String enterpriseId;
+    private String companyId;
+
+    /**
+     * 删除标识 0:停用 1:启用(默认)
+     */
+    private Integer dr = 0;
 }

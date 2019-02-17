@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -35,10 +36,11 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testAddEggType() {
         EggTypeRequestDTO saveEggTypeDTO = new EggTypeRequestDTO();
-        saveEggTypeDTO.setStrEggtypeName("测试品种2");
-        saveEggTypeDTO.setEnterpriseId("1");
+        saveEggTypeDTO.setName("测试品种3");
+        saveEggTypeDTO.setCompanyId("1");
         saveEggTypeDTO.setShopId("1");
-        saveEggTypeDTO.setStrCreateuser("老王");
+        saveEggTypeDTO.setCreator("老王");
+        saveEggTypeDTO.setModifier("老李");
 
         Message message = eggTypeService.saveEggType(saveEggTypeDTO);
 
@@ -51,11 +53,12 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testModifyEggType() {
         EggTypeRequestDTO modifyEggTypeDTO = new EggTypeRequestDTO();
-        modifyEggTypeDTO.setId("ce22c28f6a9146dab7ba26ed3dff9995");
-        modifyEggTypeDTO.setStrEggtypeName("测试品种2");
-        modifyEggTypeDTO.setEnterpriseId("1");
+        modifyEggTypeDTO.setId("738a6d1bb3ef4604ac426fb53353b1b4");
+        modifyEggTypeDTO.setName("测试品种2");
+        modifyEggTypeDTO.setCompanyId("1");
         modifyEggTypeDTO.setShopId("1");
-        modifyEggTypeDTO.setStrCreateuser("老王222");
+        modifyEggTypeDTO.setModifier("laowang2");
+        modifyEggTypeDTO.setModifytime(new Date());
 
         Message message = eggTypeService.modifyEggType(modifyEggTypeDTO);
         assertEquals(1, message.getState());
@@ -68,9 +71,9 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testDeleteById() {
         EggTypeRequestDTO deleteEggTypeDTO = new EggTypeRequestDTO();
-        deleteEggTypeDTO.setId("ce22c28f6a9146dab7ba26ed3dff9995");
+        deleteEggTypeDTO.setId("782909ad94264e8cab1aa1e5548b4766");
         deleteEggTypeDTO.setShopId("1");
-        deleteEggTypeDTO.setEnterpriseId("1");
+        deleteEggTypeDTO.setCompanyId("1");
         eggTypeService.deleteEggTypeById(deleteEggTypeDTO);
     }
 
@@ -85,7 +88,7 @@ public class BaseInfoServiceTest extends Apptest {
         ids.add("0d4813042eb54475bd7cf525fd5c80de");
         batchDeleteDTO.setIds(ids);
         batchDeleteDTO.setShopId("1");
-        batchDeleteDTO.setEnterpriseId("1");
+        batchDeleteDTO.setCompanyId("1");
         eggTypeService.batchDeleteEggType(batchDeleteDTO);
     }
 
@@ -95,9 +98,9 @@ public class BaseInfoServiceTest extends Apptest {
     @Test
     public void testSelectEggTypeById() {
         EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
-        eggTypeRequestDTO.setId("0a23ecdfa4594197a3ff53144d7d5a5b");
+        eggTypeRequestDTO.setId("3d02e7c100ec4129823738e36a44f679");
         eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setEnterpriseId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         Message message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
         System.out.println(message.getData());
     }
@@ -109,8 +112,8 @@ public class BaseInfoServiceTest extends Apptest {
     public void testListEggType() {
         EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
         eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setEnterpriseId("1");
-        eggTypeRequestDTO.setStrEggtypeName("测试");
+        eggTypeRequestDTO.setCompanyId("1");
+        eggTypeRequestDTO.setName("1");
         eggTypeRequestDTO.setCurrent(3L);
         eggTypeRequestDTO.setSize(2L);
         Message message = eggTypeService.listEggType(eggTypeRequestDTO);
