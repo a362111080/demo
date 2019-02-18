@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * @ClassName BaseInfoController
  * @Description 基础信息模块Controller
@@ -55,8 +57,10 @@ public class BaseInfoController {
              * 后期如果加验证方法,这里可以省略
              */
             if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getName()
-                    && checkShopAndEnterpriseExist(saveEggTypeRequestDTO)) {
+                    && checkShopAndCompanyExist(saveEggTypeRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
+                saveEggTypeRequestDTO.setCreator("laowang");
+                saveEggTypeRequestDTO.setModifier("laowang");
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -81,8 +85,10 @@ public class BaseInfoController {
              * 后期如果加验证方法,这里可以省略
              */
             if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getName()
-                    && checkShopAndEnterpriseExist(modifyEggTypeRequestDTO)) {
+                    && checkShopAndCompanyExist(modifyEggTypeRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
+                modifyEggTypeRequestDTO.setModifier("laoli");
+                modifyEggTypeRequestDTO.setModifytime(new Date());
                 message = eggTypeService.modifyEggType(modifyEggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -112,7 +118,7 @@ public class BaseInfoController {
         deleteEggTypeRequestDTO.setShopId("1");
         deleteEggTypeRequestDTO.setCompanyId("1");
         try {
-            if (null != deleteEggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(deleteEggTypeRequestDTO)) {
+            if (null != deleteEggTypeRequestDTO.getId() && checkShopAndCompanyExist(deleteEggTypeRequestDTO)) {
                 eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -141,7 +147,7 @@ public class BaseInfoController {
         eggTypeRequestDTO.setShopId("1");
         eggTypeRequestDTO.setCompanyId("1");
         try {
-            if (null != eggTypeRequestDTO.getIds() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
+            if (null != eggTypeRequestDTO.getIds() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
                 eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -165,7 +171,7 @@ public class BaseInfoController {
         eggTypeRequestDTO.setShopId("1");
         eggTypeRequestDTO.setCompanyId("1");
         try {
-            if (null != eggTypeRequestDTO.getId() && checkShopAndEnterpriseExist(eggTypeRequestDTO)) {
+            if (null != eggTypeRequestDTO.getId() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
                 message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -222,7 +228,7 @@ public class BaseInfoController {
         standardDataRequestDTO.setEnterpriseId("1");
         try {
             if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()
-                    && checkShopAndEnterpriseExist(standardDataRequestDTO)) {
+                    && checkShopAndCompanyExist(standardDataRequestDTO)) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -517,22 +523,22 @@ public class BaseInfoController {
     }
 
     /**
-     * 检验shopId和enterpriseId是否为空
+     * 检验shopId和companyId是否为空
      *
      * @param eggTypeRequestDTO 鸡蛋类型Request
      * @return
      */
-    private boolean checkShopAndEnterpriseExist(EggTypeRequestDTO eggTypeRequestDTO) {
+    private boolean checkShopAndCompanyExist(EggTypeRequestDTO eggTypeRequestDTO) {
         return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getCompanyId()) ? true : false;
     }
 
     /**
-     * 检验shopId和enterpriseId是否为空
+     * 检验shopId和companyId是否为空
      *
      * @param standardDataRequestDTO 方案信息Request
      * @return
      */
-    private boolean checkShopAndEnterpriseExist(StandardDataRequestDTO standardDataRequestDTO) {
+    private boolean checkShopAndCompanyExist(StandardDataRequestDTO standardDataRequestDTO) {
         return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getEnterpriseId()) ? true : false;
     }
 
