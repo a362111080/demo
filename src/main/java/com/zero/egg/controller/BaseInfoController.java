@@ -225,9 +225,9 @@ public class BaseInfoController {
         Message message = null;
         /** 从session中获取shopId和enterpriseId,暂时写死 */
         standardDataRequestDTO.setShopId("1");
-        standardDataRequestDTO.setEnterpriseId("1");
+        standardDataRequestDTO.setCompanyId("1");
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getName()
                     && checkShopAndCompanyExist(standardDataRequestDTO)) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
             } else {
@@ -295,7 +295,7 @@ public class BaseInfoController {
     public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
                 message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -322,7 +322,7 @@ public class BaseInfoController {
     public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
                 message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -539,7 +539,7 @@ public class BaseInfoController {
      * @return
      */
     private boolean checkShopAndCompanyExist(StandardDataRequestDTO standardDataRequestDTO) {
-        return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getEnterpriseId()) ? true : false;
+        return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getCompanyId()) ? true : false;
     }
 
 }

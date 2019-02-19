@@ -60,7 +60,7 @@ public class EggType {
     private String companyId;
 
     /**
-     * 删除标识 0:停用 1:启用(默认)
+     * 删除标识 0:未删除(默认) 1:已删除
      */
     private Integer dr = 0;
 }

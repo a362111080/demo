@@ -126,10 +126,12 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testAddStandard() {
         StandardDataRequestDTO standardDataRequestDTO = new StandardDataRequestDTO();
-        standardDataRequestDTO.setStrStandName("测试方案");
-        standardDataRequestDTO.setStrEggtypeId("0366b402a8364d8f9a33f6b63660c470");
+        standardDataRequestDTO.setName("测试方案");
+        standardDataRequestDTO.setCategoryId("3d02e7c100ec4129823738e36a44f679");
         standardDataRequestDTO.setShopId("1");
-        standardDataRequestDTO.setEnterpriseId("1");
+        standardDataRequestDTO.setCompanyId("1");
+        standardDataRequestDTO.setCreator("laowang");
+        standardDataRequestDTO.setModifier("laowang");
         standardDataService.addStandardData(standardDataRequestDTO);
     }
 }

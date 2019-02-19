@@ -3,6 +3,7 @@ package com.zero.egg.requestDTO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 规格方案RequestDTO
@@ -24,17 +25,17 @@ public class StandardDataRequestDTO implements Serializable {
     /**
      * 方案名称
      */
-    private String strStandName;
+    private String name;
 
     /**
      * 品种id
      */
-    private String strEggtypeId;
+    private String categoryId;
 
     /**
-     * 状态 0:停用 1:启用(默认)
+     * 删除标识 0:未删除(默认) 1:已删除
      */
-    private Integer lngState = 1;
+    private Integer dr = 0;
 
     /**
      * 所属店铺id
@@ -44,5 +45,25 @@ public class StandardDataRequestDTO implements Serializable {
     /**
      * 店铺所属企业id
      */
-    private String enterpriseId;
+    private String companyId;
+
+    /**
+     * 创建人
+     */
+    private String creator;
+
+    /**
+     * 创建时间
+     */
+    private Date createtime;
+
+    /**
+     * 修改人
+     */
+    private String modifier;
+
+    /**
+     * 修改时间
+     */
+    private Date modifytime;
 }
