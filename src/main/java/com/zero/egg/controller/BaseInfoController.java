@@ -354,6 +354,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/standard/updatestandarddetl", method = RequestMethod.POST)
     public Message updateStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和companyId,暂时写死 */
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setModifier("laowang222");
+        standardDetlRequestDTO.setModifytime(new Date());
         try {
             if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getId()) {
                 message = standardDetlService.updateStandardDetl(standardDetlRequestDTO);

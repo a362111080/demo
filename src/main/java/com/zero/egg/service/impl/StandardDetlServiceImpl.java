@@ -50,14 +50,21 @@ public class StandardDetlServiceImpl implements StandardDetlService {
             if (2 == standardDetl.getMode()) {
                 standardDetl.setNumerical(null);
             }
-            standardDetlMapper.insert(standardDetl);
-            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            /**
+             * 如果传入的最小重量大于最大重量,则返回错误信息
+             */
+            if ((standardDetl.getWeightMin().compareTo(standardDetl.getWeightMax())) > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+            } else {
+                standardDetlMapper.insert(standardDetl);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
             return message;
         } catch (Exception e) {
             log.info("addStandardDetl error", e);
             throw new ServiceException("addStandardDetl error");
-
         }
     }
 
@@ -72,9 +79,23 @@ public class StandardDetlServiceImpl implements StandardDetlService {
         StandardDetl standardDetl = new StandardDetl();
         try {
             TransferUtil.copyProperties(standardDetl, standardDetlRequestDTO);
-            standardDetlMapper.updateById(standardDetl);
-            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            /**
+             * 如果计重方式是包,则不计重
+             */
+            if (2 == standardDetl.getMode()) {
+                standardDetl.setNumerical(null);
+            }
+            /**
+             * 如果传入的最小重量大于最大重量,则返回错误信息
+             */
+            if ((standardDetl.getWeightMin().compareTo(standardDetl.getWeightMax())) > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+            } else {
+                standardDetlMapper.updateById(standardDetl);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
             return message;
         } catch (Exception e) {
             log.info("updateStandardDetl error", e);

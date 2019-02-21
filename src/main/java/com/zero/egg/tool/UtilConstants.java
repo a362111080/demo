@@ -64,6 +64,11 @@ public interface UtilConstants {
          * 缺少参数
          */
         public static final String PARAM_MISSING = "缺少参数";
+
+        /**
+         * 参数错误
+         */
+        public static final String PARAM_ERROR = "参数错误";
     }
     
     /**

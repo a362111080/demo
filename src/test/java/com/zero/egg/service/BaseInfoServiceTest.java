@@ -156,4 +156,23 @@ public class BaseInfoServiceTest extends Apptest {
         standardDetlService.addStandardDetl(standardDetlRequestDTO);
     }
 
+    @Test
+    /**
+     * 更新方案细节
+     */
+    public void testUpdateStandardDetl() {
+        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setModifier("laowang2");
+        standardDetlRequestDTO.setModifytime(new Date());
+        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        standardDetlRequestDTO.setId("0528c54a58ab40d1a615b5c281e9e7b0");
+        standardDetlRequestDTO.setWarn(1);
+        standardDetlRequestDTO.setMarker("a9sud9812");
+        standardDetlRequestDTO.setWeightMin(new BigDecimal(90));
+        standardDetlRequestDTO.setWeightMax(new BigDecimal(440));
+        standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+    }
+
 }
