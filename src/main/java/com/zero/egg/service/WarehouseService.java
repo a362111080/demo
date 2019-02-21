@@ -3,6 +3,7 @@ package com.zero.egg.service;
 import java.util.List;
 
 import com.zero.egg.model.Warehouse;
+import com.zero.egg.requestDTO.WarehouseRequestDTO;
 
 /**
  * @author hhfeng
@@ -27,7 +28,7 @@ public interface WarehouseService {
 	 *@Description 查询仓库信息(可条件查询)
 	 * @return
 	 */
-	List<Warehouse> warehouseList(Warehouse warehouse);
+	List<Warehouse> warehouseList(WarehouseRequestDTO warehouse);
 	
 	/**
 	 * 添加仓库

@@ -49,12 +49,8 @@ public class StandardDataServiceImpl implements StandardDataService {
         List<StandardData> resultList = null;
         try {
             TransferUtil.copyProperties(standardData, standardDataRequestDTO);
-            /**
-             * strStandName不能重复
-             */
-            resultList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
-                    .eq("str_stand_name", standardData.getStrStandName()));
-            if (resultList.size() > 0) {
+            /** 查重 */
+            if (checkByName(resultList, standardData) > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
@@ -112,12 +108,12 @@ public class StandardDataServiceImpl implements StandardDataService {
         List<StandardDataListResponseDTO> standardDataListResponseDTOList = new ArrayList<>();
         try {
             /**
-             * 1.先根据strEggTypeId查询出所有方案
-             * 2.根据strStandId查出所有方案细节
+             * 1.先根据category_id查询出所有方案
+             * 2.根据program_id查出所有方案细节
              */
-            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>().eq("str_eggtype_id", standardDataRequestDTO.getStrEggtypeId()));
+            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>().eq("category_id", standardDataRequestDTO.getCategoryId()));
             for (StandardData standardData : standardDataList) {
-                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_id", standardData.getId()));
+                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("program_id", standardData.getId()));
                 standardDataListResponseDTO.setStandardDetlList(standardDetlList);
                 TransferUtil.copyProperties(standardDataListResponseDTO, standardData);
                 standardDataListResponseDTOList.add(standardDataListResponseDTO);
@@ -131,5 +127,21 @@ public class StandardDataServiceImpl implements StandardDataService {
             log.info("listDataAndDetl error", e);
             throw new ServiceException("listDataAndDetl error");
         }
+    }
+
+    /**
+     * 同个企业同个店铺同一种类型只能存在独一无二的方案名
+     *
+     * @param resultList
+     * @param standardData
+     * @return 查重得到的集合大小
+     */
+    private int checkByName(List<StandardData> resultList, StandardData standardData) {
+        resultList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
+                .eq("category_id", standardData.getCategoryId())
+                .eq("name", standardData.getName())
+                .eq("shop_id", standardData.getShopId())
+                .eq("company_id", standardData.getCompanyId()));
+        return resultList.size();
     }
 }

@@ -3,8 +3,6 @@ package com.zero.egg.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.zero.egg.tool.PageDTO;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -66,10 +64,8 @@ public class Warehouse  implements Serializable {
 	 */
 	@ApiModelProperty(name="creater",dataType="string",value="创建人")
 	private String creater;
-	/**
-	 * 模糊查询内容
-	 */
-	@ApiModelProperty(name="searchValue",dataType="string",value="模糊搜索内容",example="--仓库--")
-	private String searchValue;
+	
+	
+	
 	
 }

@@ -110,7 +110,7 @@ public class StandardDetlServiceImpl implements StandardDetlService {
         StandardDetlResponseDTO standardDetlResponseDTO = new StandardDetlResponseDTO();
         List<StandardDetl> standardDetlList = null;
         try {
-            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("str_stand_id", standardDetlRequestDTO.getStrStandId()));
+            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("program_id", standardDetlRequestDTO.getProgramId()));
             standardDetlResponseDTO.setStandardDetlList(standardDetlList);
             message.setData(standardDetlResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

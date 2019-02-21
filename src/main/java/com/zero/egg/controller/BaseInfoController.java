@@ -1,13 +1,5 @@
 package com.zero.egg.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zero.egg.requestDTO.DeviceDataRequestDTO;
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
@@ -18,6 +10,15 @@ import com.zero.egg.service.StandardDataService;
 import com.zero.egg.service.StandardDetlService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 /**
  * @ClassName BaseInfoController
@@ -50,14 +51,16 @@ public class BaseInfoController {
     @ApiOperation(value = "添加鸡蛋类型")
     @RequestMapping(value = "/variety/add", method = RequestMethod.POST)
     public Message saveEggType(@RequestBody EggTypeRequestDTO saveEggTypeRequestDTO) {
-        Message message;
+        Message message = null;
         try {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getStrEggtypeName()) {
-                //应该是从session里面获取,暂时写死
-                saveEggTypeRequestDTO.setStrCreateuser("老王");
+            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getName()
+                    && checkShopAndCompanyExist(saveEggTypeRequestDTO)) {
+                //应该是从session里面获取,暂时从依赖前端
+                saveEggTypeRequestDTO.setCreator("laowang");
+                saveEggTypeRequestDTO.setModifier("laowang");
                 message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
             } else {
                 message = new Message();
@@ -73,6 +76,35 @@ public class BaseInfoController {
         }
     }
 
+    @ApiOperation(value = "修改鸡蛋类型")
+    @RequestMapping(value = "/variety/modify", method = RequestMethod.POST)
+    public Message modifyEggType(@RequestBody EggTypeRequestDTO modifyEggTypeRequestDTO) {
+        Message message = null;
+        try {
+            /**
+             * 后期如果加验证方法,这里可以省略
+             */
+            if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getName()
+                    && checkShopAndCompanyExist(modifyEggTypeRequestDTO)) {
+                //应该是从session里面获取,暂时从依赖前端
+                modifyEggTypeRequestDTO.setModifier("laoli");
+                modifyEggTypeRequestDTO.setModifytime(new Date());
+                message = eggTypeService.modifyEggType(modifyEggTypeRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+
     /**
      * @param deleteEggTypeRequestDTO
      * @return
@@ -82,8 +114,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/variety/delete", method = RequestMethod.POST)
     public Message deleteEggTypeById(@RequestBody EggTypeRequestDTO deleteEggTypeRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        deleteEggTypeRequestDTO.setShopId("1");
+        deleteEggTypeRequestDTO.setCompanyId("1");
         try {
-            if (null != deleteEggTypeRequestDTO.getId()) {
+            if (null != deleteEggTypeRequestDTO.getId() && checkShopAndCompanyExist(deleteEggTypeRequestDTO)) {
                 eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -108,8 +143,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/variety/batchdelete", method = RequestMethod.POST)
     public Message batchDeleteEggType(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         try {
-            if (null != eggTypeRequestDTO.getIds()) {
+            if (null != eggTypeRequestDTO.getIds() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
                 eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -125,6 +163,31 @@ public class BaseInfoController {
         }
     }
 
+    @ApiOperation(value = "按主键查询品种接口")
+    @RequestMapping(value = "/variety/queryeggtypebyid", method = RequestMethod.POST)
+    public Message queryEggTypeById(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setCompanyId("1");
+        try {
+            if (null != eggTypeRequestDTO.getId() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
+                message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+            return message;
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+
+        }
+    }
+
     /**
      * 查询鸡蛋列表(带分页模糊查询)
      *
@@ -134,11 +197,15 @@ public class BaseInfoController {
     @ApiOperation(value = "查询鸡蛋列表(带分页模糊查询)")
     @RequestMapping(value = "/variety/listeggtype", method = RequestMethod.POST)
     public Message SelectEggTypeList(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
-        Message message = new Message();
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        eggTypeRequestDTO.setShopId("1");
+        eggTypeRequestDTO.setCompanyId("1");
         try {
             message = eggTypeService.listEggType(eggTypeRequestDTO);
             return message;
         } catch (Exception e) {
+            message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
@@ -155,9 +222,13 @@ public class BaseInfoController {
     @ApiOperation(value = "新增方案")
     @RequestMapping(value = "/standard/addstandarddata", method = RequestMethod.POST)
     public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
-        Message message = new Message();
+        Message message = null;
+        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        standardDataRequestDTO.setShopId("1");
+        standardDataRequestDTO.setCompanyId("1");
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getStrStandName()) {
+            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getName()
+                    && checkShopAndCompanyExist(standardDataRequestDTO)) {
                 message = standardDataService.addStandardData(standardDataRequestDTO);
             } else {
                 message = new Message();
@@ -166,10 +237,25 @@ public class BaseInfoController {
             }
             return message;
         } catch (Exception e) {
+            message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
         }
+    }
+
+    /**
+     * 修改方案名
+     *
+     * @param standardDataRequestDTO
+     * @return
+     */
+    @ApiOperation(value = "修改方案名")
+    @RequestMapping(value = "/standard/updatestandard", method = RequestMethod.POST)
+    public Message updateStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+        Message message = null;
+
+        return message;
     }
 
     /**
@@ -209,7 +295,7 @@ public class BaseInfoController {
     public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
                 message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -236,7 +322,7 @@ public class BaseInfoController {
     public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getStrStandId()) {
+            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
                 message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
             } else {
                 message = new Message();
@@ -435,4 +521,25 @@ public class BaseInfoController {
             return message;
         }
     }
+
+    /**
+     * 检验shopId和companyId是否为空
+     *
+     * @param eggTypeRequestDTO 鸡蛋类型Request
+     * @return
+     */
+    private boolean checkShopAndCompanyExist(EggTypeRequestDTO eggTypeRequestDTO) {
+        return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getCompanyId()) ? true : false;
+    }
+
+    /**
+     * 检验shopId和companyId是否为空
+     *
+     * @param standardDataRequestDTO 方案信息Request
+     * @return
+     */
+    private boolean checkShopAndCompanyExist(StandardDataRequestDTO standardDataRequestDTO) {
+        return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getCompanyId()) ? true : false;
+    }
+
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +20,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.Warehouse;
+import com.zero.egg.requestDTO.WarehouseRequestDTO;
 import com.zero.egg.service.WarehouseService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.PageDTO;
@@ -31,7 +33,9 @@ import com.zero.egg.tool.UuidUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 
 /**
@@ -56,9 +60,9 @@ public class WarehouseController {
 	 * @return
 	 */
 	@ApiOperation(value="获取仓库信息" ,notes="根据仓库id查询")
-	@ApiImplicitParam(paramType="query",name="warehouse_id",value="仓库id",required=true,dataType="String")
+	@ApiImplicitParam(paramType="query",name="warehouseId",value="仓库id",dataType="String")
 	@RequestMapping(value="/getwarehouseinfo" ,method=RequestMethod.GET)
-	public Message getWarehouseInfoById(@RequestParam String warehouseId) {
+	public Message getWarehouseInfoById( @RequestParam String warehouseId ) {
 		Warehouse warehouse = warehouseService.getWarehouseInfoById(warehouseId);
 		Message ms = new Message();
 		ms.setState(ResponseCode.SUCCESS_HEAD);
@@ -75,17 +79,15 @@ public class WarehouseController {
 	 * @return
 	 */
 	@ApiOperation(value="查询仓库信息列表",notes="分页查询，各种条件查询")
-	@ApiImplicitParams({
-		@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
-		@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
-	})
 	@RequestMapping(value="/warehouselist",method=RequestMethod.POST)
-	public Message warehouseList(@RequestParam int pageNum,@RequestParam int pageSize, Warehouse warehouse) {
+	public Message warehouseList(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
+			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
+			@RequestBody @ApiParam(required=false,name="WhGoods",value="根据仓库信息查询字段") WarehouseRequestDTO warehouseRequestDTO) {
 		Message ms = new Message();
 		//Warehouse warehouse = new Warehouse();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("warehouse_id*1 desc");
-		List<Warehouse> list = warehouseService.warehouseList(warehouse);
+		List<Warehouse> list = warehouseService.warehouseList(warehouseRequestDTO);
 		PageInfo<Warehouse> pageInfo = new PageInfo<Warehouse>(list);
 		ms.setData(pageInfo);
 		ms.setState(ResponseCode.SUCCESS_HEAD);

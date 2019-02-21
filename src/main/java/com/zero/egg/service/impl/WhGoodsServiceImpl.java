@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zero.egg.dao.WhGoodsMapper;
 import com.zero.egg.model.DamageGoods;
 import com.zero.egg.model.WhGoods;
+import com.zero.egg.requestDTO.DamageGoodsDTO;
+import com.zero.egg.requestDTO.WhGoodsDTO;
 import com.zero.egg.service.WhGoodsService;
 import com.zero.egg.tool.PageData;
 
@@ -32,8 +34,8 @@ public class WhGoodsServiceImpl implements WhGoodsService{
 	}
 
 	@Override
-	public List<WhGoods> GoodsList(WhGoods whGoods) {
-		return whGoodsMapper.GoodsList(whGoods);
+	public List<WhGoodsDTO> GoodsList(WhGoodsDTO whGoodsDTO) {
+		return whGoodsMapper.GoodsList(whGoodsDTO);
 	}
 
 	@Override
@@ -48,8 +50,8 @@ public class WhGoodsServiceImpl implements WhGoodsService{
 	}
 
 	@Override
-	public List<PageData> listDamageGoods(DamageGoods damageGoods) {
-		return whGoodsMapper.listDamageGoods(damageGoods);
+	public List<DamageGoodsDTO> listDamageGoods(DamageGoodsDTO damageGoodsDTO) {
+		return whGoodsMapper.listDamageGoods(damageGoodsDTO);
 	}
 
 	@Override

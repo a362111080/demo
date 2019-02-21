@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.zero.egg.model.DamageGoods;
 import com.zero.egg.model.WhGoods;
+import com.zero.egg.requestDTO.DamageGoodsDTO;
+import com.zero.egg.requestDTO.WhGoodsDTO;
 import com.zero.egg.tool.PageData;
 
 /**
@@ -27,7 +29,7 @@ public interface WhGoodsService {
 	 *@Description 商品列表（可条件查询）
 	 * @return
 	 */
-	List<WhGoods> GoodsList(WhGoods whGoods);
+	List<WhGoodsDTO> GoodsList(WhGoodsDTO whGoodsDTO);
 	
 	/**
 	 * 
@@ -36,7 +38,7 @@ public interface WhGoodsService {
 	 * @param pd
 	 * @return
 	 */
-	List<PageData> listDamageGoods(DamageGoods damageGoods);
+	List<DamageGoodsDTO> listDamageGoods(DamageGoodsDTO damageGoodsDTO);
 	
 	/**
 	 *@title: addGoods
