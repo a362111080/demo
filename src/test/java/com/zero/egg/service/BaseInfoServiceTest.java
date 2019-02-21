@@ -3,10 +3,12 @@ package com.zero.egg.service;
 import com.Apptest;
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
+import com.zero.egg.requestDTO.StandardDetlRequestDTO;
 import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -134,4 +136,24 @@ public class BaseInfoServiceTest extends Apptest {
         standardDataRequestDTO.setModifier("laowang");
         standardDataService.addStandardData(standardDataRequestDTO);
     }
+
+    @Test
+    /**
+     * 新增方案细节
+     */
+    public void testAddStandardDetl() {
+        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setCreator("laowang");
+        standardDetlRequestDTO.setModifier("laowang");
+        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        standardDetlRequestDTO.setWeightMin(new BigDecimal("10"));
+        standardDetlRequestDTO.setWeightMax(new BigDecimal("20"));
+        standardDetlRequestDTO.setMarker("&*^&*123");
+        standardDetlRequestDTO.setMode(2);
+        standardDetlRequestDTO.setWarn(0);
+        standardDetlService.addStandardDetl(standardDetlRequestDTO);
+    }
+
 }

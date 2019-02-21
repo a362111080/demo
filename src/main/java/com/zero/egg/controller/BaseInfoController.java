@@ -223,9 +223,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/standard/addstandarddata", method = RequestMethod.POST)
     public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
         Message message = null;
-        /** 从session中获取shopId和enterpriseId,暂时写死 */
+        /** 从session中获取shopId和companyId,暂时写死 */
         standardDataRequestDTO.setShopId("1");
         standardDataRequestDTO.setCompanyId("1");
+        standardDataRequestDTO.setCreator("laowang");
+        standardDataRequestDTO.setModifier("laowang");
         try {
             if (null != standardDataRequestDTO && null != standardDataRequestDTO.getName()
                     && checkShopAndCompanyExist(standardDataRequestDTO)) {
@@ -294,6 +296,11 @@ public class BaseInfoController {
     @RequestMapping(value = "/standard/addstandarddetl", method = RequestMethod.POST)
     public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和companyId,暂时写死 */
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setCreator("laowang");
+        standardDetlRequestDTO.setModifier("laowang");
         try {
             if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
                 message = standardDetlService.addStandardDetl(standardDetlRequestDTO);

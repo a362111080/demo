@@ -44,6 +44,12 @@ public class StandardDetlServiceImpl implements StandardDetlService {
         StandardDetl standardDetl = new StandardDetl();
         try {
             TransferUtil.copyProperties(standardDetl, standardDetlRequestDTO);
+            /**
+             * 如果计重方式是包,则不计重
+             */
+            if (2 == standardDetl.getMode()) {
+                standardDetl.setNumerical(null);
+            }
             standardDetlMapper.insert(standardDetl);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
