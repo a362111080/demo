@@ -3,10 +3,12 @@ package com.zero.egg.service;
 import com.Apptest;
 import com.zero.egg.requestDTO.EggTypeRequestDTO;
 import com.zero.egg.requestDTO.StandardDataRequestDTO;
+import com.zero.egg.requestDTO.StandardDetlRequestDTO;
 import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -134,4 +136,43 @@ public class BaseInfoServiceTest extends Apptest {
         standardDataRequestDTO.setModifier("laowang");
         standardDataService.addStandardData(standardDataRequestDTO);
     }
+
+    @Test
+    /**
+     * 新增方案细节
+     */
+    public void testAddStandardDetl() {
+        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setCreator("laowang");
+        standardDetlRequestDTO.setModifier("laowang");
+        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        standardDetlRequestDTO.setWeightMin(new BigDecimal("10"));
+        standardDetlRequestDTO.setWeightMax(new BigDecimal("20"));
+        standardDetlRequestDTO.setMarker("&*^&*123");
+        standardDetlRequestDTO.setMode(2);
+        standardDetlRequestDTO.setWarn(0);
+        standardDetlService.addStandardDetl(standardDetlRequestDTO);
+    }
+
+    @Test
+    /**
+     * 更新方案细节
+     */
+    public void testUpdateStandardDetl() {
+        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
+        standardDetlRequestDTO.setCompanyId("1");
+        standardDetlRequestDTO.setShopId("1");
+        standardDetlRequestDTO.setModifier("laowang2");
+        standardDetlRequestDTO.setModifytime(new Date());
+        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        standardDetlRequestDTO.setId("0528c54a58ab40d1a615b5c281e9e7b0");
+        standardDetlRequestDTO.setWarn(1);
+        standardDetlRequestDTO.setMarker("a9sud9812");
+        standardDetlRequestDTO.setWeightMin(new BigDecimal(90));
+        standardDetlRequestDTO.setWeightMax(new BigDecimal(440));
+        standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+    }
+
 }

@@ -29,11 +29,6 @@ public class StandardDetlRequestDTO implements Serializable {
     private String programId;
 
     /**
-     * 方案名称
-     */
-    private String name;
-
-    /**
      * 判定最小称重
      */
     private BigDecimal weightMin;
@@ -59,7 +54,7 @@ public class StandardDetlRequestDTO implements Serializable {
     private Integer numerical;
 
     /**
-     * 是否预警
+     * 是否预警(0:否,1:是)
      */
     private Integer warn;
     /**
