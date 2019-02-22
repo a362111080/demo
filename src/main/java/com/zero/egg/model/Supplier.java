@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
+
+import java.util.Date;
+
 @Data
-@TableName(value = "SYS_Supplier_Data")
+@TableName(value = "bd_supplier")
 public class Supplier {
 
 	/**
-	 * @ClassName 合作单位类
-	 * @Description 合作单位类
+	 * @ClassName 供应商类
+	 * @Description 供应商类
 	 * @Author CQ
 	 * @Date 2018/11/57
 	 **/
@@ -23,57 +26,76 @@ public class Supplier {
 	    @TableId(type = IdType.UUID)
 	    private String id;
 
-	    /**
-	     * 合作单位编码
-	     */
-	    private String strSupplierCode;
+		/**
+		 * 供应商关联店铺
+		 */
+	    private  String shopid;
+		/**
+		 * 供应商关联企业
+		 */
+		private  String companyid;
 
 	    /**
-	     * 合作单位名称
+	     * 供应商编码
 	     */
-	    private String strSupplierName;
+	    private String code;
 
 	    /**
-	     * 合作单位简称
+	     * 供应商名称
 	     */
-	    private String strSupplierShortName;
+	    private String name;
 
 	    /**
-	     * 合作单位类型
+	     * 供应商简称
 	     */
-	    private String strSupplierKindCode;
+	    private String shortname;
+
+	    /**
+	     * 供应商类型
+	     */
+	    private String type;
 	    
 	    /**
-	     * 合作单位联系方式
+	     * 供应商联系方式
 	     */
-	    private String strSupplierPhone;
+	    private String phone;
 	    
 	    
 	    /**
-	     * 合作单位联系人
+	     * 供应商联系人
 	     */
-	    private String strSupplierPerSon;
+	    private String linkman;
 	    
 	    
 	    /**
-	     * 合作单位备注
+	     * 供应商备注
 	     */
-	    private String strSupplierDesc;
-	    
-	    /**
-	     * 合作单位关联店铺
-	     */
-	    private String strStoreCode;
-	    
-	    /**
-	     * 合作单位种类
-	     */
-	    private String strSupplierTypeCode;
-	    
+	    private String remark;
+
 	    
 	    /**
 	     * 状态 0:停用 1:启用(默认)
 	     */
-	    private Integer LngState;
+	    private String status;
+
+		/**
+		 * 创建人
+		 */
+		private String creator;
+
+		/**
+		 * 创建时间
+		 */
+		private Date createtime;
+
+		/**
+		 * 修改人
+		 */
+		private String modifier;
+
+		/**
+		 * 修改时间
+		 */
+		private Date modifytime;
 }
 

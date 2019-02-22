@@ -2,37 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.SupplierMapper">
-    <insert id="AddSupplier" parameterType="Supplier">insert into sys_supplier_data(id,strsuppliercode,strsuppliername,strsuppliershortname,strsupplierkindcode,strsupplierphone,strsupplierperson,lngstate,strsupplierdesc,strstorecode,strsuppliertypecode) values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from sys_supplier_data),4,'0')) as spcode FROM DUAL) a),#{strSupplierName},#{strSupplierShortName},#{strSupplierKindCode},#{strSupplierPhone},#{strSupplierPerSon},#{LngState},#{strSupplierDesc},#{strStoreCode},#{strSupplierTypeCode})</insert>
-    <update id="UpdateSupplier" parameterType="Supplier">update sys_supplier_data
+    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime)
+    values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from bd_supplier),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime})</insert>
+    <update id="UpdateSupplier" parameterType="Supplier">update bd_supplier
     <set>
-        <if test="strSupplierName!= null and strSupplierName!=''">strsuppliername= #{strSupplierName,jdbcType=VARCHAR},</if>
-        <if test="strSupplierShortName!= null and strSupplierShortName!=''">strsuppliershortname= #{strSupplierShortName,jdbcType=VARCHAR},</if>
-        <if test="strSupplierKindCode!= null and strSupplierKindCode!=''">strsupplierkindcode= #{strSupplierKindCode,jdbcType=VARCHAR},</if>
-        <if test="strSupplierPerSon!= null and strSupplierPerSon!=''">strsupplierperson= #{strSupplierPerSon,jdbcType=VARCHAR},</if>
-        <if test="strSupplierDesc!= null and strSupplierDesc!=''">strsupplierdesc= #{strSupplierDesc,jdbcType=VARCHAR},</if>
-        <if test="strSupplierPhone!= null and strSupplierPhone!=''">strsupplierphone= #{strSupplierPhone,jdbcType=VARCHAR},</if>
-        <if test="strSupplierTypeCode!= null and strSupplierTypeCode!=''">strsuppliertypecode= #{strSupplierTypeCode,jdbcType=VARCHAR},</if>
-        <if test="LngState!= null and LngState !=''">lngstate= #{LngState,jdbcType=INTEGER},</if>
-    </set>where strsuppliercode= #{strSupplierCode,jdbcType=VARCHAR} and strstorecode= #{strStoreCode,jdbcType=VARCHAR}</update>
+        <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+        <if test="shortname!= null and shortname!=''">short_name= #{shortname,jdbcType=VARCHAR},</if>
+        <if test="type!= null and type!=''">type= #{type,jdbcType=VARCHAR},</if>
+        <if test="linkman!= null and linkman!=''">linkman= #{linkman,jdbcType=VARCHAR},</if>
+        <if test="remark!= null and remark!=''">remark= #{remark,jdbcType=VARCHAR},</if>
+        <if test="phone!= null and phone!=''">phone= #{phone,jdbcType=VARCHAR},</if>
+        <if test="status!= null and status !=''">status= #{status,jdbcType=VARCHAR},</if>
+        <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
+        <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+    </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
     <select id="GetSupplierList" parameterType="Supplier" resultType="com.zero.egg.model.Supplier">
-    		select * from sys_supplier_data k <where>
-            <if test="strSupplierCode != null and strSupplierCode !=''">
-                k.strsuppliercode=#{strSupplierCode,jdbcType=VARCHAR}
+    		select * from bd_supplier k <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
             </if>
-            <if test="strSupplierKindCode != null and strSupplierKindCode !=''">
-                and k.strsupplierkindcode=#{strSupplierKindCode,jdbcType=VARCHAR}
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
             </if>
-            <if test="strSupplierShortName != null and strSupplierShortName !=''">
-                and k.strsuppliershortname LIKE '%${strSupplierShortName}%'
+            <if test="type != null and type !=''">
+                and k.type=#{type,jdbcType=VARCHAR}
             </if>
-              <if test="strSupplierTypeCode != null and strSupplierTypeCode !='-1'">
-                and k.strsuppliertypecode=#{strSupplierTypeCode,jdbcType=VARCHAR}
+            <if test="shortname != null and shortname !=''">
+                and k.short_name LIKE '%${shortname}%'
             </if>
-              <if test="strStoreCode != null and strStoreCode !=''">
-                and k.strstorecode=#{strStoreCode,jdbcType=VARCHAR}
+            <if test="companyid != null and companyid !=''">
+                and k.company_id=#{companyid,jdbcType=VARCHAR}
             </if>
-               <if test="LngState != null and LngState !='-1' and LngState !=''">
-                and k.lngstate=#{LngState,jdbcType=INTEGER}
+            <if test="shopid != null and shopid !=''">
+                and k.shop_id=#{shopid,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='-1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
             </if>
         </where>
     </select>
