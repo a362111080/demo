@@ -1,0 +1,45 @@
+package com.zero.egg.service.impl;
+
+import com.zero.egg.dao.CustomerMapper;
+import com.zero.egg.dao.SupplierMapper;
+import com.zero.egg.model.Customer;
+import com.zero.egg.model.Supplier;
+import com.zero.egg.service.CustomerService;
+import com.zero.egg.service.SupplierService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+;
+
+/**
+ * @ClassName SupplierServiceImpl
+ * @Description 合作单位模块ServiceImpl
+ * @Author CQ
+ * @Date 2018/11/7 
+ **/
+@Service
+@Transactional
+public class CustomerServiceImpl implements CustomerService {
+
+	@Autowired
+    private CustomerMapper mapper;
+	
+	@Override
+	public int AddCustomer(Customer model) {
+		return  mapper.AddCustomer(model);
+	}
+
+	@Override
+	public int UpdateCustomer(Customer model) {
+		return  mapper.UpdateCustomer(model);
+	}
+
+	@Override
+	public List<Customer> GetCustomerList(Customer model) {
+		return  mapper.GetCustomerList(model);
+	}
+
+}
