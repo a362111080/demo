@@ -64,7 +64,7 @@ public class CustomerManageController {
      * @Description 更新供应商(删除共用，不作物理删除，更新状态为无效状态)  可分为供应商/合作商
      * @Return   是否成功
      **/
-    @ApiOperation(value="修改供应商信息",notes="供应商id不能为空")
+    @ApiOperation(value="修改客户信息",notes="客户id不能为空")
     @RequestMapping(value = "/updatecustomer",method = RequestMethod.POST)
     public Message UpdateSupplier(@RequestBody  Customer model) {
         Message message = new Message();
@@ -95,7 +95,7 @@ public class CustomerManageController {
 
     }
 
-    @ApiOperation(value="查询供应商列表",notes="分页查询，各种条件查询")
+    @ApiOperation(value="查询客户列表",notes="分页查询，各种条件查询")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
             @ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
