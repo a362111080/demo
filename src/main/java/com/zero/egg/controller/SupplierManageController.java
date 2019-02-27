@@ -87,7 +87,6 @@ public class SupplierManageController {
 	        	{  
 	        		  message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 	                  message.setMessage(UtilConstants.ResponseMsg.FAILED);
-	                 
 	        	}	
 	        	return message;
 	            
