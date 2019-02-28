@@ -38,7 +38,7 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testAddEggType() {
         EggTypeRequestDTO saveEggTypeDTO = new EggTypeRequestDTO();
-        saveEggTypeDTO.setName("测试品种3");
+        saveEggTypeDTO.setName("测试品种44444");
         saveEggTypeDTO.setCompanyId("1");
         saveEggTypeDTO.setShopId("1");
         saveEggTypeDTO.setCreator("老王");
@@ -73,7 +73,7 @@ public class BaseInfoServiceTest extends Apptest {
      */
     public void testDeleteById() {
         EggTypeRequestDTO deleteEggTypeDTO = new EggTypeRequestDTO();
-        deleteEggTypeDTO.setId("782909ad94264e8cab1aa1e5548b4766");
+        deleteEggTypeDTO.setId("491fb285e47248fab419add60d534103");
         deleteEggTypeDTO.setShopId("1");
         deleteEggTypeDTO.setCompanyId("1");
         eggTypeService.deleteEggTypeById(deleteEggTypeDTO);
@@ -86,7 +86,7 @@ public class BaseInfoServiceTest extends Apptest {
     public void testBatchDeleteByIds() {
         EggTypeRequestDTO batchDeleteDTO = new EggTypeRequestDTO();
         List<String> ids = new ArrayList<>();
-        ids.add("2978dd4e3f00449fa4caaa23dff05cf9");
+        ids.add("491fb285e47248fab419add60d534103");
         ids.add("0d4813042eb54475bd7cf525fd5c80de");
         batchDeleteDTO.setIds(ids);
         batchDeleteDTO.setShopId("1");
