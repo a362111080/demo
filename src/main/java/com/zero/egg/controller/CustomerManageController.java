@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.Customer;
+import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -12,7 +13,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import com.zero.egg.tool.UtilConstants;
+import com.zero.egg.tool.UtilConstants.ResponseCode;
+import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import java.util.Date;
 import java.util.List;
 
@@ -110,5 +113,32 @@ public class CustomerManageController {
         ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
         ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         return  ms;
+    }
+
+
+    /**
+     * @Description 批量删除供应商
+     * @Param [SupplierRequestDTO]
+     * @Return java.lang.String
+     **/
+    @ApiOperation(value = "批量删除供应商")
+    @RequestMapping(value = "/delcustomer", method = RequestMethod.POST)
+    public Message DeleteCustomer(@RequestBody CustomerRequestDTO Customer) {
+        Message message = new Message();
+        try {
+            if (null != Customer.getIds()) {
+                CustomerSv.DeleteCustomer(Customer);
+                message.setState(ResponseCode.SUCCESS_HEAD);
+                message.setMessage(ResponseMsg.SUCCESS);
+            } else {
+                message.setState(ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(ResponseMsg.ATLEAST_ONE);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(ResponseMsg.FAILED);
+            return message;
+        }
     }
 }

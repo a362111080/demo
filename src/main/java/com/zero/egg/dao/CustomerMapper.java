@@ -11,4 +11,6 @@ public interface CustomerMapper {
 	int UpdateCustomer(Customer model);
 
 	List<Customer> GetCustomerList(Customer model);
+
+    int DeleteCustomer(List<String> ids);
 }

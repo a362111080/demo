@@ -4,6 +4,7 @@ import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.SupplierMapper;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,8 @@ public class CustomerServiceImpl implements CustomerService {
 		return  mapper.GetCustomerList(model);
 	}
 
+	@Override
+	public int DeleteCustomer(CustomerRequestDTO customer) {
+		return mapper.DeleteCustomer(customer.getIds());
+	}
 }
