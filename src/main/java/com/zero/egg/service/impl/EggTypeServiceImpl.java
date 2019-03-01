@@ -62,8 +62,13 @@ public class EggTypeServiceImpl implements EggTypeService {
 
     @Override
     public void deleteEggTypeById(EggTypeRequestDTO deleteEggTypeRequestDTO) {
+        EggType eggType = new EggType();
         try {
-            eggTypeMapper.delete(new QueryWrapper<EggType>()
+            /**
+             * 只做逻辑删除
+             */
+            eggType.setDr(1);
+            eggTypeMapper.update(eggType, new UpdateWrapper<EggType>()
                     .eq("id", deleteEggTypeRequestDTO.getId())
                     .eq("shop_id", deleteEggTypeRequestDTO.getShopId())
                     .eq("company_id", deleteEggTypeRequestDTO.getCompanyId()));
@@ -75,8 +80,10 @@ public class EggTypeServiceImpl implements EggTypeService {
 
     @Override
     public void batchDeleteEggType(EggTypeRequestDTO batchDeleteEggTypeRequestDTO) {
+        EggType eggType = new EggType();
         try {
-            eggTypeMapper.delete(new QueryWrapper<EggType>()
+            eggType.setDr(1);
+            eggTypeMapper.update(eggType, new UpdateWrapper<EggType>()
                     .in("id", batchDeleteEggTypeRequestDTO.getIds())
                     .eq("shop_id", batchDeleteEggTypeRequestDTO.getShopId())
                     .eq("company_id", batchDeleteEggTypeRequestDTO.getCompanyId()));
@@ -103,7 +110,8 @@ public class EggTypeServiceImpl implements EggTypeService {
                     .eq("shop_id", eggTypeRequestDTO.getShopId())
                     .eq("company_id", eggTypeRequestDTO.getCompanyId())
                     .like(null != eggTypeRequestDTO.getName() && !"".equals(eggTypeRequestDTO.getName())
-                            , "name", eggTypeRequestDTO.getName()));
+                            , "name", eggTypeRequestDTO.getName())
+                    .eq("dr", 0));
             eggTypeListResponseDTO.setEggTypeList(page.getRecords());
             eggTypeListResponseDTO.setCurrent(page.getCurrent());
             eggTypeListResponseDTO.setPages(page.getPages());
