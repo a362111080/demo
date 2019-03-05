@@ -8,12 +8,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @ClassName StandardDetlRequestDTO
+ * @ClassName SpecificationRequestDTO
  * @Author lyming
  * @Date 2018/11/9 14:41
  **/
 @Data
-public class StandardDetlRequestDTO implements Serializable {
+public class SpecificationRequestDTO implements Serializable {
 
 
     private static final long serialVersionUID = -378414257627802766L;

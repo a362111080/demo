@@ -10,12 +10,12 @@ import java.util.List;
 /**
  * 鸡蛋类型RequestDTO
  *
- * @ClassName saveEggTypeRequestDTO
+ * @ClassName CategoryRequestDTO
  * @Author lyming
  * @Date 2018/11/6 16:25
  **/
 @Data
-public class EggTypeRequestDTO extends PageDTO implements Serializable {
+public class CategoryRequestDTO extends PageDTO implements Serializable {
 
 
     private static final long serialVersionUID = -1867113411973002512L;

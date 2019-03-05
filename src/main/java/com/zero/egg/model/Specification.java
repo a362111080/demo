@@ -5,18 +5,20 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 规格方案
+ * 规格方案细节
  *
- * @ClassName StandardData
+ * @ClassName Specification
  * @Author lyming
- * @Date 2018/11/9 13:43
+ * @Date 2018/11/9 14:32
  **/
+@TableName(value = "bd_specification")
 @Data
-@TableName(value = "bd_specification_program")
-public class StandardData {
+public class Specification {
+
     /**
      * 主键id
      */
@@ -24,20 +26,39 @@ public class StandardData {
     private String id;
 
     /**
-     * 方案名称
+     * 方案id
      */
-    private String name;
+    private String programId;
 
     /**
-     * 品种id
+     * 判定最小称重
      */
-    private String categoryId;
+    private BigDecimal weightMin;
 
     /**
-     * 删除标识 0:未删除(默认) 1:已删除
+     * 判定最大称重
      */
-    private Integer dr = 0;
+    private BigDecimal weightMax;
 
+    /**
+     * 标记
+     */
+    private String marker;
+
+    /**
+     * 计重方式(1:去皮 2:包)
+     */
+    private Integer mode;
+
+    /**
+     * 数值（去皮对应的数值）
+     */
+    private Integer numerical;
+
+    /**
+     * 是否预警(0:否,1:是)
+     */
+    private Integer warn;
     /**
      * 所属店铺id
      */
@@ -67,4 +88,9 @@ public class StandardData {
      * 修改时间
      */
     private Date modifytime;
+
+    /**
+     * 删除标识 0:未删除(默认) 1:已删除
+     */
+    private Integer dr = 0;
 }
