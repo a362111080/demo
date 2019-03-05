@@ -169,10 +169,22 @@ public class BaseInfoServiceTest extends Apptest {
         standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
         standardDetlRequestDTO.setId("0528c54a58ab40d1a615b5c281e9e7b0");
         standardDetlRequestDTO.setWarn(1);
+        standardDetlRequestDTO.setMode(2);
         standardDetlRequestDTO.setMarker("a9sud9812");
         standardDetlRequestDTO.setWeightMin(new BigDecimal(90));
         standardDetlRequestDTO.setWeightMax(new BigDecimal(440));
         standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+    }
+
+    @Test
+    /**
+     * 根据方案id列出其下方案细节
+     */
+    public void testListstandarddetel(){
+        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
+        standardDetlRequestDTO.setProgramId("e61177ee779e4548b0c305d577232d57");
+        Message message = standardDetlService.listStandardDetlByProgramId(standardDetlRequestDTO);
+        System.out.println(message.getState());
     }
 
 }

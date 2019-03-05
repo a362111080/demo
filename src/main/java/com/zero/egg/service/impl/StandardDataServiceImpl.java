@@ -103,19 +103,36 @@ public class StandardDataServiceImpl implements StandardDataService {
         Message message = new Message();
         List<StandardData> standardDataList;
         List<StandardDetl> standardDetlList;
-        StandardDataListResponseDTO standardDataListResponseDTO = new StandardDataListResponseDTO();
+        StandardDataListResponseDTO standardDataListResponseDTO = null;
         StandardDataResponseDTO standardDataResponseDTO = new StandardDataResponseDTO();
         List<StandardDataListResponseDTO> standardDataListResponseDTOList = new ArrayList<>();
+        /**
+         * ---standardDataResponseDTO
+         *    ---standardDataListResponseDTOList
+         *          ---standardDataListResponseDTO1
+         *                ---standardDetlList
+         *                      ---StandardDetl1
+         *                      ---StandardDetl2
+         *          ---standardDataListResponseDTO2
+         *                ---standardDetlList
+         *                      ---StandardDetl1
+         *                      ---StandardDetl2
+         */
         try {
             /**
              * 1.先根据category_id查询出所有方案
              * 2.根据program_id查出所有方案细节
              */
-            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>().eq("category_id", standardDataRequestDTO.getCategoryId()));
+            standardDataList = standardDataMapper.selectList(new QueryWrapper<StandardData>()
+                    .eq("category_id", standardDataRequestDTO.getCategoryId())
+                    .eq("dr", 0));
             for (StandardData standardData : standardDataList) {
-                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("program_id", standardData.getId()));
-                standardDataListResponseDTO.setStandardDetlList(standardDetlList);
+                standardDataListResponseDTO = new StandardDataListResponseDTO();
+                standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>()
+                        .eq("program_id", standardData.getId())
+                        .eq("dr", 0));
                 TransferUtil.copyProperties(standardDataListResponseDTO, standardData);
+                standardDataListResponseDTO.setStandardDetlList(standardDetlList);
                 standardDataListResponseDTOList.add(standardDataListResponseDTO);
             }
             standardDataResponseDTO.setStandardDataList(standardDataListResponseDTOList);

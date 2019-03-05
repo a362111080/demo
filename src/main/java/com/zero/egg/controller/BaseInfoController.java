@@ -330,7 +330,7 @@ public class BaseInfoController {
         Message message = new Message();
         try {
             if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
-                message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
+                message = standardDetlService.listStandardDetlByProgramId(standardDetlRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

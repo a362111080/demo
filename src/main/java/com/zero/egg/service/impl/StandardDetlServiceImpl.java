@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.StandardDetlMapper;
 import com.zero.egg.model.StandardDetl;
 import com.zero.egg.requestDTO.StandardDetlRequestDTO;
@@ -113,8 +114,15 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     @Override
     public Message batchDeleteStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
+        StandardDetl standardDetl = new StandardDetl();
         try {
-            standardDetlMapper.deleteBatchIds(standardDetlRequestDTO.getIds());
+//            standardDetlMapper.deleteBatchIds(standardDetlRequestDTO.getIds());
+            /**
+             * 只做逻辑删除
+             */
+            standardDetl.setDr(1);
+            standardDetlMapper.update(standardDetl, new UpdateWrapper<StandardDetl>()
+                    .in("id", standardDetlRequestDTO.getIds()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
@@ -125,19 +133,21 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     }
 
     /**
-     * 根据StandDetlId列出所属方案细节
+     * 根据program_id(方案id)列出所属方案细节
      * 不用分页
      *
      * @param standardDetlRequestDTO
      * @return
      */
     @Override
-    public Message listStandardDetlByStandDetlCode(StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message listStandardDetlByProgramId(StandardDetlRequestDTO standardDetlRequestDTO) {
         Message message = new Message();
         StandardDetlResponseDTO standardDetlResponseDTO = new StandardDetlResponseDTO();
         List<StandardDetl> standardDetlList = null;
         try {
-            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("program_id", standardDetlRequestDTO.getProgramId()));
+            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>()
+                    .eq("program_id", standardDetlRequestDTO.getProgramId())
+                    .eq("dr", 0));
             standardDetlResponseDTO.setStandardDetlList(standardDetlList);
             message.setData(standardDetlResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
