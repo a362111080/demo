@@ -187,4 +187,21 @@ public class BaseInfoServiceTest extends Apptest {
         System.out.println(message.getState());
     }
 
+    @Test
+    /**
+     * 更新方案(方案名)
+     */
+    public void testUpdateSpecificationProgram() {
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setCompanyId("1");
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCategoryId("a50c111d11f443cdb7866e995537c186");
+        specificationProgramRequestDTO.setModifier("laowanggggg");
+        specificationProgramRequestDTO.setModifytime(new Date());
+        specificationProgramRequestDTO.setId("e61177ee779e4548b0c305d577232d57");
+        specificationProgramRequestDTO.setName("测试方案333");
+        Message message = specificationProgramService.updateSpecificationProgram(specificationProgramRequestDTO);
+        System.out.println(message.getMessage());
+    }
+
 }
