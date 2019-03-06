@@ -204,4 +204,29 @@ public class BaseInfoServiceTest extends Apptest {
         System.out.println(message.getMessage());
     }
 
+    @Test
+    /**
+     * 列出选中品种下的所有方案和方案细节
+     */
+    public void testListDataAndDetl(){
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setCategoryId("a50c111d11f443cdb7866e995537c186");
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
+        Message message = specificationProgramService.listDataAndDetl(specificationProgramRequestDTO);
+        System.out.println(message.getMessage());
+    }
+
+    @Test
+    /**
+     * 删除方案(逻辑删除)
+     */
+    public void testDeleteSpecificationProgram() {
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
+        specificationProgramRequestDTO.setId("e61177ee779e4548b0c305d577232d57");
+        Message message = specificationProgramService.deleteStandardDataById(specificationProgramRequestDTO);
+        System.out.println(message.getMessage());
+    }
 }

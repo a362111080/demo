@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.SpecificationProgramMapper;
 import com.zero.egg.model.Specification;
@@ -75,13 +76,14 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
     @Transactional
     public Message deleteStandardDataById(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
+        SpecificationProgram specificationProgram = new SpecificationProgram();
         try {
-            /**
-             * 1.先根据strStandId删除所有所属方案细节
-             * 2.根据id删除方案
-             */
-            specificationMapper.delete(new QueryWrapper<Specification>().eq("str_stand_id", specificationProgramRequestDTO.getId()));
-            specificationProgramMapper.delete(new QueryWrapper<SpecificationProgram>().eq("id", specificationProgramRequestDTO.getId()));
+            TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
+            specificationProgram.setDr(1);
+            specificationProgramMapper.update(specificationProgram, new UpdateWrapper<SpecificationProgram>()
+                    .eq("id", specificationProgram.getId())
+                    .eq("shop_id", specificationProgram.getShopId())
+                    .eq("company_id", specificationProgram.getCompanyId()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
@@ -155,7 +157,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
          */
         List<SpecificationProgram> resultList = null;
         try {
-            TransferUtil.copyProperties(specificationProgram,specificationProgramRequestDTO);
+            TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
             /**
              * 如果前端传来的新的方案名不为null或者空字符串,则判断新的方案名是否重复,若不重复,则更新
              */
@@ -176,7 +178,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             }
         } catch (Exception e) {
-            log.info("updateSpecificationProgram error",e.toString());
+            log.info("updateSpecificationProgram error", e.toString());
             throw new ServiceException("updateSpecificationProgram error");
         }
         return message;

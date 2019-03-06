@@ -430,6 +430,9 @@ public class BaseInfoController {
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
     public Message deleteStandardData(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和companyId,暂时写死 */
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
         try {
             if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getId()) {
                 message = specificationProgramService.deleteStandardDataById(specificationProgramRequestDTO);
