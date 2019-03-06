@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.Customer;
+import com.zero.egg.model.city;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.tool.Message;
@@ -141,4 +142,22 @@ public class CustomerManageController {
             return message;
         }
     }
+
+
+
+    @ApiOperation(value="查询供应商列表",notes="无参数返回省份列表，传id返回次级列表")
+    @RequestMapping(value = "/getcitys",method = RequestMethod.POST)
+    public Message GetCitysList(@RequestBody city model) {
+        Message ms = new Message();
+        if(model.getParentId()=="" || model.getParentId()==null)
+        {
+            model.setParentId("100000");
+        }
+        List<city> Citys=CustomerSv.GetCitys(model);
+        ms.setData(Citys);
+        ms.setState(ResponseCode.SUCCESS_HEAD);
+        ms.setMessage(ResponseMsg.SUCCESS);
+        return  ms;
+    }
+
 }

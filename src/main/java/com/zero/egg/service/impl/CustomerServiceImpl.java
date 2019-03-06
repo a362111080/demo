@@ -4,6 +4,7 @@ import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.SupplierMapper;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.model.city;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.service.SupplierService;
@@ -46,5 +47,10 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public int DeleteCustomer(CustomerRequestDTO customer) {
 		return mapper.DeleteCustomer(customer.getIds());
+	}
+
+	@Override
+	public List<city> GetCitys(city model) {
+		return  mapper.GetCitys(model);
 	}
 }

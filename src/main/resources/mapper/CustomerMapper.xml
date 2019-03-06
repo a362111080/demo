@@ -56,4 +56,12 @@
             </if>
         </where>
     </select>
+
+    <select id="GetCitys" parameterType="city" resultType="city">
+        select * from bd_citys k <where>
+        <if test="parentId != null and parentId !=''">
+            k.ParentId=#{parentId,jdbcType=VARCHAR}
+        </if>
+         </where>
+    </select>
 </mapper>
