@@ -1,21 +1,23 @@
-package com.zero.egg.requestDTO;
+package com.zero.egg.responseDTO;
 
+import com.zero.egg.model.Specification;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
- * 规格方案RequestDTO
+ * 方案及其细节列表ResponseDTO
  *
- * @ClassName StandardDataRequestDTO
+ * @ClassName SpecificationProgramListResponseDTO
  * @Author lyming
- * @Date 2018/11/9 13:49
+ * @Date 2018/11/10 4:33
  **/
 @Data
-public class StandardDataRequestDTO implements Serializable {
+public class SpecificationProgramListResponseDTO implements Serializable {
 
-    private static final long serialVersionUID = 3598140603310947570L;
+    private static final long serialVersionUID = 451479826913900341L;
 
     /**
      * 主键id
@@ -66,4 +68,10 @@ public class StandardDataRequestDTO implements Serializable {
      * 修改时间
      */
     private Date modifytime;
+
+    /**
+     * 方案细节列表
+     */
+    private List<Specification> specificationList;
+
 }

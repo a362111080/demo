@@ -1,11 +1,12 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zero.egg.dao.StandardDetlMapper;
-import com.zero.egg.model.StandardDetl;
-import com.zero.egg.requestDTO.StandardDetlRequestDTO;
-import com.zero.egg.responseDTO.StandardDetlResponseDTO;
-import com.zero.egg.service.StandardDetlService;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.zero.egg.dao.SpecificationMapper;
+import com.zero.egg.model.Specification;
+import com.zero.egg.requestDTO.SpecificationRequestDTO;
+import com.zero.egg.responseDTO.SpecificationResponseDTO;
+import com.zero.egg.service.SpecificationService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TransferUtil;
@@ -20,44 +21,44 @@ import java.util.List;
 /**
  * 方案细节ServiceImpl
  *
- * @ClassName StandardDetlServiceImpl
+ * @ClassName SpecificationServiceImpl
  * @Author lyming
  * @Date 2018/11/9 17:04
  **/
 @Service
 @Slf4j
 @Transactional
-public class StandardDetlServiceImpl implements StandardDetlService {
+public class SpecificationServiceImpl implements SpecificationService {
 
     @Autowired
-    private StandardDetlMapper standardDetlMapper;
+    private SpecificationMapper specificationMapper;
 
     /**
      * 新增方案细节
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @Override
-    public Message addStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message addStandardDetl(SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
-        StandardDetl standardDetl = new StandardDetl();
+        Specification specification = new Specification();
         try {
-            TransferUtil.copyProperties(standardDetl, standardDetlRequestDTO);
+            TransferUtil.copyProperties(specification, specificationRequestDTO);
             /**
              * 如果计重方式是包,则不计重
              */
-            if (2 == standardDetl.getMode()) {
-                standardDetl.setNumerical(null);
+            if (2 == specification.getMode()) {
+                specification.setNumerical(null);
             }
             /**
              * 如果传入的最小重量大于最大重量,则返回错误信息
              */
-            if ((standardDetl.getWeightMin().compareTo(standardDetl.getWeightMax())) > 0) {
+            if ((specification.getWeightMin().compareTo(specification.getWeightMax())) > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             } else {
-                standardDetlMapper.insert(standardDetl);
+                specificationMapper.insert(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }
@@ -71,28 +72,28 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     /**
      * 更新方案细节
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
-    public Message updateStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message updateStandardDetl(SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
-        StandardDetl standardDetl = new StandardDetl();
+        Specification specification = new Specification();
         try {
-            TransferUtil.copyProperties(standardDetl, standardDetlRequestDTO);
+            TransferUtil.copyProperties(specification, specificationRequestDTO);
             /**
              * 如果计重方式是包,则不计重
              */
-            if (2 == standardDetl.getMode()) {
-                standardDetl.setNumerical(null);
+            if (2 == specification.getMode()) {
+                specification.setNumerical(null);
             }
             /**
              * 如果传入的最小重量大于最大重量,则返回错误信息
              */
-            if ((standardDetl.getWeightMin().compareTo(standardDetl.getWeightMax())) > 0) {
+            if ((specification.getWeightMin().compareTo(specification.getWeightMax())) > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             } else {
-                standardDetlMapper.updateById(standardDetl);
+                specificationMapper.updateById(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }
@@ -107,14 +108,21 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     /**
      * 批量删除方案细节
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @Override
-    public Message batchDeleteStandardDetl(StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message batchDeleteStandardDetl(SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
+        Specification specification = new Specification();
         try {
-            standardDetlMapper.deleteBatchIds(standardDetlRequestDTO.getIds());
+//            specificationMapper.deleteBatchIds(specificationRequestDTO.getIds());
+            /**
+             * 只做逻辑删除
+             */
+            specification.setDr(1);
+            specificationMapper.update(specification, new UpdateWrapper<Specification>()
+                    .in("id", specificationRequestDTO.getIds()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
@@ -125,21 +133,23 @@ public class StandardDetlServiceImpl implements StandardDetlService {
     }
 
     /**
-     * 根据StandDetlId列出所属方案细节
+     * 根据program_id(方案id)列出所属方案细节
      * 不用分页
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @Override
-    public Message listStandardDetlByStandDetlCode(StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message listStandardDetlByProgramId(SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
-        StandardDetlResponseDTO standardDetlResponseDTO = new StandardDetlResponseDTO();
-        List<StandardDetl> standardDetlList = null;
+        SpecificationResponseDTO specificationResponseDTO = new SpecificationResponseDTO();
+        List<Specification> specificationList = null;
         try {
-            standardDetlList = standardDetlMapper.selectList(new QueryWrapper<StandardDetl>().eq("program_id", standardDetlRequestDTO.getProgramId()));
-            standardDetlResponseDTO.setStandardDetlList(standardDetlList);
-            message.setData(standardDetlResponseDTO);
+            specificationList = specificationMapper.selectList(new QueryWrapper<Specification>()
+                    .eq("program_id", specificationRequestDTO.getProgramId())
+                    .eq("dr", 0));
+            specificationResponseDTO.setSpecificationList(specificationList);
+            message.setData(specificationResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;

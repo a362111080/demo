@@ -1,9 +1,9 @@
 package com.zero.egg.service;
 
 import com.Apptest;
-import com.zero.egg.requestDTO.EggTypeRequestDTO;
-import com.zero.egg.requestDTO.StandardDataRequestDTO;
-import com.zero.egg.requestDTO.StandardDetlRequestDTO;
+import com.zero.egg.requestDTO.CategoryRequestDTO;
+import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
+import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +24,27 @@ import static org.junit.Assert.assertEquals;
 public class BaseInfoServiceTest extends Apptest {
 
     @Autowired
-    private EggTypeService eggTypeService;
+    private CategoryService categoryService;
 
     @Autowired
-    private StandardDataService standardDataService;
+    private SpecificationProgramService specificationProgramService;
 
     @Autowired
-    private StandardDetlService standardDetlService;
+    private SpecificationService specificationService;
 
     @Test
     /**
      * 新增品种
      */
     public void testAddEggType() {
-        EggTypeRequestDTO saveEggTypeDTO = new EggTypeRequestDTO();
+        CategoryRequestDTO saveEggTypeDTO = new CategoryRequestDTO();
         saveEggTypeDTO.setName("测试品种44444");
         saveEggTypeDTO.setCompanyId("1");
         saveEggTypeDTO.setShopId("1");
         saveEggTypeDTO.setCreator("老王");
         saveEggTypeDTO.setModifier("老李");
 
-        Message message = eggTypeService.saveEggType(saveEggTypeDTO);
+        Message message = categoryService.saveEggType(saveEggTypeDTO);
 
         assertEquals(1, message.getState());
     }
@@ -54,7 +54,7 @@ public class BaseInfoServiceTest extends Apptest {
      * 修改品种
      */
     public void testModifyEggType() {
-        EggTypeRequestDTO modifyEggTypeDTO = new EggTypeRequestDTO();
+        CategoryRequestDTO modifyEggTypeDTO = new CategoryRequestDTO();
         modifyEggTypeDTO.setId("738a6d1bb3ef4604ac426fb53353b1b4");
         modifyEggTypeDTO.setName("测试品种2");
         modifyEggTypeDTO.setCompanyId("1");
@@ -62,7 +62,7 @@ public class BaseInfoServiceTest extends Apptest {
         modifyEggTypeDTO.setModifier("laowang2");
         modifyEggTypeDTO.setModifytime(new Date());
 
-        Message message = eggTypeService.modifyEggType(modifyEggTypeDTO);
+        Message message = categoryService.modifyEggType(modifyEggTypeDTO);
         assertEquals(1, message.getState());
 
     }
@@ -72,11 +72,11 @@ public class BaseInfoServiceTest extends Apptest {
      * 删除单个品种
      */
     public void testDeleteById() {
-        EggTypeRequestDTO deleteEggTypeDTO = new EggTypeRequestDTO();
+        CategoryRequestDTO deleteEggTypeDTO = new CategoryRequestDTO();
         deleteEggTypeDTO.setId("491fb285e47248fab419add60d534103");
         deleteEggTypeDTO.setShopId("1");
         deleteEggTypeDTO.setCompanyId("1");
-        eggTypeService.deleteEggTypeById(deleteEggTypeDTO);
+        categoryService.deleteEggTypeById(deleteEggTypeDTO);
     }
 
     @Test
@@ -84,14 +84,14 @@ public class BaseInfoServiceTest extends Apptest {
      * 批量删除品种
      */
     public void testBatchDeleteByIds() {
-        EggTypeRequestDTO batchDeleteDTO = new EggTypeRequestDTO();
+        CategoryRequestDTO batchDeleteDTO = new CategoryRequestDTO();
         List<String> ids = new ArrayList<>();
         ids.add("491fb285e47248fab419add60d534103");
         ids.add("0d4813042eb54475bd7cf525fd5c80de");
         batchDeleteDTO.setIds(ids);
         batchDeleteDTO.setShopId("1");
         batchDeleteDTO.setCompanyId("1");
-        eggTypeService.batchDeleteEggType(batchDeleteDTO);
+        categoryService.batchDeleteEggType(batchDeleteDTO);
     }
 
     /**
@@ -99,11 +99,11 @@ public class BaseInfoServiceTest extends Apptest {
      */
     @Test
     public void testSelectEggTypeById() {
-        EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
-        eggTypeRequestDTO.setId("3d02e7c100ec4129823738e36a44f679");
-        eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setCompanyId("1");
-        Message message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
+        CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
+        categoryRequestDTO.setId("3d02e7c100ec4129823738e36a44f679");
+        categoryRequestDTO.setShopId("1");
+        categoryRequestDTO.setCompanyId("1");
+        Message message = categoryService.selectEggTypeById(categoryRequestDTO);
         System.out.println(message.getData());
     }
 
@@ -112,13 +112,13 @@ public class BaseInfoServiceTest extends Apptest {
      * 品种列表分页模糊查询
      */
     public void testListEggType() {
-        EggTypeRequestDTO eggTypeRequestDTO = new EggTypeRequestDTO();
-        eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setCompanyId("1");
-        eggTypeRequestDTO.setName("1");
-        eggTypeRequestDTO.setCurrent(3L);
-        eggTypeRequestDTO.setSize(2L);
-        Message message = eggTypeService.listEggType(eggTypeRequestDTO);
+        CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
+        categoryRequestDTO.setShopId("1");
+        categoryRequestDTO.setCompanyId("1");
+        categoryRequestDTO.setName("1");
+        categoryRequestDTO.setCurrent(3L);
+        categoryRequestDTO.setSize(2L);
+        Message message = categoryService.listEggType(categoryRequestDTO);
         System.out.println(message.getState());
     }
 
@@ -127,14 +127,14 @@ public class BaseInfoServiceTest extends Apptest {
      * 新增方案
      */
     public void testAddStandard() {
-        StandardDataRequestDTO standardDataRequestDTO = new StandardDataRequestDTO();
-        standardDataRequestDTO.setName("测试方案");
-        standardDataRequestDTO.setCategoryId("3d02e7c100ec4129823738e36a44f679");
-        standardDataRequestDTO.setShopId("1");
-        standardDataRequestDTO.setCompanyId("1");
-        standardDataRequestDTO.setCreator("laowang");
-        standardDataRequestDTO.setModifier("laowang");
-        standardDataService.addStandardData(standardDataRequestDTO);
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setName("测试方案");
+        specificationProgramRequestDTO.setCategoryId("3d02e7c100ec4129823738e36a44f679");
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
+        specificationProgramRequestDTO.setCreator("laowang");
+        specificationProgramRequestDTO.setModifier("laowang");
+        specificationProgramService.addStandardData(specificationProgramRequestDTO);
     }
 
     @Test
@@ -142,18 +142,18 @@ public class BaseInfoServiceTest extends Apptest {
      * 新增方案细节
      */
     public void testAddStandardDetl() {
-        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
-        standardDetlRequestDTO.setCompanyId("1");
-        standardDetlRequestDTO.setShopId("1");
-        standardDetlRequestDTO.setCreator("laowang");
-        standardDetlRequestDTO.setModifier("laowang");
-        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
-        standardDetlRequestDTO.setWeightMin(new BigDecimal("10"));
-        standardDetlRequestDTO.setWeightMax(new BigDecimal("20"));
-        standardDetlRequestDTO.setMarker("&*^&*123");
-        standardDetlRequestDTO.setMode(2);
-        standardDetlRequestDTO.setWarn(0);
-        standardDetlService.addStandardDetl(standardDetlRequestDTO);
+        SpecificationRequestDTO specificationRequestDTO = new SpecificationRequestDTO();
+        specificationRequestDTO.setCompanyId("1");
+        specificationRequestDTO.setShopId("1");
+        specificationRequestDTO.setCreator("laowang");
+        specificationRequestDTO.setModifier("laowang");
+        specificationRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        specificationRequestDTO.setWeightMin(new BigDecimal("10"));
+        specificationRequestDTO.setWeightMax(new BigDecimal("20"));
+        specificationRequestDTO.setMarker("&*^&*123");
+        specificationRequestDTO.setMode(2);
+        specificationRequestDTO.setWarn(0);
+        specificationService.addStandardDetl(specificationRequestDTO);
     }
 
     @Test
@@ -161,18 +161,30 @@ public class BaseInfoServiceTest extends Apptest {
      * 更新方案细节
      */
     public void testUpdateStandardDetl() {
-        StandardDetlRequestDTO standardDetlRequestDTO = new StandardDetlRequestDTO();
-        standardDetlRequestDTO.setCompanyId("1");
-        standardDetlRequestDTO.setShopId("1");
-        standardDetlRequestDTO.setModifier("laowang2");
-        standardDetlRequestDTO.setModifytime(new Date());
-        standardDetlRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
-        standardDetlRequestDTO.setId("0528c54a58ab40d1a615b5c281e9e7b0");
-        standardDetlRequestDTO.setWarn(1);
-        standardDetlRequestDTO.setMarker("a9sud9812");
-        standardDetlRequestDTO.setWeightMin(new BigDecimal(90));
-        standardDetlRequestDTO.setWeightMax(new BigDecimal(440));
-        standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+        SpecificationRequestDTO specificationRequestDTO = new SpecificationRequestDTO();
+        specificationRequestDTO.setCompanyId("1");
+        specificationRequestDTO.setShopId("1");
+        specificationRequestDTO.setModifier("laowang2");
+        specificationRequestDTO.setModifytime(new Date());
+        specificationRequestDTO.setProgramId("3ede7a23dadb4fba928c56fbf7cfdff8");
+        specificationRequestDTO.setId("0528c54a58ab40d1a615b5c281e9e7b0");
+        specificationRequestDTO.setWarn(1);
+        specificationRequestDTO.setMode(2);
+        specificationRequestDTO.setMarker("a9sud9812");
+        specificationRequestDTO.setWeightMin(new BigDecimal(90));
+        specificationRequestDTO.setWeightMax(new BigDecimal(440));
+        specificationService.updateStandardDetl(specificationRequestDTO);
+    }
+
+    @Test
+    /**
+     * 根据方案id列出其下方案细节
+     */
+    public void testListstandarddetel(){
+        SpecificationRequestDTO specificationRequestDTO = new SpecificationRequestDTO();
+        specificationRequestDTO.setProgramId("e61177ee779e4548b0c305d577232d57");
+        Message message = specificationService.listStandardDetlByProgramId(specificationRequestDTO);
+        System.out.println(message.getState());
     }
 
 }

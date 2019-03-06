@@ -1,13 +1,13 @@
 package com.zero.egg.controller;
 
+import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.DeviceDataRequestDTO;
-import com.zero.egg.requestDTO.EggTypeRequestDTO;
-import com.zero.egg.requestDTO.StandardDataRequestDTO;
-import com.zero.egg.requestDTO.StandardDetlRequestDTO;
+import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
+import com.zero.egg.requestDTO.SpecificationRequestDTO;
+import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.DeviceDataService;
-import com.zero.egg.service.EggTypeService;
-import com.zero.egg.service.StandardDataService;
-import com.zero.egg.service.StandardDetlService;
+import com.zero.egg.service.SpecificationProgramService;
+import com.zero.egg.service.SpecificationService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
@@ -32,36 +32,36 @@ import java.util.Date;
 public class BaseInfoController {
 
     @Autowired
-    private EggTypeService eggTypeService;
+    private CategoryService categoryService;
 
     @Autowired
-    private StandardDataService standardDataService;
+    private SpecificationProgramService specificationProgramService;
 
     @Autowired
-    private StandardDetlService standardDetlService;
+    private SpecificationService specificationService;
 
     @Autowired
     private DeviceDataService dataService;
 
     /**
-     * @param saveEggTypeRequestDTO
+     * @param saveCategoryRequestDTO
      * @return
      * @Description 添加鸡蛋类型
      */
     @ApiOperation(value = "添加鸡蛋类型")
     @RequestMapping(value = "/variety/add", method = RequestMethod.POST)
-    public Message saveEggType(@RequestBody EggTypeRequestDTO saveEggTypeRequestDTO) {
+    public Message saveEggType(@RequestBody CategoryRequestDTO saveCategoryRequestDTO) {
         Message message = null;
         try {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != saveEggTypeRequestDTO && null != saveEggTypeRequestDTO.getName()
-                    && checkShopAndCompanyExist(saveEggTypeRequestDTO)) {
+            if (null != saveCategoryRequestDTO && null != saveCategoryRequestDTO.getName()
+                    && checkShopAndCompanyExist(saveCategoryRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
-                saveEggTypeRequestDTO.setCreator("laowang");
-                saveEggTypeRequestDTO.setModifier("laowang");
-                message = eggTypeService.saveEggType(saveEggTypeRequestDTO);
+                saveCategoryRequestDTO.setCreator("laowang");
+                saveCategoryRequestDTO.setModifier("laowang");
+                message = categoryService.saveEggType(saveCategoryRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -78,18 +78,18 @@ public class BaseInfoController {
 
     @ApiOperation(value = "修改鸡蛋类型")
     @RequestMapping(value = "/variety/modify", method = RequestMethod.POST)
-    public Message modifyEggType(@RequestBody EggTypeRequestDTO modifyEggTypeRequestDTO) {
+    public Message modifyEggType(@RequestBody CategoryRequestDTO modifyCategoryRequestDTO) {
         Message message = null;
         try {
             /**
              * 后期如果加验证方法,这里可以省略
              */
-            if (null != modifyEggTypeRequestDTO && null != modifyEggTypeRequestDTO.getName()
-                    && checkShopAndCompanyExist(modifyEggTypeRequestDTO)) {
+            if (null != modifyCategoryRequestDTO && null != modifyCategoryRequestDTO.getName()
+                    && checkShopAndCompanyExist(modifyCategoryRequestDTO)) {
                 //应该是从session里面获取,暂时从依赖前端
-                modifyEggTypeRequestDTO.setModifier("laoli");
-                modifyEggTypeRequestDTO.setModifytime(new Date());
-                message = eggTypeService.modifyEggType(modifyEggTypeRequestDTO);
+                modifyCategoryRequestDTO.setModifier("laoli");
+                modifyCategoryRequestDTO.setModifytime(new Date());
+                message = categoryService.modifyEggType(modifyCategoryRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -106,20 +106,20 @@ public class BaseInfoController {
 
 
     /**
-     * @param deleteEggTypeRequestDTO
+     * @param deleteCategoryRequestDTO
      * @return
      * @Description 删除鸡蛋类型（单个删除）
      */
     @ApiOperation(value = "删除鸡蛋类型（单个删除）")
     @RequestMapping(value = "/variety/delete", method = RequestMethod.POST)
-    public Message deleteEggTypeById(@RequestBody EggTypeRequestDTO deleteEggTypeRequestDTO) {
+    public Message deleteEggTypeById(@RequestBody CategoryRequestDTO deleteCategoryRequestDTO) {
         Message message = new Message();
         /** 从session中获取shopId和enterpriseId,暂时写死 */
-        deleteEggTypeRequestDTO.setShopId("1");
-        deleteEggTypeRequestDTO.setCompanyId("1");
+        deleteCategoryRequestDTO.setShopId("1");
+        deleteCategoryRequestDTO.setCompanyId("1");
         try {
-            if (null != deleteEggTypeRequestDTO.getId() && checkShopAndCompanyExist(deleteEggTypeRequestDTO)) {
-                eggTypeService.deleteEggTypeById(deleteEggTypeRequestDTO);
+            if (null != deleteCategoryRequestDTO.getId() && checkShopAndCompanyExist(deleteCategoryRequestDTO)) {
+                categoryService.deleteEggTypeById(deleteCategoryRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
@@ -136,19 +136,19 @@ public class BaseInfoController {
 
     /**
      * @Description 批量删除鸡蛋类型
-     * @Param [eggTypeRequestDTO]
+     * @Param [categoryRequestDTO]
      * @Return java.lang.String
      **/
     @ApiOperation(value = "批量删除鸡蛋类型")
     @RequestMapping(value = "/variety/batchdelete", method = RequestMethod.POST)
-    public Message batchDeleteEggType(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+    public Message batchDeleteEggType(@RequestBody CategoryRequestDTO categoryRequestDTO) {
         Message message = new Message();
         /** 从session中获取shopId和enterpriseId,暂时写死 */
-        eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setCompanyId("1");
+        categoryRequestDTO.setShopId("1");
+        categoryRequestDTO.setCompanyId("1");
         try {
-            if (null != eggTypeRequestDTO.getIds() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
-                eggTypeService.batchDeleteEggType(eggTypeRequestDTO);
+            if (null != categoryRequestDTO.getIds() && checkShopAndCompanyExist(categoryRequestDTO)) {
+                categoryService.batchDeleteEggType(categoryRequestDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
@@ -165,14 +165,14 @@ public class BaseInfoController {
 
     @ApiOperation(value = "按主键查询品种接口")
     @RequestMapping(value = "/variety/queryeggtypebyid", method = RequestMethod.POST)
-    public Message queryEggTypeById(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+    public Message queryEggTypeById(@RequestBody CategoryRequestDTO categoryRequestDTO) {
         Message message = null;
         /** 从session中获取shopId和enterpriseId,暂时写死 */
-        eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setCompanyId("1");
+        categoryRequestDTO.setShopId("1");
+        categoryRequestDTO.setCompanyId("1");
         try {
-            if (null != eggTypeRequestDTO.getId() && checkShopAndCompanyExist(eggTypeRequestDTO)) {
-                message = eggTypeService.selectEggTypeById(eggTypeRequestDTO);
+            if (null != categoryRequestDTO.getId() && checkShopAndCompanyExist(categoryRequestDTO)) {
+                message = categoryService.selectEggTypeById(categoryRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -196,13 +196,13 @@ public class BaseInfoController {
      **/
     @ApiOperation(value = "查询鸡蛋列表(带分页模糊查询)")
     @RequestMapping(value = "/variety/listeggtype", method = RequestMethod.POST)
-    public Message SelectEggTypeList(@RequestBody EggTypeRequestDTO eggTypeRequestDTO) {
+    public Message SelectEggTypeList(@RequestBody CategoryRequestDTO categoryRequestDTO) {
         Message message = null;
         /** 从session中获取shopId和enterpriseId,暂时写死 */
-        eggTypeRequestDTO.setShopId("1");
-        eggTypeRequestDTO.setCompanyId("1");
+        categoryRequestDTO.setShopId("1");
+        categoryRequestDTO.setCompanyId("1");
         try {
-            message = eggTypeService.listEggType(eggTypeRequestDTO);
+            message = categoryService.listEggType(categoryRequestDTO);
             return message;
         } catch (Exception e) {
             message = new Message();
@@ -216,22 +216,22 @@ public class BaseInfoController {
     /**
      * 新增方案
      *
-     * @Param [standardDataRequestDTO]
+     * @Param [specificationProgramRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
     @ApiOperation(value = "新增方案")
     @RequestMapping(value = "/standard/addstandarddata", method = RequestMethod.POST)
-    public Message addStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+    public Message addStandard(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
         /** 从session中获取shopId和companyId,暂时写死 */
-        standardDataRequestDTO.setShopId("1");
-        standardDataRequestDTO.setCompanyId("1");
-        standardDataRequestDTO.setCreator("laowang");
-        standardDataRequestDTO.setModifier("laowang");
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
+        specificationProgramRequestDTO.setCreator("laowang");
+        specificationProgramRequestDTO.setModifier("laowang");
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getName()
-                    && checkShopAndCompanyExist(standardDataRequestDTO)) {
-                message = standardDataService.addStandardData(standardDataRequestDTO);
+            if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getName()
+                    && checkShopAndCompanyExist(specificationProgramRequestDTO)) {
+                message = specificationProgramService.addStandardData(specificationProgramRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -249,12 +249,12 @@ public class BaseInfoController {
     /**
      * 修改方案名
      *
-     * @param standardDataRequestDTO
+     * @param specificationProgramRequestDTO
      * @return
      */
     @ApiOperation(value = "修改方案名")
     @RequestMapping(value = "/standard/updatestandard", method = RequestMethod.POST)
-    public Message updateStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+    public Message updateStandard(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
 
         return message;
@@ -263,16 +263,16 @@ public class BaseInfoController {
     /**
      * 根据品种id列出所有方案及其细节
      *
-     * @Param [standardDataRequestDTO]
+     * @Param [specificationProgramRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
     @ApiOperation(value = "根据品种id列出所有方案及其细节")
     @RequestMapping(value = "/standard/liststandardddataanddetl", method = RequestMethod.POST)
-    public Message listStandard(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+    public Message listStandard(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO) {
-                message = standardDataService.listDataAndDetl(standardDataRequestDTO);
+            if (null != specificationProgramRequestDTO) {
+                message = specificationProgramService.listDataAndDetl(specificationProgramRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -289,21 +289,21 @@ public class BaseInfoController {
     /**
      * 添加一条方案细节
      *
-     * @Param [standardDetlRequestDTO]
+     * @Param [specificationRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
     @ApiOperation(value = "添加一条方案细节")
     @RequestMapping(value = "/standard/addstandarddetl", method = RequestMethod.POST)
-    public Message addStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message addStandardDetl(@RequestBody SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         /** 从session中获取shopId和companyId,暂时写死 */
-        standardDetlRequestDTO.setShopId("1");
-        standardDetlRequestDTO.setCompanyId("1");
-        standardDetlRequestDTO.setCreator("laowang");
-        standardDetlRequestDTO.setModifier("laowang");
+        specificationRequestDTO.setShopId("1");
+        specificationRequestDTO.setCompanyId("1");
+        specificationRequestDTO.setCreator("laowang");
+        specificationRequestDTO.setModifier("laowang");
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
-                message = standardDetlService.addStandardDetl(standardDetlRequestDTO);
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()) {
+                message = specificationService.addStandardDetl(specificationRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -321,16 +321,16 @@ public class BaseInfoController {
     /**
      * 根据方案id列出其下方案细节
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @ApiOperation(value = "根据方案id列出其下方案细节")
     @RequestMapping(value = "/standard/liststandarddetel", method = RequestMethod.POST)
-    public Message listStandardDetel(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message listStandardDetel(@RequestBody SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getProgramId()) {
-                message = standardDetlService.listStandardDetlByStandDetlCode(standardDetlRequestDTO);
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()) {
+                message = specificationService.listStandardDetlByProgramId(specificationRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -347,21 +347,21 @@ public class BaseInfoController {
     /**
      * 更新方案细节
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @ApiOperation(value = "更新方案细节")
     @RequestMapping(value = "/standard/updatestandarddetl", method = RequestMethod.POST)
-    public Message updateStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message updateStandardDetl(@RequestBody SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         /** 从session中获取shopId和companyId,暂时写死 */
-        standardDetlRequestDTO.setShopId("1");
-        standardDetlRequestDTO.setCompanyId("1");
-        standardDetlRequestDTO.setModifier("laowang222");
-        standardDetlRequestDTO.setModifytime(new Date());
+        specificationRequestDTO.setShopId("1");
+        specificationRequestDTO.setCompanyId("1");
+        specificationRequestDTO.setModifier("laowang222");
+        specificationRequestDTO.setModifytime(new Date());
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getId()) {
-                message = standardDetlService.updateStandardDetl(standardDetlRequestDTO);
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getId()) {
+                message = specificationService.updateStandardDetl(specificationRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -380,16 +380,16 @@ public class BaseInfoController {
     /**
      * 批量删除方案细节(单个删除也走批量的流程)
      *
-     * @param standardDetlRequestDTO
+     * @param specificationRequestDTO
      * @return
      */
     @ApiOperation(value = "批量删除方案细节(单个删除也走批量的流程)")
     @RequestMapping(value = "/standard/batchdeletestandarddetl", method = RequestMethod.POST)
-    public Message batchDeleteStandardDetl(@RequestBody StandardDetlRequestDTO standardDetlRequestDTO) {
+    public Message batchDeleteStandardDetl(@RequestBody SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDetlRequestDTO && null != standardDetlRequestDTO.getIds()) {
-                message = standardDetlService.batchDeleteStandardDetl(standardDetlRequestDTO);
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getIds()) {
+                message = specificationService.batchDeleteStandardDetl(specificationRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -406,16 +406,16 @@ public class BaseInfoController {
     /**
      * 根据方案id删除方案及其方案细节
      *
-     * @param standardDataRequestDTO
+     * @param specificationProgramRequestDTO
      * @return
      */
     @ApiOperation(value = "根据方案id删除方案及其方案细节")
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
-    public Message deleteStandardData(@RequestBody StandardDataRequestDTO standardDataRequestDTO) {
+    public Message deleteStandardData(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         try {
-            if (null != standardDataRequestDTO && null != standardDataRequestDTO.getId()) {
-                message = standardDataService.deleteStandardDataById(standardDataRequestDTO);
+            if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getId()) {
+                message = specificationProgramService.deleteStandardDataById(specificationProgramRequestDTO);
             } else {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -537,21 +537,21 @@ public class BaseInfoController {
     /**
      * 检验shopId和companyId是否为空
      *
-     * @param eggTypeRequestDTO 鸡蛋类型Request
+     * @param categoryRequestDTO 鸡蛋类型Request
      * @return
      */
-    private boolean checkShopAndCompanyExist(EggTypeRequestDTO eggTypeRequestDTO) {
-        return (null != eggTypeRequestDTO.getShopId() && null != eggTypeRequestDTO.getCompanyId()) ? true : false;
+    private boolean checkShopAndCompanyExist(CategoryRequestDTO categoryRequestDTO) {
+        return (null != categoryRequestDTO.getShopId() && null != categoryRequestDTO.getCompanyId()) ? true : false;
     }
 
     /**
      * 检验shopId和companyId是否为空
      *
-     * @param standardDataRequestDTO 方案信息Request
+     * @param specificationProgramRequestDTO 方案信息Request
      * @return
      */
-    private boolean checkShopAndCompanyExist(StandardDataRequestDTO standardDataRequestDTO) {
-        return (null != standardDataRequestDTO.getShopId() && null != standardDataRequestDTO.getCompanyId()) ? true : false;
+    private boolean checkShopAndCompanyExist(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+        return (null != specificationProgramRequestDTO.getShopId() && null != specificationProgramRequestDTO.getCompanyId()) ? true : false;
     }
 
 }

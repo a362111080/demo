@@ -8,14 +8,14 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @ClassName EggType
+ * @ClassName Category
  * @Description 鸡蛋类型
  * @Author lyming
  * @Date 2018/11/1 16:22
  **/
 @Data
 @TableName(value = "bd_category")
-public class EggType {
+public class Category {
 
     /**
      * 主键id
