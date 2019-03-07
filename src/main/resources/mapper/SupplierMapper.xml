@@ -32,7 +32,11 @@
         </if>
     </update>
     <select id="GetSupplierList" parameterType="Supplier" resultType="com.zero.egg.model.Supplier">
-    		select * from bd_supplier k <where>
+    		select  k.*,lv1.id as city1,lv2.id as city2 from bd_supplier k
+            left join bd_city   lv3  on lv3.id=k.city_id
+            left join bd_city   lv2  on lv2.id=lv3.parent_id
+            left join bd_city   lv1  on lv1.id=lv2.parent_id
+        <where>
             <if test="id != null and id !=''">
                 k.id=#{id,jdbcType=VARCHAR}
             </if>

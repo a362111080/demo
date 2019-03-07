@@ -102,5 +102,15 @@ public class Supplier {
 		 * 省市区id
 		 */
 		private String cityid;
+
+		/**
+		 * 省市区一级id
+		 */
+		private String city1;
+		/**
+		 * 省市区二级id
+		 */
+		private String city2;
+
 }
 
