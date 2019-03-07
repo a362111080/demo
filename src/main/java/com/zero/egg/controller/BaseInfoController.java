@@ -253,11 +253,28 @@ public class BaseInfoController {
      * @return
      */
     @ApiOperation(value = "修改方案名")
-    @RequestMapping(value = "/standard/updatestandard", method = RequestMethod.POST)
+    @RequestMapping(value = "/standard/updatespecificationprogram", method = RequestMethod.POST)
     public Message updateStandard(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
-
-        return message;
+        /** 从session中获取shopId和companyId,暂时写死 */
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
+        specificationProgramRequestDTO.setModifier("laowang3333");
+        specificationProgramRequestDTO.setModifytime(new Date());
+        try {
+            if (null != specificationProgramRequestDTO) {
+                message = specificationProgramService.updateSpecificationProgram(specificationProgramRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
     }
 
     /**
@@ -413,6 +430,9 @@ public class BaseInfoController {
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
     public Message deleteStandardData(@RequestBody SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
+        /** 从session中获取shopId和companyId,暂时写死 */
+        specificationProgramRequestDTO.setShopId("1");
+        specificationProgramRequestDTO.setCompanyId("1");
         try {
             if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getId()) {
                 message = specificationProgramService.deleteStandardDataById(specificationProgramRequestDTO);

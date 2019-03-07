@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.SpecificationProgramMapper;
 import com.zero.egg.model.Specification;
@@ -60,7 +61,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             }
             return message;
         } catch (Exception e) {
-            log.info("addStandardData error", e);
+            log.info("addStandardData error", e.toString());
             throw new ServiceException("addStandardData error");
         }
     }
@@ -75,18 +76,19 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
     @Transactional
     public Message deleteStandardDataById(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
+        SpecificationProgram specificationProgram = new SpecificationProgram();
         try {
-            /**
-             * 1.先根据strStandId删除所有所属方案细节
-             * 2.根据id删除方案
-             */
-            specificationMapper.delete(new QueryWrapper<Specification>().eq("str_stand_id", specificationProgramRequestDTO.getId()));
-            specificationProgramMapper.delete(new QueryWrapper<SpecificationProgram>().eq("id", specificationProgramRequestDTO.getId()));
+            TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
+            specificationProgram.setDr(1);
+            specificationProgramMapper.update(specificationProgram, new UpdateWrapper<SpecificationProgram>()
+                    .eq("id", specificationProgram.getId())
+                    .eq("shop_id", specificationProgram.getShopId())
+                    .eq("company_id", specificationProgram.getCompanyId()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
         } catch (Exception e) {
-            log.info("deleteStandardDataById error", e);
+            log.info("deleteStandardDataById error", e.toString());
             throw new ServiceException("deleteStandardDataById error");
         }
     }
@@ -141,10 +143,47 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
         } catch (Exception e) {
-            log.info("listDataAndDetl error", e);
+            log.info("listDataAndDetl error", e.toString());
             throw new ServiceException("listDataAndDetl error");
         }
     }
+
+    @Override
+    public Message updateSpecificationProgram(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException {
+        Message message = new Message();
+        SpecificationProgram specificationProgram = new SpecificationProgram();
+        /**
+         * 查重结果
+         */
+        List<SpecificationProgram> resultList = null;
+        try {
+            TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
+            /**
+             * 如果前端传来的新的方案名不为null或者空字符串,则判断新的方案名是否重复,若不重复,则更新
+             */
+            if (null != specificationProgramRequestDTO.getName() && !"".equals(specificationProgramRequestDTO.getName())) {
+                /**
+                 * 查重
+                 */
+                if (checkByName(resultList, specificationProgram) > 0) {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                } else {
+                    specificationProgramMapper.updateById(specificationProgram);
+                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                }
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+            }
+        } catch (Exception e) {
+            log.info("updateSpecificationProgram error", e.toString());
+            throw new ServiceException("updateSpecificationProgram error");
+        }
+        return message;
+    }
+
 
     /**
      * 同个企业同个店铺同一种类型只能存在独一无二的方案名
