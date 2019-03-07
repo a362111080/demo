@@ -94,4 +94,8 @@ public class Customer {
      * 修改时间
      */
     private Date modifytime;
+    /**
+     * 省市区id
+     */
+    private String cityid;
 }

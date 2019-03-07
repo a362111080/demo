@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.CustomerMapper">
-    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime)
+    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id)
     values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('CT',LPAD((SELECT COUNT(1)+1 from bd_customer),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
-           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime})</insert>
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid})</insert>
     <update id="UpdateCustomer" parameterType="Customer">update bd_customer
     <set>
         <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
@@ -16,6 +16,7 @@
         <if test="status!= null and status !=''">status= #{status,jdbcType=VARCHAR},</if>
         <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
         <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+        <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
     </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
 
     <update id="DeleteCustomer" parameterType="java.util.List">

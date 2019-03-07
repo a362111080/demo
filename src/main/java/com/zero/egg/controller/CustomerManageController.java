@@ -44,6 +44,7 @@ public class CustomerManageController {
             model.setModifier("老陈");
             model.setModifytime(new Date());
             model.setStatus("正常");
+            model.setCityid("421022");
             int strval=CustomerSv.AddCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
