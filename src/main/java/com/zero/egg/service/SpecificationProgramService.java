@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 
 /**
  * 方案Service
@@ -35,4 +36,12 @@ public interface SpecificationProgramService {
      * @Return com.zero.egg.tool.Message
      **/
     public Message listDataAndDetl(SpecificationProgramRequestDTO specificationProgramRequestDTO);
+
+    /**
+     * 编辑方案(方案名)
+     * @param specificationProgramRequestDTO
+     * @return
+     * @throws ServiceException
+     */
+    public Message updateSpecificationProgram(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException;
 }

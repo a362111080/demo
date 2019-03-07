@@ -1,8 +1,10 @@
 package com.zero.egg.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.SupplierRequestDTO;
 
 public interface SupplierMapper {
 
@@ -11,4 +13,6 @@ public interface SupplierMapper {
 	int UpdateSupplier(Supplier model);
 
 	List<Supplier> GetSupplierList(Supplier model);
+
+	int DeleteSupplier(List<String> ids);
 }

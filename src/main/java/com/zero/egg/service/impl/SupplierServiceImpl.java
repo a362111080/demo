@@ -2,6 +2,7 @@ package com.zero.egg.service.impl;
 
 import java.util.List;
 
+import com.zero.egg.requestDTO.SupplierRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,5 +38,10 @@ public class SupplierServiceImpl implements SupplierService {
 	public List<Supplier> GetSupplierList(Supplier model) {
 		return  mapper.GetSupplierList(model);
 	}
+
+    @Override
+    public int DeleteSupplier(SupplierRequestDTO supplier) {
+        return mapper.DeleteSupplier(supplier.getIds());
+    }
 
 }

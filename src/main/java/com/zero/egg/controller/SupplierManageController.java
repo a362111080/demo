@@ -2,7 +2,7 @@ package com.zero.egg.controller;
 
 import java.util.Date;
 import java.util.List;
-
+import com.zero.egg.requestDTO.SupplierRequestDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -42,6 +42,7 @@ public class SupplierManageController {
 				 	model.setModifier("老陈");
 				 	model.setModifytime(new Date());
 				 	model.setStatus("正常");
+				 	model.setCityid("421022");
 				    int strval=supplierService.AddSupplier(model);
 		        	if (strval>0) {
 		        		 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -87,7 +88,6 @@ public class SupplierManageController {
 	        	{  
 	        		  message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 	                  message.setMessage(UtilConstants.ResponseMsg.FAILED);
-	                 
 	        	}	
 	        	return message;
 	            
@@ -116,6 +116,34 @@ public class SupplierManageController {
 		  ms.setMessage(ResponseMsg.SUCCESS);
 	      return  ms;
 	 }
+
+	/**
+	 * @Description 批量删除供应商
+	 * @Param [SupplierRequestDTO]
+	 * @Return java.lang.String
+	 **/
+	@ApiOperation(value = "批量删除供应商")
+	@RequestMapping(value = "/delsupplier", method = RequestMethod.POST)
+	public Message batchDeleteEggType(@RequestBody SupplierRequestDTO supplier) {
+		Message message = new Message();
+		try {
+			if (null != supplier.getIds()) {
+				supplierService.DeleteSupplier(supplier);
+				message.setState(ResponseCode.SUCCESS_HEAD);
+				message.setMessage(ResponseMsg.SUCCESS);
+			} else {
+				message.setState(ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(ResponseMsg.ATLEAST_ONE);
+			}
+			return message;
+		} catch (Exception e) {
+			message.setState(ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(ResponseMsg.FAILED);
+			return message;
+		}
+	}
+
+
 }
 
 
