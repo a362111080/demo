@@ -10,6 +10,15 @@ import lombok.Data;
  */
 @Data
 public class BaseResponse<T> {
+	
+	public BaseResponse(int code, String msg){
+		this.code = code;
+		this.msg = msg;
+	}
+	
+	public BaseResponse(){
+		
+	}
 
 	/**
 	 * 返回状态  

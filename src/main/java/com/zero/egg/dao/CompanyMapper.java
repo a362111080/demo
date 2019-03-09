@@ -1,8 +1,6 @@
 package com.zero.egg.dao;
 
 import com.zero.egg.model.Company;
-
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,9 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-06
+ * @since 2019-03-09
  */
-
 public interface CompanyMapper extends BaseMapper<Company> {
 
 }

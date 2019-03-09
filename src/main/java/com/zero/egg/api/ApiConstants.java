@@ -1,6 +1,6 @@
 package com.zero.egg.api;
 
-public class Apiconstants {
+public class ApiConstants {
 	
 	 /**
      * 返回状态常量
@@ -99,5 +99,14 @@ public class Apiconstants {
          * 参数错误
          */
         public static final String PARAM_ERROR = "参数错误";
+        /**
+         *空数据
+         */
+        public static final String NULL_DATA = "空数据";
+        
+        /**
+         * 业务错误
+         */
+        public static final String EXECUTE_ERROR="业务错误";
     }
 }

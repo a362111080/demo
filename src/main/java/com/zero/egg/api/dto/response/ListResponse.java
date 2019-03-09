@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.zero.egg.api.Apiconstants;
+import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 
 import lombok.Data;
@@ -16,7 +16,7 @@ public class ListResponse<T> extends BaseResponse<ListResponse.Body<T>> {
 	private static final long serialVersionUID = 1L;
 
 	public ListResponse(){
-        this.code = Apiconstants.ResponseCode.SUCCESS;
+        this.code = ApiConstants.ResponseCode.SUCCESS;
         this.data = new ListResponse.Body<>();
     }
 
@@ -32,7 +32,7 @@ public class ListResponse<T> extends BaseResponse<ListResponse.Body<T>> {
 
     public int getCode(){
         if((this.data.getData() == null || this.data.getData().size() == 0) && this.code == 200){
-            this.code = Apiconstants.ResponseCode.NULL_DATA;
+            this.code = ApiConstants.ResponseCode.NULL_DATA;
         }
         return this.code;
     }

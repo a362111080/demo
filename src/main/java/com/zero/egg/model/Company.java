@@ -3,9 +3,6 @@ package com.zero.egg.model;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -20,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-06
+ * @since 2019-03-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -50,15 +47,13 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "创建人")
     private String creator;
 
-    @ApiModelProperty(value = "创建时间",example="2018-09-00 00:00:00")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "创建时间")
     private LocalDateTime createtime;
 
     @ApiModelProperty(value = "更新人")
     private String modifier;
 
-    @ApiModelProperty(value = "更新时间",example="2018-09-00 00:00:00")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间")
     private LocalDateTime modifytime;
 
     @ApiModelProperty(value = "删除标识")

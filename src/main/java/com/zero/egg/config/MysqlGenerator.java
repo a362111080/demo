@@ -123,7 +123,6 @@ public class MysqlGenerator {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setSuperControllerClass("com.zero.egg.controller.BaseInfoController");
         strategy.setInclude(scanner("表名"));
         //strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);

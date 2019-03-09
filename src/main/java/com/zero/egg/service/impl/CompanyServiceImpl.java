@@ -1,11 +1,10 @@
 package com.zero.egg.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zero.egg.dao.CompanyMapper;
 import com.zero.egg.model.Company;
+import com.zero.egg.dao.CompanyMapper;
 import com.zero.egg.service.ICompanyService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -13,11 +12,9 @@ import com.zero.egg.service.ICompanyService;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-06
+ * @since 2019-03-09
  */
 @Service
 public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> implements ICompanyService {
 
-	
-	
 }
