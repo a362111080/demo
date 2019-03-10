@@ -54,6 +54,7 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.0.3</version>
         </dependency>
+        
         <!-- velocity 模板引擎, 默认 -->
 		<dependency>
 		    <groupId>org.apache.velocity</groupId>
@@ -72,8 +73,9 @@
         <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			
 		</dependency>
+		
+		
         <!-- reflectasm -->
         <dependency>
             <groupId>com.esotericsoftware</groupId>

@@ -3,6 +3,9 @@ package com.zero.egg.model;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -10,6 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * <p>
@@ -46,14 +50,16 @@ public class Company implements Serializable {
 
     @ApiModelProperty(value = "创建人")
     private String creator;
-
+   
     @ApiModelProperty(value = "创建时间")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createtime;
 
     @ApiModelProperty(value = "更新人")
     private String modifier;
-
+   
     @ApiModelProperty(value = "更新时间")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifytime;
 
     @ApiModelProperty(value = "删除标识")

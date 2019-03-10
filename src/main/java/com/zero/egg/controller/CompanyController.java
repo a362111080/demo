@@ -67,13 +67,13 @@ public class CompanyController {
 	}
 	
 	@ApiOperation(value="根据Id查询企业")
-	@RequestMapping(value="/get.do",method=RequestMethod.POST)
+	@RequestMapping(value="/get.data",method=RequestMethod.POST)
 	public BaseResponse<Object> getById(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Company company = iCompanyService.getById(id);
 		if (company != null) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
-			response.setMsg("添加成功");
+			response.setMsg("查询成功");
 			response.setData(company);
 		}else {
 			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
@@ -89,9 +89,9 @@ public class CompanyController {
 		company.setId(UuidUtil.get32UUID());
 		company.setCreatetime(LocalDateTime.now());
 		company.setModifytime(LocalDateTime.now());
-		LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);
+		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);
 		company.setModifier(loginUser.getStrusercode());
-		company.setCreator(loginUser.getStrusercode());
+		company.setCreator(loginUser.getStrusercode());*/
 		company.setDr(false);
 		if (iCompanyService.save(company)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
