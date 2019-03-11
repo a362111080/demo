@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
-import com.zero.egg.enums.CompanyEnums;
-import com.zero.egg.model.Company;
-import com.zero.egg.service.ICompanyService;
+import com.zero.egg.enums.CompanyUserEnums;
+import com.zero.egg.model.CompanyUser;
+import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UuidUtil;
 
@@ -36,92 +36,96 @@ import io.swagger.annotations.ApiParam;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-09
+ * @since 2019-03-11
  */
 @RestController
-@Api(value="企业管理")
-@RequestMapping("/company")
-public class CompanyController {
+@Api(value="企业用户管理")
+@RequestMapping("/company-user")
+public class CompanyUserController {
 
 	@Autowired
-	private ICompanyService iCompanyService;
+	private ICompanyUserService iCompanyUserService;
 	
-	@ApiOperation(value="查询企业")
+	@ApiOperation(value="分页查询企业用户")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
-	public ListResponse<Company> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
+	public ListResponse<CompanyUser> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
 			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="company",value="查询字段：关键词（名称 、编号）、状态") Company company) {
-		ListResponse<Company> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Page<Company> page = new Page<>();
+			@RequestBody @ApiParam(required=false,name="companyUser",value="查询字段：关键词（名称 、编号）、状态") CompanyUser companyUser) {
+		ListResponse<CompanyUser> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Page<CompanyUser> page = new Page<>();
 		page.setPages(pageNum);
 		page.setSize(pageSize);
-		QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
-		if (company != null) {
-			queryWrapper.like(StringUtils.isNotBlank(company.getName()),"name", company.getName())
-			.like(StringUtils.isNotBlank(company.getCode()),"code", company.getCode())
-			.eq(StringUtils.isNotBlank(company.getStatus()), "status", company.getStatus());
+		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<>();
+		if (companyUser != null) {
+			queryWrapper.like(StringUtils.isNotBlank(companyUser.getName()),"name", companyUser.getName())
+			.like(StringUtils.isNotBlank(companyUser.getCode()),"code", companyUser.getCode())
+			.eq(StringUtils.isNotBlank(companyUser.getStatus()), "status", companyUser.getStatus());
 		}
-		IPage<Company> list = iCompanyService.page(page, queryWrapper);
+		IPage<CompanyUser> list = iCompanyUserService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
 		return response;
 		
 	}
 	
-	@ApiOperation(value="根据Id查询企业")
+	@ApiOperation(value="根据Id查询企业用户")
 	@RequestMapping(value="/get.data",method=RequestMethod.POST)
 	public BaseResponse<Object> getById(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Company company = iCompanyService.getById(id);
-		if (company != null) {
+		CompanyUser companyUser = iCompanyUserService.getById(id);
+		if (companyUser != null) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("查询成功");
-			response.setData(company);
+			response.setData(companyUser);
 		}else {
 			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="新增企业")
+	@ApiOperation(value="根据企业id查询企业用户")
+	@RequestMapping(value="/get-company.data",method=RequestMethod.POST)
+	public BaseResponse<Object> getByCompanyId(@RequestParam @ApiParam(required=true,name="companyId",value="企业id") String companyId) {
+		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<CompanyUser>();
+		queryWrapper.eq("company_id", companyId);
+		List<CompanyUser> companyUserList = iCompanyUserService.list(queryWrapper);
+		if (companyUserList != null) {
+			response.setCode(ApiConstants.ResponseCode.SUCCESS);
+			response.setMsg("查询成功");
+			response.setData(companyUserList);
+		}else {
+			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
+		}
+		return response;
+	}
+	
+	@ApiOperation(value="新增企业用户")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
-	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="company",value="企业信息:编号，名称，电话") Company company
+	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="companyUser",value="企业信息:编号，名称，电话，企业主键") CompanyUser companyUser
 			,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		company.setId(UuidUtil.get32UUID());
-		company.setCreatetime(LocalDateTime.now());
-		company.setModifytime(LocalDateTime.now());
-		company.setStatus(CompanyEnums.Status.Normal.index().toString());
+		companyUser.setId(UuidUtil.get32UUID());
+		companyUser.setCreatetime(LocalDateTime.now());
+		companyUser.setModifytime(LocalDateTime.now());
+		companyUser.setStatus(CompanyUserEnums.Status.Normal.index().toString());
+		companyUser.setPassword("888888");
 		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
-		company.setModifier("1");
-		company.setCreator("1");
-		company.setDr(false);
-		if (iCompanyService.save(company)) {
+		companyUser.setModifier("1");
+		companyUser.setCreator("1");
+		companyUser.setDr(false);
+		if (iCompanyUserService.save(companyUser)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("添加成功");
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="根据id修改企业信息")
+	@ApiOperation(value="根据id修改企业用户信息")
 	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
-	public BaseResponse<Object> edit(@RequestBody  @ApiParam(required=true,name="company",value="企业信息：编号，名称，电话") Company company,HttpSession session) {
+	public BaseResponse<Object> edit(@RequestBody  @ApiParam(required=true,name="companyUser",value="企业信息：编号，名称，电话，企业主键") CompanyUser companyUser,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		if (iCompanyService.updateById(company)) {
-			response.setCode(ApiConstants.ResponseCode.SUCCESS);
-			response.setMsg("修改成功");
-		}
-		return response;
-	}
-	
-	@ApiOperation(value="停用企业")
-	@RequestMapping(value="/stopcompany.do",method=RequestMethod.POST)
-	public BaseResponse<Object> edit(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Company company = new Company();
-		company.setStatus(CompanyEnums.Status.Disable.index().toString());
-		company.setId(id);
-		if (iCompanyService.updateById(company)) {
+		if (iCompanyUserService.updateById(companyUser)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
 		}
@@ -130,24 +134,25 @@ public class CompanyController {
 	
 	
 	
-	@ApiOperation(value="根据id删除企业信息")
+	
+	@ApiOperation(value="根据id删除企业用户信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
 	public BaseResponse<Object> del(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		if (iCompanyService.removeById(id)) {
+		if (iCompanyUserService.removeById(id)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="批量删除企业信息")
+	@ApiOperation(value="批量删除企业用户信息")
 	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
 	public BaseResponse<Object> batchDel(@RequestParam @ApiParam(required=true,name="ids",value="企业ids,逗号拼接") String ids) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		List<String> idsList = StringTool.splitToList(ids, ",");
 		if (idsList !=null) {
-			if (iCompanyService.removeByIds(idsList)) {
+			if (iCompanyUserService.removeByIds(idsList)) {
 				response.setCode(ApiConstants.ResponseCode.SUCCESS);
 				response.setMsg("删除成功");
 			}
@@ -157,7 +162,4 @@ public class CompanyController {
 		
 		return response;
 	}
-	
-	
-	
 }
