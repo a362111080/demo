@@ -1,7 +1,7 @@
 package com.zero.egg.enums;
 
 
-public class CompanyEnums {
+public class ShopEnums {
 	
 	public enum Status {
 

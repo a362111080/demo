@@ -2,6 +2,7 @@ package com.zero.egg.controller;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -32,7 +33,7 @@ import io.swagger.annotations.ApiParam;
 
 /**
  * <p>
- *  前端控制器
+ *  企业控制器
  * </p>
  *
  * @author Hhaifeng
@@ -56,6 +57,7 @@ public class CompanyController {
 		page.setPages(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("dr", false);//查询未删除信息
 		if (company != null) {
 			queryWrapper.like(StringUtils.isNotBlank(company.getName()),"name", company.getName())
 			.like(StringUtils.isNotBlank(company.getCode()),"code", company.getCode())
@@ -134,7 +136,10 @@ public class CompanyController {
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
 	public BaseResponse<Object> del(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		if (iCompanyService.removeById(id)) {
+		Company company = new Company();
+		company.setId(id);
+		company.setDr(true);
+		if (iCompanyService.updateById(company)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
 		}
@@ -147,7 +152,14 @@ public class CompanyController {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		List<String> idsList = StringTool.splitToList(ids, ",");
 		if (idsList !=null) {
-			if (iCompanyService.removeByIds(idsList)) {
+			List<Company> companyList = new ArrayList<>();
+			for (String id : idsList) {
+				Company company = new Company();
+				company.setId(id);
+				company.setDr(true);
+				companyList.add(company);
+			}
+			if (iCompanyService.updateBatchById(companyList)) {//逻辑删除
 				response.setCode(ApiConstants.ResponseCode.SUCCESS);
 				response.setMsg("删除成功");
 			}

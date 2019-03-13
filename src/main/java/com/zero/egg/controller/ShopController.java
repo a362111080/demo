@@ -22,8 +22,9 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.enums.CompanyUserEnums;
-import com.zero.egg.model.CompanyUser;
-import com.zero.egg.service.ICompanyUserService;
+import com.zero.egg.enums.ShopEnums;
+import com.zero.egg.model.Shop;
+import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UuidUtil;
 
@@ -33,65 +34,66 @@ import io.swagger.annotations.ApiParam;
 
 /**
  * <p>
- *  企业用户控制器
+ *  前端控制器
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-11
+ * @since 2019-03-13
  */
 @RestController
-@Api(value="企业用户管理")
-@RequestMapping("/company-user")
-public class CompanyUserController {
-
-	@Autowired
-	private ICompanyUserService iCompanyUserService;
+@Api(value="店铺管理")
+@RequestMapping("/shop")
+public class ShopController {
 	
-	@ApiOperation(value="分页查询企业用户")
+	
+	@Autowired
+	private IShopService shopService;
+	
+	@ApiOperation(value="分页查询店铺")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
-	public ListResponse<CompanyUser> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
+	public ListResponse<Shop> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
 			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="companyUser",value="查询字段：关键词（名称 、编号）、状态") CompanyUser companyUser) {
-		ListResponse<CompanyUser> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Page<CompanyUser> page = new Page<>();
+			@RequestBody @ApiParam(required=false,name="shop",value="查询字段：关键词（名称 、编号）、状态") Shop shop) {
+		ListResponse<Shop> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Page<Shop> page = new Page<>();
 		page.setPages(pageNum);
 		page.setSize(pageSize);
-		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<>();
+		QueryWrapper<Shop> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
-		if (companyUser != null) {
-			queryWrapper.like(StringUtils.isNotBlank(companyUser.getName()),"name", companyUser.getName())
-			.like(StringUtils.isNotBlank(companyUser.getCode()),"code", companyUser.getCode())
-			.eq(StringUtils.isNotBlank(companyUser.getStatus()), "status", companyUser.getStatus());
+		if (shop != null) {
+			queryWrapper.like(StringUtils.isNotBlank(shop.getName()),"name", shop.getName())
+			.like(StringUtils.isNotBlank(shop.getCode()),"code", shop.getCode())
+			.eq(StringUtils.isNotBlank(shop.getStatus()), "status", shop.getStatus());
 		}
-		IPage<CompanyUser> list = iCompanyUserService.page(page, queryWrapper);
+		IPage<Shop> list = shopService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
 		return response;
 		
 	}
 	
-	@ApiOperation(value="根据Id查询企业用户")
+	@ApiOperation(value="根据Id查询店铺")
 	@RequestMapping(value="/get.data",method=RequestMethod.POST)
-	public BaseResponse<Object> getById(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
+	public BaseResponse<Object> getById(@RequestParam @ApiParam(required=true,name="id",value="店铺id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		CompanyUser companyUser = iCompanyUserService.getById(id);
-		if (companyUser != null) {
+		Shop shop = shopService.getById(id);
+		if (shop != null) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("查询成功");
-			response.setData(companyUser);
+			response.setData(shop);
 		}else {
 			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="根据企业id查询企业用户")
+	@ApiOperation(value="根据企业id查询店铺")
 	@RequestMapping(value="/get-company.data",method=RequestMethod.POST)
 	public BaseResponse<Object> getByCompanyId(@RequestParam @ApiParam(required=true,name="companyId",value="企业id") String companyId) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<CompanyUser>();
+		QueryWrapper<Shop> queryWrapper = new QueryWrapper<Shop>();
 		queryWrapper.eq("company_id", companyId);
-		List<CompanyUser> companyUserList = iCompanyUserService.list(queryWrapper);
+		List<Shop> companyUserList = shopService.list(queryWrapper);
 		if (companyUserList != null) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("查询成功");
@@ -102,32 +104,45 @@ public class CompanyUserController {
 		return response;
 	}
 	
-	@ApiOperation(value="新增企业用户")
+	@ApiOperation(value="新增店铺")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
-	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="companyUser",value="企业信息:编号，名称，电话，企业主键") CompanyUser companyUser
+	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="shop",value="店铺信息:编号，名称，电话，企业主键") Shop shop
 			,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		companyUser.setId(UuidUtil.get32UUID());
-		companyUser.setCreatetime(LocalDateTime.now());
-		companyUser.setModifytime(LocalDateTime.now());
-		companyUser.setStatus(CompanyUserEnums.Status.Normal.index().toString());
-		companyUser.setPassword("888888");
+		shop.setId(UuidUtil.get32UUID());
+		shop.setCreatetime(LocalDateTime.now());
+		shop.setModifytime(LocalDateTime.now());
+		shop.setStatus(CompanyUserEnums.Status.Normal.index().toString());
 		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
-		companyUser.setModifier("1");
-		companyUser.setCreator("1");
-		companyUser.setDr(false);
-		if (iCompanyUserService.save(companyUser)) {//逻辑删除
+		shop.setModifier("1");
+		shop.setCreator("1");
+		shop.setDr(false);
+		if (shopService.save(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("添加成功");
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="根据id修改企业用户信息")
+	@ApiOperation(value="根据id修改店铺信息")
 	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
-	public BaseResponse<Object> edit(@RequestBody  @ApiParam(required=true,name="companyUser",value="企业信息：编号，名称，电话，企业主键") CompanyUser companyUser,HttpSession session) {
+	public BaseResponse<Object> edit(@RequestBody  @ApiParam(required=true,name="shop",value="店铺信息：编号，名称，电话，企业主键") Shop shop,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		if (iCompanyUserService.updateById(companyUser)) {
+		if (shopService.updateById(shop)) {
+			response.setCode(ApiConstants.ResponseCode.SUCCESS);
+			response.setMsg("修改成功");
+		}
+		return response;
+	}
+	
+	@ApiOperation(value="停用店铺")
+	@RequestMapping(value="/stopshop.do",method=RequestMethod.POST)
+	public BaseResponse<Object> edit(@RequestParam @ApiParam(required=true,name="id",value="店铺id") String id) {
+		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Shop shop = new Shop();
+		shop.setStatus(ShopEnums.Status.Disable.index().toString());
+		shop.setId(id);
+		if (shopService.updateById(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
 		}
@@ -135,36 +150,34 @@ public class CompanyUserController {
 	}
 	
 	
-	
-	
-	@ApiOperation(value="根据id删除企业用户信息")
+	@ApiOperation(value="根据id删除店铺信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
-	public BaseResponse<Object> del(@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
+	public BaseResponse<Object> del(@RequestParam @ApiParam(required=true,name="id",value="店铺id") String id) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		CompanyUser companyUser = new CompanyUser();
-		companyUser.setId(id);
-		companyUser.setDr(true);
-		if (iCompanyUserService.updateById(companyUser)) {
+		Shop shop = new Shop();
+		shop.setDr(true);
+		shop.setId(id);
+		if (shopService.updateById(shop)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
 		}
 		return response;
 	}
 	
-	@ApiOperation(value="批量删除企业用户信息")
+	@ApiOperation(value="批量删除店铺信息")
 	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
-	public BaseResponse<Object> batchDel(@RequestParam @ApiParam(required=true,name="ids",value="企业ids,逗号拼接") String ids) {
+	public BaseResponse<Object> batchDel(@RequestParam @ApiParam(required=true,name="ids",value="店铺ids,逗号拼接") String ids) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		List<String> idsList = StringTool.splitToList(ids, ",");
 		if (idsList !=null) {
-			List<CompanyUser> userList = new ArrayList<>();
+			List<Shop> shopList = new ArrayList<>();
 			for (String id : idsList) {
-				CompanyUser user = new CompanyUser();
-				user.setId(id);
-				user.setDr(true);
-				userList.add(user);
+				Shop shop = new Shop();
+				shop.setDr(true);
+				shop.setId(id);
+				shopList.add(shop);
 			}
-			if (iCompanyUserService.updateBatchById(userList)) {//逻辑删除
+			if (shopService.updateBatchById(shopList)) {//逻辑删除
 				response.setCode(ApiConstants.ResponseCode.SUCCESS);
 				response.setMsg("删除成功");
 			}
@@ -174,4 +187,5 @@ public class CompanyUserController {
 		
 		return response;
 	}
+
 }

@@ -5,7 +5,7 @@ public class CompanyUserEnums {
 	
 	public enum Status {
 
-		Normal(1,"正常"),Disable(2,"停用");
+		Normal(1,"正常"),Disable(-1,"停用");
 
 	    private Integer index;
 	    private String note;
