@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zero.egg.enums.CompanyEnums;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -65,5 +66,9 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
+    
+    public String getStatusName() {
+		return CompanyEnums.Status.note(Integer.parseInt(this.status));
+	}
 
 }

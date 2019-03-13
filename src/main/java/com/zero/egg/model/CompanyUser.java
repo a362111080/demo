@@ -1,6 +1,8 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zero.egg.enums.CompanyEnums;
+import com.zero.egg.enums.CompanyUserEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -65,5 +67,7 @@ public class CompanyUser implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
-
+    public String getStatusName() {
+		return CompanyUserEnums.Status.note(Integer.parseInt(this.status));
+	}
 }

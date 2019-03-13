@@ -91,6 +91,7 @@ public class CompanyUserController {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<CompanyUser>();
 		queryWrapper.eq("company_id", companyId);
+		queryWrapper.eq("dr", false);
 		List<CompanyUser> companyUserList = iCompanyUserService.list(queryWrapper);
 		if (companyUserList != null) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
