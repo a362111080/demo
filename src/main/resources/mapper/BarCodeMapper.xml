@@ -19,8 +19,8 @@
         </if>
     </update>
 
-    <select id="GetBarCodeList" parameterType="BarCode" resultType="com.zero.egg.model.BarCode">
-        select a.*,b.name,c.name,d.name,e.name from bd_barcode a
+    <select id="GetBarCodeList" parameterType="BarCode" resultType="com.zero.egg.responseDTO.BarCodeResponseDTO">
+        select a.*,b.name as shopName,c.name as companyName,d.name as supplierName,e.name as categoryName from bd_barcode a
         left join  bd_shop b on a.shop_id=b.id
         left join  bd_company c on a.company_id=c.id
         left join  bd_supplier d on a.supplier_id=d.id

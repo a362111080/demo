@@ -3,6 +3,7 @@ package com.zero.egg.service.impl;
 import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
+import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public List<BarCode> GetBarCodeList(BarCode model) {
+    public List<BarCodeResponseDTO> GetBarCodeList(BarCode model) {
         return  mapper.GetBarCodeList(model);
     }
 }

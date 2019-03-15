@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
+import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -95,8 +96,8 @@ public class BarCodeController {
     public Message GetBarCodeList(@RequestParam int pageNum, @RequestParam int pageSize, @RequestBody BarCode model) {
         Message ms = new Message();
         PageHelper.startPage(pageNum, pageSize);
-        List<BarCode> BarCode=bcService.GetBarCodeList(model);
-        PageInfo<BarCode> pageInfo = new PageInfo<>(BarCode);
+        List<BarCodeResponseDTO> BarCode=bcService.GetBarCodeList(model);
+        PageInfo<BarCodeResponseDTO> pageInfo = new PageInfo<>(BarCode);
         ms.setData(pageInfo);
         ms.setState(ResponseCode.SUCCESS_HEAD);
         ms.setMessage(ResponseMsg.SUCCESS);
