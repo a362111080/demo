@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.BarCodeMapper">
+    <insert id="AddBarCode" parameterType="BarCodeRequestDTO">insert into bd_barcode(id,shop_id,company_id,code,supplier_id,category_id,current_code,creator,createtime,modifier,modifytime,dr)
+    values(REPLACE(UUID(),'-',''),#{shopId},#{companyId},#{code},#{supplierId},#{categoryId},0,#{creator},#{createtime},#{modifier},#{modifytime},0)</insert>
+
+    <update id="DeleteBarCode" parameterType="java.util.List">
+        <if test="list!=null">
+            <foreach collection="list" item="id" index= "index" open="" close="" separator =";">
+                update bd_barcode
+                <set>
+                    dr=1
+                </set>
+                <where>
+                    id=#{id}
+                </where>
+            </foreach>
+        </if>
+    </update>
+
+    <select id="GetBarCodeList" parameterType="BarCode" resultType="com.zero.egg.model.BarCode">
+        select a.*,b.name,c.name,d.name,e.name from bd_barcode a
+        left join  bd_shop b on a.shop_id=b.id
+        left join  bd_company c on a.company_id=c.id
+        left join  bd_supplier d on a.supplier_id=d.id
+        left join  bd_category e on e.id=a.category_id
+        <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
+            </if>
+            <if test="supplierId != null and supplierId !=''">
+                and k.supplier_id=#{supplierId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !=''">
+                and d.status=#{status,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>
