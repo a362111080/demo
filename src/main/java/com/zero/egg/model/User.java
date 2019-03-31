@@ -41,6 +41,9 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "编码",required=false)
     private String code;
+    
+    @ApiModelProperty(value = "身份类型（1-PC端，2-Boss端，3-员工端，4-设备端）",required=false)
+    private Integer type;
 
     @ApiModelProperty(value = "姓名",required=false)
     private String name;
@@ -77,4 +80,7 @@ public class User implements Serializable {
 		return UserEnums.Status.note(Integer.parseInt(this.status));
 	}
 
+    public String getTypeName() {
+    	return UserEnums.Type.note(this.type);
+    }
 }

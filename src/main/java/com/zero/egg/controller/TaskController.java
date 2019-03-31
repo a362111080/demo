@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 
 import java.time.LocalDateTime;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +19,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.TaskProgram;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ITaskProgramService;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.UuidUtil;
@@ -50,7 +53,7 @@ public class TaskController {
 	@Autowired
 	private ITaskProgramService taskProgramService;
 	
-	
+	@LoginToken
 	@ApiOperation(value="查询卸货任务")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public ListResponse<Task> unloadList(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
@@ -75,21 +78,22 @@ public class TaskController {
 		
 	}
 	
-	
+	@LoginToken
 	@ApiOperation(value="新增卸货任务")
 	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
 	public BaseResponse<Object> unloadAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
 			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注") Task task
-			,HttpSession session) {
+			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		task.setId(UuidUtil.get32UUID());
 		task.setCreatetime(LocalDateTime.now());
 		task.setModifytime(LocalDateTime.now());
 		task.setStatus(TaskEnums.Status.Execute.index().toString());
 		task.setType(TaskEnums.Type.Unload.index().toString());
-		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
-		task.setModifier("1");
-		task.setCreator("1");
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		task.setModifier(loginUser.getId());
+		task.setCreator(loginUser.getId());
 		task.setDr(false);
 		if (taskService.save(task)) {
 			TaskProgram taskProgram = new TaskProgram();
@@ -105,10 +109,14 @@ public class TaskController {
 		return response;
 	}
 	
+	@LoginToken
 	@ApiOperation(value="更换卸货任务方案状态")
 	@PostMapping(value="/changeprogram.do")
-	public BaseResponse<Object> changeProgram(@RequestBody @ApiParam(required=true,name="taskProgram",value="任务主键、方案主键,状态（true-活动/false-不活动）") TaskProgram taskProgram) {
+	public BaseResponse<Object> changeProgram(HttpServletRequest request
+			,@RequestBody @ApiParam(required=true,name="taskProgram",value="任务主键、方案主键,状态（true-活动/false-不活动）") TaskProgram taskProgram) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (taskService.getById(taskProgram.getTaskId()) != null) {
 			UpdateWrapper<TaskProgram> updateWrapper = new UpdateWrapper<>();
 			updateWrapper.eq("task_id", taskProgram.getTaskId())

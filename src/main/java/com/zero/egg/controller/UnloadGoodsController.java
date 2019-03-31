@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sun.xml.bind.v2.TODO;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
@@ -48,7 +49,7 @@ public class UnloadGoodsController {
 	@Autowired
 	private IUnloadGoodsService unloadGoodsService;
 	
-	
+	@LoginToken
 	@ApiOperation(value="分页查询卸货商品")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public ListResponse<UnloadGoods> unloadList(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
@@ -71,7 +72,7 @@ public class UnloadGoodsController {
 		
 	}
 	
-	
+	@LoginToken
 	@ApiOperation(value="新增卸货")
 	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
 	public BaseResponse<Object> unloadAdd(@RequestParam @ApiParam(required=true,name="specificationId",value="规格主键") String specificationId,
