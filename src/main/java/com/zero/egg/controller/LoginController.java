@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
+import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.User;
 import com.zero.egg.service.ICompanyUserService;
@@ -23,6 +24,7 @@ import com.zero.egg.tool.TokenUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 
 @Api(value="系统基础功能")
@@ -38,10 +40,11 @@ public class LoginController {
 	@PassToken
     @ApiOperation(value="登录")
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public BaseResponse<Object> checklogin(@RequestParam String loginName,@RequestParam String login_pwd,HttpSession session ){
+    public BaseResponse<Object> checklogin(@RequestParam @ApiParam(required=true,name="loginName",value="登录名") String loginName
+    		,@RequestParam @ApiParam(required=true,name="loginPwd",value="登录密码") String loginPwd,HttpSession session ){
     	BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
         try {
-        	String pwd = MD5Utils.encode(login_pwd);
+        	String pwd = MD5Utils.encode(loginPwd);
         	QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         	userQueryWrapper.eq("name", loginName)
         	.eq("password", pwd);
@@ -51,6 +54,8 @@ public class LoginController {
                 String accessToken=TokenUtils.createJwtToken(user.getId());
                 Map<String, Object> map = new HashMap<>();
                 map.put("token", accessToken);
+                map.put("userType", 2);
+                map.put("userTypeName", "店铺员工");
                 map.put("user", user);
                 response.setData(map);
                 response.setCode(ApiConstants.ResponseCode.SUCCESS);
@@ -66,6 +71,8 @@ public class LoginController {
                     Map<String, Object> map = new HashMap<>();
                     map.put("token", accessToken);
                     map.put("user", companyUser);
+                    map.put("userType", 1);
+                    map.put("userTypeName", "企业员工");
                     response.setData(map);
                     response.setCode(ApiConstants.ResponseCode.SUCCESS);
                     response.setMsg("登录成功");
