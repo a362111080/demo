@@ -6,6 +6,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.Bill;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.StringTool;
 
@@ -44,7 +48,7 @@ public class BillController {
 	@Autowired
 	private IBillService billService;
 	
-	
+	@LoginToken
 	@ApiOperation(value="分页查询财务账单")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
 	public ListResponse<Bill> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
@@ -87,18 +91,23 @@ public class BillController {
 		return response;
 	}
 	
+	@LoginToken
 	@ApiOperation(value="批量修改账单状态(挂账/销账)")
 	@RequestMapping(value="/batchupdate.do",method=RequestMethod.POST)
-	public BaseResponse<Object> batchUpdateStatus(@RequestParam @ApiParam(required=true,name="ids",value="账单ids,逗号拼接") String ids
+	public BaseResponse<Object> batchUpdateStatus(HttpServletRequest request
+			,@RequestParam @ApiParam(required=true,name="ids",value="账单ids,逗号拼接") String ids
 			,@ApiParam(required=true,name="status",value="状态：1挂账，-1销账") @RequestParam String status) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		List<String> idsList = StringTool.splitToList(ids, ",");
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (idsList !=null) {
 			List<Bill> billList = new ArrayList<>();
 			for (String id : idsList) {
 				Bill bill = new Bill();
 				bill.setId(id);
 				bill.setStatus(status);
+				bill.setModifier(loginUser.getId());
+				bill.setModifytime(LocalDateTime.now());
 				billList.add(bill);
 			}
 			if (billService.updateBatchById(billList)) {//逻辑删除

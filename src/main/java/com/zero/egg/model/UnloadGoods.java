@@ -1,7 +1,7 @@
 package com.zero.egg.model;
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zero.egg.enums.UserEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -18,14 +18,14 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-13
+ * @since 2019-03-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("bd_user")
-@ApiModel(value="User对象", description="")
-public class User implements Serializable {
+@TableName("bd_unload_goods")
+@ApiModel(value="UnloadGoods对象", description="")
+public class UnloadGoods implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,26 +39,35 @@ public class User implements Serializable {
     @ApiModelProperty(value = "企业主键",required=false)
     private String companyId;
 
-    @ApiModelProperty(value = "编码",required=false)
-    private String code;
-    
-    @ApiModelProperty(value = "身份类型（1-PC端，2-Boss端，3-员工端，4-设备端）",required=false)
-    private Integer type;
+    @ApiModelProperty(value = "供应商主键",required=false)
+    private String supplierId;
 
-    @ApiModelProperty(value = "姓名",required=false)
-    private String name;
+    @ApiModelProperty(value = "方案主键",required=false)
+    private String programId;
 
-    @ApiModelProperty(value = "性别",required=false)
-    private Integer sex;
+    @ApiModelProperty(value = "任务主键",required=false)
+    private String taskId;
 
-    @ApiModelProperty(value = "联系方式",required=false)
-    private String phone;
+    @ApiModelProperty(value = "商品分类主键",required=false)
+    private String goodsCategoryId;
 
-    @ApiModelProperty(value = "密码",hidden=true)
-    private String password;
+    @ApiModelProperty(value = "商品编码",required=false)
+    private String goodsNo;
 
-    @ApiModelProperty(value = "状态",hidden=true)
-    private String status;
+    @ApiModelProperty(value = "标记",required=false)
+    private String marker;
+
+    @ApiModelProperty(value = "记重方式",required=false)
+    private String mode;
+
+    @ApiModelProperty(value = "重量",required=false)
+    private BigDecimal weight;
+
+    @ApiModelProperty(value = "是否预警",required=false)
+    private Boolean warn;
+
+    @ApiModelProperty(value = "备注",required=false)
+    private String remark;
 
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
@@ -75,12 +84,5 @@ public class User implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
-    
-    public String getStatusName() {
-		return UserEnums.Status.note(Integer.parseInt(this.status));
-	}
 
-    public String getTypeName() {
-    	return UserEnums.Type.note(this.type);
-    }
 }

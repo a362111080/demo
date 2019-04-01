@@ -2,6 +2,13 @@ package com.zero.egg.api;
 
 public class ApiConstants {
 	
+	
+	public final static String LOGIN_USER = "login_user";
+	/**
+	 * 1为企业用户，2位店铺员工
+	 */
+	public final static String LOGIN_TYPE = "login_type";
+	
 	 /**
      * 返回状态常量
      */

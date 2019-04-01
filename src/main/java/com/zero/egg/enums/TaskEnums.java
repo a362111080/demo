@@ -1,11 +1,11 @@
 package com.zero.egg.enums;
 
 
-public class UserEnums {
+public class TaskEnums {
 	
 	public enum Status {
 
-		Normal(1,"正常"),Disable(-1,"离职");
+		Execute(1,"执行中"),Finish(-1,"执行完成");
 
 	    private Integer index;
 	    private String note;
@@ -47,7 +47,7 @@ public class UserEnums {
 	}
 	public enum Type {
 		
-		Pc(1,"PC客户端"),Boss(2,"Boss移动端"),Staff(3,"员工端"),Device(4,"设备端");
+		Unload(1,"卸货"),Shipment(2,"出货");
 		
 		private Integer index;
 		private String note;

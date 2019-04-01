@@ -48,10 +48,28 @@ public class Shop implements Serializable {
 
     @ApiModelProperty(value = "联系方式",required=false)
     private String phone;
+    
+    @ApiModelProperty(value = "pc端数量",required=false)
+    private Integer pcClient;
+    
+    @ApiModelProperty(value = "boss端数量",required=false)
+    private Integer bossClient;
+    
+    @ApiModelProperty(value = "员工端数量",required=false)
+    private Integer staffClient;
+    
+    @ApiModelProperty(value = "设备端数量",required=false)
+    private Integer deviceClient;
 
     @ApiModelProperty(value = "状态",hidden=true)
     private String status;
 
+    @ApiModelProperty(value = "业务员",required=false)
+    private String salesman;
+    
+    @ApiModelProperty(value = "实施员",required=false)
+    private String technician;
+    
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
 

@@ -1,7 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zero.egg.enums.UserEnums;
+import com.zero.egg.enums.TaskEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -18,14 +18,14 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-03-13
+ * @since 2019-03-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("bd_user")
-@ApiModel(value="User对象", description="")
-public class User implements Serializable {
+@TableName("bd_task")
+@ApiModel(value="Task对象", description="")
+public class Task implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,26 +39,17 @@ public class User implements Serializable {
     @ApiModelProperty(value = "企业主键",required=false)
     private String companyId;
 
-    @ApiModelProperty(value = "编码",required=false)
-    private String code;
-    
-    @ApiModelProperty(value = "身份类型（1-PC端，2-Boss端，3-员工端，4-设备端）",required=false)
-    private Integer type;
+    @ApiModelProperty(value = "客商主键",required=false)
+    private String supplierId;
 
-    @ApiModelProperty(value = "姓名",required=false)
-    private String name;
-
-    @ApiModelProperty(value = "性别",required=false)
-    private Integer sex;
-
-    @ApiModelProperty(value = "联系方式",required=false)
-    private String phone;
-
-    @ApiModelProperty(value = "密码",hidden=true)
-    private String password;
-
-    @ApiModelProperty(value = "状态",hidden=true)
+    @ApiModelProperty(value = "状态",required=false)
     private String status;
+    
+    @ApiModelProperty(value = "类型",hidden=true)
+    private String type;
+
+    @ApiModelProperty(value = "备注",required=false)
+    private String remark;
 
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
@@ -77,10 +68,11 @@ public class User implements Serializable {
 
     
     public String getStatusName() {
-		return UserEnums.Status.note(Integer.parseInt(this.status));
+		return TaskEnums.Status.note(Integer.parseInt(this.status));
+	}
+    
+    public String  getTypeName() {
+		return TaskEnums.Type.note(Integer.parseInt(this.type));
 	}
 
-    public String getTypeName() {
-    	return UserEnums.Type.note(this.type);
-    }
 }
