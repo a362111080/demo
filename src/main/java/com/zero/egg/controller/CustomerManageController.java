@@ -8,15 +8,15 @@ import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
+import com.zero.egg.tool.UtilConstants.ResponseCode;
+import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.zero.egg.tool.UtilConstants;
-import com.zero.egg.tool.UtilConstants.ResponseCode;
-import com.zero.egg.tool.UtilConstants.ResponseMsg;
+
 import java.util.Date;
 import java.util.List;
 
@@ -37,14 +37,14 @@ public class CustomerManageController {
         Message message = new Message();
         try {
             //实际根据界面传值
-            model.setCompanyid ("1");
-            model.setShopid("1");
-            model.setCreator("老陈");
+            //model.setCompanyid ("1");
+            //model.setShopid("1");
+            //model.setCreator("老陈");
             model.setCreatetime(new Date());
-            model.setModifier("老陈");
+            //model.setModifier("老陈");
             model.setModifytime(new Date());
-            model.setStatus("正常");
-            model.setCityid("421022");
+            //model.setStatus("正常");
+            //model.setCityid("421022");
             int strval=CustomerSv.AddCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -75,10 +75,10 @@ public class CustomerManageController {
         Message message = new Message();
         try {
             //店铺编码  实际根据界面传值
-            model.setId("d56b1af03a5611e9ab6200163e08ec43");
-            model.setShopid("1");
-            model.setModifier("老陈2号");
-            model.setModifytime(new Date());
+            //model.setId("d56b1af03a5611e9ab6200163e08ec43");
+            //model.setShopid("1");
+            //model.setModifier("老陈2号");
+            //model.setModifytime(new Date());
             int strval=CustomerSv.UpdateCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
