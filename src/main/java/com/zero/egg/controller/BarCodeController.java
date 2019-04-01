@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-@Api(value="供应商管理")
+@Api(value="条码管理")
 @RestController
 @RequestMapping("/barcode")
 public class BarCodeController {
