@@ -66,7 +66,7 @@ public class CustomerManageController {
 
     }
     /**
-     * @Description 更新供应商(删除共用，不作物理删除，更新状态为无效状态)  可分为供应商/合作商
+     * @Description 更新客户(删除共用，不作物理删除，更新状态为无效状态) 
      * @Return   是否成功
      **/
     @ApiOperation(value="修改客户信息",notes="客户id不能为空")
@@ -119,11 +119,11 @@ public class CustomerManageController {
 
 
     /**
-     * @Description 批量删除供应商
+     * @Description 批量删除客户
      * @Param [SupplierRequestDTO]
      * @Return java.lang.String
      **/
-    @ApiOperation(value = "批量删除供应商")
+    @ApiOperation(value = "批量删除客户")
     @RequestMapping(value = "/delcustomer", method = RequestMethod.POST)
     public Message DeleteCustomer(@RequestBody CustomerRequestDTO Customer) {
         Message message = new Message();
@@ -146,7 +146,7 @@ public class CustomerManageController {
 
 
 
-    @ApiOperation(value="查询供应商列表",notes="无参数返回省份列表，传id返回次级列表")
+    @ApiOperation(value="查询省份列表",notes="无参数返回省份列表，传id返回次级列表")
     @RequestMapping(value = "/getcitys",method = RequestMethod.POST)
     public Message GetCitysList(@RequestBody city model) {
         Message ms = new Message();
