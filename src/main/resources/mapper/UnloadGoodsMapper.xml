@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.UnloadGoodsMapper">
-
+    <insert id="AddUnloadDetl" parameterType="UnloadGoods">
+    insert into bd_unload_goods(id,shop_id,company_id,supplier_id,program_id,task_id,goods_category_id,goods_no,marker,mode,weight,warn,remark,creator,createtime,modifier,modifytime,dr)
+    values(REPLACE(UUID(),'-',''),#{shopId},#{companyId},#{supplierId},#{programId},#{taskId},#{goodsCategoryId},
+    #{goodsNo},#{marker},#{mode},#{weight},#{warn},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
+    </insert>
+    <select id="CheckWeight"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
+        SELECT IFNULL(k.numerical,0) as numerical ,k.marker FROM bd_specification  k
+        where k.program_id=#{programId}  and k.weight_min <![CDATA[ <= ]]> #{weight}  and k.weight_max <![CDATA[ > ]]> #{weight}
+    </select>
 </mapper>

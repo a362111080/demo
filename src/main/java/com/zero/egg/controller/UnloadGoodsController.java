@@ -1,37 +1,29 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.type.TrueFalseType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.xml.bind.v2.TODO;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
-import com.zero.egg.enums.TaskEnums;
-import com.zero.egg.model.Task;
-import com.zero.egg.model.TaskProgram;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -94,5 +86,60 @@ public class UnloadGoodsController {
 		}
 		return response;
 	}
+
+	@ApiOperation(value="新增卸货记录")
+	@RequestMapping(value = "/addunloaddetl",method = RequestMethod.POST)
+	public Message AddSupplier(@RequestBody  UnloadGoods model) {
+		Message message = new Message();
+		try {
+			//实际根据界面传值
+			model.setCreatetime(LocalDateTime.now());
+			model.setModifytime(LocalDateTime.now());
+			//根据重量对应规程方案判断是否预警
+			if (null!=model.getWeight() && null !=model.getProgramId())
+			{
+				//小于方案最小称重则预警，返回标识以及是否预警结果
+				UnLoadResponseDto  res=unloadGoodsService.CheckWeight(model.getWeight(),model.getProgramId());
+				if (null!=res)
+				{
+					if(res.getNumerical().compareTo(BigDecimal.ZERO)!=0)
+					{
+						//存在去皮数值   显示标识为实际称重减去去皮值
+						model.setMarker(model.getWeight().add(res.getNumerical()).toString());
+						model.setWarn(false);
+					}
+					else
+					{
+						model.setMarker(res.getMarker());
+						model.setWarn(false);
+					}
+				}
+				else
+				{
+					//无返回结果代表小于最低称重范围，进行预警
+					model.setMarker("");
+					model.setWarn(true);
+				}
+			}
+			int strval=unloadGoodsService.AddUnloadDetl(model);
+			if (strval>0) {
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+
+			}
+			return message;
+
+		} catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
+		}
+	}
+
 
 }

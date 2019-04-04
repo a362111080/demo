@@ -1,16 +1,17 @@
 package com.zero.egg.model;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -42,7 +43,7 @@ public class UnloadGoods implements Serializable {
     @ApiModelProperty(value = "供应商主键",required=false)
     private String supplierId;
 
-    @ApiModelProperty(value = "方案主键",required=false)
+    @ApiModelProperty(value = "规格方案主键",required=false)
     private String programId;
 
     @ApiModelProperty(value = "任务主键",required=false)

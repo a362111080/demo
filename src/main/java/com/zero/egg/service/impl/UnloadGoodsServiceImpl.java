@@ -1,10 +1,14 @@
 package com.zero.egg.service.impl;
 
-import com.zero.egg.model.UnloadGoods;
-import com.zero.egg.dao.UnloadGoodsMapper;
-import com.zero.egg.service.IUnloadGoodsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zero.egg.dao.UnloadGoodsMapper;
+import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.responseDTO.UnLoadResponseDto;
+import com.zero.egg.service.IUnloadGoodsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -17,4 +21,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, UnloadGoods> implements IUnloadGoodsService {
 
+    @Autowired
+    private UnloadGoodsMapper mapper;
+
+    @Override
+    public int AddUnloadDetl(UnloadGoods model) {
+        return mapper.AddUnloadDetl(model);
+    }
+
+    @Override
+    public UnLoadResponseDto CheckWeight(BigDecimal weight, String programId) {
+        return  mapper.CheckWeight(weight,programId);
+    }
 }
