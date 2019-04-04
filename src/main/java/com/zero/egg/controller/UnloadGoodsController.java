@@ -41,7 +41,7 @@ public class UnloadGoodsController {
 	@Autowired
 	private IUnloadGoodsService unloadGoodsService;
 	
-	@LoginToken
+
 	@ApiOperation(value="分页查询卸货商品")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public ListResponse<UnloadGoods> unloadList(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
@@ -54,8 +54,17 @@ public class UnloadGoodsController {
 		QueryWrapper<UnloadGoods> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
 		if (unloadGoods != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()),"task_id", unloadGoods.getTaskId())
-			.eq(StringUtils.isNotBlank(unloadGoods.getProgramId()),"program_id", unloadGoods.getProgramId());
+
+		    if(unloadGoods.getWarn()!=null) {
+                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
+                 .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId())
+                  .eq(StringUtils.isNotBlank(unloadGoods.getWarn().toString()), "warn", unloadGoods.getWarn());
+            }
+		    else
+            {
+                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
+                        .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId());
+            }
 		}
 		IPage<UnloadGoods> list = unloadGoodsService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
