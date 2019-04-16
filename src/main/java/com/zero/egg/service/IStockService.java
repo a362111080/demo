@@ -1,7 +1,13 @@
 package com.zero.egg.service;
 
-import com.zero.egg.model.Stock;
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.Stock;
+import com.zero.egg.requestDTO.StockRequest;
+import com.zero.egg.responseDTO.StockResponse;
 
 /**
  * <p>
@@ -12,5 +18,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-03-26
  */
 public interface IStockService extends IService<Stock> {
-
+	
+	
+	public IPage<StockResponse> listByCondition(IPage<Stock> page,QueryWrapper<StockRequest> queryWrapper);
+	
+	
+	public List<StockResponse> listByCondition(QueryWrapper<StockRequest> queryWrapper);
+	
 }

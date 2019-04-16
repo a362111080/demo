@@ -2,4 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.StockMapper">
 
+<select id="listByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
+	SELECT *,s.id as stockId FROM bd_stock s  
+	INNER JOIN bd_specification sp ON s.specification_id = sp.id ${ew.customSqlSegment}
+</select>
+
 </mapper>
