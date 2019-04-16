@@ -32,6 +32,11 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     private String supplierId;
 
     /**
+     * 店铺id
+     */
+    private String shopId;
+
+    /**
      * 任务id
      */
     private String taskId;

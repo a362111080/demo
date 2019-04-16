@@ -40,4 +40,9 @@ public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, Unloa
     public List<UnLoadGoodsQueryResponseDto> QueryUnloadGood(String taskId) {
         return  mapper.QueryUnloadGood(taskId);
     }
+
+    @Override
+    public List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(String shopId, String unloadTime) {
+        return  mapper.QueryUnloadGoodForDay(shopId,unloadTime);
+    }
 }

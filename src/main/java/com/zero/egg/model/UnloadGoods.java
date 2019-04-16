@@ -85,5 +85,7 @@ public class UnloadGoods implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
+    @ApiModelProperty(value = "统计日期(汇总卸货数量使用yyyy-mm-dd 字符)",hidden=true)
+    private String UnloadTime;
 
 }

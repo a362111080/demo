@@ -23,4 +23,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     UnLoadResponseDto CheckWeight(BigDecimal weight, String programId);
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGood(String taskId);
+
+    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(String shopId, String unloadTime);
 }

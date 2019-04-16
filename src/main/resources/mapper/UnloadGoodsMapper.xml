@@ -16,4 +16,10 @@
         where  a.task_id=#{taskId}
         GROUP BY  a.task_id,b.id,a.marker,a.supplier_id
     </select>
+    <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
+        left join  bd_category  b  on  a.goods_category_id=b.id
+        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime}
+        GROUP BY  a.shop_id,b.id
+    </select>
 </mapper>

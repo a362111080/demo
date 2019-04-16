@@ -169,4 +169,22 @@ public class UnloadGoodsController {
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return  ms;
 	}
+
+
+    @ApiOperation(value="根据当天日期、按店铺、品种统计今日卸货数量")
+    @RequestMapping(value = "/queryunloadgoodsforday",method = RequestMethod.POST)
+    public Message QueryUnloadGoodForDay(@RequestBody  UnloadGoods model)
+    {
+        Message ms = new Message();
+        PageHelper.startPage(1, 999);
+        if (null==model.getUnloadTime()) {
+			model.setUnloadTime("2019-04-04");
+		}
+        List<UnLoadGoodsQueryResponseDto> ResponseDto=unloadGoodsService.QueryUnloadGoodForDay(model.getShopId(),model.getUnloadTime());
+        PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
+        ms.setData(pageInfo);
+        ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+        ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        return  ms;
+    }
 }

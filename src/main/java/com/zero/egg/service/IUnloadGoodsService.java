@@ -24,4 +24,5 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGood(String taskId);
 
+    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(String shopId, String unloadTime);
 }
