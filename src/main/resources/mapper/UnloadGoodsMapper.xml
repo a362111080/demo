@@ -10,4 +10,10 @@
         SELECT IFNULL(k.numerical,0) as numerical ,k.marker FROM bd_specification  k
         where k.program_id=#{programId}  and k.weight_min <![CDATA[ <= ]]> #{weight}  and k.weight_max <![CDATA[ > ]]> #{weight}
     </select>
+    <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select b.name,a.marker,a.supplier_id,a.task_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
+        left join  bd_category  b  on  a.goods_category_id=b.id
+        where  a.task_id=#{taskId}
+        GROUP BY  a.task_id,b.id,a.marker,a.supplier_id
+    </select>
 </mapper>

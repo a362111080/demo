@@ -4,11 +4,14 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
 import com.zero.egg.tool.Message;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -151,4 +155,18 @@ public class UnloadGoodsController {
 	}
 
 
+
+	@ApiOperation(value="根据任务id,按品种、方案分组统计本次卸货数量")
+	@RequestMapping(value = "/queryunloadgoods",method = RequestMethod.POST)
+	public Message QueryUnloadGood(@RequestBody  UnloadGoods model)
+	{
+		Message ms = new Message();
+		PageHelper.startPage(1, 999);
+		List<UnLoadGoodsQueryResponseDto> ResponseDto=unloadGoodsService.QueryUnloadGood(model.getTaskId());
+		PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return  ms;
+	}
 }
