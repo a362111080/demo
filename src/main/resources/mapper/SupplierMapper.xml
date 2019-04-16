@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.SupplierMapper">
-    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id)
+    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr)
     values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from bd_supplier),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
-           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid})</insert>
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0)</insert>
     <update id="UpdateSupplier" parameterType="Supplier">update bd_supplier
     <set>
         <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
@@ -23,7 +23,7 @@
             <foreach collection="list" item="id" index= "index" open="" close="" separator =";">
                 update bd_supplier
                 <set>
-                    dr=0
+                    dr=1
                 </set>
                 <where>
                     id=#{id}

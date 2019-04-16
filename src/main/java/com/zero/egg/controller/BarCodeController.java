@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-@Api(value="供应商管理")
+@Api(value="条码管理")
 @RestController
 @RequestMapping("/barcode")
 public class BarCodeController {
@@ -33,14 +33,7 @@ public class BarCodeController {
         Message message = new Message();
         try {
             //实际根据界面传值
-            req.setShopId("1");
-            req.setCompanyId("1");
-            req.setCategoryId("1");
-            req.setSupplierId("1");
-            req.setCode("测试编码");
-            req.setCreator("老陈");
             req.setCreatetime(new Date());
-            req.setModifier("老陈");
             req.setModifytime(new Date());
             int strval=bcService.AddBarCode(req);
             if (strval>0) {
