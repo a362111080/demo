@@ -180,7 +180,7 @@ public class UnloadGoodsController {
         if (null==model.getUnloadTime()) {
 			model.setUnloadTime("2019-04-04");
 		}
-        List<UnLoadGoodsQueryResponseDto> ResponseDto=unloadGoodsService.QueryUnloadGoodForDay(model.getShopId(),model.getUnloadTime());
+        List<UnLoadGoodsQueryResponseDto>  ResponseDto=unloadGoodsService.QueryUnloadGoodForDay(model.getShopId(),model.getUnloadTime());
         PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
         ms.setData(pageInfo);
         ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
