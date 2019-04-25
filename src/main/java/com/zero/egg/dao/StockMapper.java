@@ -1,7 +1,16 @@
 package com.zero.egg.dao;
 
-import com.zero.egg.model.Stock;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.zero.egg.model.Stock;
+import com.zero.egg.requestDTO.StockRequest;
+import com.zero.egg.responseDTO.StockResponse;
 
 /**
  * <p>
@@ -13,4 +22,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface StockMapper extends BaseMapper<Stock> {
 
+	
+	IPage<StockResponse> listByCondition(IPage<Stock> page,@Param(Constants.WRAPPER) QueryWrapper<StockRequest> wrapper);
+	
+	
+	List<StockResponse> listByCondition(@Param(Constants.WRAPPER) QueryWrapper<StockRequest> wrapper);
 }
