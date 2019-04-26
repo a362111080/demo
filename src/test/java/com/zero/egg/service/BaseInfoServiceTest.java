@@ -5,7 +5,6 @@ import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,6 +31,15 @@ public class BaseInfoServiceTest extends Apptest {
 
     @Autowired
     private SpecificationService specificationService;
+
+    @Autowired
+    private WechatAuthService wechatAuthService;
+
+
+    @Test
+    public void testRegisterWechatAuth() {
+        System.out.println(wechatAuthService.getCountByOpenId("12y3912uirbhdqwebn"));
+    }
 
     @Test
     /**

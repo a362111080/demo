@@ -1,8 +1,8 @@
 package com.zero.egg.tool;
 
-import java.util.Map;
-
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * @author hhfeng

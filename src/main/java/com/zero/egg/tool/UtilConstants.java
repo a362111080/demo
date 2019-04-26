@@ -69,6 +69,10 @@ public interface UtilConstants {
          * 参数错误
          */
         public static final String PARAM_ERROR = "参数错误";
+        /**
+         * 凭证校验失败
+         */
+        public static final String HTTPAPI_ERROR = "凭证校验失败";
     }
     
     /**
@@ -130,6 +134,16 @@ public interface UtilConstants {
          */
         public static final int DISCONNECT = 3;
 
+    }
+
+    /**
+     * 微信状态
+     */
+    public static class WXState {
+        //成功
+        public static final int OK = 200;
+        //失败
+        public static final int FAIL = 500;
     }
 
 }
