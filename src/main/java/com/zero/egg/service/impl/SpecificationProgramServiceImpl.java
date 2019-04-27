@@ -127,12 +127,16 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
              */
             specificationProgramList = specificationProgramMapper.selectList(new QueryWrapper<SpecificationProgram>()
                     .eq("category_id", specificationProgramRequestDTO.getCategoryId())
-                    .eq("dr", 0));
+                    .eq("dr", 0)
+                    .eq("shop_id", specificationProgramRequestDTO.getShopId())
+                    .eq("company_id", specificationProgramRequestDTO.getCompanyId()));
             for (SpecificationProgram specificationProgram : specificationProgramList) {
                 specificationProgramListResponseDTO = new SpecificationProgramListResponseDTO();
                 specificationList = specificationMapper.selectList(new QueryWrapper<Specification>()
                         .eq("program_id", specificationProgram.getId())
-                        .eq("dr", 0));
+                        .eq("dr", 0)
+                        .eq("shop_id", specificationProgram.getShopId())
+                        .eq("company_id", specificationProgram.getCompanyId()));
                 TransferUtil.copyProperties(specificationProgramListResponseDTO, specificationProgram);
                 specificationProgramListResponseDTO.setSpecificationList(specificationList);
                 specificationProgramListResponseDTOList.add(specificationProgramListResponseDTO);

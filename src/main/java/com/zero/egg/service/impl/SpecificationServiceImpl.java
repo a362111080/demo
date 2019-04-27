@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -121,6 +122,8 @@ public class SpecificationServiceImpl implements SpecificationService {
              * 只做逻辑删除
              */
             specification.setDr(1);
+            specification.setModifytime(new Date());
+            specification.setModifier(specificationRequestDTO.getModifier());
             specificationMapper.update(specification, new UpdateWrapper<Specification>()
                     .in("id", specificationRequestDTO.getIds()));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -147,7 +150,9 @@ public class SpecificationServiceImpl implements SpecificationService {
         try {
             specificationList = specificationMapper.selectList(new QueryWrapper<Specification>()
                     .eq("program_id", specificationRequestDTO.getProgramId())
-                    .eq("dr", 0));
+                    .eq("dr", 0)
+                    .eq("shop_id", specificationRequestDTO.getShopId())
+                    .eq("company_id", specificationRequestDTO.getCompanyId()));
             specificationResponseDTO.setSpecificationList(specificationList);
             message.setData(specificationResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
