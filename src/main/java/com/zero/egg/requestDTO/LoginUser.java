@@ -1,8 +1,8 @@
 package com.zero.egg.requestDTO;
 
-import java.io.Serializable;
-
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class LoginUser implements Serializable{/**
@@ -14,7 +14,9 @@ public class LoginUser implements Serializable{/**
 	    private String id;
 	 
 	    private String code;
-	 
+
+	    private String loginname;
+
 	    private String name;
 	 
 	    private Integer sex;

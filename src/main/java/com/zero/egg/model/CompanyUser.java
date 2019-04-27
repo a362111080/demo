@@ -1,17 +1,17 @@
 package com.zero.egg.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.zero.egg.enums.CompanyEnums;
-import com.zero.egg.enums.CompanyUserEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.zero.egg.enums.CompanyUserEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -45,6 +45,9 @@ public class CompanyUser implements Serializable {
 
     @ApiModelProperty(value = "联系方式",required=false)
     private String phone;
+
+    @ApiModelProperty(value = "登陆名",required = false)
+    private String loginname;
 
     @ApiModelProperty(value = "密码",hidden=true)
     private String password;

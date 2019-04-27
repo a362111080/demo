@@ -1,30 +1,26 @@
 package com.zero.egg.controller;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
-import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.User;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.TokenUtils;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Api(value="系统基础功能")
@@ -40,13 +36,13 @@ public class LoginController {
 	@PassToken
     @ApiOperation(value="登录")
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public BaseResponse<Object> checklogin(@RequestParam @ApiParam(required=true,name="loginName",value="登录名") String loginName
+    public BaseResponse<Object> checklogin(@RequestParam @ApiParam(required=true,name="loginname",value="登录名") String loginname
     		,@RequestParam @ApiParam(required=true,name="loginPwd",value="登录密码") String loginPwd,HttpSession session ){
     	BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
         try {
         	String pwd = MD5Utils.encode(loginPwd);
         	QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        	userQueryWrapper.eq("name", loginName)
+        	userQueryWrapper.eq("loginname", loginname)
         	.eq("password", pwd);
             User user=userService.getOne(userQueryWrapper);
             if (null != user) {
@@ -62,7 +58,7 @@ public class LoginController {
                 response.setMsg("登录成功");
             }else{
             	QueryWrapper<CompanyUser> cUserQueryWrapper = new QueryWrapper<>();
-            	cUserQueryWrapper.eq("name", loginName)
+            	cUserQueryWrapper.eq("loginname", loginname)
             	.eq("password", pwd);
             	CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
             	if (companyUser != null) {

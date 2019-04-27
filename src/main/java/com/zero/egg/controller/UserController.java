@@ -1,21 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -30,10 +15,21 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.StringTool;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -125,7 +121,7 @@ public class UserController {
 	@ApiOperation(value="新增员工")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public BaseResponse<Object> add(
-			@RequestBody @ApiParam(required=true,name="user",value="员工信息:店铺主键，企业主键，编号，名称，电话，性别") User user
+			@RequestBody @ApiParam(required=true,name="user",value="员工信息:店铺主键，企业主键，编号，登录名,名称，电话，性别") User user
 			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		//当前登录用户

@@ -1,15 +1,5 @@
 package com.zero.egg.interceptor;
 
-import java.lang.reflect.Method;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
@@ -20,10 +10,17 @@ import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TokenUtils;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 
 /**
@@ -89,7 +86,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 						loginUser.setId(companyUser.getId());
 	                	loginUser.setCode(companyUser.getCode());
 	                	loginUser.setName(companyUser.getName());
-	                	loginUser.setPhone(companyUser.getName());
+	                	loginUser.setLoginname(companyUser.getLoginname());
 	                	loginUser.setPhone(companyUser.getPhone());
 	                	 request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
 		                request.setAttribute(ApiConstants.LOGIN_TYPE, 1);
@@ -99,7 +96,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 	loginUser.setId(user.getId());
                 	loginUser.setCode(user.getCode());
                 	loginUser.setName(user.getName());
-                	loginUser.setPhone(user.getName());
+                	loginUser.setLoginname(user.getLoginname());
                 	loginUser.setPhone(user.getPhone());
                 	 request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                     request.setAttribute(ApiConstants.LOGIN_TYPE, 2);

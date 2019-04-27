@@ -1,22 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -33,10 +17,23 @@ import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.StringTool;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -122,7 +119,7 @@ public class CompanyController {
 	@RequestMapping(value="/add-company-shop.do",method=RequestMethod.POST)
 	public BaseResponse<Object> addCompanyAndShop(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="company",value="企业信息:编号，名称，电话") Company company
-			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业用户：企业信息:编号，名称，电话，企业主键，密码") CompanyUser companyUser
+			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业用户：企业信息:编号，名称，电话，企业主键，登录名,密码") CompanyUser companyUser
 			,@RequestParam @ApiParam(required=true,name="shopList",value="店铺数组,店铺信息：编号，名称，电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") List<Shop> shopList
 			) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
