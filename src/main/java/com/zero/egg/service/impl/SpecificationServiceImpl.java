@@ -56,9 +56,9 @@ public class SpecificationServiceImpl implements SpecificationService {
              * 如果传入的最小重量大于最大重量,则返回错误信息
              */
             if ((specification.getWeightMin().compareTo(specification.getWeightMax())) > 0) {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                throw new ServiceException("WeightMin>WeightMax");
             } else {
+                specification.setCreatetime(new Date());
                 specificationMapper.insert(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -91,9 +91,9 @@ public class SpecificationServiceImpl implements SpecificationService {
              * 如果传入的最小重量大于最大重量,则返回错误信息
              */
             if ((specification.getWeightMin().compareTo(specification.getWeightMax())) > 0) {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                throw new ServiceException("WeightMin>WeightMax");
             } else {
+                specification.setModifytime(new Date());
                 specificationMapper.updateById(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

@@ -4,6 +4,7 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.DeviceDataRequestDTO;
+import com.zero.egg.requestDTO.SaveSpecificationRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.service.CategoryService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName BaseInfoController
@@ -85,12 +87,12 @@ public class BaseInfoController {
         }
     }
 
-    @ApiOperation(value = "修改品种信息",notes = "{\"id\":\"\",\"name\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "修改品种信息", notes = "{\"id\":\"\",\"name\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/variety/modify", method = RequestMethod.POST)
     @LoginToken
     public Message modifyEggType(@RequestBody @ApiParam(required = true,
             name = "modifyCategoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.鸡蛋类别名称 4.主键") CategoryRequestDTO modifyCategoryRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.鸡蛋类别名称 4.主键") CategoryRequestDTO modifyCategoryRequestDTO) {
         Message message = null;
         try {
             /**
@@ -122,12 +124,12 @@ public class BaseInfoController {
      * @return
      * @Description 删除鸡蛋类型（单个删除）
      */
-    @ApiOperation(value = "单个删除品种",notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "单个删除品种", notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/variety/delete", method = RequestMethod.POST)
     @LoginToken
     public Message deleteEggTypeById(@RequestBody @ApiParam(required = true,
             name = "deleteCategoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.主键") CategoryRequestDTO deleteCategoryRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.主键") CategoryRequestDTO deleteCategoryRequestDTO) {
         Message message = new Message();
         try {
             if (null != deleteCategoryRequestDTO.getId() && checkShopAndCompanyExist(deleteCategoryRequestDTO)) {
@@ -151,12 +153,12 @@ public class BaseInfoController {
      * @Param [categoryRequestDTO]
      * @Return java.lang.String
      **/
-    @ApiOperation(value = "批量删除鸡蛋类型",notes = "{\"ids\":[\"\"],\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "批量删除鸡蛋类型", notes = "{\"ids\":[\"\"],\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/variety/batchdelete", method = RequestMethod.POST)
     @LoginToken
     public Message batchDeleteEggType(@RequestBody @ApiParam(required = true,
             name = "categoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.前端传来的类别id数组(批量操作)") CategoryRequestDTO categoryRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.前端传来的类别id数组(批量操作)") CategoryRequestDTO categoryRequestDTO) {
         Message message = new Message();
         try {
             if (null != categoryRequestDTO.getIds() && checkShopAndCompanyExist(categoryRequestDTO)) {
@@ -175,12 +177,12 @@ public class BaseInfoController {
         }
     }
 
-    @ApiOperation(value = "按主键查询品种接口",notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "按主键查询品种接口", notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/variety/queryeggtypebyid", method = RequestMethod.POST)
     @LoginToken
     public Message queryEggTypeById(@RequestBody @ApiParam(required = true,
             name = "categoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.主键") CategoryRequestDTO categoryRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.主键") CategoryRequestDTO categoryRequestDTO) {
         Message message = null;
         try {
             if (null != categoryRequestDTO.getId() && checkShopAndCompanyExist(categoryRequestDTO)) {
@@ -212,7 +214,7 @@ public class BaseInfoController {
     @LoginToken
     public Message SelectEggTypeList(@RequestBody @ApiParam(required = true,
             name = "categoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.鸡蛋类别名称(可选,默认null) 4.当前页(默认1) 5.每页数量(默认10)") CategoryRequestDTO categoryRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.鸡蛋类别名称(可选,默认null) 4.当前页(默认1) 5.每页数量(默认10)") CategoryRequestDTO categoryRequestDTO) {
         Message message = null;
         try {
             message = categoryService.listEggType(categoryRequestDTO);
@@ -232,12 +234,12 @@ public class BaseInfoController {
      * @Param [specificationProgramRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
-    @ApiOperation(value = "新增方案",notes = "{\"name\":\"\",\"categoryId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "新增方案", notes = "{\"name\":\"\",\"categoryId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/addstandarddata", method = RequestMethod.POST)
     @LoginToken
     public Message addStandard(@RequestBody @ApiParam(required = true,
             name = "specificationProgramRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.品种id 4.方案名称") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.品种id 4.方案名称") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
         String name = String.valueOf(request.getAttribute(ApiConstants.LOGIN_USER_Name));
         specificationProgramRequestDTO.setCreator(name);
@@ -299,15 +301,15 @@ public class BaseInfoController {
      * @Param [specificationProgramRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
-    @ApiOperation(value = "根据品种id列出所有方案及其细节",notes = "{\"categoryId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "根据品种id列出所有方案及其细节", notes = "{\"categoryId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/liststandardddataanddetl", method = RequestMethod.POST)
     @LoginToken
     public Message listStandard(@RequestBody @ApiParam(required = true,
             name = "categoryRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.品种id") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.品种id") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         try {
-            if (null != specificationProgramRequestDTO) {
+            if (null != specificationProgramRequestDTO && checkShopAndCompanyExist(specificationProgramRequestDTO)) {
                 message = specificationProgramService.listDataAndDetl(specificationProgramRequestDTO);
             } else {
                 message = new Message();
@@ -328,13 +330,13 @@ public class BaseInfoController {
      * @Param [specificationRequestDTO]
      * @Return com.zero.egg.tool.Message
      **/
-    @ApiOperation(value = "添加一条方案细节",notes = "{\"programId\":\"\",\"weightMin\":0,\"weightMax\":0," +
+    @ApiOperation(value = "添加一条方案细节", notes = "{\"programId\":\"\",\"weightMin\":0,\"weightMax\":0," +
             "\"marker\":\"\",\"mode\":0,\"numerical\":0,\"warn\":0,\"dr\":\"0\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/addstandarddetl", method = RequestMethod.POST)
     @LoginToken
     public Message addStandardDetl(@RequestBody @ApiParam(required = true,
             name = "specificationRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.方案id " +
+            value = "1.所属店铺id 2.店铺所属企业id 3.方案id " +
                     "4.判定最小称重 5.判定最大称重 6.标记 7.是否预警(0:否,1:是) " +
                     "8.计重方式(1:去皮 2:包) 9(非必传).删除标识 0:未删除(默认) 1:已删除 " +
                     "10(非必传).数值（去皮对应的数值,计重方式为包是不传）") SpecificationRequestDTO specificationRequestDTO) {
@@ -343,7 +345,8 @@ public class BaseInfoController {
         specificationRequestDTO.setCreator(name);
         specificationRequestDTO.setModifier(name);
         try {
-            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()) {
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()
+                    && checkShopAndCompanyExist(specificationRequestDTO)) {
                 message = specificationService.addStandardDetl(specificationRequestDTO);
             } else {
                 message = new Message();
@@ -365,15 +368,16 @@ public class BaseInfoController {
      * @param specificationRequestDTO
      * @return
      */
-    @ApiOperation(value = "根据方案id列出其下方案细节",notes = "{\"programId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "根据方案id列出其下方案细节", notes = "{\"programId\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/liststandarddetel", method = RequestMethod.POST)
     @LoginToken
     public Message listStandardDetel(@RequestBody @ApiParam(required = true,
             name = "specificationRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.方案id")SpecificationRequestDTO specificationRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.方案id") SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         try {
-            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()) {
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getProgramId()
+                    && checkShopAndCompanyExist(specificationRequestDTO)) {
                 message = specificationService.listStandardDetlByProgramId(specificationRequestDTO);
             } else {
                 message = new Message();
@@ -394,13 +398,13 @@ public class BaseInfoController {
      * @param specificationRequestDTO
      * @return
      */
-    @ApiOperation(value = "更新方案细节",notes = "{\"id\":\"\",\"programId\":\"\",\"weightMin\":0,\"weightMax\":0,\"ma" +
+    @ApiOperation(value = "更新方案细节", notes = "{\"id\":\"\",\"programId\":\"\",\"weightMin\":0,\"weightMax\":0,\"ma" +
             "rker\":\"\",\"mode\":0,\"numerical\":\"\",\"warn\":0,\"dr\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/updatestandarddetl", method = RequestMethod.POST)
     @LoginToken
     public Message updateStandardDetl(@RequestBody @ApiParam(required = true,
             name = "specificationRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.方案id " +
+            value = "1.所属店铺id 2.店铺所属企业id 3.方案id " +
                     "4.判定最小称重 5.判定最大称重 6.标记 7.是否预警(0:否,1:是) " +
                     "8.计重方式(1:去皮 2:包) 9.主键 10(非必传).删除标识 0:未删除(默认) 1:已删除 " +
                     "11(非必传).数值（去皮对应的数值,计重方式为包是不传）") SpecificationRequestDTO specificationRequestDTO) {
@@ -409,7 +413,8 @@ public class BaseInfoController {
         specificationRequestDTO.setModifier(name);
         specificationRequestDTO.setModifytime(new Date());
         try {
-            if (null != specificationRequestDTO && null != specificationRequestDTO.getId()) {
+            if (null != specificationRequestDTO && null != specificationRequestDTO.getId()
+                    && checkShopAndCompanyExist(specificationRequestDTO)) {
                 message = specificationService.updateStandardDetl(specificationRequestDTO);
             } else {
                 message = new Message();
@@ -432,12 +437,12 @@ public class BaseInfoController {
      * @param specificationRequestDTO
      * @return
      */
-    @ApiOperation(value = "批量删除方案细节(单个删除也走批量的流程)",notes = "{\"ids\":[\"\"]}")
+    @ApiOperation(value = "批量删除方案细节(单个删除也走批量的流程)", notes = "{\"ids\":[\"\"]}")
     @RequestMapping(value = "/standard/batchdeletestandarddetl", method = RequestMethod.POST)
     @LoginToken
     public Message batchDeleteStandardDetl(@RequestBody @ApiParam(required = true,
             name = "specificationRequestDTO",
-            value ="1.前端传来的方案细节id数组(批量操作)")SpecificationRequestDTO specificationRequestDTO) {
+            value = "1.前端传来的方案细节id数组(批量操作)") SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         String name = String.valueOf(request.getAttribute(ApiConstants.LOGIN_USER_Name));
         try {
@@ -463,18 +468,18 @@ public class BaseInfoController {
      * @param specificationProgramRequestDTO
      * @return
      */
-    @ApiOperation(value = "根据方案id删除方案及其方案细节",notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
+    @ApiOperation(value = "根据方案id删除方案及其方案细节", notes = "{\"id\":\"\",\"shopId\":\"\",\"companyId\":\"\"}")
     @RequestMapping(value = "/standard/deletstandarddateanddetl", method = RequestMethod.POST)
     @LoginToken
     public Message deleteStandardData(@RequestBody @ApiParam(required = true,
             name = "specificationProgramRequestDTO",
-            value ="1.所属店铺id 2.店铺所属企业id 3.主键") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+            value = "1.所属店铺id 2.店铺所属企业id 3.主键") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         try {
-            if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getId()) {
+            if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getId()
+                    && checkShopAndCompanyExist(specificationProgramRequestDTO)) {
                 message = specificationProgramService.deleteStandardDataById(specificationProgramRequestDTO);
             } else {
-                message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
             }
@@ -484,6 +489,60 @@ public class BaseInfoController {
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
         }
+    }
+
+    /**
+     * 保存方案细节(包括新增和修改)
+     *
+     * @return
+     */
+    @RequestMapping(value = "/standard/savestandarddetl", method = RequestMethod.POST)
+    @LoginToken
+    @ApiOperation(value = "保存方案细节(包括新增和修改)",notes = "{\"shopId\":\"1\",\"companyId\":\"1\",\"specificationRequestDTOS\":[{\"id\":" +
+            "\"6d68494a6235753e635b58f005d594d2\",\"programId\":\"e61177ee779e4548b0c305d577232d57\",\"weightMin\":10," +
+            "\"weightMax\":20,\"marker\":\"4811111\",\"mode\":2,\"numerical\":null,\"warn\":1},{\"programId\":" +
+            "\"e61177ee779e4548b0c305d577232d57\",\"weightMin\":10,\"weightMax\":20,\"marker\":\"4811111\",\"mode\":2,\"" +
+            "numerical\":null,\"warn\":1}]}")
+    public Message saveSpecification(@RequestBody @ApiParam(required = true,
+            name = "saveSpecificationRequestDTO",
+            value = "1.所属店铺id 2.店铺所属企业id 3.方案id " +
+                    "4.判定最小称重 5.判定最大称重 6.标记 7.是否预警(0:否,1:是) " +
+                    "8.计重方式(1:去皮 2:包) 9.主键(非必传,传了走修改,不传走新增) 10.数值（去皮对应的数值,计重方式为包是不传）")
+                                                 SaveSpecificationRequestDTO saveSpecificationRequestDTO) {
+        Message message = new Message();
+        try {
+            //空值判断
+            if (null != saveSpecificationRequestDTO && null != saveSpecificationRequestDTO.getSpecificationRequestDTOS()
+                    && !saveSpecificationRequestDTO.getSpecificationRequestDTOS().isEmpty()
+                    && null != saveSpecificationRequestDTO.getCompanyId() && null != saveSpecificationRequestDTO.getShopId()) {
+                String name = String.valueOf(request.getAttribute(ApiConstants.LOGIN_USER_Name));
+                /* 迭代方案细节列表,将店铺id和企业id赋予给方案细节,并判断方案细节的id是否为空,为空走新增流程,否则走编辑 */
+                List<SpecificationRequestDTO> dtoList = saveSpecificationRequestDTO.getSpecificationRequestDTOS();
+                for (SpecificationRequestDTO requestDTO : dtoList) {
+                    requestDTO.setCompanyId(saveSpecificationRequestDTO.getCompanyId());
+                    requestDTO.setShopId(saveSpecificationRequestDTO.getShopId());
+                    if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
+                        //编辑
+                        requestDTO.setModifier(name);
+                        specificationService.updateStandardDetl(requestDTO);
+                    } else {
+                        requestDTO.setCreator(name);
+                        specificationService.addStandardDetl(requestDTO);
+                    }
+                }
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(e.toString());
+            return message;
+        }
+
     }
 
     /**
@@ -613,6 +672,16 @@ public class BaseInfoController {
      */
     private boolean checkShopAndCompanyExist(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         return (null != specificationProgramRequestDTO.getShopId() && null != specificationProgramRequestDTO.getCompanyId()) ? true : false;
+    }
+
+    /**
+     * 检验shopId和companyId是否为空
+     *
+     * @param specificationRequestDTO 方案细节信息Request
+     * @return
+     */
+    private boolean checkShopAndCompanyExist(SpecificationRequestDTO specificationRequestDTO) {
+        return (null != specificationRequestDTO.getShopId() && null != specificationRequestDTO.getCompanyId()) ? true : false;
     }
 
 }
