@@ -122,8 +122,8 @@ public class StockController {
 		return response;
 	}
 	
-	//@LoginToken
-	@PassToken
+	@LoginToken
+	//@PassToken
 	@ApiOperation(value="店铺下各品种的库存数量")
 	@PostMapping(value="/statistics")
 	public BaseResponse<Object> statistics(@RequestParam @ApiParam(required =true,name ="shopId",value="店铺id") String shopId
