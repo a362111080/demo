@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
@@ -49,6 +50,7 @@ public class BillController {
 	private IBillService billService;
 	
 	@LoginToken
+	//@PassToken
 	@ApiOperation(value="分页查询财务账单")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
 	public ListResponse<Bill> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,

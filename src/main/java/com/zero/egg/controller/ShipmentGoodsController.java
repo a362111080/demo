@@ -1,7 +1,9 @@
 package com.zero.egg.controller;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
@@ -98,7 +99,7 @@ public class ShipmentGoodsController {
 	@RequestMapping(value="/shipment-list.data",method=RequestMethod.POST)
 	public ListResponse<ShipmentGoodsResponse> shipmentlist(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
 			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键）") ShipmentGoods shipmentGoods) {
+			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间）") ShipmentGoods shipmentGoods) {
 		ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<ShipmentGoods> page = new Page<>();
 		page.setPages(pageNum);
@@ -108,7 +109,11 @@ public class ShipmentGoodsController {
 		if (shipmentGoods != null) {
 			queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()),"s.company_id", shipmentGoods.getCompanyId())
 			.eq(StringUtils.isNotBlank(shipmentGoods.getShopId()),"s.shop_id", shipmentGoods.getShopId())
-			.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"s.task_id", shipmentGoods.getTaskId());
+			.eq(StringUtils.isNotBlank(shipmentGoods.getCreator()),"s.creator", shipmentGoods.getCreator())
+			.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"s.task_id", shipmentGoods.getTaskId())
+			.ge(shipmentGoods.getCreatetime() != null,"s.createtime",  LocalDateTime.of(LocalDate.now(), LocalTime.MIN))
+			.le(shipmentGoods.getCreatetime() != null,"s.createtime",  LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
+			;
 		}
 		IPage<ShipmentGoodsResponse> list = shipmentGoodsService.listByCondition(page, queryWrapper);
 		response.getData().setData(list.getRecords());
@@ -119,7 +124,7 @@ public class ShipmentGoodsController {
 	
 	
 	@LoginToken
-	@ApiOperation(value="查询出货商品")
+	@ApiOperation(value="统计出货商品")
 	@PostMapping(value="/shipment-statistics.data")
 	public BaseResponse<Object> statistics(
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键）") ShipmentGoods shipmentGoods
@@ -190,5 +195,9 @@ public class ShipmentGoodsController {
 		return response;
 		
 	}
+	
+	
+	
+	
 	
 }

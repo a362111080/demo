@@ -7,4 +7,13 @@
 	INNER JOIN bd_specification sp ON s.specification_id = sp.id ${ew.customSqlSegment}
 </select>
 
+
+<select id="categoryCountListByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
+	SELECT quantity,s.id as stockId FROM bd_stock s  
+	INNER JOIN bd_specification sp ON s.specification_id = sp.id
+	INNER JOIN bd_specification_program p ON sp.program_id = p.id
+	INNER JOIN bd_category c ON p.category_id = c.id
+	${ew.customSqlSegment}
+</select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.zero.egg.responseDTO;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class StockResponse implements Serializable{
 	
 	private String stockId;
 	
-	private String quantity;
+	private BigDecimal quantity;
 	
 	private String specificationId;
 	

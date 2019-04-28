@@ -27,4 +27,6 @@ public interface StockMapper extends BaseMapper<Stock> {
 	
 	
 	List<StockResponse> listByCondition(@Param(Constants.WRAPPER) QueryWrapper<StockRequest> wrapper);
+	
+	List<StockResponse> categoryCountListByCondition(@Param(Constants.WRAPPER) QueryWrapper<StockRequest> wrapper);
 }

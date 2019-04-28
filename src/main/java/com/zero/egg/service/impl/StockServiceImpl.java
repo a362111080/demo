@@ -35,6 +35,11 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 		
 		return super.baseMapper.listByCondition(queryWrapper);
 	}
+	@Override
+	public List<StockResponse> categoryCountListByCondition(QueryWrapper<StockRequest> queryWrapper) {
+		
+		return super.baseMapper.categoryCountListByCondition(queryWrapper);
+	}
 	
 	
 
