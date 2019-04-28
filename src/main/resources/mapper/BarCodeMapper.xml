@@ -7,7 +7,7 @@
 
     <update id="DeleteBarCode" parameterType="java.util.List">
         <if test="list!=null">
-            <foreach collection="list" item="id" index= "index" open="" close="" separator =";">
+            <foreach collection="list" item="id" index= "index" open="" close="" separator =",">
                 update bd_barcode
                 <set>
                     dr=1
