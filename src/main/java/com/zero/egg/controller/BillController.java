@@ -56,7 +56,7 @@ public class BillController {
 	public ListResponse<Bill> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
 			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
 			@RequestBody @ApiParam(required=false,name="company"
-			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）") Bill bill) {
+			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）,状态（1挂账，-1销账）") Bill bill) {
 		ListResponse<Bill> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<Bill> page = new Page<>();
 		page.setPages(pageNum);
@@ -67,6 +67,7 @@ public class BillController {
 			queryWrapper.like(StringUtils.isNotBlank(bill.getCompanyId()),"company_id", bill.getCompanyId())
 			.eq(StringUtils.isNotBlank(bill.getShopId()),"shop_id", bill.getShopId())
 			.eq(StringUtils.isNotBlank(bill.getBillNo()),"bill_no", bill.getBillNo())
+			.eq(StringUtils.isNotBlank(bill.getStatus()),"status", bill.getStatus())
 			.eq(StringUtils.isNotBlank(bill.getCussupId()), "cussup_id", bill.getCussupId());
 			LocalDateTime today;
 			//去本月第一天
