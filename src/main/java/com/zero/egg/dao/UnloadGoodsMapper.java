@@ -1,9 +1,10 @@
 package com.zero.egg.dao;
 
-import com.zero.egg.model.UnloadGoods;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,5 +25,5 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGood(String taskId);
 
-    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(String shopId, String unloadTime);
+    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(@Param("shopId") String shopId, @Param("unloadTime") String unloadTime);
 }
