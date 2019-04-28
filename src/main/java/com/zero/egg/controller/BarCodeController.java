@@ -61,8 +61,7 @@ public class BarCodeController {
      **/
     @ApiOperation(value = "批量删除条码",notes="批量删除 使用ids 传值，用,号拼接")
     @RequestMapping(value = "/delbarcode", method = RequestMethod.POST)
-    public Message DeleteBarCode(@RequestBody @ApiParam(required = true, name = "BarCodeRequestDTO",
-            value = "ids：拼接要删除的条件id,用,号隔开，其他字段不需要") BarCodeRequestDTO model) {
+    public Message DeleteBarCode(@RequestBody  BarCodeRequestDTO model) {
         Message message = new Message();
         try {
             if (null != model.getIds()) {
