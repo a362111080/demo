@@ -60,7 +60,8 @@ public class UnloadGoodsController {
 		if (unloadGoods != null) {
 
 		    if(unloadGoods.getWarn()!=null) {
-                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
+
+		    	queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
                  .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId())
                   .eq(StringUtils.isNotBlank(unloadGoods.getWarn().toString()), "warn", unloadGoods.getWarn());
             }
