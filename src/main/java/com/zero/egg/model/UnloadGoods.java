@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -85,6 +86,7 @@ public class UnloadGoods implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "统计日期(汇总卸货数量使用yyyy-mm-dd 字符)",hidden=true)
     private String UnloadTime;
 

@@ -26,4 +26,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGood(String taskId);
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(@Param("shopId") String shopId, @Param("unloadTime") String unloadTime);
+
+    int GetTaskUnloadCount(String taskId);
 }

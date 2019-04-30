@@ -11,6 +11,7 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.responseDTO.UnLoadCountResponseDto;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
@@ -60,7 +61,8 @@ public class UnloadGoodsController {
 		if (unloadGoods != null) {
 
 		    if(unloadGoods.getWarn()!=null) {
-                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
+
+		    	queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
                  .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId())
                   .eq(StringUtils.isNotBlank(unloadGoods.getWarn().toString()), "warn", unloadGoods.getWarn());
             }
@@ -120,6 +122,7 @@ public class UnloadGoodsController {
 						//存在去皮数值   显示标识为实际称重减去去皮值
 						model.setMarker(model.getWeight().add(res.getNumerical()).toString());
 						model.setWarn(false);
+
 					}
 					else
 					{
@@ -134,8 +137,19 @@ public class UnloadGoodsController {
 					model.setWarn(true);
 				}
 			}
+
 			int strval=unloadGoodsService.AddUnloadDetl(model);
 			if (strval>0) {
+				UnLoadCountResponseDto dto=new UnLoadCountResponseDto();
+				dto.setMarker(model.getMarker());
+				if(null != model.getTaskId())
+				{
+					//获取当前卸货任务已卸货数量，含本次
+					int count=unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+					dto.setCount(count);
+					message.setData(dto);
+				}
+
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}

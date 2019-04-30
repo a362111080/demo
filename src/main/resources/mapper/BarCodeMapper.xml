@@ -40,4 +40,15 @@
             </if>
         </where>
     </select>
+
+    <update id="PrintBarCode" parameterType="com.zero.egg.responseDTO.BarCodeResponseDTO">
+                update bd_barcode k
+                <set>
+                    k.current_code=k.current_code+#{printNum}
+                </set>
+                <where>
+                    id=#{id}
+                </where>
+
+    </update>
 </mapper>
