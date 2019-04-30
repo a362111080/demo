@@ -1,24 +1,23 @@
 package com.zero.egg.tool;
 
-import java.security.Key;
-import java.util.Date;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
+import java.util.Date;
+
 public class TokenUtils {
 
-	 
+
     /**
      * 签名秘钥
      */
     public static final String SECRET = "zero";
- 
+
     /**
      * 生成token
      *
@@ -28,10 +27,10 @@ public class TokenUtils {
     public static String createJwtToken(String id) {
         String issuer = "com.zero";
         String subject = "";
-        long ttlMillis = 3600*1000;
+        long ttlMillis = 3600 * 2 * 1000;
         return createJwtToken(id, issuer, subject, ttlMillis);
     }
- 
+
     /**
      * 生成Token
      *
@@ -42,37 +41,37 @@ public class TokenUtils {
      * @return token String
      */
     public static String createJwtToken(String id, String issuer, String subject, long ttlMillis) {
- 
+
         // 签名算法 ，将对token进行签名
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
- 
+
         // 生成签发时间
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
- 
+
         // 通过秘钥签名JWT
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
- 
+
         // Let's set the JWT Claims
         JwtBuilder builder = Jwts.builder().setId(id)
                 .setIssuedAt(now)
                 .setSubject(subject)
                 .setIssuer(issuer)
                 .signWith(signatureAlgorithm, signingKey);
- 
+
         // if it has been specified, let's add the expiration
         if (ttlMillis >= 0) {
             long expMillis = nowMillis + ttlMillis;
             Date exp = new Date(expMillis);
             builder.setExpiration(exp);
         }
- 
+
         // Builds the JWT and serializes it to a compact, URL-safe string
         return builder.compact();
- 
+
     }
- 
+
     // Sample method to validate and read the JWT
     public static Claims parseJWT(String jwt) {
         // This line will throw an exception if it is not a signed JWS (as expected)
@@ -81,7 +80,7 @@ public class TokenUtils {
                 .parseClaimsJws(jwt).getBody();
         return claims;
     }
- 
+
     public static void main(String[] args) {
         System.out.println(TokenUtils.createJwtToken("11111"));
     }

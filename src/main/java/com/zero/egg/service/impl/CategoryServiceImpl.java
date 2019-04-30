@@ -187,6 +187,12 @@ public class CategoryServiceImpl implements CategoryService {
                 .eq("name", category.getName())
                 .eq("shop_id", category.getShopId())
                 .eq("company_id", category.getCompanyId()));
-        return resultList.size();
+        int count;
+        if (null != resultList) {
+            count = resultList.size();
+        } else {
+            count = 0;
+        }
+        return count;
     }
 }
