@@ -1,11 +1,9 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +23,11 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.enums.TaskEnums;
+import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.TaskProgram;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.service.IShipmentGoodsService;
 import com.zero.egg.service.ITaskProgramService;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.UuidUtil;
@@ -53,6 +53,8 @@ public class TaskController {
 	private ITaskService taskService;
 	@Autowired
 	private ITaskProgramService taskProgramService;
+	@Autowired
+	private IShipmentGoodsService shipmentGoodsService;
 	
 	@LoginToken
 	@ApiOperation(value="查询卸货任务")
@@ -89,7 +91,7 @@ public class TaskController {
 		task.setId(UuidUtil.get32UUID());
 		task.setCreatetime(new Date());
 		task.setModifytime(new Date());
-		task.setStatus(TaskEnums.Status.Execute.index().toString());
+		task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
 		task.setType(TaskEnums.Type.Unload.index().toString());
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -119,12 +121,46 @@ public class TaskController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (taskService.getById(taskProgram.getTaskId()) != null) {
+			
+			Task task = new Task();
+			task.setId(taskProgram.getTaskId());
+			task.setModifier(loginUser.getId());
+			task.setModifytime(new Date());
+			if (taskProgram.getActive() == false) {//如果为不活动，，则为任务完成，
+				task.setStatus(TaskEnums.Status.Finish.index().toString());
+			}else {//如果为活动，，则为任务执行中
+				task.setStatus(TaskEnums.Status.Execute.index().toString());
+			}
+			//修改任务状态
+			taskService.updateById(task);
 			UpdateWrapper<TaskProgram> updateWrapper = new UpdateWrapper<>();
 			updateWrapper.eq("task_id", taskProgram.getTaskId())
 			.eq("program_id", taskProgram.getProgramId());
 			if (taskProgramService.update(taskProgram, updateWrapper)) {
 				response.setCode(ApiConstants.ResponseCode.SUCCESS);
 				response.setMsg("修改成功");
+			}
+		}else {
+			response.setMsg("任务不存在");
+		}
+		return response;
+	}
+	@LoginToken
+	@ApiOperation(value="取消出货任务")
+	@PostMapping(value="/cancel-shipment.do")
+	public BaseResponse<Object> cancelShipment(HttpServletRequest request
+			,@RequestBody @ApiParam(required=true,name="task",value="任务主键") Task task) {
+		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//当前登录用户
+		//LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (taskService.getById(task.getId()) != null) {
+			task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
+			taskService.updateById(task);
+			QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("task_id", task.getId());
+			if (shipmentGoodsService.remove(queryWrapper)) {
+				response.setCode(ApiConstants.ResponseCode.SUCCESS);
+				response.setMsg("取消成功");
 			}
 		}else {
 			response.setMsg("任务不存在");
@@ -167,7 +203,7 @@ public class TaskController {
 		task.setId(UuidUtil.get32UUID());
 		task.setCreatetime(new Date());
 		task.setModifytime(new Date());
-		task.setStatus(TaskEnums.Status.Execute.index().toString());
+		task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
 		task.setType(TaskEnums.Type.Shipment.index().toString());
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
