@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -134,7 +135,7 @@ public class CompanyUserController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
-		companyUser.setModifytime(LocalDateTime.now());
+		companyUser.setModifytime(new Date());
 		if (iCompanyUserService.updateById(companyUser)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -154,7 +155,7 @@ public class CompanyUserController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
-		companyUser.setModifytime(LocalDateTime.now());
+		companyUser.setModifytime(new Date());
 		companyUser.setId(id);
 		companyUser.setDr(true);
 		if (iCompanyUserService.updateById(companyUser)) {
@@ -180,7 +181,7 @@ public class CompanyUserController {
 				user.setId(id);
 				user.setDr(true);
 				user.setModifier(loginUser.getId());
-				user.setModifytime(LocalDateTime.now());
+				user.setModifytime(new Date());
 				userList.add(user);
 			}
 			if (iCompanyUserService.updateBatchById(userList)) {//逻辑删除

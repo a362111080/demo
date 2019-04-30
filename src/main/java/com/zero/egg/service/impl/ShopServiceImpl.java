@@ -8,6 +8,7 @@ import com.zero.egg.tool.UuidUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public boolean save(Shop shop) {
 		shop.setId(UuidUtil.get32UUID());
-		shop.setCreatetime(LocalDateTime.now());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setCreatetime(new Date());
+		shop.setModifytime(new Date());
 		shop.setStatus(CompanyUserEnums.Status.Normal.index().toString());
 		shop.setDr(false);
 		return super.save(shop);

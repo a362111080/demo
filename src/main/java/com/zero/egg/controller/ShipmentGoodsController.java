@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +78,9 @@ public class ShipmentGoodsController {
 			shipmentGoods.setMarker(goods.getMarker());
 			shipmentGoods.setMode(goods.getMode());
 			shipmentGoods.setWeight(goods.getWeight());
-			shipmentGoods.setCreatetime(LocalDateTime.now());
+			shipmentGoods.setCreatetime(new Date());
 			shipmentGoods.setCreator(loginUser.getId());
-			shipmentGoods.setModifytime(LocalDateTime.now());
+			shipmentGoods.setModifytime(new Date());
 			shipmentGoods.setModifier(loginUser.getId());
 			shipmentGoods.setDr(false);
 			if (shipmentGoodsService.save(shipmentGoods)) {

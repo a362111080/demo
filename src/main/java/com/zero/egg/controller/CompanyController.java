@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -126,7 +127,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		company.setModifier(loginUser.getId());
 		company.setCreator(loginUser.getId());
 		if (iCompanyService.save(company)) {
@@ -156,7 +157,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		if (iCompanyService.updateById(company)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -173,7 +174,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		company.setStatus(CompanyEnums.Status.Disable.index().toString());
 		company.setId(id);
 		if (iCompanyService.updateById(company)) {
@@ -196,7 +197,7 @@ public class CompanyController {
 		company.setId(id);
 		company.setDr(true);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		if (iCompanyService.updateById(company)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
@@ -220,7 +221,7 @@ public class CompanyController {
 				company.setId(id);
 				company.setDr(true);
 				company.setModifier(loginUser.getId());
-				company.setModifytime(LocalDateTime.now());
+				company.setModifytime(new Date());
 				companyList.add(company);
 			}
 			if (iCompanyService.updateBatchById(companyList)) {//逻辑删除

@@ -9,6 +9,7 @@ import com.zero.egg.tool.UuidUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.security.MD5Encoder;
@@ -28,8 +29,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	@Override
 	public boolean save(User user) {
 		user.setId(UuidUtil.get32UUID());
-		user.setCreatetime(LocalDateTime.now());
-		user.setModifytime(LocalDateTime.now());
+		user.setCreatetime(new Date());
+		user.setModifytime(new Date());
 		user.setStatus(CompanyUserEnums.Status.Normal.index().toString());
 		user.setDr(false);
 		if (StringUtils.isNotBlank(user.getPassword())) {

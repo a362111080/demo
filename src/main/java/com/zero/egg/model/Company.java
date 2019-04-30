@@ -2,6 +2,7 @@ package com.zero.egg.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -54,14 +55,14 @@ public class Company implements Serializable {
    
     @ApiModelProperty(value = "创建时间",hidden=true)
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createtime;
+    private Date createtime;
 
     @ApiModelProperty(value = "更新人",hidden=true)
     private String modifier;
    
     @ApiModelProperty(value = "更新时间",hidden=true)
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime modifytime;
+    private Date modifytime;
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;

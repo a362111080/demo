@@ -2,6 +2,7 @@ package com.zero.egg.controller;
 
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public class BillDetailsController {
 			bill.setId(billDetails.getBillId());
 			bill.setAmount(billDetails.getAmount());
 			bill.setModifier(loginUser.getId());
-			bill.setModifytime(LocalDateTime.now());
+			bill.setModifytime(new Date());
 			if (billService.updateById(bill)) {
 				response.setCode(ApiConstants.ResponseCode.SUCCESS);
 				response.setMsg("修改成功");

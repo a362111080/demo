@@ -2,6 +2,7 @@ package com.zero.egg.responseDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -34,11 +35,11 @@ public class ShipmentGoodsResponse {
 
 	    private String creator;
 
-	    private LocalDateTime createtime;
+	    private Date createtime;
 
 	    private String modifier;
 
-	    private LocalDateTime modifytime;
+	    private Date modifytime;
 
 	    private Boolean dr;
 	    

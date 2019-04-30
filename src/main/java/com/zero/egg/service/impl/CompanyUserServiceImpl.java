@@ -9,6 +9,7 @@ import com.zero.egg.tool.UuidUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.security.MD5Encoder;
@@ -28,8 +29,8 @@ public class CompanyUserServiceImpl extends ServiceImpl<CompanyUserMapper, Compa
 	@Override
 	public boolean save(CompanyUser entity) {
 		entity.setId(UuidUtil.get32UUID());
-		entity.setCreatetime(LocalDateTime.now());
-		entity.setModifytime(LocalDateTime.now());
+		entity.setCreatetime(new Date());
+		entity.setModifytime(new Date());
 		entity.setStatus(CompanyUserEnums.Status.Normal.index().toString());
 		entity.setDr(false);
 		if (StringUtils.isNotBlank(entity.getPassword())) {

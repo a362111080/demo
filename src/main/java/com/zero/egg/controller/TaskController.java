@@ -2,6 +2,7 @@ package com.zero.egg.controller;
 
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -86,8 +87,8 @@ public class TaskController {
 			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		task.setId(UuidUtil.get32UUID());
-		task.setCreatetime(LocalDateTime.now());
-		task.setModifytime(LocalDateTime.now());
+		task.setCreatetime(new Date());
+		task.setModifytime(new Date());
 		task.setStatus(TaskEnums.Status.Execute.index().toString());
 		task.setType(TaskEnums.Type.Unload.index().toString());
 		//当前登录用户
@@ -164,8 +165,8 @@ public class TaskController {
 			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		task.setId(UuidUtil.get32UUID());
-		task.setCreatetime(LocalDateTime.now());
-		task.setModifytime(LocalDateTime.now());
+		task.setCreatetime(new Date());
+		task.setModifytime(new Date());
 		task.setStatus(TaskEnums.Status.Execute.index().toString());
 		task.setType(TaskEnums.Type.Shipment.index().toString());
 		//当前登录用户

@@ -1,9 +1,12 @@
 package com.zero.egg.controller;
 
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,7 +82,9 @@ public class BillController {
 				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
 				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth()); 
 			}else {
-				today = bill.getBillDate();
+				Instant instant = bill.getBillDate().toInstant();
+			    ZoneId zone = ZoneId.systemDefault();
+			    today = LocalDateTime.ofInstant(instant, zone);
 				//去本月第一天
 				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
 				// 取本月最后一天，再也不用计算是28，29，30还是31：
@@ -110,7 +115,7 @@ public class BillController {
 				bill.setId(id);
 				bill.setStatus(status);
 				bill.setModifier(loginUser.getId());
-				bill.setModifytime(LocalDateTime.now());
+				bill.setModifytime(new Date());
 				billList.add(bill);
 			}
 			if (billService.updateBatchById(billList)) {//逻辑删除

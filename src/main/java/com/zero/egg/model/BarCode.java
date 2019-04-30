@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -52,13 +53,13 @@ public class BarCode implements Serializable {
     private String creator;
 
     @ApiModelProperty(value = "创建时间",hidden=true)
-    private LocalDateTime createtime;
+    private Date createtime;
 
     @ApiModelProperty(value = "更新人",hidden=true)
     private String modifier;
 
     @ApiModelProperty(value = "更新时间",hidden=true)
-    private LocalDateTime modifytime;
+    private Date modifytime;
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;

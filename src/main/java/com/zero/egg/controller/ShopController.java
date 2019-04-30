@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -134,7 +135,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -153,7 +154,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -172,7 +173,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
@@ -195,7 +196,7 @@ public class ShopController {
 				shop.setDr(true);
 				shop.setId(id);
 				shop.setModifier(loginUser.getId());
-				shop.setModifytime(LocalDateTime.now());
+				shop.setModifytime(new Date());
 				shopList.add(shop);
 			}
 			if (shopService.updateBatchById(shopList)) {//逻辑删除

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -88,8 +89,8 @@ public class UnloadGoodsController {
 			,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		unloadGoods.setId(UuidUtil.get32UUID());
-		unloadGoods.setCreatetime(LocalDateTime.now());
-		unloadGoods.setModifytime(LocalDateTime.now());
+		unloadGoods.setCreatetime(new Date());
+		unloadGoods.setModifytime(new Date());
 		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
 		unloadGoods.setModifier("1");
 		unloadGoods.setCreator("1");
@@ -108,8 +109,8 @@ public class UnloadGoodsController {
 		Message message = new Message();
 		try {
 			//实际根据界面传值
-			model.setCreatetime(LocalDateTime.now());
-			model.setModifytime(LocalDateTime.now());
+			model.setCreatetime(new Date());
+			model.setModifytime(new Date());
 			//根据重量对应规程方案判断是否预警
 			if (null!=model.getWeight() && null !=model.getProgramId())
 			{
