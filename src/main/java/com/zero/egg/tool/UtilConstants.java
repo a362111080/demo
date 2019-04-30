@@ -73,6 +73,11 @@ public interface UtilConstants {
          * 凭证校验失败
          */
         public static final String HTTPAPI_ERROR = "凭证校验失败";
+
+        /**
+         * session_key过期
+         */
+        public static final String SESSION_KEY_TIMEOUT = "session_key过期";
     }
     
     /**
@@ -144,6 +149,16 @@ public interface UtilConstants {
         public static final int OK = 200;
         //失败
         public static final int FAIL = 500;
+    }
+
+    /**
+     * Redis的key前缀
+     */
+    public static class RedisPrefix {
+        /**
+         * 微信用户信息(openid)前缀
+         */
+        public static final String WXUSER_REDIS_SESSION = "wxuser-redis-session:";
     }
 
 }

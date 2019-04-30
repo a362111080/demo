@@ -3,6 +3,7 @@ package com.zero.egg.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,17 +24,28 @@ public class WechatAuth {
     private String wechatAuthId;
 
     /**
-     * 微信openId
+     * 微信openid
      */
-    private String openId;
+    private String openid;
 
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Date createtime;
+
+    /**
+     * 最后一次绑定时间
+     */
+    @ApiModelProperty(value = "最后一次绑定时间", required = false)
+    private Date modifytime;
 
     /**
      * 与用户实体类关联
      */
-    private User user;
+    private String userId;
+
+    /**
+     * 用户类型(1.企业员工 2.店铺用户)
+     */
+    private Integer type;
 }

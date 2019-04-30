@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.UserMapper;
 import com.zero.egg.dao.WechatAuthMapper;
 import com.zero.egg.enums.WechatAuthStateEnum;
@@ -33,7 +34,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     @Override
     public WechatAuth getWechatAuthByOpenId(String openId) {
         return wechatAuthMapper.selectOne(new QueryWrapper<WechatAuth>()
-                .eq("open_id", openId));
+                .eq("openid", openId));
     }
 
     @Override
@@ -41,7 +42,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     public Message register(WechatAuth wechatAuth) throws ServiceException {
         Message message = null;
         //空值判断
-        if (wechatAuth == null || wechatAuth.getOpenId() == null) {
+        if (wechatAuth == null || wechatAuth.getOpenid() == null) {
             message = new Message();
             message.setState(WechatAuthStateEnum.LOGINFAIL.getState());
             message.setMessage(WechatAuthStateEnum.NULL_AUTH_INFO.getStateInfo());
@@ -50,7 +51,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         //如果微信账号里夹带着用户信息并且用户id为空,则认为该用户第一次使用平台,且使用微信登录
         //自动创建用户信息
         try {
-            wechatAuth.setCreateTime(new Date());
+            wechatAuth.setCreatetime(new Date());
             //创建专属于本平台的微信账号
             int effectedNum = wechatAuthMapper.insert(wechatAuth);
             if (effectedNum <= 0) {
@@ -74,6 +75,29 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     @Override
     public int getCountByOpenId(String openId) {
         return wechatAuthMapper.selectCount(new QueryWrapper<WechatAuth>()
-                .eq("open_id", openId));
+                .eq("openid", openId));
     }
+
+    @Override
+    public int bindWechatAuth(WechatAuth wechatAuth) {
+        try {
+            wechatAuth.setModifytime(new Date());
+            int effectNum = wechatAuthMapper.update(wechatAuth, new UpdateWrapper<WechatAuth>()
+                    .eq("openid", wechatAuth.getOpenid()));
+            if (effectNum <= 0) {
+                throw new ServiceException("bindWechatAuth failed");
+            }
+            return effectNum;
+        } catch (Exception e) {
+            log.error("bindWechatAuth", e);
+            throw new ServiceException("bindWechatAuth failed:", e.getMessage());
+        }
+    }
+
+    @Override
+    public int getCountByUserId(String userId) {
+        return wechatAuthMapper.selectCount(new QueryWrapper<WechatAuth>()
+                .eq("user_id", userId));
+    }
+
 }
