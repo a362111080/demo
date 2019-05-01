@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 
@@ -45,10 +46,13 @@ public class ListResponse<T> extends BaseResponse<ListResponse.Body<T>> {
     }
     @Data
     public static class Body<T> {
-
+    	@ApiModelProperty(value = "当前页")
     	private Long page = 1L;
+    	@ApiModelProperty(value = "每页大小")
     	private Long limit = 20L;
+    	@ApiModelProperty(value = "查询总数")
         private Long total;
+    	@ApiModelProperty(value = "查询数据")
         private List<T> data;
 
         public Long getTotal() {
