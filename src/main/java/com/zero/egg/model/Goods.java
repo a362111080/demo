@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -67,13 +69,13 @@ public class Goods implements Serializable {
     private String creator;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createtime;
+    private Date createtime;
 
     @ApiModelProperty(value = "更新人")
     private String modifier;
 
     @ApiModelProperty(value = "更新时间")
-    private LocalDateTime modifytime;
+    private Date modifytime;
 
     @ApiModelProperty(value = "删除标识")
     private Boolean dr;

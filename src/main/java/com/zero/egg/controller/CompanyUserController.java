@@ -1,8 +1,8 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +56,7 @@ public class CompanyUserController {
 			@RequestBody @ApiParam(required=false,name="companyUser",value="查询字段：关键词（名称 、编号）、状态") CompanyUser companyUser) {
 		ListResponse<CompanyUser> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<CompanyUser> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<CompanyUser> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -68,6 +68,8 @@ public class CompanyUserController {
 		IPage<CompanyUser> list = iCompanyUserService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}
@@ -134,7 +136,7 @@ public class CompanyUserController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
-		companyUser.setModifytime(LocalDateTime.now());
+		companyUser.setModifytime(new Date());
 		if (iCompanyUserService.updateById(companyUser)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -154,7 +156,7 @@ public class CompanyUserController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
-		companyUser.setModifytime(LocalDateTime.now());
+		companyUser.setModifytime(new Date());
 		companyUser.setId(id);
 		companyUser.setDr(true);
 		if (iCompanyUserService.updateById(companyUser)) {
@@ -180,7 +182,7 @@ public class CompanyUserController {
 				user.setId(id);
 				user.setDr(true);
 				user.setModifier(loginUser.getId());
-				user.setModifytime(LocalDateTime.now());
+				user.setModifytime(new Date());
 				userList.add(user);
 			}
 			if (iCompanyUserService.updateBatchById(userList)) {//逻辑删除

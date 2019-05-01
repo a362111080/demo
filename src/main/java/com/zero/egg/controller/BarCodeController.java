@@ -14,8 +14,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
@@ -97,4 +102,26 @@ public class BarCodeController {
         return  ms;
     }
 
+
+    @ApiOperation(value = "批量打印条码后更换当前最大编码值",notes="条码主键、本次打印条码数量")
+    @RequestMapping(value = "/printbarcode", method = RequestMethod.POST)
+    public Message PrintBarCode(@RequestBody @ApiParam(required = true, name = "BarCodeRequestDTO",
+            value = "id：条码主键,printNum:本次打印数量，其他字段不需要") BarCodeRequestDTO model) {
+        Message message = new Message();
+        try {
+            if (null != model.getId()) {
+                bcService.PrintBarCode(model);
+                message.setState(ResponseCode.SUCCESS_HEAD);
+                message.setMessage(ResponseMsg.SUCCESS);
+            } else {
+                message.setState(ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(ResponseMsg.ATLEAST_ONE);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(ResponseMsg.FAILED);
+            return message;
+        }
+    }
 }

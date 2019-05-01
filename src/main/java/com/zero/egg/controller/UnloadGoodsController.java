@@ -1,6 +1,20 @@
 package com.zero.egg.controller;
 
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,23 +25,17 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.responseDTO.UnLoadCountResponseDto;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * <p>
@@ -53,14 +61,15 @@ public class UnloadGoodsController {
 			@RequestBody @ApiParam(required=false,name="unloadGoods",value="查询字段：任务主键、方案（可选）") UnloadGoods unloadGoods) {
 		ListResponse<UnloadGoods> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<UnloadGoods> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<UnloadGoods> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
 		if (unloadGoods != null) {
 
 		    if(unloadGoods.getWarn()!=null) {
-                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
+
+		    	queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
                  .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId())
                   .eq(StringUtils.isNotBlank(unloadGoods.getWarn().toString()), "warn", unloadGoods.getWarn());
             }
@@ -73,6 +82,8 @@ public class UnloadGoodsController {
 		IPage<UnloadGoods> list = unloadGoodsService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}
@@ -86,8 +97,8 @@ public class UnloadGoodsController {
 			,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		unloadGoods.setId(UuidUtil.get32UUID());
-		unloadGoods.setCreatetime(LocalDateTime.now());
-		unloadGoods.setModifytime(LocalDateTime.now());
+		unloadGoods.setCreatetime(new Date());
+		unloadGoods.setModifytime(new Date());
 		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
 		unloadGoods.setModifier("1");
 		unloadGoods.setCreator("1");
@@ -106,8 +117,8 @@ public class UnloadGoodsController {
 		Message message = new Message();
 		try {
 			//实际根据界面传值
-			model.setCreatetime(LocalDateTime.now());
-			model.setModifytime(LocalDateTime.now());
+			model.setCreatetime(new Date());
+			model.setModifytime(new Date());
 			//根据重量对应规程方案判断是否预警
 			if (null!=model.getWeight() && null !=model.getProgramId())
 			{
@@ -120,6 +131,7 @@ public class UnloadGoodsController {
 						//存在去皮数值   显示标识为实际称重减去去皮值
 						model.setMarker(model.getWeight().add(res.getNumerical()).toString());
 						model.setWarn(false);
+
 					}
 					else
 					{
@@ -134,8 +146,19 @@ public class UnloadGoodsController {
 					model.setWarn(true);
 				}
 			}
+
 			int strval=unloadGoodsService.AddUnloadDetl(model);
 			if (strval>0) {
+				UnLoadCountResponseDto dto=new UnLoadCountResponseDto();
+				dto.setMarker(model.getMarker());
+				if(null != model.getTaskId())
+				{
+					//获取当前卸货任务已卸货数量，含本次
+					int count=unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+					dto.setCount(count);
+					message.setData(dto);
+				}
+
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}

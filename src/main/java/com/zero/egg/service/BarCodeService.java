@@ -13,4 +13,6 @@ public interface BarCodeService {
     int DeleteBarCode(BarCodeRequestDTO model);
 
     List<BarCodeResponseDTO> GetBarCodeList(BarCode model);
+
+    int PrintBarCode(BarCodeRequestDTO model);
 }

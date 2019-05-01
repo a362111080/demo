@@ -16,4 +16,5 @@ public interface BarCodeMapper {
 
     List<BarCodeResponseDTO> GetBarCodeList(BarCode model);
 
+    int PrintBarCode(BarCodeRequestDTO model);
 }

@@ -1,8 +1,8 @@
 package com.zero.egg.controller;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +58,7 @@ public class ShopController {
 			@RequestBody @ApiParam(required=false,name="shop",value="查询字段：关键词（名称 、编号）、状态") Shop shop) {
 		ListResponse<Shop> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<Shop> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<Shop> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -70,6 +70,8 @@ public class ShopController {
 		IPage<Shop> list = shopService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}
@@ -134,7 +136,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -153,7 +155,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -172,7 +174,7 @@ public class ShopController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
-		shop.setModifytime(LocalDateTime.now());
+		shop.setModifytime(new Date());
 		if (shopService.updateById(shop)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
@@ -195,7 +197,7 @@ public class ShopController {
 				shop.setDr(true);
 				shop.setId(id);
 				shop.setModifier(loginUser.getId());
-				shop.setModifytime(LocalDateTime.now());
+				shop.setModifytime(new Date());
 				shopList.add(shop);
 			}
 			if (shopService.updateBatchById(shopList)) {//逻辑删除

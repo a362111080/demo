@@ -66,7 +66,7 @@ public class StockController {
 			@RequestBody @ApiParam(required=false,name="stockRequest" ,value="根据需求自行确定搜索字段") StockRequest stockRequest) {
 		ListResponse<StockResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<Stock> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<StockRequest> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("s.dr", false);//查询未删除信息
@@ -86,6 +86,8 @@ public class StockController {
 		IPage<StockResponse> list = stockService.listByCondition(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}

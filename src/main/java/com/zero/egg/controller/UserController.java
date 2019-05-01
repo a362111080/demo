@@ -1,6 +1,20 @@
 package com.zero.egg.controller;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,21 +29,10 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.StringTool;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -57,7 +60,7 @@ public class UserController {
 			@RequestBody @ApiParam(required=false,name="user",value="查询字段：企业主键，店铺主键，关键词（名称 、编号）、状态") User user) {
 		ListResponse<User> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<User> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -71,6 +74,8 @@ public class UserController {
 		IPage<User> list = userService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}
@@ -121,12 +126,14 @@ public class UserController {
 	@ApiOperation(value="新增员工")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public BaseResponse<Object> add(
-			@RequestBody @ApiParam(required=true,name="user",value="员工信息:店铺主键，企业主键，编号，登录名,名称，电话，性别") User user
+			@RequestBody @ApiParam(required=true,name="user",value="员工信息:店铺主键，企业主键，编号，登录名,名称，电话，性别，密码(不填则默认888888)") User user
 			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		user.setPassword("888888");
+		if (StringUtils.isNotBlank(user.getPassword())) {
+			user.setPassword("888888");
+		}
 		user.setModifier(loginUser.getId());
 		user.setCreator(loginUser.getId());
 		String shopId = user.getShopId();
@@ -191,7 +198,7 @@ public class UserController {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		user.setModifier(loginUser.getId());
-		user.setModifytime(LocalDateTime.now());
+		user.setModifytime(new Date());
 		if (userService.updateById(user)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -207,7 +214,7 @@ public class UserController {
 		User user = new User();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		user.setModifier(loginUser.getId());
-		user.setModifytime(LocalDateTime.now());
+		user.setModifytime(new Date());
 		user.setStatus(UserEnums.Status.Disable.index().toString());
 		user.setId(id);
 		if (userService.updateById(user)) {
@@ -227,7 +234,7 @@ public class UserController {
 		user.setId(id);
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		user.setModifier(loginUser.getId());
-		user.setModifytime(LocalDateTime.now());
+		user.setModifytime(new Date());
 		if (userService.updateById(user)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
@@ -249,7 +256,7 @@ public class UserController {
 				user.setDr(true);
 				user.setId(id);
 				user.setModifier(loginUser.getId());
-				user.setModifytime(LocalDateTime.now());
+				user.setModifytime(new Date());
 				userList.add(user);
 			}
 			if (userService.updateBatchById(userList)) {//逻辑删除

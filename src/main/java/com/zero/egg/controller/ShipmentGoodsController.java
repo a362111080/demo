@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +78,9 @@ public class ShipmentGoodsController {
 			shipmentGoods.setMarker(goods.getMarker());
 			shipmentGoods.setMode(goods.getMode());
 			shipmentGoods.setWeight(goods.getWeight());
-			shipmentGoods.setCreatetime(LocalDateTime.now());
+			shipmentGoods.setCreatetime(new Date());
 			shipmentGoods.setCreator(loginUser.getId());
-			shipmentGoods.setModifytime(LocalDateTime.now());
+			shipmentGoods.setModifytime(new Date());
 			shipmentGoods.setModifier(loginUser.getId());
 			shipmentGoods.setDr(false);
 			if (shipmentGoodsService.save(shipmentGoods)) {
@@ -102,7 +103,7 @@ public class ShipmentGoodsController {
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间）") ShipmentGoods shipmentGoods) {
 		ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<ShipmentGoods> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("s.dr", false);//查询未删除信息
@@ -118,6 +119,8 @@ public class ShipmentGoodsController {
 		IPage<ShipmentGoodsResponse> list = shipmentGoodsService.listByCondition(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}

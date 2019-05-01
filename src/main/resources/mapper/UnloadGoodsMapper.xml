@@ -22,4 +22,9 @@
         where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime}
         GROUP BY  a.shop_id,b.id
     </select>
+
+    <select id="GetTaskUnloadCount"  resultType="int">
+        select sum(1) as sumVal from  bd_unload_goods  a
+        where  a.task_id=#{taskId}
+    </select>
 </mapper>

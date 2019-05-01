@@ -10,6 +10,16 @@ import java.util.List;
 @Data
 public class BarCodeRequestDTO extends PageDTO implements Serializable {
     private static final long serialVersionUID = 9013224672043236709L;
+
+    /**
+     * 条码主键
+     */
+    private String id;
+
+    /**
+     * 打印数量
+     */
+    private Integer printNum;
     /**
      * 企业主键id
      */

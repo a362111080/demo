@@ -1,6 +1,22 @@
 package com.zero.egg.controller;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,23 +33,10 @@ import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.StringTool;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -63,7 +66,7 @@ public class CompanyController {
 			@RequestBody @ApiParam(required=false,name="company",value="查询字段：关键词（名称 、编号）、状态") Company company) {
 		ListResponse<Company> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<Company> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<Company> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -75,6 +78,8 @@ public class CompanyController {
 		IPage<Company> list = iCompanyService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 		
 	}
@@ -126,7 +131,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		company.setModifier(loginUser.getId());
 		company.setCreator(loginUser.getId());
 		if (iCompanyService.save(company)) {
@@ -156,7 +161,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		if (iCompanyService.updateById(company)) {
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("修改成功");
@@ -173,7 +178,7 @@ public class CompanyController {
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		company.setStatus(CompanyEnums.Status.Disable.index().toString());
 		company.setId(id);
 		if (iCompanyService.updateById(company)) {
@@ -196,7 +201,7 @@ public class CompanyController {
 		company.setId(id);
 		company.setDr(true);
 		company.setModifier(loginUser.getId());
-		company.setModifytime(LocalDateTime.now());
+		company.setModifytime(new Date());
 		if (iCompanyService.updateById(company)) {//逻辑删除
 			response.setCode(ApiConstants.ResponseCode.SUCCESS);
 			response.setMsg("删除成功");
@@ -220,7 +225,7 @@ public class CompanyController {
 				company.setId(id);
 				company.setDr(true);
 				company.setModifier(loginUser.getId());
-				company.setModifytime(LocalDateTime.now());
+				company.setModifytime(new Date());
 				companyList.add(company);
 			}
 			if (iCompanyService.updateBatchById(companyList)) {//逻辑删除

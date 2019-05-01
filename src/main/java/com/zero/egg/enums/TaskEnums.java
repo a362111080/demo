@@ -5,7 +5,7 @@ public class TaskEnums {
 	
 	public enum Status {
 
-		Execute(1,"执行中"),Finish(-1,"执行完成");
+		Execute(1,"执行中"),Finish(-1,"执行完成"),Unexecuted(0,"未执行");
 
 	    private Integer index;
 	    private String note;

@@ -1,9 +1,12 @@
 package com.zero.egg.controller;
 
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +23,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.api.dto.response.ListResponse;
@@ -56,10 +58,10 @@ public class BillController {
 	public ListResponse<Bill> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
 			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
 			@RequestBody @ApiParam(required=false,name="company"
-			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）") Bill bill) {
+			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）,状态（1挂账，-1销账）") Bill bill) {
 		ListResponse<Bill> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Page<Bill> page = new Page<>();
-		page.setPages(pageNum);
+		page.setCurrent(pageNum);
 		page.setSize(pageSize);
 		QueryWrapper<Bill> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -67,6 +69,7 @@ public class BillController {
 			queryWrapper.like(StringUtils.isNotBlank(bill.getCompanyId()),"company_id", bill.getCompanyId())
 			.eq(StringUtils.isNotBlank(bill.getShopId()),"shop_id", bill.getShopId())
 			.eq(StringUtils.isNotBlank(bill.getBillNo()),"bill_no", bill.getBillNo())
+			.eq(StringUtils.isNotBlank(bill.getStatus()),"status", bill.getStatus())
 			.eq(StringUtils.isNotBlank(bill.getCussupId()), "cussup_id", bill.getCussupId());
 			LocalDateTime today;
 			//去本月第一天
@@ -78,7 +81,9 @@ public class BillController {
 				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
 				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth()); 
 			}else {
-				today = bill.getBillDate();
+				Instant instant = bill.getBillDate().toInstant();
+			    ZoneId zone = ZoneId.systemDefault();
+			    today = LocalDateTime.ofInstant(instant, zone);
 				//去本月第一天
 				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
 				// 取本月最后一天，再也不用计算是28，29，30还是31：
@@ -90,6 +95,8 @@ public class BillController {
 		IPage<Bill> list = billService.page(page, queryWrapper);
 		response.getData().setData(list.getRecords());
 		response.getData().setTotal(list.getTotal());
+		response.getData().setPage(list.getCurrent());
+		response.getData().setLimit(list.getSize());
 		return response;
 	}
 	
@@ -109,7 +116,7 @@ public class BillController {
 				bill.setId(id);
 				bill.setStatus(status);
 				bill.setModifier(loginUser.getId());
-				bill.setModifytime(LocalDateTime.now());
+				bill.setModifytime(new Date());
 				billList.add(bill);
 			}
 			if (billService.updateBatchById(billList)) {//逻辑删除

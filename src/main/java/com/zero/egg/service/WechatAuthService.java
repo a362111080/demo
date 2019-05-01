@@ -31,5 +31,19 @@ public interface WechatAuthService {
      */
     int getCountByOpenId(String openId);
 
-    //TODO bindUser
+
+    /**
+     * 微信账号和本地账号做绑定(user_id和type)
+     *
+     * @return
+     */
+    int bindWechatAuth(WechatAuth wechatAuth);
+
+    /**
+     * 查看是否绑定了本地账号
+     *
+     * @param userId
+     * @return
+     */
+    int getCountByUserId(String userId);
 }

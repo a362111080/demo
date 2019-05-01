@@ -8,6 +8,7 @@ import com.zero.egg.tool.UuidUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 	@Override
 	public boolean save(Company company) {
 		company.setId(UuidUtil.get32UUID());
-		company.setCreatetime(LocalDateTime.now());
-		company.setModifytime(LocalDateTime.now());
+		company.setCreatetime(new Date());
+		company.setModifytime(new Date());
 		company.setStatus(CompanyEnums.Status.Normal.index().toString());
 		company.setDr(false);
 		return super.save(company);

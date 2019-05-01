@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class BarCodeResponseDTO implements Serializable {
@@ -34,11 +35,11 @@ public class BarCodeResponseDTO implements Serializable {
 
     private String creator;
 
-    private LocalDateTime createtime;
+    private Date createtime;
 
     private String modifier;
 
-    private LocalDateTime modifytime;
+    private Date modifytime;
 
     private Boolean dr;
 

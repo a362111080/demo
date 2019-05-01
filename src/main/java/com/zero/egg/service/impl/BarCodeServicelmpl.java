@@ -32,4 +32,9 @@ public class BarCodeServicelmpl implements BarCodeService {
     public List<BarCodeResponseDTO> GetBarCodeList(BarCode model) {
         return  mapper.GetBarCodeList(model);
     }
+
+    @Override
+    public int PrintBarCode(BarCodeRequestDTO model) {
+        return  mapper.PrintBarCode(model);
+    }
 }
