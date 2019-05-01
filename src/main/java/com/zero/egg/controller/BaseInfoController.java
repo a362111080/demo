@@ -220,7 +220,7 @@ public class BaseInfoController {
         Message message = null;
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
-            if (null != categoryRequestDTO.getId() && checkShopAndCompanyExist(user, categoryRequestDTO)) {
+            if (checkShopAndCompanyExist(user, categoryRequestDTO)) {
                 message = categoryService.listEggType(categoryRequestDTO);
             } else {
                 message = new Message();
