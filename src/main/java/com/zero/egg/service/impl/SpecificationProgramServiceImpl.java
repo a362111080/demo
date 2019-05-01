@@ -80,6 +80,23 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
         try {
             TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
             specificationProgram.setDr(1);
+            /**
+             * 1. 查询方案下相关联的方案细节,并逻辑删除
+             */
+            List<Specification> specificationList = specificationMapper.selectList(new QueryWrapper<Specification>()
+                    .eq("program_id", specificationProgramRequestDTO.getId())
+                    .eq("shop_id", specificationProgramRequestDTO.getShopId())
+                    .eq("company_id", specificationProgramRequestDTO.getCompanyId()));
+            for (Specification specification : specificationList) {
+                specification.setDr(1);
+                specificationMapper.update(specification, new UpdateWrapper<Specification>()
+                        .eq("id", specification.getId())
+                        .eq("shop_id", specification.getShopId())
+                        .eq("company_id", specification.getCompanyId()));
+            }
+            /**
+             * 2.逻辑删除该方案
+             */
             specificationProgramMapper.update(specificationProgram, new UpdateWrapper<SpecificationProgram>()
                     .eq("id", specificationProgram.getId())
                     .eq("shop_id", specificationProgram.getShopId())
@@ -201,7 +218,8 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                 .eq("category_id", specificationProgram.getCategoryId())
                 .eq("name", specificationProgram.getName())
                 .eq("shop_id", specificationProgram.getShopId())
-                .eq("company_id", specificationProgram.getCompanyId()));
+                .eq("company_id", specificationProgram.getCompanyId())
+                .eq("dr", 0));
         return resultList.size();
     }
 }
