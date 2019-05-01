@@ -46,8 +46,8 @@ public class ListResponse<T> extends BaseResponse<ListResponse.Body<T>> {
     @Data
     public static class Body<T> {
 
-    	private int page = 1;
-    	private int limit = 20;
+    	private Long page = 1L;
+    	private Long limit = 20L;
         private Long total;
         private List<T> data;
 
