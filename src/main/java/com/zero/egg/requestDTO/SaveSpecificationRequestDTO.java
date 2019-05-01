@@ -24,15 +24,4 @@ public class SaveSpecificationRequestDTO implements Serializable {
     @ApiModelProperty(value = "需要作保存操作的方案细节列表(新增和编辑)",required=false)
     List<SpecificationRequestDTO> specificationRequestDTOS;
 
-    /**
-     * 所属店铺id
-     */
-    @ApiModelProperty(value = "所属店铺id",required=false)
-    private String shopId;
-
-    /**
-     * 店铺所属企业id
-     */
-    @ApiModelProperty(value = "店铺所属企业id",required=false)
-    private String companyId;
 }

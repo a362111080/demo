@@ -4,10 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.SpecificationMapper;
+import com.zero.egg.dao.SpecificationProgramMapper;
 import com.zero.egg.model.Category;
+import com.zero.egg.model.SpecificationProgram;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
+import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.responseDTO.CategoryListResponseDTO;
 import com.zero.egg.service.CategoryService;
+import com.zero.egg.service.SpecificationProgramService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TransferUtil;
@@ -32,6 +37,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private SpecificationProgramMapper specificationProgramMapper;
+
+    @Autowired
+    private SpecificationMapper specificationMapper;
+
+    @Autowired
+    private SpecificationProgramService programService;
 
     @Override
     @Transactional
@@ -61,9 +75,26 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteEggTypeById(CategoryRequestDTO deleteCategoryRequestDTO) {
+        Message message = null;
         Category category = new Category();
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setShopId(deleteCategoryRequestDTO.getShopId());
+        specificationProgramRequestDTO.setCompanyId(deleteCategoryRequestDTO.getCompanyId());
         try {
+            /**
+             * 想根据Id删除所属的所有方案以及方案细节
+             */
+            List<SpecificationProgram> specificationProgramList = specificationProgramMapper.selectList(new QueryWrapper<SpecificationProgram>()
+                    .eq("category_id", deleteCategoryRequestDTO.getId())
+                    .eq("dr", 0)
+                    .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", deleteCategoryRequestDTO.getCompanyId()));
+            for (SpecificationProgram specificationProgram : specificationProgramList) {
+                specificationProgramRequestDTO.setId(specificationProgram.getId());
+                programService.deleteStandardDataById(specificationProgramRequestDTO);
+            }
             /**
              * 只做逻辑删除
              */
@@ -72,6 +103,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .eq("id", deleteCategoryRequestDTO.getId())
                     .eq("shop_id", deleteCategoryRequestDTO.getShopId())
                     .eq("company_id", deleteCategoryRequestDTO.getCompanyId()));
+
         } catch (Exception e) {
             log.error("deleteEggTypeById Error!", e);
             throw new ServiceException("deleteEggTypeById Error!");
@@ -164,7 +196,8 @@ public class CategoryServiceImpl implements CategoryService {
             category = categoryMapper.selectOne(new QueryWrapper<Category>()
                     .eq("id", categoryRequestDTO.getId())
                     .eq("shop_id", categoryRequestDTO.getShopId())
-                    .eq("company_id", categoryRequestDTO.getCompanyId()));
+                    .eq("company_id", categoryRequestDTO.getCompanyId())
+                    .eq("dr", 0));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             message.setData(category);
@@ -186,7 +219,8 @@ public class CategoryServiceImpl implements CategoryService {
         resultList = categoryMapper.selectList(new QueryWrapper<Category>()
                 .eq("name", category.getName())
                 .eq("shop_id", category.getShopId())
-                .eq("company_id", category.getCompanyId()));
+                .eq("company_id", category.getCompanyId()
+                ).eq("dr", 0));
         int count;
         if (null != resultList) {
             count = resultList.size();

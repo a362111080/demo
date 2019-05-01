@@ -5,7 +5,6 @@ public class ApiConstants {
 	
 	public final static String LOGIN_USER = "login_user";
 
-	public final static String LOGIN_USER_Name = "login_user_name";
 	/**
 	 * 1为企业用户，2位店铺员工
 	 */
