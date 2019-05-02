@@ -12,7 +12,7 @@ public interface SupplierMapper {
 
 	int UpdateSupplier(Supplier model);
 
-	List<Supplier> GetSupplierList(Supplier model);
+	List<Supplier> GetSupplierList(SupplierRequestDTO model);
 
 	int DeleteSupplier(List<String> ids);
 }

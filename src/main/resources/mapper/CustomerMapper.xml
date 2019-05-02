@@ -32,7 +32,7 @@
             </foreach>
         </if>
     </update>
-    <select id="GetCustomerList" parameterType="Customer" resultType="com.zero.egg.model.Customer">
+    <select id="GetCustomerList" parameterType="Customer" resultType="com.zero.egg.requestDTO.CustomerRequestDTO">
             select  k.*,lv1.id as city1,lv2.id as city2  from bd_customer k
             left join bd_city   lv3  on lv3.id=k.city_id
             left join bd_city   lv2  on lv2.id=lv3.parent_id
@@ -50,11 +50,11 @@
             <if test="shortname != null and shortname !=''">
                 and k.short_name LIKE '%${shortname}%'
             </if>
-            <if test="companyid != null and companyid !=''">
-                and k.company_id=#{companyid,jdbcType=VARCHAR}
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
             </if>
-            <if test="shopid != null and shopid !=''">
-                and k.shop_id=#{shopid,jdbcType=VARCHAR}
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
             </if>
             <if test="status != null and status !='-1' and status !=''">
                 and k.status=#{status,jdbcType=INTEGER}

@@ -99,9 +99,9 @@ public class CustomerManageController {
             @ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
     })
     @RequestMapping(value = "/getcustomerlist",method = RequestMethod.POST)
-    public Message GetSupplierList(@RequestParam int pageNum, @RequestParam int pageSize, @RequestBody  Customer model) {
+    public Message GetSupplierList(@RequestBody  CustomerRequestDTO model) {
         Message ms = new Message();
-        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         List<Customer> Customer=CustomerSv.GetCustomerList(model);
         PageInfo<Customer> pageInfo = new PageInfo<>(Customer);
         ms.setData(pageInfo);

@@ -91,15 +91,11 @@ public class SupplierManageController {
 		
 	  }
 
-	@ApiOperation(value="查询供应商列表",notes="分页查询，各种条件查询")
-	@ApiImplicitParams({
-			@ApiImplicitParam(paramType="query",name="页码",value="pageNum",dataType="int"),
-			@ApiImplicitParam(paramType="query",name="页大小",value="pageSize",dataType="int")
-	})
+	 @ApiOperation(value="查询供应商列表",notes="分页查询，各种条件查询")
 	 @RequestMapping(value = "/getsupplierlist",method = RequestMethod.POST)
-	 public Message GetSupplierList(@RequestParam int pageNum,@RequestParam int pageSize, @RequestBody  Supplier model) {
+	 public Message GetSupplierList(@RequestBody  SupplierRequestDTO model) {
 		  Message ms = new Message();
-		  PageHelper.startPage(pageNum, pageSize);
+		  PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
 		  List<Supplier> Supplier=supplierService.GetSupplierList(model);
 		  PageInfo<Supplier> pageInfo = new PageInfo<>(Supplier);
 		  ms.setData(pageInfo);

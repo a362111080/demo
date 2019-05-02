@@ -35,7 +35,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
-	public List<Supplier> GetSupplierList(Supplier model) {
+	public List<Supplier> GetSupplierList(SupplierRequestDTO model) {
 		return  mapper.GetSupplierList(model);
 	}
 
