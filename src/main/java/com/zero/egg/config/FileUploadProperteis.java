@@ -57,8 +57,8 @@ public class FileUploadProperteis {
         return basePath;
     }
 
-    public static String getMatrixImagePath(String companyId, String shopId, String supplierId) {
-        String imagePath = matrixPath + "/" + companyId + "/" + shopId + "/" + supplierId + "/" + "/";
+    public static String getMatrixImagePath(String companyId, String shopId, String supplierId, String categoryId) {
+        String imagePath = matrixPath + "/" + companyId + "/" + shopId + "/" + supplierId + "/" + categoryId + "/";
         return imagePath.replace("/", separator);
     }
 }

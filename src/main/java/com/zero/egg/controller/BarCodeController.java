@@ -16,7 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,14 +122,26 @@ public class BarCodeController {
     }
 
 
-    @ApiOperation(value = "批量打印条码后更换当前最大编码值", notes = "条码主键、本次打印条码数量")
+    /**
+     * 前端需要把母二维码信息加上printNum后请求改接口
+     *
+     * @param barCodeRequestDTO
+     * @return
+     */
     @RequestMapping(value = "/printbarcode", method = RequestMethod.POST)
-    public Message PrintBarCode(@RequestBody @ApiParam(required = true, name = "BarCodeRequestDTO",
-            value = "id：条码主键,printNum:本次打印数量，其他字段不需要") BarCodeRequestDTO model) {
+    public Message PrintBarCode(@RequestBody BarCodeRequestDTO barCodeRequestDTO) {
         Message message = new Message();
+        /**
+         * 覆盖母条码的创建人,创建时间,修改人,修改时间
+         */
+        barCodeRequestDTO.setCompanyId("37bc5bcf03d74e40b4093be33aa50870");
+        barCodeRequestDTO.setShopId("02ba5d9530f34711be70bc7b6547fbd3");
+        barCodeRequestDTO.setCreator("柳柳");
+        barCodeRequestDTO.setModifier("柳柳");
+        //登录接口有问题,暂时写死柳柳
         try {
-            if (null != model.getId()) {
-                bcService.PrintBarCode(model);
+            if (null != barCodeRequestDTO) {
+                bcService.PrintBarCode(barCodeRequestDTO);
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
             } else {
