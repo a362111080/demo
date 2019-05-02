@@ -1,6 +1,7 @@
 package com.zero.egg.controller;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,18 +19,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.model.Category;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
+import com.zero.egg.requestDTO.StockRequest;
+import com.zero.egg.responseDTO.CategoryListResponseDTO;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
+import com.zero.egg.responseDTO.StockResponse;
+import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
 import com.zero.egg.tool.Message;
@@ -57,6 +66,9 @@ public class ShipmentGoodsController {
 	private IShipmentGoodsService shipmentGoodsService;
 	@Autowired
 	private IGoodsService goodService;
+	
+	@Autowired
+	private  CategoryService categoryService;
 	
 	@LoginToken
 	@ApiOperation(value="新增出货商品")
@@ -155,7 +167,7 @@ public class ShipmentGoodsController {
 				map.put("programId", shipmentGoodsResponse.getProgramId());
 				map.put("programName", shipmentGoodsResponse.getProgramName());
 				int programGoodsCount = 0;
-				//品种
+				//方案下的品种
 				QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
 				categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
 				if (shipmentGoods != null) {
@@ -168,6 +180,7 @@ public class ShipmentGoodsController {
 				List<Map<String, Object>> categoryList = new ArrayList<>();
 				for (ShipmentGoodsResponse shipmentGoodsResponse2 : listCategory) {
 					Map<String, Object> map2 = new HashMap<>();
+					//每个品种下的出货商品
 					map2.put("categoryId", shipmentGoodsResponse2.getCategoryId());
 					map2.put("categoryName", shipmentGoodsResponse2.getCategoryName());
 					QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
@@ -176,8 +189,8 @@ public class ShipmentGoodsController {
 						queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()),"s.company_id", shipmentGoods.getCompanyId())
 						.eq(StringUtils.isNotBlank(shipmentGoods.getShopId()),"s.shop_id", shipmentGoods.getShopId())
 						.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"s.task_id", shipmentGoods.getTaskId())
-						.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"sp.program_id", shipmentGoodsResponse.getProgramId())
-						.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"p.category_id", shipmentGoodsResponse2.getCategoryId())
+						.eq(StringUtils.isNotBlank(shipmentGoodsResponse.getProgramId()),"sp.program_id", shipmentGoodsResponse.getProgramId())
+						.eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()),"p.category_id", shipmentGoodsResponse2.getCategoryId())
 						.groupBy("s.specification_id","s.marker");
 					}
 					List<ShipmentGoodsResponse> shipList =shipmentGoodsService.countSpecification(queryWrapper);
@@ -205,7 +218,49 @@ public class ShipmentGoodsController {
 		
 	}
 	
-	
+	@LoginToken
+	//@PassToken
+	@ApiOperation(value="每日出货品种数目统计")
+	@PostMapping(value="/today-statistics")
+	public Message<List<Map<String, Object>>> todayStatistics(@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键）") ShipmentGoods shipmentGoods) {
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
+		//店铺今天出货品种
+		QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
+		categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
+		if (shipmentGoods != null) {
+			categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()),"s.company_id", shipmentGoods.getCompanyId())
+			.eq(StringUtils.isNotBlank(shipmentGoods.getShopId()),"s.shop_id", shipmentGoods.getShopId())
+			.groupBy(true,"p.category_id");
+		}
+		List<ShipmentGoodsResponse> listCategory =shipmentGoodsService.todaycountcategory(categoryqueryWrapper);
+		List<Map<String, Object>> categoryList = new ArrayList<>();
+		for (ShipmentGoodsResponse shipmentGoodsResponse2 : listCategory) {
+			Map<String, Object> map = new HashMap<>();
+			int count = 0;
+			//每个品种下的出货商品
+			map.put("categoryId", shipmentGoodsResponse2.getCategoryId());
+			map.put("categoryName", shipmentGoodsResponse2.getCategoryName());
+			QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("s.dr", false);//查询未删除信息
+			if (shipmentGoods != null) {
+				queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()),"s.company_id", shipmentGoods.getCompanyId())
+				.eq(StringUtils.isNotBlank(shipmentGoods.getShopId()),"s.shop_id", shipmentGoods.getShopId())
+				.eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()),"p.category_id", shipmentGoodsResponse2.getCategoryId())
+				.groupBy("s.specification_id","s.marker");
+			}
+			List<ShipmentGoodsResponse> shipList =shipmentGoodsService.todaycountspecification(queryWrapper);
+			for (ShipmentGoodsResponse shipmentGoodsResponse3 : shipList) {
+				count += shipmentGoodsResponse3.getCount();
+			}
+			map.put("count", count);
+			categoryList.add(map);
+		}
+		message.setData(categoryList);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
+	}
 	
 	
 	

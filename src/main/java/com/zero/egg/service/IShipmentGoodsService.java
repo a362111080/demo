@@ -29,4 +29,8 @@ public interface IShipmentGoodsService extends IService<ShipmentGoods> {
 	
 	public List<ShipmentGoodsResponse> countSpecification(QueryWrapper<ShipmentGoods> queryWrapper);
 	
+	public List<ShipmentGoodsResponse> todaycountcategory(QueryWrapper<ShipmentGoods> queryWrapper);
+	
+	public List<ShipmentGoodsResponse> todaycountspecification(QueryWrapper<ShipmentGoods> queryWrapper);
+	
 }

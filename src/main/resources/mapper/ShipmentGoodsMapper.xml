@@ -35,6 +35,19 @@
 	 ${ew.customSqlSegment}
 </select>
 
+<select id="todaycountcategory" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+	SELECT c.id as categoryId,c.name as categoryName FROM (SELECT * FROM  bd_shipment_goods WHERE to_days(createtime) = to_days(now())) s  
+	INNER JOIN bd_specification sp ON s.specification_id = sp.id
+	INNER JOIN bd_specification_program p ON sp.program_id = p.id
+	INNER JOIN bd_category c ON p.category_id = c.id
+	${ew.customSqlSegment} 
+</select>
 
-
+<select id="todaycountspecification" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+	SELECT s.specification_id,s.marker,COUNT(s.specification_id) as count FROM (SELECT * FROM  bd_shipment_goods WHERE to_days(createtime) = to_days(now())) s   
+	INNER JOIN bd_specification sp ON s.specification_id = sp.id
+	INNER JOIN bd_specification_program p ON sp.program_id = p.id
+	INNER JOIN bd_category c ON p.category_id = c.id
+	 ${ew.customSqlSegment}
+</select>
 </mapper>
