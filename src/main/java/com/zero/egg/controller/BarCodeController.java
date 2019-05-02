@@ -40,16 +40,24 @@ public class BarCodeController {
     public Message AddSupplier(@RequestBody BarCodeRequestDTO barCodeRequestDTO, HttpServletRequest request) {
         Message message = new Message();
         try {
+            barCodeRequestDTO.setCompanyId("37bc5bcf03d74e40b4093be33aa50870");
+            barCodeRequestDTO.setShopId("02ba5d9530f34711be70bc7b6547fbd3");
+            barCodeRequestDTO.setCreator("柳柳");
+            barCodeRequestDTO.setModifier("柳柳");
+            //登录接口有问题,暂时写死柳柳
+//                barCodeRequestDTO.setCompanyId(user.getCompanyId());
+//               barCodeRequestDTO.setShopId(user.getShopId());
+//                barCodeRequestDTO.setCreator(user.getName());
+//                barCodeRequestDTO.setModifier(user.getName());
             //非空判断
             if (null != barCodeRequestDTO && null != barCodeRequestDTO.getCode()
                     && null != barCodeRequestDTO.getCategoryId() && null != barCodeRequestDTO.getSupplierId()) {
                 LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-                barCodeRequestDTO.setCompanyId(user.getCompanyId());
-                barCodeRequestDTO.setShopId(user.getShopId());
-                barCodeRequestDTO.setCreator(user.getName());
+
+
                 barCodeRequestDTO.setCreatetime(new Date());
-                barCodeRequestDTO.setModifier(user.getName());
                 barCodeRequestDTO.setModifytime(new Date());
+
                 int strval = bcService.AddBarCode(barCodeRequestDTO);
                 if (strval > 0) {
                     message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
