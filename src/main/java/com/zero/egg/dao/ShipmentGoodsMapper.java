@@ -31,7 +31,11 @@ public interface ShipmentGoodsMapper extends BaseMapper<ShipmentGoods> {
 	
 	List<ShipmentGoodsResponse> countcategory(@Param(Constants.WRAPPER) QueryWrapper<ShipmentGoods> wrapper);
 	
+	List<ShipmentGoodsResponse> todaycountcategory(@Param(Constants.WRAPPER) QueryWrapper<ShipmentGoods> wrapper);
+	
 	List<ShipmentGoodsResponse> countspecification(@Param(Constants.WRAPPER) QueryWrapper<ShipmentGoods> wrapper);
+	
+	List<ShipmentGoodsResponse> todaycountspecification(@Param(Constants.WRAPPER) QueryWrapper<ShipmentGoods> wrapper);
 	
 	
 	

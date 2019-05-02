@@ -45,5 +45,13 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
 	public List<ShipmentGoodsResponse> countSpecification(QueryWrapper<ShipmentGoods> queryWrapper) {
 		return super.baseMapper.countspecification(queryWrapper);
 	}
+	@Override
+	public List<ShipmentGoodsResponse> todaycountcategory(QueryWrapper<ShipmentGoods> queryWrapper) {
+		return super.baseMapper.todaycountcategory(queryWrapper);
+	}
+	@Override
+	public List<ShipmentGoodsResponse> todaycountspecification(QueryWrapper<ShipmentGoods> queryWrapper) {
+		return super.baseMapper.todaycountspecification(queryWrapper);
+	}
 
 }

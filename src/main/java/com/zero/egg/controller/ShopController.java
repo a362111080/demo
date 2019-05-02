@@ -52,8 +52,8 @@ public class ShopController {
 	@Autowired
 	private IShopService shopService;
 	
-	//@LoginToken
-	@PassToken
+	@LoginToken
+	//@PassToken
 	@ApiOperation(value="分页查询店铺")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
 	public Message<IPage<Shop>> list(
