@@ -22,4 +22,7 @@ public class TaskRequest extends PageDTO{
 	    
 	    @ApiModelProperty(value = "类型",required=false)
 	    private String type;
+	    
+	    @ApiModelProperty(value = "设备号",required=false)
+	    private String  equipmentNo;
 }

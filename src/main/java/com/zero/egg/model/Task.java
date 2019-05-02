@@ -43,6 +43,9 @@ public class Task implements Serializable {
 
     @ApiModelProperty(value = "客商主键",required=false)
     private String supplierId;
+    
+    @ApiModelProperty(value = "设备号",required=false)
+    private String  equipmentNo;
 
     @ApiModelProperty(value = "状态",required=false)
     private String status;

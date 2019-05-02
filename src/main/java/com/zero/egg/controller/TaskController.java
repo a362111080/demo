@@ -87,7 +87,7 @@ public class TaskController {
 	@ApiOperation(value="新增卸货任务")
 	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
 	public Message<Object> unloadAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注") Task task
+			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
 			,HttpServletRequest request) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
@@ -214,7 +214,7 @@ public class TaskController {
 	@ApiOperation(value="新增出货任务")
 	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
 	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注") Task task
+			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
 			,HttpServletRequest request) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
