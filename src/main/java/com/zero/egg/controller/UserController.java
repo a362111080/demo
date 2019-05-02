@@ -131,7 +131,7 @@ public class UserController {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		if (StringUtils.isNotBlank(user.getPassword())) {
+		if (StringUtils.isBlank(user.getPassword())) {
 			user.setPassword("888888");
 		}
 		user.setModifier(loginUser.getId());
