@@ -78,8 +78,14 @@ public interface UtilConstants {
          * session_key过期
          */
         public static final String SESSION_KEY_TIMEOUT = "session_key过期";
+
+
+        /**
+         * 生成编码成功
+         */
+        public static final String GENERATE_CODE_SUCCESS = "生成编码成功";
     }
-    
+
     /**
      * @author hhf
      *Title: WarehouseState

@@ -20,18 +20,14 @@
     </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
     <update id="DeleteSupplier" parameterType="java.util.List">
         <if test="list!=null">
-            <foreach collection="list" item="id" index= "index" open="" close="" separator =",">
-                update bd_supplier
-                <set>
-                    dr=1
-                </set>
-                <where>
-                    id=#{id}
-                </where>
+            update bd_supplier set dr=1
+            where id in
+            <foreach collection="list" item="id" index= "index" open="(" close=")" separator =",">
+                    #{id}
             </foreach>
         </if>
     </update>
-    <select id="GetSupplierList" parameterType="Supplier" resultType="com.zero.egg.requestDTO.SupplierRequestDTO">
+    <select id="GetSupplierList" parameterType="SupplierRequestDTO" resultType="com.zero.egg.model.Supplier">
     		select  k.*,lv1.id as city1,lv2.id as city2 from bd_supplier k
             left join bd_city   lv3  on lv3.id=k.city_id
             left join bd_city   lv2  on lv2.id=lv3.parent_id
