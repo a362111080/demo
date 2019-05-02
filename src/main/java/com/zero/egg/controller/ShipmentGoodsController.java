@@ -218,8 +218,8 @@ public class ShipmentGoodsController {
 		
 	}
 	
-	//@LoginToken
-	@PassToken
+	@LoginToken
+	//@PassToken
 	@ApiOperation(value="每日出货品种数目统计")
 	@PostMapping(value="/today-statistics")
 	public Message<List<Map<String, Object>>> todayStatistics(@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键）") ShipmentGoods shipmentGoods) {
