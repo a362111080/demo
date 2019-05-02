@@ -42,7 +42,7 @@ public class SupplierManageController {
             //实际根据界面传值
             model.setCreatetime(new Date());
             model.setModifytime(new Date());
-            if (null != model.getCode() && !"".equals(model.getCode()) && model.getCode().length() != 4) {
+            if (null != model.getCode() && !"".equals(model.getCode()) && model.getCode().length() == 4) {
 
                 int strval = supplierService.AddSupplier(model);
 
