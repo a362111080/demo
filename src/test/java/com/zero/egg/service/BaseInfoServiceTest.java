@@ -1,6 +1,9 @@
 package com.zero.egg.service;
 
 import com.Apptest;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.model.Category;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
@@ -35,10 +38,20 @@ public class BaseInfoServiceTest extends Apptest {
     @Autowired
     private WechatAuthService wechatAuthService;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
 
     @Test
     public void testRegisterWechatAuth() {
         System.out.println(wechatAuthService.getCountByOpenId("12y3912uirbhdqwebn"));
+    }
+
+
+    @Test
+    public void testSelectSql() {
+        Category category = categoryMapper.selectOne(new QueryWrapper<Category>().select("name").eq("id", "3a3d2d61e15c14c619ced247990fc08f"));
+        System.out.println(category);
     }
 
     @Test

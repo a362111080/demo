@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -10,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -49,6 +49,12 @@ public class BarCode implements Serializable {
     @ApiModelProperty(value = "当前编号",required=false)
     private String currentCode;
 
+    /**
+     * 二维码图片地址
+     */
+    @ApiModelProperty(value = "二维码图片地址", required = false)
+    private String matrixAddr;
+
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
 
@@ -62,9 +68,13 @@ public class BarCode implements Serializable {
     private Date modifytime;
 
     @ApiModelProperty(value = "删除标识",hidden=true)
-    private Boolean dr;
+    /**
+     * 删除标识,默认为0
+     */
+    private Boolean dr = false;
 
     @ApiModelProperty(value = "条码状态",hidden=true)
+    @TableField(exist = false)
     private String status;
 
 }

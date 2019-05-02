@@ -1,10 +1,24 @@
 package com.zero.egg.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.config.FileUploadProperteis;
 import com.zero.egg.dao.BarCodeMapper;
+import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.ShopMapper;
+import com.zero.egg.dao.SupplierMapper;
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.BarCodeInfoDTO;
+import com.zero.egg.model.Category;
+import com.zero.egg.model.Shop;
+import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
+import com.zero.egg.tool.JsonUtils;
+import com.zero.egg.tool.MatrixToImageWriterUtil;
+import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.TransferUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,15 +27,42 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class BarCodeServicelmpl implements BarCodeService {
 
     @Autowired
     private BarCodeMapper mapper;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private SupplierMapper supplierMapper;
+
+    @Autowired
+    private ShopMapper shopMapper;
+
     @Override
-    public int AddBarCode(BarCodeRequestDTO req) {
-        return  mapper.AddBarCode(req);
+    public int AddBarCode(BarCodeRequestDTO barCodeRequestDTO) {
+        BarCode barCode = new BarCode();
+        try {
+            TransferUtil.copyProperties(barCode, barCodeRequestDTO);
+            /**根据供应商id和category_id生成二维码,并把相对路径复制给barCode实体类进行新增操作*/
+            String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(), barCode.getShopId(), barCode.getSupplierId());
+            //二维码信息包含供应商id,code,name  产品(鸡蛋)类别 id,name  店铺id  名称  企业 id
+            //TODO 二维码信息需要加密
+            BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
+            String text = JsonUtils.objectToJson(infoDTO);
+            String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix");
+            barCode.setMatrixAddr(matrixAddr);
+            int effectNum = mapper.insert(barCode);
+            return effectNum;
+        } catch (Exception e) {
+            log.error("AddBarCode error:" + e);
+            throw new ServiceException("AddBarCode error");
+        }
     }
+
 
     @Override
     public int DeleteBarCode(BarCodeRequestDTO model) {
@@ -30,11 +71,33 @@ public class BarCodeServicelmpl implements BarCodeService {
 
     @Override
     public List<BarCodeResponseDTO> GetBarCodeList(BarCode model) {
-        return  mapper.GetBarCodeList(model);
+        return mapper.GetBarCodeList(model);
     }
 
     @Override
     public int PrintBarCode(BarCodeRequestDTO model) {
-        return  mapper.PrintBarCode(model);
+        return mapper.PrintBarCode(model);
+    }
+
+    /**
+     * 封装母二维码信息(不包含current_code和matrix_addr)
+     *
+     * @param barCode
+     * @return
+     */
+    private BarCodeInfoDTO compactBarInfo(BarCode barCode) {
+        BarCodeInfoDTO infoDTO = new BarCodeInfoDTO();
+        Supplier supplier = supplierMapper.selectOne(new QueryWrapper<Supplier>().select("name").eq("id", barCode.getSupplierId()));
+        Category category = categoryMapper.selectOne(new QueryWrapper<Category>().select("name").eq("id", barCode.getCategoryId()));
+        Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("name").eq("id", barCode.getShopId()));
+        infoDTO.setCategoryId(barCode.getCategoryId());
+        infoDTO.setCategoryName(category.getName());
+        infoDTO.setCompanyId(barCode.getCompanyId());
+        infoDTO.setSupplierId(barCode.getSupplierId());
+        infoDTO.setSupplierName(supplier.getName());
+        infoDTO.setSupplierCode(barCode.getCode());
+        infoDTO.setShopId(barCode.getShopId());
+        infoDTO.setShopName(shop.getName());
+        return infoDTO;
     }
 }
