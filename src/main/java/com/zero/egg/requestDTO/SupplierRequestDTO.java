@@ -55,4 +55,26 @@ public class SupplierRequestDTO extends PageDTO implements Serializable {
      * 前端传来的id数组(批量操作)
      */
     private List<String> ids;
+
+    /**
+     * 查询编码
+     */
+    private String code;
+
+    /**
+     * 查询条件
+     */
+    private String type;
+
+    /**
+     * 查询条件
+     */
+    private String status;
+
+
+    /**
+     * 查询条件
+     */
+    private String shortname;
+
 }

@@ -55,4 +55,25 @@ public class CustomerRequestDTO extends PageDTO implements Serializable {
      * 前端传来的id数组(批量操作)
      */
     private List<String> ids;
+
+
+    /**
+     * 店铺所属企业id
+     */
+    private String code;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String type;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String shortname;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String status;
 }

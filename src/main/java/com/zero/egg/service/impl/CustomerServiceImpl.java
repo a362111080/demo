@@ -1,13 +1,10 @@
 package com.zero.egg.service.impl;
 
 import com.zero.egg.dao.CustomerMapper;
-import com.zero.egg.dao.SupplierMapper;
 import com.zero.egg.model.Customer;
-import com.zero.egg.model.Supplier;
 import com.zero.egg.model.city;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.service.CustomerService;
-import com.zero.egg.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<Customer> GetCustomerList(Customer model) {
+	public List<Customer> GetCustomerList(CustomerRequestDTO model) {
 		return  mapper.GetCustomerList(model);
 	}
 

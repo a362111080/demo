@@ -11,7 +11,7 @@ public interface CustomerService {
 
     int UpdateCustomer(Customer model);
 
-    List<Customer> GetCustomerList(Customer model);
+    List<Customer> GetCustomerList(CustomerRequestDTO model);
 
     int DeleteCustomer(CustomerRequestDTO customer);
 
