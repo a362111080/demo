@@ -21,14 +21,10 @@
 
     <update id="DeleteCustomer" parameterType="java.util.List">
         <if test="list!=null">
-            <foreach collection="list" item="id" index= "index" open="" close="" separator =";">
-                update bd_customer
-                <set>
-                    dr=1
-                </set>
-                <where>
-                    id=#{id}
-                </where>
+
+            update bd_customer set dr=1 where id in
+            <foreach collection="list" item="id" index= "index" open="(" close=")" separator =",">
+                #{id}
             </foreach>
         </if>
     </update>
