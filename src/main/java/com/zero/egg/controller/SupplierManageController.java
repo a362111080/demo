@@ -12,6 +12,7 @@ import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import java.util.List;
 @Api(value = "供应商管理")
 @RestController
 @RequestMapping("/suppliermanage")
+@Slf4j
 public class SupplierManageController {
     @Autowired
     private SupplierService supplierService;
@@ -63,7 +65,7 @@ public class SupplierManageController {
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            //message.setMessage(e.getMessage());
+            log.error("addsupplier failed:", e);
             return message;
         }
 
