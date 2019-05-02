@@ -2,11 +2,13 @@ package com.zero.egg.requestDTO;
 
 import java.io.Serializable;
 
+import com.zero.egg.tool.PageDTO;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class StockRequest implements Serializable{
+public class StockRequest extends PageDTO implements Serializable{
 	
 	 /**
 	 * 

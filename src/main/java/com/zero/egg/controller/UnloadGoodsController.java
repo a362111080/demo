@@ -21,10 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.api.ApiConstants;
-import com.zero.egg.api.dto.BaseResponse;
-import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadCountResponseDto;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
@@ -56,13 +54,13 @@ public class UnloadGoodsController {
 
 	@ApiOperation(value="分页查询卸货商品")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
-	public ListResponse<UnloadGoods> unloadList(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
-			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="unloadGoods",value="查询字段：任务主键、方案（可选）") UnloadGoods unloadGoods) {
-		ListResponse<UnloadGoods> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	public Message<IPage<UnloadGoods>> unloadList(
+			@RequestBody @ApiParam(required=false,name="unloadGoods",value="查询字段：任务主键、方案（可选）,是否预警") UnloadGoodsRequest unloadGoods) {
+		//ListResponse<UnloadGoods> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<IPage<UnloadGoods>> message = new Message<IPage<UnloadGoods>>();
 		Page<UnloadGoods> page = new Page<>();
-		page.setCurrent(pageNum);
-		page.setSize(pageSize);
+		page.setCurrent(unloadGoods.getCurrent());
+		page.setSize(unloadGoods.getSize());
 		QueryWrapper<UnloadGoods> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
 		if (unloadGoods != null) {
@@ -80,22 +78,22 @@ public class UnloadGoodsController {
             }
 		}
 		IPage<UnloadGoods> list = unloadGoodsService.page(page, queryWrapper);
-		response.getData().setData(list.getRecords());
-		response.getData().setTotal(list.getTotal());
-		response.getData().setPage(list.getCurrent());
-		response.getData().setLimit(list.getSize());
-		return response;
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		message.setData(list);
+		return message;
 		
 	}
 	
 	@LoginToken
 	@ApiOperation(value="新增卸货")
 	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
-	public BaseResponse<Object> unloadAdd(@RequestParam @ApiParam(required=true,name="specificationId",value="规格主键") String specificationId,
+	public Message<Object> unloadAdd(@RequestParam @ApiParam(required=true,name="specificationId",value="规格主键") String specificationId,
 			@RequestBody @ApiParam(required=true,name="unloadGoods"
 			,value="企业主键、店铺主键、供应商主键、规格方案主键、任务主键、商品分类主键、商品编码、重量、创建人") UnloadGoods unloadGoods
 			,HttpSession session) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<Object> message = new Message<Object>();
 		unloadGoods.setId(UuidUtil.get32UUID());
 		unloadGoods.setCreatetime(new Date());
 		unloadGoods.setModifytime(new Date());
@@ -105,16 +103,19 @@ public class UnloadGoodsController {
 		unloadGoods.setDr(false);
 		//TODO 根据规格查询数据，并进行预警处理
 		if (unloadGoodsService.save(unloadGoods)) {
-			response.setCode(ApiConstants.ResponseCode.SUCCESS);
-			response.setMsg("添加成功");
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}else {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
 		}
-		return response;
+		return message;
 	}
 
 	@ApiOperation(value="新增卸货记录")
 	@RequestMapping(value = "/addunloaddetl",method = RequestMethod.POST)
-	public Message AddSupplier(@RequestBody  UnloadGoods model) {
-		Message message = new Message();
+	public Message<Object> AddSupplier(@RequestBody  UnloadGoods model) {
+		Message<Object> message = new Message<Object>();
 		try {
 			//实际根据界面传值
 			model.setCreatetime(new Date());
@@ -181,9 +182,9 @@ public class UnloadGoodsController {
 
 	@ApiOperation(value="根据任务id,按品种、方案分组统计本次卸货数量")
 	@RequestMapping(value = "/queryunloadgoods",method = RequestMethod.POST)
-	public Message QueryUnloadGood(@RequestBody  UnloadGoods model)
+	public Message<PageInfo<UnLoadGoodsQueryResponseDto>> QueryUnloadGood(@RequestBody  UnloadGoods model)
 	{
-		Message ms = new Message();
+		Message<PageInfo<UnLoadGoodsQueryResponseDto>> ms = new Message<PageInfo<UnLoadGoodsQueryResponseDto>>();
 		PageHelper.startPage(1, 999);
 		List<UnLoadGoodsQueryResponseDto> ResponseDto=unloadGoodsService.QueryUnloadGood(model.getTaskId());
 		PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,14 +25,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
-import com.zero.egg.api.dto.BaseResponse;
-import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.ShipmentGoodsRequest;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
 
 import io.swagger.annotations.Api;
@@ -61,11 +61,12 @@ public class ShipmentGoodsController {
 	@LoginToken
 	@ApiOperation(value="新增出货商品")
 	@PostMapping(value="/add")
-	public BaseResponse<Object> add(
+	public Message<Object> add(
 			@RequestBody @ApiParam(required=true,name="shipmentGoods",value="店铺主键、企业主键、商品编号，客户主键,任务主键，备注") ShipmentGoods shipmentGoods
 			,HttpServletRequest request
 			){
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<Object> message = new Message<Object>();
 		QueryWrapper<Goods>  goodQuery = new QueryWrapper<>();
 		goodQuery.eq("goods_no", shipmentGoods.getGoodsNo());
 		Goods goods = goodService.getOne(goodQuery);
@@ -84,27 +85,31 @@ public class ShipmentGoodsController {
 			shipmentGoods.setModifier(loginUser.getId());
 			shipmentGoods.setDr(false);
 			if (shipmentGoodsService.save(shipmentGoods)) {
-				response.setCode(ApiConstants.ResponseCode.SUCCESS);
-				response.setMsg("添加成功");
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}else {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.FAILED);
 			}
 		}else {
-			response.setMsg("商品不存在");
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("商品不存在");
 		}
 		
-		return response;
+		return message;
 	}
 	
 	
 	@LoginToken
 	@ApiOperation(value="查询出货商品")
 	@RequestMapping(value="/shipment-list.data",method=RequestMethod.POST)
-	public ListResponse<ShipmentGoodsResponse> shipmentlist(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
-			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间）") ShipmentGoods shipmentGoods) {
-		ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	public Message<IPage<ShipmentGoodsResponse>> shipmentlist(
+			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间）") ShipmentGoodsRequest shipmentGoods) {
+		//ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<IPage<ShipmentGoodsResponse>> message = new Message<IPage<ShipmentGoodsResponse>>();
 		Page<ShipmentGoods> page = new Page<>();
-		page.setCurrent(pageNum);
-		page.setSize(pageSize);
+		page.setCurrent(shipmentGoods.getCurrent());
+		page.setSize(shipmentGoods.getSize());
 		QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("s.dr", false);//查询未删除信息
 		if (shipmentGoods != null) {
@@ -117,11 +122,10 @@ public class ShipmentGoodsController {
 			;
 		}
 		IPage<ShipmentGoodsResponse> list = shipmentGoodsService.listByCondition(page, queryWrapper);
-		response.getData().setData(list.getRecords());
-		response.getData().setTotal(list.getTotal());
-		response.getData().setPage(list.getCurrent());
-		response.getData().setLimit(list.getSize());
-		return response;
+		message.setData(list);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
 		
 	}
 	
@@ -129,10 +133,11 @@ public class ShipmentGoodsController {
 	@LoginToken
 	@ApiOperation(value="统计出货商品")
 	@PostMapping(value="/shipment-statistics.data")
-	public BaseResponse<Object> statistics(
+	public Message<List<Map<String, Object>>> statistics(
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键）") ShipmentGoods shipmentGoods
 			) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		QueryWrapper<ShipmentGoods> programqueryWrapper = new QueryWrapper<>();
 		programqueryWrapper.eq("s.dr", false);//查询未删除信息
@@ -192,10 +197,11 @@ public class ShipmentGoodsController {
 				map.put("programGoodsCount", programGoodsCount);
 				resultList.add(map);
 			}
-			response.setData(resultList);
-			response.setMsg("查询成功");
+			message.setData(resultList);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
-		return response;
+		return message;
 		
 	}
 	

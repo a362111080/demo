@@ -37,18 +37,20 @@ public class Swagger2 {
 	    public Docket platformApi() {
 
 	        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).forCodeGeneration(true)
-	                .select().apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+	        		.useDefaultResponseMessages(false)
+	                .select()
 	                .apis(RequestHandlerSelectors.any())
-	                .paths(PathSelectors.regex("^.*(?<!auth)$"))
+	                .paths(PathSelectors.regex("^(?!auth).*$"))
 	                .build()
 	                .securitySchemes(securitySchemes())
-	                .securityContexts(securityContexts());
+	                .securityContexts(securityContexts())
+	                ;
 
 
 	    }
 	    private List<ApiKey> securitySchemes() {
 	        List<ApiKey> apiKeyList= new ArrayList<ApiKey>();
-	        apiKeyList.add(new ApiKey("x-auth-token", "x-auth-token", "header"));
+	        apiKeyList.add( new ApiKey("Authorization", "Authorization", "header"));
 	        return apiKeyList;
 	    }
 

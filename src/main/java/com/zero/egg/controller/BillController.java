@@ -24,12 +24,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
-import com.zero.egg.api.dto.BaseResponse;
-import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.Bill;
+import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IBillService;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
+import com.zero.egg.tool.UtilConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,14 +56,14 @@ public class BillController {
 	//@PassToken
 	@ApiOperation(value="分页查询财务账单")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
-	public ListResponse<Bill> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
-			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
-			@RequestBody @ApiParam(required=false,name="company"
-			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）,状态（1挂账，-1销账）") Bill bill) {
-		ListResponse<Bill> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	public Message<IPage<Bill>> list(
+			@RequestBody @ApiParam(required=false,name="bill"
+			,value="企业主键、店铺主键、账单编号（可选）、客户（可选）、供应商（可选）、账单时间范围（默认当月，属于必输项）,状态（1挂账，-1销账）") BillRequest bill) {
+		//ListResponse<Bill> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<IPage<Bill>> message = new Message<IPage<Bill>>();
 		Page<Bill> page = new Page<>();
-		page.setCurrent(pageNum);
-		page.setSize(pageSize);
+		page.setCurrent(bill.getCurrent());
+		page.setSize(bill.getSize());
 		QueryWrapper<Bill> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
 		if (bill != null) {
@@ -93,20 +94,20 @@ public class BillController {
 			queryWrapper.le("bill_date", lastDayOfThisMonth);
 		}
 		IPage<Bill> list = billService.page(page, queryWrapper);
-		response.getData().setData(list.getRecords());
-		response.getData().setTotal(list.getTotal());
-		response.getData().setPage(list.getCurrent());
-		response.getData().setLimit(list.getSize());
-		return response;
+		message.setData(list);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
 	}
 	
 	@LoginToken
 	@ApiOperation(value="批量修改账单状态(挂账/销账)")
 	@RequestMapping(value="/batchupdate.do",method=RequestMethod.POST)
-	public BaseResponse<Object> batchUpdateStatus(HttpServletRequest request
+	public Message<Object> batchUpdateStatus(HttpServletRequest request
 			,@RequestParam @ApiParam(required=true,name="ids",value="账单ids,逗号拼接") String ids
 			,@ApiParam(required=true,name="status",value="状态：1挂账，-1销账") @RequestParam String status) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<Object> message = new Message<Object>();
 		List<String> idsList = StringTool.splitToList(ids, ",");
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (idsList !=null) {
@@ -120,14 +121,15 @@ public class BillController {
 				billList.add(bill);
 			}
 			if (billService.updateBatchById(billList)) {//逻辑删除
-				response.setCode(ApiConstants.ResponseCode.SUCCESS);
-				response.setMsg("删除成功");
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			}
 		}else {
-			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
+			message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 		}
 		
-		return response;
+		return message;
 	}
 
 }

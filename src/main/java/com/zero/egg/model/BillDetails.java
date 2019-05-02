@@ -1,13 +1,13 @@
 package com.zero.egg.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("bd_bill_details")
 @ApiModel(value="BillDetails对象", description="")
-public class BillDetails implements Serializable {
+public class BillDetails  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
