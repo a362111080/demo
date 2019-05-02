@@ -59,7 +59,7 @@ public class User implements Serializable {
     @ApiModelProperty(value = "联系方式",required=false)
     private String phone;
 
-    @ApiModelProperty(value = "密码",hidden=true)
+    @ApiModelProperty(value = "密码",required=true)
     private String password;
 
     @ApiModelProperty(value = "状态",hidden=true)

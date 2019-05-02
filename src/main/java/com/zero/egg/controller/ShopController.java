@@ -114,7 +114,7 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
-	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="shop",value="店铺信息:编号，名称，电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") Shop shop
+	public BaseResponse<Object> add(@RequestBody @ApiParam(required=true,name="shop",value="店铺信息:编号，名称，地址，联系电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") Shop shop
 			,HttpServletRequest request) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		//当前登录用户
@@ -131,7 +131,7 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="根据id修改店铺信息")
 	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
-	public BaseResponse<Object> edit(HttpServletRequest request,@RequestBody  @ApiParam(required=true,name="shop",value="店铺信息：编号，名称，电话，企业主键") Shop shop,HttpSession session) {
+	public BaseResponse<Object> edit(HttpServletRequest request,@RequestBody  @ApiParam(required=true,name="shop",value="店铺信息：编号，名称，电话，地址，企业主键") Shop shop,HttpSession session) {
 		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
