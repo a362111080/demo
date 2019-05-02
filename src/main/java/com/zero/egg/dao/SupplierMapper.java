@@ -1,12 +1,12 @@
 package com.zero.egg.dao;
 
-import java.util.Date;
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 
-public interface SupplierMapper {
+import java.util.List;
+
+public interface SupplierMapper extends BaseMapper<Supplier> {
 
 	int	AddSupplier(Supplier model);
 
