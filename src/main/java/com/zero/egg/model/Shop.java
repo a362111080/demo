@@ -1,14 +1,13 @@
 package com.zero.egg.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.zero.egg.enums.CompanyEnums;
-import com.zero.egg.enums.ShopEnums;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.zero.egg.enums.ShopEnums;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

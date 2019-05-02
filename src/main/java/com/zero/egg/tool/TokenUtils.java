@@ -27,7 +27,10 @@ public class TokenUtils {
     public static String createJwtToken(String id) {
         String issuer = "com.zero";
         String subject = "";
-        long ttlMillis = 3600 * 2 * 1000;
+        /**
+         * 有效时间7天
+         */
+        long ttlMillis = 3600 * 24 * 1000 * 7;
         return createJwtToken(id, issuer, subject, ttlMillis);
     }
 

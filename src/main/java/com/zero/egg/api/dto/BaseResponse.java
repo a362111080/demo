@@ -1,5 +1,6 @@
 package com.zero.egg.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -23,14 +24,17 @@ public class BaseResponse<T> {
 	/**
 	 * 返回状态  
 	 */
+	@ApiModelProperty(value = "状态码")
 	public int code;
 	/**
 	 * 返回信息
 	 */
+	@ApiModelProperty(value = "返回消息")
 	public String msg;
 	/**
 	 * 返回对象
 	 */
+	@ApiModelProperty(value = "返回数据")
 	public T data ;
 	
 	

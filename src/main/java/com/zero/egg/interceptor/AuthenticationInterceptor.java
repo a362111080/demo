@@ -88,9 +88,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         loginUser.setName(companyUser.getName());
                         loginUser.setLoginname(companyUser.getLoginname());
                         loginUser.setPhone(companyUser.getPhone());
+                        loginUser.setCompanyId(companyUser.getCompanyId());
                         request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                         request.setAttribute(ApiConstants.LOGIN_TYPE, 1);
-                        request.setAttribute(ApiConstants.LOGIN_USER_Name,loginUser.getName());
                     }
                 } else {
                     // 当前登录用户@CurrentUser
@@ -99,9 +99,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     loginUser.setName(user.getName());
                     loginUser.setLoginname(user.getLoginname());
                     loginUser.setPhone(user.getPhone());
+                    loginUser.setCompanyId(user.getCompanyId());
+                    loginUser.setShopId(user.getShopId());
                     request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                     request.setAttribute(ApiConstants.LOGIN_TYPE, 2);
-                    request.setAttribute(ApiConstants.LOGIN_USER_Name,loginUser.getName());
                 }
                 return true;
             }
