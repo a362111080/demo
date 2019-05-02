@@ -21,9 +21,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
-import com.zero.egg.api.ApiConstants;
-import com.zero.egg.api.dto.BaseResponse;
-import com.zero.egg.api.dto.response.ListResponse;
 import com.zero.egg.model.Category;
 import com.zero.egg.model.Stock;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
@@ -32,6 +29,8 @@ import com.zero.egg.responseDTO.CategoryListResponseDTO;
 import com.zero.egg.responseDTO.StockResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IStockService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,13 +60,13 @@ public class StockController {
 	@PassToken
 	@ApiOperation(value="分页查询库存")
 	@RequestMapping(value="/list-page.data",method=RequestMethod.POST)
-	public ListResponse<StockResponse> list(@RequestParam @ApiParam(required =true,name ="pageNum",value="页码") int pageNum,
-			@RequestParam @ApiParam(required=true,name="pageSize",value="页大小") int pageSize,
+	public Message<IPage<StockResponse>> list(
 			@RequestBody @ApiParam(required=false,name="stockRequest" ,value="根据需求自行确定搜索字段") StockRequest stockRequest) {
-		ListResponse<StockResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//ListResponse<StockResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<IPage<StockResponse>> message = new Message<IPage<StockResponse>>();
 		Page<Stock> page = new Page<>();
-		page.setCurrent(pageNum);
-		page.setSize(pageSize);
+		page.setCurrent(stockRequest.getCurrent());
+		page.setSize(stockRequest.getSize());
 		QueryWrapper<StockRequest> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("s.dr", false);//查询未删除信息
 		if (stockRequest != null) {
@@ -84,11 +83,10 @@ public class StockController {
 			;
 		}
 		IPage<StockResponse> list = stockService.listByCondition(page, queryWrapper);
-		response.getData().setData(list.getRecords());
-		response.getData().setTotal(list.getTotal());
-		response.getData().setPage(list.getCurrent());
-		response.getData().setLimit(list.getSize());
-		return response;
+		message.setData(list);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
 		
 	}
 	
@@ -96,8 +94,9 @@ public class StockController {
 	//@PassToken
 	@ApiOperation(value="根据条件查询库存")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
-	public BaseResponse<Object> getByCompanyId(@RequestBody @ApiParam(required=false,name="stockRequest" ,value="根据需求自行确定搜索字段") StockRequest stockRequest) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	public Message<List<StockResponse>> getByCompanyId(@RequestBody @ApiParam(required=false,name="stockRequest" ,value="根据需求自行确定搜索字段") StockRequest stockRequest) {
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<List<StockResponse>> message = new Message<List<StockResponse>>();
 		QueryWrapper<StockRequest> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("s.dr", false);//查询未删除信息
 		if (stockRequest != null) {
@@ -113,24 +112,26 @@ public class StockController {
 			.le(StringUtils.isNotBlank(stockRequest.getWeightMax()), "sp.weight_max", stockRequest.getWeightMax())
 			;
 		}
-		List<StockResponse> companyUserList = stockService.listByCondition(queryWrapper);
-		if (companyUserList != null) {
-			response.setCode(ApiConstants.ResponseCode.SUCCESS);
-			response.setMsg("查询成功");
-			response.setData(companyUserList);
+		List<StockResponse> stockList = stockService.listByCondition(queryWrapper);
+		if (stockList != null) {
+			message.setData(stockList);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}else {
-			response.setMsg(ApiConstants.ResponseMsg.NULL_DATA);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
-		return response;
+		return message;
 	}
 	
 	@LoginToken
 	//@PassToken
 	@ApiOperation(value="店铺下各品种的库存数量")
 	@PostMapping(value="/statistics")
-	public BaseResponse<Object> statistics(@RequestParam @ApiParam(required =true,name ="shopId",value="店铺id") String shopId
+	public Message<List<Map<String, Object>>> statistics(@RequestParam @ApiParam(required =true,name ="shopId",value="店铺id") String shopId
 			,@RequestParam @ApiParam(required =true,name ="companyId",value="企业id") String companyId) {
-		BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		//查询店铺下的所有的种类
 		CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
@@ -160,10 +161,10 @@ public class StockController {
 				resultList.add(map);
 			}
 		}
-		response.setCode(ApiConstants.ResponseCode.SUCCESS);
-		response.setData(resultList);
-		response.setMsg("查询成功");
-		return response;
+		message.setData(resultList);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
 	}
 
 }
