@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
+import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.User;
@@ -50,7 +51,9 @@ public class LoginController {
             String pwd = MD5Utils.encode(loginPwd);
             QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
             userQueryWrapper.eq("loginname", loginname)
-                    .eq("password", pwd);
+                    .eq("password", pwd)
+                    .eq("dr", false)
+                    .eq("status", UserEnums.Status.Normal);
             User user = userService.getOne(userQueryWrapper);
             Map<String, Object> map;
             //需要绑定的本地设备id(除了企业
@@ -72,7 +75,9 @@ public class LoginController {
                 response = new BaseResponse<>();
                 QueryWrapper<CompanyUser> cUserQueryWrapper = new QueryWrapper<>();
                 cUserQueryWrapper.eq("loginname", loginname)
-                        .eq("password", pwd);
+                        .eq("password", pwd)
+                        .eq("dr", false)
+                        .eq("status", CompanyUserEnums.Status.Normal);
                 CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                 if (companyUser != null) {
                     //生成token
