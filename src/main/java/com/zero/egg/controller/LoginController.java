@@ -53,7 +53,7 @@ public class LoginController {
             userQueryWrapper.eq("loginname", loginname)
                     .eq("password", pwd)
                     .eq("dr", false)
-                    .eq("status", UserEnums.Status.Normal);
+                    .eq("status", UserEnums.Status.Normal.toString());
             User user = userService.getOne(userQueryWrapper);
             Map<String, Object> map;
             //需要绑定的本地设备id(除了企业
@@ -77,7 +77,7 @@ public class LoginController {
                 cUserQueryWrapper.eq("loginname", loginname)
                         .eq("password", pwd)
                         .eq("dr", false)
-                        .eq("status", CompanyUserEnums.Status.Normal);
+                        .eq("status", CompanyUserEnums.Status.Normal.toString());
                 CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                 if (companyUser != null) {
                     //生成token
