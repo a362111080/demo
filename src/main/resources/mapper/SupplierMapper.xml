@@ -54,6 +54,7 @@
             <if test="status != null and status !='1' and status !=''">
                 and k.status=#{status,jdbcType=INTEGER}
             </if>
+            and k.dr=0
         </where>
     </select>
 </mapper>

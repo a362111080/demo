@@ -59,7 +59,7 @@ public class BarCodeServicelmpl implements BarCodeService {
             String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                     barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
             //二维码信息包含供应商id,code,name  产品(鸡蛋)类别 id,name  店铺id  名称  企业 id
-            //TODO 二维码信息需要加密
+            //TODO 1.二维码信息需要加密 2.查重:同一个店铺同一品种只能生成一张母二维码
             BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
             String text = JsonUtils.objectToJson(infoDTO);
             String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix");
