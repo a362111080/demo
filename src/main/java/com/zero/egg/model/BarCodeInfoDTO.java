@@ -25,7 +25,7 @@ public class BarCodeInfoDTO {
     /**
      * 供应商识别码
      */
-    private String supplierCode;
+    private String code;
 
     /**
      * 类别id
@@ -51,5 +51,15 @@ public class BarCodeInfoDTO {
      * 企业id
      */
     private String companyId;
+
+    /**
+     * 打印数量
+     */
+    private Integer printNum;
+
+    /**
+     * 当前编号
+     */
+    private String currentCode;
 
 }

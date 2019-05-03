@@ -2,13 +2,16 @@ package com.zero.egg.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
@@ -36,35 +39,24 @@ public class BarCodeController {
 
     @ApiOperation(value = "新增条码")
     @RequestMapping(value = "/addbarcode", method = RequestMethod.POST)
+    @LoginToken
     public Message AddSupplier(@RequestBody BarCodeRequestDTO barCodeRequestDTO, HttpServletRequest request) {
         Message message = new Message();
         try {
-            barCodeRequestDTO.setCompanyId("37bc5bcf03d74e40b4093be33aa50870");
-            barCodeRequestDTO.setShopId("02ba5d9530f34711be70bc7b6547fbd3");
-            barCodeRequestDTO.setCreator("柳柳");
-            barCodeRequestDTO.setModifier("柳柳");
-            //登录接口有问题,暂时写死柳柳
-//                barCodeRequestDTO.setCompanyId(user.getCompanyId());
-//               barCodeRequestDTO.setShopId(user.getShopId());
-//                barCodeRequestDTO.setCreator(user.getName());
-//                barCodeRequestDTO.setModifier(user.getName());
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+
+            barCodeRequestDTO.setCompanyId(user.getCompanyId());
+            barCodeRequestDTO.setShopId(user.getShopId());
+            barCodeRequestDTO.setCreator(user.getName());
+            barCodeRequestDTO.setModifier(user.getName());
             //非空判断
-            if (null != barCodeRequestDTO && null != barCodeRequestDTO.getCode()
+            if (null != barCodeRequestDTO.getCode()
                     && null != barCodeRequestDTO.getCategoryId() && null != barCodeRequestDTO.getSupplierId()) {
-                LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-
-
                 barCodeRequestDTO.setCreatetime(new Date());
                 barCodeRequestDTO.setModifytime(new Date());
 
-                int strval = bcService.AddBarCode(barCodeRequestDTO);
-                if (strval > 0) {
-                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                } else {
-                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
-                }
+                message = bcService.AddBarCode(barCodeRequestDTO);
+
             } else {
                 message.setState(ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(ResponseMsg.PARAM_MISSING);
@@ -125,23 +117,29 @@ public class BarCodeController {
     /**
      * 前端需要把母二维码信息加上printNum后请求改接口
      *
-     * @param barCodeRequestDTO
+     * @param infoDTO
      * @return
      */
     @RequestMapping(value = "/printbarcode", method = RequestMethod.POST)
-    public Message PrintBarCode(@RequestBody BarCodeRequestDTO barCodeRequestDTO) {
+    @LoginToken
+    public Message PrintBarCode(@RequestBody BarCodeInfoDTO infoDTO, HttpServletRequest request) {
         Message message = new Message();
-        /**
-         * 覆盖母条码的创建人,创建时间,修改人,修改时间
-         */
-        barCodeRequestDTO.setCompanyId("37bc5bcf03d74e40b4093be33aa50870");
-        barCodeRequestDTO.setShopId("02ba5d9530f34711be70bc7b6547fbd3");
-        barCodeRequestDTO.setCreator("柳柳");
-        barCodeRequestDTO.setModifier("柳柳");
-        //登录接口有问题,暂时写死柳柳
         try {
-            if (null != barCodeRequestDTO) {
-                bcService.PrintBarCode(barCodeRequestDTO);
+
+            if (null != infoDTO && null != infoDTO.getPrintNum() && 0 != infoDTO.getPrintNum()) {
+                /**
+                 * 覆盖母条码的创建人,创建时间,修改人,修改时间
+                 */
+                LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+                BarCodeRequestDTO barCodeRequestDTO = new BarCodeRequestDTO();
+                TransferUtil.copyProperties(barCodeRequestDTO, infoDTO);
+                barCodeRequestDTO.setCompanyId(user.getCompanyId());
+                barCodeRequestDTO.setShopId(user.getShopId());
+                barCodeRequestDTO.setCreator(user.getName());
+                barCodeRequestDTO.setModifier(user.getName());
+                barCodeRequestDTO.setCreatetime(new Date());
+                barCodeRequestDTO.setModifytime(new Date());
+                message = bcService.PrintBarCode(barCodeRequestDTO, infoDTO);
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
             } else {

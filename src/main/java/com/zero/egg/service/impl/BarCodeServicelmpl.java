@@ -16,15 +16,20 @@ import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TransferUtil;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -44,21 +49,33 @@ public class BarCodeServicelmpl implements BarCodeService {
     private ShopMapper shopMapper;
 
     @Override
-    public int AddBarCode(BarCodeRequestDTO barCodeRequestDTO) {
+    public Message AddBarCode(BarCodeRequestDTO barCodeRequestDTO) {
         BarCode barCode = new BarCode();
+        Message message = new Message();
+        Map<String, String> hash;
         try {
             TransferUtil.copyProperties(barCode, barCodeRequestDTO);
             /**根据供应商id和category_id生成二维码,并把相对路径复制给barCode实体类进行新增操作*/
             String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                     barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
             //二维码信息包含供应商id,code,name  产品(鸡蛋)类别 id,name  店铺id  名称  企业 id
-            //TODO 二维码信息需要加密
+            //TODO 1.二维码信息需要加密 2.查重:同一个店铺同一品种只能生成一张母二维码
             BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
             String text = JsonUtils.objectToJson(infoDTO);
             String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix");
             barCode.setMatrixAddr(matrixAddr);
             int effectNum = mapper.insert(barCode);
-            return effectNum;
+            if (effectNum > 0) {
+                hash = new HashMap<>();
+                hash.put("matrixAddr", matrixAddr);
+                message.setData(hash);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+            return message;
         } catch (Exception e) {
             log.error("AddBarCode error:" + e);
             throw new ServiceException("AddBarCode error");
@@ -77,15 +94,18 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public int PrintBarCode(BarCodeRequestDTO model) {
+    public Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO) {
         BarCode barCode = new BarCode();
+        Message message = new Message();
         int num = model.getPrintNum();
+        List<String> matrixAddrList = new ArrayList<>();
         try {
             TransferUtil.copyProperties(barCode, model);
             /**8位编码前面补0格式*/
             DecimalFormat g1 = new DecimalFormat("00000000");
             String currentCode = null;
             for (int i = 0; i < num; i++) {
+                barCode.setId(null);
                 //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
                 int count = mapper.selectCount(new QueryWrapper<BarCode>()
                         .eq("shop_id", barCode.getShopId())
@@ -93,15 +113,18 @@ public class BarCodeServicelmpl implements BarCodeService {
                         .eq("supplier_id", barCode.getSupplierId())
                         .eq("category_id", barCode.getCategoryId()));
                 currentCode = barCode.getCode() + g1.format(count);
+                infoDTO.setCurrentCode(currentCode);
                 barCode.setCurrentCode(currentCode);
                 String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                         barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
-                String text = JsonUtils.objectToJson(barCode);
-                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "currentCode");
+                String text = JsonUtils.objectToJson(infoDTO);
+                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode);
                 barCode.setMatrixAddr(matrixAddr);
                 mapper.insert(barCode);
+                matrixAddrList.add(matrixAddr);
             }
-            return 0;
+            message.setData(matrixAddrList);
+            return message;
         } catch (Exception e) {
             log.error("PrintBarCode error:" + e);
             throw new ServiceException("PrintBarCode error");
@@ -124,7 +147,7 @@ public class BarCodeServicelmpl implements BarCodeService {
         infoDTO.setCompanyId(barCode.getCompanyId());
         infoDTO.setSupplierId(barCode.getSupplierId());
         infoDTO.setSupplierName(supplier.getName());
-        infoDTO.setSupplierCode(barCode.getCode());
+        infoDTO.setCode(barCode.getCode());
         infoDTO.setShopId(barCode.getShopId());
         infoDTO.setShopName(shop.getName());
         return infoDTO;
