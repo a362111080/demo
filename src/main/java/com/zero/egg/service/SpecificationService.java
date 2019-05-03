@@ -1,5 +1,6 @@
 package com.zero.egg.service;
 
+import com.zero.egg.model.Specification;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
 
@@ -42,4 +43,6 @@ public interface SpecificationService {
      * @Return com.zero.egg.tool.Message
      **/
     public Message listStandardDetlByProgramId(SpecificationRequestDTO specificationRequestDTO);
+    
+    public Specification getById(Specification specification);
 }

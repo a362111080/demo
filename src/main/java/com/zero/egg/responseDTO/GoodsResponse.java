@@ -1,37 +1,18 @@
-package com.zero.egg.model;
+package com.zero.egg.responseDTO;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author Hhaifeng
- * @since 2019-04-23
- */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("bd_goods")
-@ApiModel(value="Goods对象", description="")
-public class Goods implements Serializable {
+public class GoodsResponse {
 
-    private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "主键")
+	@ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
@@ -43,10 +24,13 @@ public class Goods implements Serializable {
 
     @ApiModelProperty(value = "供应商主键")
     private String supplierId;
+    
+    @ApiModelProperty(value = "供应商")
+    private String supplierName;
 
     @ApiModelProperty(value = "规格主键")
     private String specificationId;
-
+    
     @ApiModelProperty(value = "商品分类主键")
     private String goodsCategoryId;
 
@@ -79,6 +63,4 @@ public class Goods implements Serializable {
 
     @ApiModelProperty(value = "删除标识")
     private Boolean dr;
-
-
 }

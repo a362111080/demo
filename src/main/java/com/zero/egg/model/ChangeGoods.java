@@ -20,14 +20,14 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Hhaifeng
- * @since 2019-04-23
+ * @since 2019-05-03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("bd_goods")
-@ApiModel(value="Goods对象", description="")
-public class Goods implements Serializable {
+@TableName("bd_change_goods")
+@ApiModel(value="ChangeGoods对象", description="")
+public class ChangeGoods implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,14 +35,11 @@ public class Goods implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ApiModelProperty(value = "店铺主键")
-    private String shopId;
+    @ApiModelProperty(value = "所属报损主键")
+    private String brokenId;
 
-    @ApiModelProperty(value = "企业主键")
-    private String companyId;
-
-    @ApiModelProperty(value = "供应商主键")
-    private String supplierId;
+    @ApiModelProperty(value = "客户主键")
+    private String customerId;
 
     @ApiModelProperty(value = "规格主键")
     private String specificationId;
@@ -50,7 +47,7 @@ public class Goods implements Serializable {
     @ApiModelProperty(value = "商品分类主键")
     private String goodsCategoryId;
 
-    @ApiModelProperty(value = "商品编码")
+    @ApiModelProperty(value = "商品主键")
     private String goodsNo;
 
     @ApiModelProperty(value = "标记")
@@ -71,10 +68,10 @@ public class Goods implements Serializable {
     @ApiModelProperty(value = "创建时间")
     private Date createtime;
 
-    @ApiModelProperty(value = "更新人")
+    @ApiModelProperty(value = "修改人")
     private String modifier;
 
-    @ApiModelProperty(value = "更新时间")
+    @ApiModelProperty(value = "修改时间")
     private Date modifytime;
 
     @ApiModelProperty(value = "删除标识")

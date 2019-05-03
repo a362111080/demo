@@ -24,6 +24,9 @@ public class ShipmentGoodsRequest extends PageDTO{
     @ApiModelProperty(value = "任务主键",required=false)
     private String taskId;
     
+    @ApiModelProperty(value = "商品编号",required=false)
+    private String goodsNo;
+    
     @ApiModelProperty(value = "创建人",required=false)
     private String creator;
 

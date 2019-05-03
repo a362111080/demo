@@ -3,8 +3,9 @@
 <mapper namespace="com.zero.egg.dao.StockMapper">
 
 <select id="listByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
-	SELECT *,s.id as stockId FROM bd_stock s  
-	INNER JOIN bd_specification sp ON s.specification_id = sp.id ${ew.customSqlSegment}
+	SELECT *,s.id as stockId,s. FROM bd_stock s  
+	INNER JOIN bd_specification sp ON s.specification_id = sp.id 
+	${ew.customSqlSegment}
 </select>
 
 

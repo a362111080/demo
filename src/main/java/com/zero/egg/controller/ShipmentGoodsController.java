@@ -1,7 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,25 +18,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
-import com.zero.egg.model.Category;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
-import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
-import com.zero.egg.requestDTO.StockRequest;
-import com.zero.egg.responseDTO.CategoryListResponseDTO;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
-import com.zero.egg.responseDTO.StockResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
@@ -116,7 +108,7 @@ public class ShipmentGoodsController {
 	@ApiOperation(value="查询出货商品")
 	@RequestMapping(value="/shipment-list.data",method=RequestMethod.POST)
 	public Message<IPage<ShipmentGoodsResponse>> shipmentlist(
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间）") ShipmentGoodsRequest shipmentGoods) {
+			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,任务主键,创建人，创建时间,商品编号") ShipmentGoodsRequest shipmentGoods) {
 		//ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<IPage<ShipmentGoodsResponse>> message = new Message<IPage<ShipmentGoodsResponse>>();
 		Page<ShipmentGoods> page = new Page<>();
@@ -129,6 +121,7 @@ public class ShipmentGoodsController {
 			.eq(StringUtils.isNotBlank(shipmentGoods.getShopId()),"s.shop_id", shipmentGoods.getShopId())
 			.eq(StringUtils.isNotBlank(shipmentGoods.getCreator()),"s.creator", shipmentGoods.getCreator())
 			.eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()),"s.task_id", shipmentGoods.getTaskId())
+			.eq(StringUtils.isNotBlank(shipmentGoods.getGoodsNo()),"s.goods_no", shipmentGoods.getGoodsNo())
 			.ge(shipmentGoods.getCreatetime() != null,"s.createtime",  LocalDateTime.of(LocalDate.now(), LocalTime.MIN))
 			.le(shipmentGoods.getCreatetime() != null,"s.createtime",  LocalDateTime.of(LocalDate.now(), LocalTime.MAX))
 			;

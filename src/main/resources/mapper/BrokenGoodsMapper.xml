@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.BrokenGoodsMapper">
+
+<select id="listByCondition" resultType="com.zero.egg.responseDTO.BrokenGoodsReponse">
+	SELECT b.*,sp.name as customerName,g.name as goodsName,c.name as categoryName,u.name as creatorName FROM bd_broken_goods b 
+	INNER JOIN bd_supplier sp ON b.customer_id = sp.id 
+	INNER JOIN bd_goods g on b.goods_no = g.goods_no
+	INNER JOIN bd_specification s ON b.specification_id = s.id
+	INNER JOIN bd_specification_program p ON s.program_id = p.id
+	INNER JOIN bd_category c ON p.category_id = c.id
+	LEFT JOIN bd_user u ON u.id = b.creator
+	${ew.customSqlSegment}
+</select>
+
+
+
+
+</mapper>

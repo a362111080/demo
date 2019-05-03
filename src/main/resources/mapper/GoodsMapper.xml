@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.GoodsMapper">
 
+
+<select id="listByCondition" resultType="com.zero.egg.responseDTO.GoodsResponse">
+	SELECT g.*,s.name as supplierName FROM bd_goods g 
+	INNER JOIN bd_supplier s ON g.supplier_id = s.id 
+	${ew.customSqlSegment}
+</select>
+
 </mapper>

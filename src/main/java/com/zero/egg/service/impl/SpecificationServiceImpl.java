@@ -163,4 +163,9 @@ public class SpecificationServiceImpl implements SpecificationService {
             throw new ServiceException("listStandardDetlByStandDetlCode error");
         }
     }
+
+	@Override
+	public Specification getById(Specification specification) {
+		return specificationMapper.selectById(specification.getId());
+	}
 }
