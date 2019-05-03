@@ -33,6 +33,9 @@ public class StockRequest extends PageDTO implements Serializable{
 	@ApiModelProperty(value = "规格方案主键",required=false)
 	private String programId;
 	
+	@ApiModelProperty(value = "品种主键",required=false)
+	private String categoryId;
+	
 	@ApiModelProperty(value = "判定最小称重",required=false)
 	private String weightMin;
 	
@@ -50,5 +53,7 @@ public class StockRequest extends PageDTO implements Serializable{
 	
 	@ApiModelProperty(value = "是否预警(0:否,1:是)",required=false)
 	private String warn;
+	
+	
 
 }

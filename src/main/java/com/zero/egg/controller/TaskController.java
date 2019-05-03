@@ -1,7 +1,9 @@
 package com.zero.egg.controller;
 
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,12 +23,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
+import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.TaskProgram;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
+import com.zero.egg.service.IStockService;
 import com.zero.egg.service.ITaskProgramService;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.Message;
@@ -56,6 +62,11 @@ public class TaskController {
 	private ITaskProgramService taskProgramService;
 	@Autowired
 	private IShipmentGoodsService shipmentGoodsService;
+	@Autowired 
+	private IStockService stockService;
+	@Autowired 
+	private IGoodsService goodsService;
+	
 	
 	@LoginToken
 	@ApiOperation(value="查询卸货任务")
@@ -119,7 +130,7 @@ public class TaskController {
 	}
 	
 	@LoginToken
-	@ApiOperation(value="更换任务方案状态")
+	@ApiOperation(value="更换任务状态")
 	@PostMapping(value="/changeprogram.do")
 	public Message<Object> changeProgram(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="taskProgram",value="任务主键、方案主键,状态（true-活动/false-不活动）") TaskProgram taskProgram) {
@@ -127,19 +138,49 @@ public class TaskController {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		if (taskService.getById(taskProgram.getTaskId()) != null) {
+		Task task = taskService.getById(taskProgram.getTaskId());
+		if ( task != null) {
 			
-			Task task = new Task();
-			task.setId(taskProgram.getTaskId());
-			task.setModifier(loginUser.getId());
-			task.setModifytime(new Date());
+			Task changeTask = new Task();
+			changeTask.setId(taskProgram.getTaskId());
+			changeTask.setModifier(loginUser.getId());
+			changeTask.setModifytime(new Date());
 			if (taskProgram.getActive() == false) {//如果为不活动，，则为任务完成，
-				task.setStatus(TaskEnums.Status.Finish.index().toString());
+				changeTask.setStatus(TaskEnums.Status.Finish.index().toString());
 			}else {//如果为活动，，则为任务执行中
-				task.setStatus(TaskEnums.Status.Execute.index().toString());
+				changeTask.setStatus(TaskEnums.Status.Execute.index().toString());
 			}
 			//修改任务状态
-			taskService.updateById(task);
+			if (taskService.updateById(changeTask)) {
+				if (taskProgram.getActive() == false) {
+					if (TaskEnums.Type.Unload.index().toString().equals(task.getType())) {//卸货任务
+						//将卸货商品表中新增至库存和商品表
+						
+					}else if (TaskEnums.Type.Shipment.index().toString().equals(task.getType())) {//出货任务
+						//从出货商品表中去更新库存和商品表
+						QueryWrapper<ShipmentGoods> shipmentWrapper = new QueryWrapper<>();
+						shipmentWrapper.eq("task_id", task.getId());
+						List<ShipmentGoods> shipmentlist =shipmentGoodsService.list(shipmentWrapper);
+						if (shipmentlist != null && shipmentlist.size()>0) {
+							for (ShipmentGoods shipmentGoods : shipmentlist) {
+								//减去相应的库存
+								QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
+								stockWrapper.eq("specification_id", shipmentGoods.getSpecificationId());
+								Stock stock =stockService.getOne(stockWrapper);
+								stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
+								stockService.updateById(stock);
+								//逻辑删除相对应的商品表
+								Goods goods  = new Goods();
+								goods.setDr(true);
+								QueryWrapper<Goods> goodsWrapper = new QueryWrapper<>();
+								goodsWrapper.eq("goods_no", shipmentGoods.getGoodsNo());
+								goodsService.update(goods, goodsWrapper);
+							}
+						}
+					}
+				}
+			}
+			//修改任务方案状态
 			UpdateWrapper<TaskProgram> updateWrapper = new UpdateWrapper<>();
 			updateWrapper.eq("task_id", taskProgram.getTaskId())
 			.eq("program_id", taskProgram.getProgramId());

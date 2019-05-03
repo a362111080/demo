@@ -73,7 +73,7 @@ public class StockController {
 	@ApiOperation(value="分页查询库存")
 	@RequestMapping(value="/list-page.data",method=RequestMethod.POST)
 	public Message<IPage<StockResponse>> listPage(
-			@RequestBody @ApiParam(required=false,name="stockRequest" ,value="根据需求自行确定搜索字段") StockRequest stockRequest) {
+			@RequestBody @ApiParam(required=false,name="stockRequest" ,value="企业主键，店铺主键，品种主键") StockRequest stockRequest) {
 		//ListResponse<StockResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<IPage<StockResponse>> message = new Message<IPage<StockResponse>>();
 		Page<Stock> page = new Page<>();
@@ -86,6 +86,7 @@ public class StockController {
 			.eq(StringUtils.isNotBlank(stockRequest.getCompanyId()),"s.company_id", stockRequest.getCompanyId())
 			.eq(StringUtils.isNotBlank(stockRequest.getSpecificationId()), "s.specification_id", stockRequest.getSpecificationId())
 			.eq(StringUtils.isNotBlank(stockRequest.getProgramId()), "sp.program_id", stockRequest.getProgramId())
+			.eq(StringUtils.isNotBlank(stockRequest.getCategoryId()), "c.id", stockRequest.getCategoryId())
 			.eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.marker", stockRequest.getMarker())
 			.eq(StringUtils.isNotBlank(stockRequest.getMode()), "sp.mode", stockRequest.getMode())
 			.eq(StringUtils.isNotBlank(stockRequest.getWarn()), "sp.warn", stockRequest.getWarn())
@@ -127,6 +128,32 @@ public class StockController {
 		List<StockResponse> stockList = stockService.listByCondition(queryWrapper);
 		if (stockList != null) {
 			message.setData(stockList);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}else {
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+		return message;
+	}
+	
+	@LoginToken
+	//@PassToken
+	@ApiOperation(value="库存中存在的品种")
+	@RequestMapping(value="/findcategory.data",method=RequestMethod.POST)
+	public Message<List<StockResponse>> findCategory(@RequestBody @ApiParam(required=false,name="stockRequest" ,value="企业主键，店铺主键") StockRequest stockRequest) {
+		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<List<StockResponse>> message = new Message<List<StockResponse>>();
+		QueryWrapper<StockRequest> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("s.dr", false);//查询未删除信息
+		if (stockRequest != null) {
+			queryWrapper.eq(StringUtils.isNotBlank(stockRequest.getShopId()),"s.shop_id", stockRequest.getShopId())
+			.eq(StringUtils.isNotBlank(stockRequest.getCompanyId()),"s.company_id", stockRequest.getCompanyId())
+			;
+		}
+		List<StockResponse> categoryList = stockService.categoryListByCondition(queryWrapper);
+		if (categoryList != null) {
+			message.setData(categoryList);
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}else {

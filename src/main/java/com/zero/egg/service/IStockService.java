@@ -27,4 +27,6 @@ public interface IStockService extends IService<Stock> {
 	
 	public List<StockResponse> categoryCountListByCondition(QueryWrapper<StockRequest> queryWrapper);
 	
+	public List<StockResponse> categoryListByCondition(QueryWrapper<StockRequest> queryWrapper);
+	
 }

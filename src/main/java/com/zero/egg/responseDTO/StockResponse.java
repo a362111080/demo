@@ -43,5 +43,11 @@ public class StockResponse implements Serializable{
 	
 	@ApiModelProperty(value = "是否预警(0:否,1:是)")
 	private String warn;
+	
+	@ApiModelProperty(value = "品种主键")
+	private String categoryId;
+	
+	@ApiModelProperty(value = "品种名称")
+	private String categoryName;
 
 }
