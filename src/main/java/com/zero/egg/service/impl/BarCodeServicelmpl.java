@@ -117,7 +117,7 @@ public class BarCodeServicelmpl implements BarCodeService {
                 String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                         barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
                 String text = JsonUtils.objectToJson(infoDTO);
-                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "currentCode");
+                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode);
                 barCode.setMatrixAddr(matrixAddr);
                 mapper.insert(barCode);
                 matrixAddrList.add(matrixAddr);
