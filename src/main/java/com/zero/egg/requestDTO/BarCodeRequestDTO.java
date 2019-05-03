@@ -46,6 +46,11 @@ public class BarCodeRequestDTO extends PageDTO implements Serializable {
     private String categoryId;
 
     /**
+     * 二维码图片地址
+     */
+    private String matrixAddr;
+
+    /**
      * 创建人
      */
     private String creator;
