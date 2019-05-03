@@ -94,7 +94,7 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public Message PrintBarCode(BarCodeRequestDTO model) {
+    public Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO) {
         BarCode barCode = new BarCode();
         Message message = new Message();
         int num = model.getPrintNum();
@@ -112,10 +112,11 @@ public class BarCodeServicelmpl implements BarCodeService {
                         .eq("supplier_id", barCode.getSupplierId())
                         .eq("category_id", barCode.getCategoryId()));
                 currentCode = barCode.getCode() + g1.format(count);
+                infoDTO.setCurrentCode(currentCode);
                 barCode.setCurrentCode(currentCode);
                 String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                         barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
-                String text = JsonUtils.objectToJson(barCode);
+                String text = JsonUtils.objectToJson(infoDTO);
                 String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "currentCode");
                 barCode.setMatrixAddr(matrixAddr);
                 mapper.insert(barCode);
@@ -145,7 +146,7 @@ public class BarCodeServicelmpl implements BarCodeService {
         infoDTO.setCompanyId(barCode.getCompanyId());
         infoDTO.setSupplierId(barCode.getSupplierId());
         infoDTO.setSupplierName(supplier.getName());
-        infoDTO.setSupplierCode(barCode.getCode());
+        infoDTO.setCode(barCode.getCode());
         infoDTO.setShopId(barCode.getShopId());
         infoDTO.setShopName(shop.getName());
         return infoDTO;

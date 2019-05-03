@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.tool.Message;
@@ -15,5 +16,5 @@ public interface BarCodeService {
 
     List<BarCodeResponseDTO> GetBarCodeList(BarCode model);
 
-    Message PrintBarCode(BarCodeRequestDTO model);
+    Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO);
 }
