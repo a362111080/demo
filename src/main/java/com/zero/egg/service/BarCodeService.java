@@ -4,15 +4,16 @@ package com.zero.egg.service;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.responseDTO.BarCodeResponseDTO;
+import com.zero.egg.tool.Message;
 
 import java.util.List;
 
 public interface BarCodeService {
-    int AddBarCode(BarCodeRequestDTO req);
+    Message AddBarCode(BarCodeRequestDTO req);
 
     int DeleteBarCode(BarCodeRequestDTO model);
 
     List<BarCodeResponseDTO> GetBarCodeList(BarCode model);
 
-    int PrintBarCode(BarCodeRequestDTO model);
+    Message PrintBarCode(BarCodeRequestDTO model);
 }

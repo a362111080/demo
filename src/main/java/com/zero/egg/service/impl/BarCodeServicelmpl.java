@@ -16,15 +16,20 @@ import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TransferUtil;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -44,8 +49,10 @@ public class BarCodeServicelmpl implements BarCodeService {
     private ShopMapper shopMapper;
 
     @Override
-    public int AddBarCode(BarCodeRequestDTO barCodeRequestDTO) {
+    public Message AddBarCode(BarCodeRequestDTO barCodeRequestDTO) {
         BarCode barCode = new BarCode();
+        Message message = new Message();
+        Map<String, String> hash;
         try {
             TransferUtil.copyProperties(barCode, barCodeRequestDTO);
             /**根据供应商id和category_id生成二维码,并把相对路径复制给barCode实体类进行新增操作*/
@@ -58,7 +65,17 @@ public class BarCodeServicelmpl implements BarCodeService {
             String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix");
             barCode.setMatrixAddr(matrixAddr);
             int effectNum = mapper.insert(barCode);
-            return effectNum;
+            if (effectNum > 0) {
+                hash = new HashMap<>();
+                hash.put("matrixAddr", matrixAddr);
+                message.setData(hash);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+            return message;
         } catch (Exception e) {
             log.error("AddBarCode error:" + e);
             throw new ServiceException("AddBarCode error");
@@ -77,9 +94,11 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public int PrintBarCode(BarCodeRequestDTO model) {
+    public Message PrintBarCode(BarCodeRequestDTO model) {
         BarCode barCode = new BarCode();
+        Message message = new Message();
         int num = model.getPrintNum();
+        List<String> matrixAddrList = new ArrayList<>();
         try {
             TransferUtil.copyProperties(barCode, model);
             /**8位编码前面补0格式*/
@@ -100,8 +119,10 @@ public class BarCodeServicelmpl implements BarCodeService {
                 String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "currentCode");
                 barCode.setMatrixAddr(matrixAddr);
                 mapper.insert(barCode);
+                matrixAddrList.add(matrixAddr);
             }
-            return 0;
+            message.setData(matrixAddrList);
+            return message;
         } catch (Exception e) {
             log.error("PrintBarCode error:" + e);
             throw new ServiceException("PrintBarCode error");
