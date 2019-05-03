@@ -105,6 +105,7 @@ public class BarCodeServicelmpl implements BarCodeService {
             DecimalFormat g1 = new DecimalFormat("00000000");
             String currentCode = null;
             for (int i = 0; i < num; i++) {
+                barCode.setId(null);
                 //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
                 int count = mapper.selectCount(new QueryWrapper<BarCode>()
                         .eq("shop_id", barCode.getShopId())
