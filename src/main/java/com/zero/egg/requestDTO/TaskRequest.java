@@ -7,8 +7,11 @@ import lombok.Data;
 
 @Data
 public class TaskRequest extends PageDTO{
+	
+		@ApiModelProperty(value = "任务主键",required=false)
+	    private String id;
 
-	 @ApiModelProperty(value = "店铺主键",required=false)
+		@ApiModelProperty(value = "店铺主键",required=false)
 	    private String shopId;
 
 	    @ApiModelProperty(value = "企业主键",required=false)

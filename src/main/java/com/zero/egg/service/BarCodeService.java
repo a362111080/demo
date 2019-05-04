@@ -9,7 +9,7 @@ import com.zero.egg.tool.Message;
 public interface BarCodeService {
     Message AddBarCode(BarCodeRequestDTO req);
 
-    int DeleteBarCode(BarCodeRequestDTO model);
+    void DeleteBarCode(BarCodeRequestDTO model);
 
     Message GetBarCodeList(BarCodeListRequestDTO listRequestDTO);
 

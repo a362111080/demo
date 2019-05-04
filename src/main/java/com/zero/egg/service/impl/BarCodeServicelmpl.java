@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.config.FileUploadProperteis;
 import com.zero.egg.dao.BarCodeMapper;
@@ -68,7 +69,8 @@ public class BarCodeServicelmpl implements BarCodeService {
                     .eq("company_id", barCode.getCompanyId())
                     .eq("shop_id", barCode.getShopId())
                     .eq("supplier_id", barCode.getSupplierId())
-                    .eq("category_id", barCode.getCategoryId()));
+                    .eq("category_id", barCode.getCategoryId())
+                    .eq("dr", 0));
             if (count > 1) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
@@ -98,8 +100,18 @@ public class BarCodeServicelmpl implements BarCodeService {
 
 
     @Override
-    public int DeleteBarCode(BarCodeRequestDTO model) {
-        return mapper.DeleteBarCode(model.getIds());
+    public void DeleteBarCode(BarCodeRequestDTO model) {
+        BarCode barCode = new BarCode();
+        try {
+            barCode.setDr(true);
+            mapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .in("id", model.getIds())
+                    .eq("shop_id", model.getShopId())
+                    .eq("company_id", model.getCompanyId()));
+        } catch (Exception e) {
+            log.error("DeleteBarCode Error!", e);
+            throw new ServiceException("DeleteBarCode Error!");
+        }
     }
 
     @Override
