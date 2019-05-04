@@ -3,7 +3,9 @@ package com.zero.egg.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.service.SupplierService;
 import com.zero.egg.tool.Message;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +33,8 @@ import java.util.List;
 public class SupplierManageController {
     @Autowired
     private SupplierService supplierService;
-
+    @Autowired
+    private HttpServletRequest request;
     /**
      * @Description 新增供应商
      * @Return 是否成功
@@ -40,12 +44,14 @@ public class SupplierManageController {
     @LoginToken
     public Message AddSupplier(@RequestBody Supplier model) {
         Message message = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
-            //实际根据界面传值
-            model.setCreatetime(new Date());
-            model.setModifytime(new Date());
-            if (null != model.getCode() && !"".equals(model.getCode()) && model.getCode().length() == 4) {
 
+            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
+                model.setCreator(user.getName());
+                model.setCreatetime(new Date());
+            }
+            if (null != model.getCode() && !"".equals(model.getCode()) && model.getCode().length() == 4) {
                 int strval = supplierService.AddSupplier(model);
 
                 if (strval > 0) {
@@ -60,6 +66,7 @@ public class SupplierManageController {
                 message.setState(ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(ResponseMsg.PARAM_ERROR);
             }
+
             return message;
 
         } catch (Exception e) {
@@ -79,9 +86,12 @@ public class SupplierManageController {
     @RequestMapping(value = "/updatesupplier", method = RequestMethod.POST)
     public Message UpdateSupplier(@RequestBody Supplier model) {
         Message message = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
-            //店铺编码  实际根据界面传值
-            model.setModifytime(new Date());
+            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
+                model.setModifier(user.getName());
+                model.setModifytime(new Date());
+            }
             int strval = supplierService.UpdateSupplier(model);
             if (strval > 0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -167,6 +177,18 @@ public class SupplierManageController {
         return message;
     }
 
+    /**
+     * 从当前登录用户信息中检查shopId和companyId是否为空
+     *
+     */
+    private boolean checkShopAndCompanyExist(LoginUser user, Supplier Supplier) {
+        boolean flag = (null != Supplier.getShopid() && null != Supplier.getCompanyid()) ? true : false;
+        Supplier.setCompanyid(user.getCompanyId());
+        Supplier.setShopid(user.getShopId());
+        Supplier.setModifier(user.getName());
+        Supplier.setModifytime(new Date());
+        return flag;
+    }
 
 }
 
