@@ -5,8 +5,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.zero.egg.api.ApiConstants;
+import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +54,8 @@ public class UnloadGoodsController {
 	
 	@Autowired
 	private IUnloadGoodsService unloadGoodsService;
+	@Autowired
+	private HttpServletRequest request;
 	
 
 	@ApiOperation(value="分页查询卸货商品")
@@ -85,41 +91,20 @@ public class UnloadGoodsController {
 		
 	}
 	
-	@LoginToken
-	@ApiOperation(value="新增卸货")
-	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
-	public Message<Object> unloadAdd(@RequestParam @ApiParam(required=true,name="specificationId",value="规格主键") String specificationId,
-			@RequestBody @ApiParam(required=true,name="unloadGoods"
-			,value="企业主键、店铺主键、供应商主键、规格方案主键、任务主键、商品分类主键、商品编码、重量、创建人") UnloadGoods unloadGoods
-			,HttpSession session) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Object> message = new Message<Object>();
-		unloadGoods.setId(UuidUtil.get32UUID());
-		unloadGoods.setCreatetime(new Date());
-		unloadGoods.setModifytime(new Date());
-		/*LoginInfo loginUser = (LoginInfo) session.getAttribute(SysConstants.LOGIN_USER);*/
-		unloadGoods.setModifier("1");
-		unloadGoods.setCreator("1");
-		unloadGoods.setDr(false);
-		//TODO 根据规格查询数据，并进行预警处理
-		if (unloadGoodsService.save(unloadGoods)) {
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		}else {
-			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.FAILED);
-		}
-		return message;
-	}
+
 
 	@ApiOperation(value="新增卸货记录")
 	@RequestMapping(value = "/addunloaddetl",method = RequestMethod.POST)
 	public Message<Object> AddSupplier(@RequestBody  UnloadGoods model) {
 		Message<Object> message = new Message<Object>();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		try {
 			//实际根据界面传值
-			model.setCreatetime(new Date());
-			model.setModifytime(new Date());
+			if (null != model  && checkShopAndCompanyExist(user, model)) {
+				model.setCreator(user.getName());
+				model.setCreatetime(new Date());
+			}
+
 			//根据重量对应规程方案判断是否预警
 			if (null!=model.getWeight() && null !=model.getProgramId())
 			{
@@ -127,6 +112,7 @@ public class UnloadGoodsController {
 				UnLoadResponseDto  res=unloadGoodsService.CheckWeight(model.getWeight(),model.getProgramId());
 				if (null!=res)
 				{
+					model.setSpecificationId(res.getSpecificationId());
 					if(res.getNumerical().compareTo(BigDecimal.ZERO)!=0)
 					{
 						//存在去皮数值   显示标识为实际称重减去去皮值
@@ -211,4 +197,18 @@ public class UnloadGoodsController {
         ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         return  ms;
     }
+
+
+	/**
+	 * 从当前登录用户信息中检查shopId和companyId是否为空
+	 *
+	 */
+	private boolean checkShopAndCompanyExist(LoginUser user, UnloadGoods UnloadGoods) {
+		boolean flag = (null != UnloadGoods.getShopId() && null != UnloadGoods.getCompanyId()) ? true : false;
+		UnloadGoods.setCompanyId(user.getCompanyId());
+		UnloadGoods.setShopId(user.getShopId());
+		UnloadGoods.setModifier(user.getName());
+		UnloadGoods.setModifytime(new Date());
+		return flag;
+	}
 }

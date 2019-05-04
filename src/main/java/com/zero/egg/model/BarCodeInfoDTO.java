@@ -53,11 +53,6 @@ public class BarCodeInfoDTO {
     private String companyId;
 
     /**
-     * 打印数量
-     */
-    private Integer printNum;
-
-    /**
      * 当前编号
      */
     private String currentCode;

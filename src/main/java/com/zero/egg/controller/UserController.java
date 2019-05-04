@@ -112,6 +112,7 @@ public class UserController {
 			.like(StringUtils.isNotBlank(user.getCode()),"code", user.getCode())
 			.eq(StringUtils.isNotBlank(user.getStatus()), "status", user.getStatus())
 			.eq(StringUtils.isNotBlank(user.getCompanyId()),"company_id",user.getCompanyId())
+			.eq(StringUtils.isNotBlank(user.getType().toString()),"type",user.getType())
 			.eq(StringUtils.isNotBlank(user.getShopId()), "shop_id", user.getShopId());
 		}
 		List<User> userList = userService.list(queryWrapper);

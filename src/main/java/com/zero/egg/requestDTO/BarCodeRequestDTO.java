@@ -17,10 +17,6 @@ public class BarCodeRequestDTO extends PageDTO implements Serializable {
     private String id;
 
     /**
-     * 打印数量
-     */
-    private Integer printNum;
-    /**
      * 企业主键id
      */
     private String companyId;

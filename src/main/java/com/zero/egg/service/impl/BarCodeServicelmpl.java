@@ -1,9 +1,9 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.config.FileUploadProperteis;
-import com.zero.egg.controller.BarCodeListRequestDTO;
 import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.ShopMapper;
@@ -13,6 +13,7 @@ import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.model.Category;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.responseDTO.BarCodeListResponseDTO;
 import com.zero.egg.service.BarCodeService;
@@ -61,7 +62,20 @@ public class BarCodeServicelmpl implements BarCodeService {
             String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                     barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
             //二维码信息包含供应商id,code,name  产品(鸡蛋)类别 id,name  店铺id  名称  企业 id
-            //TODO 1.二维码信息需要加密 2.查重:同一个店铺同一品种只能生成一张母二维码
+            /**
+             * 查重:同一个店铺同一品种只能生成一张母二维码
+             */
+            int count = mapper.selectCount(new QueryWrapper<BarCode>()
+                    .eq("company_id", barCode.getCompanyId())
+                    .eq("shop_id", barCode.getShopId())
+                    .eq("supplier_id", barCode.getSupplierId())
+                    .eq("category_id", barCode.getCategoryId())
+                    .eq("dr", 0));
+            if (count > 1) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                return message;
+            }
             BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
             String text = JsonUtils.objectToJson(infoDTO);
             String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix");
@@ -86,8 +100,18 @@ public class BarCodeServicelmpl implements BarCodeService {
 
 
     @Override
-    public int DeleteBarCode(BarCodeRequestDTO model) {
-        return mapper.DeleteBarCode(model.getIds());
+    public void DeleteBarCode(BarCodeRequestDTO model) {
+        BarCode barCode = new BarCode();
+        try {
+            barCode.setDr(true);
+            mapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .in("id", model.getIds())
+                    .eq("shop_id", model.getShopId())
+                    .eq("company_id", model.getCompanyId()));
+        } catch (Exception e) {
+            log.error("DeleteBarCode Error!", e);
+            throw new ServiceException("DeleteBarCode Error!");
+        }
     }
 
     @Override
@@ -122,17 +146,16 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO) {
+    public Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO, int printNum) {
         BarCode barCode = new BarCode();
         Message message = new Message();
-        int num = model.getPrintNum();
         List<String> matrixAddrList = new ArrayList<>();
         try {
             TransferUtil.copyProperties(barCode, model);
             /**8位编码前面补0格式*/
             DecimalFormat g1 = new DecimalFormat("00000000");
             String currentCode = null;
-            for (int i = 0; i < num; i++) {
+            for (int i = 0; i < printNum; i++) {
                 barCode.setId(null);
                 //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
                 int count = mapper.selectCount(new QueryWrapper<BarCode>()

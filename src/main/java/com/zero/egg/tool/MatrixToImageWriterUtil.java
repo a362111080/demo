@@ -1,9 +1,14 @@
 package com.zero.egg.tool;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatReader;
 import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.Result;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
 import com.zero.egg.config.FileUploadProperteis;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,11 +56,15 @@ public class MatrixToImageWriterUtil {
 
     public static String writeToFile(String targetAddr, String text, String name) throws Exception {
         makeDirPath(targetAddr);
+        /**
+         * 对二维码数据进行加密
+         */
+        String aesText = AESUtil.encrypt(text, AESUtil.KEY);
         String relativeAddr = targetAddr + name + "." + FORMAT;
         log.debug("current relativeAddr is:" + relativeAddr);
         Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");    // 内容所使用字符集编码
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, hints);
+        BitMatrix bitMatrix = new MultiFormatWriter().encode(aesText, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, hints);
         log.debug(basePath + relativeAddr);
         File outputFile = new File(basePath + relativeAddr);
         BufferedImage image = toBufferedImage(bitMatrix);
@@ -85,6 +94,40 @@ public class MatrixToImageWriterUtil {
         }
     }
 
+    /**
+     * 解析二维码
+     *
+     * @param file 二维码图片
+     * @return
+     * @throws Exception
+     */
+    public static String decode(File file) throws Exception {
+        BufferedImage image;
+        image = ImageIO.read(file);
+        if (image == null) {
+            return null;
+        }
+        BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(
+                image);
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        Result result;
+        Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>();
+        hints.put(DecodeHintType.CHARACTER_SET, "utf-8");
+        result = new MultiFormatReader().decode(bitmap, hints);
+        String resultStr = result.getText();
+        return AESUtil.decrypt(resultStr, AESUtil.KEY);
+    }
+
+    /**
+     * 解析二维码
+     *
+     * @param path 二维码图片地址
+     * @return
+     * @throws Exception
+     */
+    public static String decode(String path) throws Exception {
+        return MatrixToImageWriterUtil.decode(new File(basePath + path));
+    }
 
 }
 

@@ -18,4 +18,9 @@ public class UnLoadResponseDto implements Serializable {
     //净重去皮数值，没有则为0
     @ApiModelProperty(value = "净重去皮数值，没有则为0")
     private BigDecimal numerical;
+
+    //返回标识
+    @ApiModelProperty(value = "对应规格编码")
+    private String specificationId;
+
 }

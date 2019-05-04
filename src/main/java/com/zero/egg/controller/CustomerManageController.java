@@ -2,9 +2,11 @@ package com.zero.egg.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.city;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.CustomerService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -17,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +29,8 @@ import java.util.List;
 public class CustomerManageController {
     @Autowired
     private CustomerService CustomerSv;
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * @Description 新增客户
@@ -35,12 +40,13 @@ public class CustomerManageController {
     @RequestMapping(value = "/addcustomer",method = RequestMethod.POST)
     public Message AddCustomer(@RequestBody Customer model){
         Message message = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             //实际根据界面传值
-
-            model.setCreatetime(new Date());
-
-            model.setModifytime(new Date());
+            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
+                model.setCreator(user.getName());
+                model.setCreatetime(new Date());
+            }
 
             int strval=CustomerSv.AddCustomer(model);
             if (strval>0) {
@@ -70,8 +76,13 @@ public class CustomerManageController {
     @RequestMapping(value = "/updatecustomer",method = RequestMethod.POST)
     public Message UpdateSupplier(@RequestBody  Customer model) {
         Message message = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             //店铺编码  实际根据界面传值
+            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
+                model.setCreator(user.getName());
+                model.setCreatetime(new Date());
+            }
             int strval=CustomerSv.UpdateCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -154,4 +165,16 @@ public class CustomerManageController {
         return  ms;
     }
 
+    /**
+     * 从当前登录用户信息中检查shopId和companyId是否为空
+     *
+     */
+    private boolean checkShopAndCompanyExist(LoginUser user, Customer Customer) {
+        boolean flag = (null != Customer.getShopid() && null != Customer.getCompanyid()) ? true : false;
+        Customer.setCompanyid(user.getCompanyId());
+        Customer.setShopid(user.getShopId());
+        Customer.setModifier(user.getName());
+        Customer.setModifytime(new Date());
+        return flag;
+    }
 }
