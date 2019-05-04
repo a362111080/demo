@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,27 +73,16 @@ public class TaskController {
 	@LoginToken
 	@ApiOperation(value="查询卸货任务")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
-	public Message<IPage<Task>> unloadList(
+	public Message<PageInfo<Task>> unloadList(
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
-		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<IPage<Task>> message = new Message<IPage<Task>>();
-		Page<Task> page = new Page<>();
-		page.setCurrent(task.getCurrent());
-		page.setSize(task.getSize());
-		QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("dr", false);//查询未删除信息
-		if (task != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(task.getCompanyId()),"company_id", task.getCompanyId())
-			.eq(StringUtils.isNotBlank(task.getShopId()),"shop_id", task.getShopId())
-			.eq(StringUtils.isNotBlank(task.getStatus()),"status", task.getStatus())
-			.eq("type", TaskEnums.Type.Unload.index().toString());
-		}
-		IPage<Task> list = taskService.page(page, queryWrapper);
-		message.setData(list);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		return message;
-		
+		Message<PageInfo<Task>> ms = new Message<PageInfo<Task>>();
+		PageHelper.startPage(task.getCurrent().intValue(), task.getSize().intValue());
+		List<Task> ResponseDto=taskService.QueryTaskList(task);
+		PageInfo<Task> pageInfo = new PageInfo<>(ResponseDto);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return  ms;
 	}
 	
 	@LoginToken

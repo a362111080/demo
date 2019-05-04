@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.TaskMapper">
-
+    <select id="QueryTaskList"  resultType="com.zero.egg.model.Task">
+        SELECT a.*,b.program_id,c.name as programName,d.name as suppliername,e.name as categoryname FROM  bd_task  a
+        left join bd_task_program b on a.id=b.task_id
+        left join bd_specification_program c on b.program_id=c.id
+        left join bd_supplier d on d.id=a.supplier_id
+        left join bd_category e on e.id=c.category_id
+        <where>
+            <if test="type != null and type !=''">
+                and a.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and a.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and a.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !=''">
+                and a.status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test="supplierId != null and supplierId !=''">
+                and a.supplier_id=#{supplierId,jdbcType=VARCHAR}
+            </if>
+            <if test="equipmentNo != null and equipmentNo !=''">
+                and a.equipment_no=#{equipmentNo,jdbcType=VARCHAR}
+            </if>
+                 and a.dr=0
+        </where>
+    </select>
 </mapper>
