@@ -137,8 +137,8 @@ public class StockController {
 		return message;
 	}
 	
-	@LoginToken
-	//@PassToken
+	//@LoginToken
+	@PassToken
 	@ApiOperation(value="库存中存在的品种")
 	@RequestMapping(value="/findcategory.data",method=RequestMethod.POST)
 	public Message<List<StockResponse>> findCategory(@RequestBody @ApiParam(required=false,name="stockRequest" ,value="企业主键，店铺主键") StockRequest stockRequest) {
@@ -163,8 +163,8 @@ public class StockController {
 		return message;
 	}
 	
-	@LoginToken
-	//@PassToken
+	//@LoginToken
+	@PassToken
 	@ApiOperation(value="仓库规格下商品详情")
 	@RequestMapping(value="/findbyspecification.data",method=RequestMethod.POST)
 	public Message<Map<String, Object>> findBySpecification(@RequestBody @ApiParam(required=false,name="stockRequest" ,value="企业主键,店铺主键，规格主键") StockRequest stockRequest) {

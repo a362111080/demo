@@ -252,6 +252,20 @@ public class TaskController {
 	}
 	
 	@LoginToken
+	@ApiOperation(value="根据任务主键查询任务")
+	@RequestMapping(value="/getTaskById.data",method=RequestMethod.POST)
+	public Message<Task> getTaskById(
+			@RequestBody @ApiParam(required=false,name="task",value="任务主键") TaskRequest task) {
+		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+		Message<Task> message = new Message<Task>();
+		Task task2 =taskService.getById(task.getId());
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		message.setData(task2);
+		return message;
+	}
+	
+	@LoginToken
 	@ApiOperation(value="新增出货任务")
 	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
 	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
