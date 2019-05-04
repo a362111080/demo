@@ -45,8 +45,11 @@ public class UnloadGoods implements Serializable {
     @ApiModelProperty(value = "供应商主键",required=false)
     private String supplierId;
 
-    @ApiModelProperty(value = "规格方案主键",required=false)
+    @ApiModelProperty(value = "方案主键",required=false)
     private String programId;
+
+    @ApiModelProperty(value = "规格主键",required=false)
+    private String specificationId;
 
     @ApiModelProperty(value = "任务主键",required=false)
     private String taskId;

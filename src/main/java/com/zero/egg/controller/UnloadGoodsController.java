@@ -127,6 +127,7 @@ public class UnloadGoodsController {
 				UnLoadResponseDto  res=unloadGoodsService.CheckWeight(model.getWeight(),model.getProgramId());
 				if (null!=res)
 				{
+					model.setSpecificationId(res.getSpecificationId());
 					if(res.getNumerical().compareTo(BigDecimal.ZERO)!=0)
 					{
 						//存在去皮数值   显示标识为实际称重减去去皮值
