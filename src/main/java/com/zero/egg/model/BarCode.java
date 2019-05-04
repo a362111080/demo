@@ -21,13 +21,10 @@ import java.util.Date;
 public class BarCode implements Serializable {
 
     private static final long serialVersionUID = -3485701086348884048L;
+
     /**
-     * @ClassName 条码类
-     * @Description 条码类
-     * @Author CQ
-     * @Date 2019/03/15
-     **/
-    @ApiModelProperty(value = "主键",required=false)
+     * 主键
+     */
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
@@ -42,6 +39,11 @@ public class BarCode implements Serializable {
 
     @ApiModelProperty(value = "供应商主键",required=false)
     private String supplierId;
+
+    /**
+     * 供应商名
+     */
+    private String supplierName;
 
     @ApiModelProperty(value = "品种主键",required=false)
     private String categoryId;

@@ -1,7 +1,9 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.config.FileUploadProperteis;
+import com.zero.egg.controller.BarCodeListRequestDTO;
 import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.ShopMapper;
@@ -12,7 +14,7 @@ import com.zero.egg.model.Category;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
-import com.zero.egg.responseDTO.BarCodeResponseDTO;
+import com.zero.egg.responseDTO.BarCodeListResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
@@ -89,8 +91,34 @@ public class BarCodeServicelmpl implements BarCodeService {
     }
 
     @Override
-    public List<BarCodeResponseDTO> GetBarCodeList(BarCode model) {
-        return mapper.GetBarCodeList(model);
+    public Message GetBarCodeList(BarCodeListRequestDTO listRequestDTO) {
+        Message message = new Message();
+        Page<BarCode> page = new Page<>();
+        BarCodeListResponseDTO barCodeListResponseDTO = new BarCodeListResponseDTO();
+        try {
+            page.setCurrent(listRequestDTO.getCurrent());
+            page.setSize(listRequestDTO.getSize());
+            page = (Page<BarCode>) mapper.selectPage(page, new QueryWrapper<BarCode>()
+                    .eq("shop_id", listRequestDTO.getShopId())
+                    .eq("company_id", listRequestDTO.getCompanyId())
+                    .like(null != listRequestDTO.getSupplierName() && !"".equals(listRequestDTO.getSupplierName())
+                            , "supplier_name", listRequestDTO.getSupplierName())
+                    .eq("dr", 0));
+            barCodeListResponseDTO.setBarCodeList(page.getRecords());
+            barCodeListResponseDTO.setCurrent(page.getCurrent());
+            barCodeListResponseDTO.setPages(page.getPages());
+            barCodeListResponseDTO.setTotal(page.getTotal());
+            barCodeListResponseDTO.setSize(page.getSize());
+            message.setData(barCodeListResponseDTO);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("GetBarCodeList!", e);
+            throw new ServiceException("GetBarCodeList");
+        }
+
+
+        return message;
     }
 
     @Override

@@ -1,14 +1,10 @@
 package com.zero.egg.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
-import com.zero.egg.model.BarCode;
 import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
-import com.zero.egg.responseDTO.BarCodeResponseDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.TransferUtil;
@@ -16,23 +12,21 @@ import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 
 @Api(value = "条码管理")
 @RestController
 @RequestMapping("/barcode")
+@Slf4j
 public class BarCodeController {
     @Autowired
     private BarCodeService bcService;
@@ -51,7 +45,8 @@ public class BarCodeController {
             barCodeRequestDTO.setModifier(user.getName());
             //非空判断
             if (null != barCodeRequestDTO.getCode()
-                    && null != barCodeRequestDTO.getCategoryId() && null != barCodeRequestDTO.getSupplierId()) {
+                    && null != barCodeRequestDTO.getCategoryId() && null != barCodeRequestDTO.getSupplierId()
+                    && null != barCodeRequestDTO.getSupplierName()) {
                 barCodeRequestDTO.setCreatetime(new Date());
                 barCodeRequestDTO.setModifytime(new Date());
 
@@ -65,7 +60,6 @@ public class BarCodeController {
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            //message.setMessage(e.getMessage());
             return message;
         }
     }
@@ -80,6 +74,7 @@ public class BarCodeController {
     public Message DeleteBarCode(@RequestBody BarCodeRequestDTO model) {
         Message message = new Message();
         try {
+
             if (null != model.getIds()) {
                 bcService.DeleteBarCode(model);
                 message.setState(ResponseCode.SUCCESS_HEAD);
@@ -96,21 +91,29 @@ public class BarCodeController {
         }
     }
 
-    @ApiOperation(value = "查询条码列表", notes = "分页查询，各种条件查询")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "页码", value = "pageNum", dataType = "int"),
-            @ApiImplicitParam(paramType = "query", name = "页大小", value = "pageSize", dataType = "int")
-    })
+    @ApiOperation(value = "查询条码列表", notes = "分页查询(根据供应商名称模糊查询")
     @RequestMapping(value = "/getbarcodelist", method = RequestMethod.POST)
-    public Message GetBarCodeList(@RequestParam int pageNum, @RequestParam int pageSize, @RequestBody BarCode model) {
-        Message ms = new Message();
-        PageHelper.startPage(pageNum, pageSize);
-        List<BarCodeResponseDTO> BarCode = bcService.GetBarCodeList(model);
-        PageInfo<BarCodeResponseDTO> pageInfo = new PageInfo<>(BarCode);
-        ms.setData(pageInfo);
-        ms.setState(ResponseCode.SUCCESS_HEAD);
-        ms.setMessage(ResponseMsg.SUCCESS);
-        return ms;
+    @LoginToken
+    public Message GetBarCodeList(@RequestBody BarCodeListRequestDTO listRequestDTO, HttpServletRequest request) {
+        Message message = null;
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            if (null != user.getCompanyId() && null != user.getShopId()) {
+                listRequestDTO.setCompanyId(user.getCompanyId());
+                listRequestDTO.setShopId(user.getShopId());
+                message = bcService.GetBarCodeList(listRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+        } catch (Exception e) {
+            log.error("GetBarCodeList failed:" + e);
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+        }
+        return message;
     }
 
 

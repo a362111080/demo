@@ -40,6 +40,12 @@ public class BarCodeRequestDTO extends PageDTO implements Serializable {
      */
     private String supplierId;
 
+
+    /**
+     * 供应商名
+     */
+    private String supplierName;
+
     /**
      * 品种
      */
