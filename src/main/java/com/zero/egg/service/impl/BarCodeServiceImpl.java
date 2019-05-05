@@ -129,7 +129,8 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("company_id", listRequestDTO.getCompanyId())
                     .like(null != listRequestDTO.getSupplierName() && !"".equals(listRequestDTO.getSupplierName())
                             , "supplier_name", listRequestDTO.getSupplierName())
-                    .eq("dr", 0));
+                    .eq("dr", 0)
+                    .eq("current_code", ""));
             barCodeListResponseDTO.setBarCodeList(page.getRecords());
             barCodeListResponseDTO.setCurrent(page.getCurrent());
             barCodeListResponseDTO.setPages(page.getPages());
