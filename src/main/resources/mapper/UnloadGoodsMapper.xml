@@ -13,18 +13,18 @@
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.marker,a.supplier_id,a.task_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
-        where  a.task_id=#{taskId}
+        where  a.task_id=#{taskId} and  a.dr=1
         GROUP BY  a.task_id,b.id,a.marker,a.supplier_id
     </select>
     <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
-        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime}
+        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime} and  a.dr=1
         GROUP BY  a.shop_id,b.id
     </select>
 
     <select id="GetTaskUnloadCount"  resultType="int">
         select sum(1) as sumVal from  bd_unload_goods  a
-        where  a.task_id=#{taskId}
+        where  a.task_id=#{taskId} and  a.dr=1
     </select>
 </mapper>

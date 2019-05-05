@@ -1,8 +1,11 @@
 package com.zero.egg.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.TaskEnums;
 import com.baomidou.mybatisplus.annotation.IdType;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -93,5 +96,25 @@ public class Task implements Serializable {
     public String  getTypeName() {
 		return TaskEnums.Type.note(Integer.parseInt(this.type));
 	}
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
+    private String billno;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
+    private String cussupid;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
+    private BigDecimal quantity;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
+    private BigDecimal amount;
+
+
+
 
 }
