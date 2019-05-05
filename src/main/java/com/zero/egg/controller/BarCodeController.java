@@ -132,7 +132,7 @@ public class BarCodeController {
      */
     @RequestMapping(value = "/printbarcode", method = RequestMethod.POST)
     @LoginToken
-    public Message PrintBarCode(String matrixAddr, int printNum, HttpServletRequest request) {
+    public Message PrintBarCode(String matrixAddr, Integer printNum, HttpServletRequest request) {
         Message message = new Message();
         try {
             /**
