@@ -48,6 +48,11 @@ public class BarCode implements Serializable {
     @ApiModelProperty(value = "品种主键",required=false)
     private String categoryId;
 
+    /**
+     * 品种名
+     */
+    private String categoryName;
+
     @ApiModelProperty(value = "当前编号",required=false)
     private String currentCode;
 

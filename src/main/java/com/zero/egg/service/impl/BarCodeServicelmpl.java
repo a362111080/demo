@@ -193,6 +193,8 @@ public class BarCodeServicelmpl implements BarCodeService {
         Supplier supplier = supplierMapper.selectOne(new QueryWrapper<Supplier>().select("name").eq("id", barCode.getSupplierId()));
         Category category = categoryMapper.selectOne(new QueryWrapper<Category>().select("name").eq("id", barCode.getCategoryId()));
         Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("name").eq("id", barCode.getShopId()));
+        barCode.setCategoryName(category.getName());
+        barCode.setSupplierName(supplier.getName());
         infoDTO.setCategoryId(barCode.getCategoryId());
         infoDTO.setCategoryName(category.getName());
         infoDTO.setCompanyId(barCode.getCompanyId());

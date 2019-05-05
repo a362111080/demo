@@ -48,7 +48,7 @@ public class BarCodeController {
             //非空判断
             if (null != barCodeRequestDTO.getCode()
                     && null != barCodeRequestDTO.getCategoryId() && null != barCodeRequestDTO.getSupplierId()
-                    && null != barCodeRequestDTO.getSupplierName()) {
+                    ) {
                 barCodeRequestDTO.setCreatetime(new Date());
                 barCodeRequestDTO.setModifytime(new Date());
 
