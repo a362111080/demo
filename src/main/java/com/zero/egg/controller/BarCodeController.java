@@ -6,6 +6,7 @@ import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.PrintBarCodeRequestDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
@@ -90,7 +91,7 @@ public class BarCodeController {
             }
             return message;
         } catch (Exception e) {
-            log.error("delbarcode failed:"+e);
+            log.error("delbarcode failed:" + e);
             message.setState(ResponseCode.EXCEPTION_HEAD);
             message.setMessage(ResponseMsg.FAILED);
             return message;
@@ -126,21 +127,22 @@ public class BarCodeController {
     /**
      * 前端需要把母二维码信息加上printNum后请求改接口
      *
-     * @param printNum   需要打印数量
-     * @param matrixAddr 母二维码相对地址
+     * @param printBarCodeRequestDTO
      * @return
      */
     @RequestMapping(value = "/printbarcode", method = RequestMethod.POST)
     @LoginToken
-    public Message PrintBarCode(String matrixAddr, Integer printNum, HttpServletRequest request) {
+    public Message PrintBarCode(PrintBarCodeRequestDTO printBarCodeRequestDTO, HttpServletRequest request) {
         Message message = new Message();
         try {
             /**
              *
              */
-            if (null != matrixAddr && !"".equals(matrixAddr) && printNum > 0) {
+            if (null != printBarCodeRequestDTO && null != printBarCodeRequestDTO.getMatrixAddr()
+                    && !"".equals(printBarCodeRequestDTO.getMatrixAddr())
+                    && printBarCodeRequestDTO.getPrintNum() > 0) {
                 LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-                String infoDTOStr = MatrixToImageWriterUtil.decode(matrixAddr);
+                String infoDTOStr = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
                 BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
                 BarCodeRequestDTO barCodeRequestDTO = new BarCodeRequestDTO();
                 TransferUtil.copyProperties(barCodeRequestDTO, infoDTO);
@@ -153,7 +155,7 @@ public class BarCodeController {
                 barCodeRequestDTO.setModifier(user.getName());
                 barCodeRequestDTO.setCreatetime(new Date());
                 barCodeRequestDTO.setModifytime(new Date());
-                message = bcService.PrintBarCode(barCodeRequestDTO, infoDTO, printNum);
+                message = bcService.PrintBarCode(barCodeRequestDTO, infoDTO, printBarCodeRequestDTO.getPrintNum());
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
             } else {
