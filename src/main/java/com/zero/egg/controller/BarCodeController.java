@@ -73,6 +73,7 @@ public class BarCodeController {
      **/
     @ApiOperation(value = "批量删除条码")
     @RequestMapping(value = "/delbarcode", method = RequestMethod.POST)
+    @LoginToken
     public Message DeleteBarCode(@RequestBody BarCodeRequestDTO model, HttpServletRequest request) {
         Message message = new Message();
         try {
@@ -89,6 +90,7 @@ public class BarCodeController {
             }
             return message;
         } catch (Exception e) {
+            log.error("delbarcode failed:"+e);
             message.setState(ResponseCode.EXCEPTION_HEAD);
             message.setMessage(ResponseMsg.FAILED);
             return message;
