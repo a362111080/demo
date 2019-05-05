@@ -16,6 +16,8 @@ import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.responseDTO.BarCodeListResponseDTO;
+import com.zero.egg.responseDTO.PrintBarCodeResponseDTO;
+import com.zero.egg.responseDTO.SinglePrintBarCodeDTO;
 import com.zero.egg.service.BarCodeService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
@@ -37,7 +39,7 @@ import java.util.Map;
 @Service
 @Transactional
 @Slf4j
-public class BarCodeServicelmpl implements BarCodeService {
+public class BarCodeServiceImpl implements BarCodeService {
 
     @Autowired
     private BarCodeMapper mapper;
@@ -149,7 +151,9 @@ public class BarCodeServicelmpl implements BarCodeService {
     public Message PrintBarCode(BarCodeRequestDTO model, BarCodeInfoDTO infoDTO, int printNum) {
         BarCode barCode = new BarCode();
         Message message = new Message();
-        List<String> matrixAddrList = new ArrayList<>();
+        PrintBarCodeResponseDTO barCodeResponseDTO = new PrintBarCodeResponseDTO();
+        List<SinglePrintBarCodeDTO> singlePrintBarCodeDTOList = new ArrayList<>();
+        SinglePrintBarCodeDTO barCodeDTO = null;
         try {
             TransferUtil.copyProperties(barCode, model);
             /**8位编码前面补0格式*/
@@ -166,15 +170,23 @@ public class BarCodeServicelmpl implements BarCodeService {
                 currentCode = barCode.getCode() + g1.format(count);
                 infoDTO.setCurrentCode(currentCode);
                 barCode.setCurrentCode(currentCode);
+                barCode.setCategoryName(infoDTO.getCategoryName());
                 String targetAddr = FileUploadProperteis.getMatrixImagePath(barCode.getCompanyId(),
                         barCode.getShopId(), barCode.getSupplierId(), barCode.getCategoryId());
                 String text = JsonUtils.objectToJson(infoDTO);
                 String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode);
                 barCode.setMatrixAddr(matrixAddr);
                 mapper.insert(barCode);
-                matrixAddrList.add(matrixAddr);
+                barCodeDTO = new SinglePrintBarCodeDTO();
+                barCodeDTO.setCategoryName(barCode.getCategoryName());
+                barCodeDTO.setCurrentCode(currentCode);
+                barCodeDTO.setMatrixAddr(matrixAddr);
+                barCodeDTO.setShopName(infoDTO.getShopName());
+                singlePrintBarCodeDTOList.add(barCodeDTO);
+                barCodeDTO = null;
             }
-            message.setData(matrixAddrList);
+            barCodeResponseDTO.setPrintBarCodeDTOS(singlePrintBarCodeDTOList);
+            message.setData(barCodeResponseDTO);
             return message;
         } catch (Exception e) {
             log.error("PrintBarCode error:" + e);
