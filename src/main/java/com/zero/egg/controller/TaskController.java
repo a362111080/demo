@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zero.egg.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +26,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.ShipmentGoods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
-import com.zero.egg.model.TaskProgram;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.service.IGoodsService;
@@ -68,7 +64,8 @@ public class TaskController {
 	private IStockService stockService;
 	@Autowired 
 	private IGoodsService goodsService;
-	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@LoginToken
 	@ApiOperation(value="查询卸货任务")
@@ -290,9 +287,130 @@ public class TaskController {
 		}
 		return message;
 	}
-	
-	
-	
+
+
+	/**
+	 * @Description 卸货任务结束/取消
+	 * @Return 是否成功
+	 **/
+	@LoginToken
+	@ApiOperation(value = "卸货任务结束/取消", notes = "任务id不能为空")
+	@RequestMapping(value = "/UnloadTaskState", method = RequestMethod.POST)
+	public Message UnloadTaskState(@RequestBody Task model) {
+		Message message = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		try {
+			model.setModifier(user.getId());
+			model.setModifytime(new Date());
+			if(null!=model.getId())
+			{
+				if (Integer.parseInt(model.getStatus())==0)
+				{
+					//取消任务
+					//1.更改任务状态；
+					if (taskService.updateById(model)) {
+						//2.删除卸货明细
+						if(taskService.UpdateUnloadDetl(model.getId()))
+						{
+							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						}
+						else
+						{
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.FAILED);
+						}
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+				else if (Integer.parseInt(model.getStatus())==2)
+				{
+					//卸货完成
+					//1.更改任务状态；
+					if (taskService.updateById(model)) {
+						//写入账单明细
+						List<UnloadGoods>  IUnloadList=taskService.GetUnloadDetl(model.getId());
+						for (int m=0;m<IUnloadList.size();m++)
+						{
+							//写入商品表
+							Goods   Igoods=new Goods();
+							Igoods.setId(UuidUtil.get32UUID());
+							Igoods.setShopId(IUnloadList.get(m).getShopId());
+							Igoods.setCompanyId(IUnloadList.get(m).getCompanyId());
+							Igoods.setSpecificationId(IUnloadList.get(m).getSpecificationId());
+							Igoods.setGoodsCategoryId(IUnloadList.get(m).getGoodsCategoryId());
+							Igoods.setGoodsNo(IUnloadList.get(m).getGoodsNo());
+							Igoods.setMarker(IUnloadList.get(m).getMarker());
+							Igoods.setMode(IUnloadList.get(m).getMode());
+							Igoods.setCreator(user.getId());
+							Igoods.setModifier(user.getId());
+							Igoods.setCreatetime(new Date());
+							Igoods.setModifytime(new Date());
+							taskService.InsertGoods(Igoods);
+							//写入库存表
+							 if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId())>0)
+							 {
+									//库存已存在该批次，原基础数量+1
+									taskService.updateStock(IUnloadList.get(m).getSpecificationId());
+							 }
+							 else
+							 {
+								   //库存不存在规格，新增库存规格   数量为1
+								   Stock  Istock=new Stock();
+								   Istock.setId(UuidUtil.get32UUID());
+								   Istock.setShopId(IUnloadList.get(m).getShopId());
+								   Istock.setCompanyId(IUnloadList.get(m).getCompanyId());
+								   Istock.setSpecificationId(IUnloadList.get(m).getSpecificationId());
+								   Istock.setQuantity(BigDecimal.ONE);
+								   Istock.setRemark("卸货结束新增");
+								   Istock.setCreator(user.getId());
+								   Istock.setModifier(user.getId());
+								   Istock.setCreatetime(new Date());
+								   Istock.setModifytime(new Date());
+								   Istock.setDr(true);
+								   taskService.insertStock(Istock);
+							 }
+
+						}
+
+						String Billid=UuidUtil.get32UUID();
+						//写入账单统计数据
+						Bill  Ibill=new Bill();
+						Ibill.setId(Billid);
+						Ibill.setShopId(user.getShopId());
+						Ibill.setCompanyId(user.getCompanyId());
+						Ibill.setBillDate(new Date());
+						Ibill.setType(TaskEnums.Type.Unload.index().toString());
+						Ibill.setQuantity(model.getQuantity());
+						Ibill.setAmount(model.getAmount());
+						Ibill.setStatus("1");
+						Ibill.setCreatetime(new Date());
+						Ibill.setCreator(user.getId());
+						Ibill.setModifier(user.getId());
+						Ibill.setModifytime(new Date());
+						Ibill.setDr(true);
+					}
+
+				}
+			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			}
+			return message;
+
+		} catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
+		}
+
+	}
 	
 
 }
