@@ -94,4 +94,9 @@ public class UnloadGoods implements Serializable {
     @ApiModelProperty(value = "统计日期(汇总卸货数量使用yyyy-mm-dd 字符)",hidden=true)
     private String UnloadTime;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "查询使用  鸡蛋品种",hidden=true)
+    private String categoryName;
+
 }

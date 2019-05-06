@@ -60,34 +60,18 @@ public class UnloadGoodsController {
 
 	@ApiOperation(value="分页查询卸货商品")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
-	public Message<IPage<UnloadGoods>> unloadList(
+	public Message  unloadList(
 			@RequestBody @ApiParam(required=false,name="unloadGoods",value="查询字段：任务主键、方案（可选）,是否预警") UnloadGoodsRequest unloadGoods) {
-		//ListResponse<UnloadGoods> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<IPage<UnloadGoods>> message = new Message<IPage<UnloadGoods>>();
-		Page<UnloadGoods> page = new Page<>();
-		page.setCurrent(unloadGoods.getCurrent());
-		page.setSize(unloadGoods.getSize());
-		QueryWrapper<UnloadGoods> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("dr", false);//查询未删除信息
-		if (unloadGoods != null) {
 
-		    if(unloadGoods.getWarn()!=null) {
+		Message ms = new Message();
+		PageHelper.startPage(unloadGoods.getCurrent().intValue(), unloadGoods.getSize().intValue());
+		List<UnloadGoods> unloadList = unloadGoodsService.GetUnloadList(unloadGoods);
 
-		    	queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
-                 .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId())
-                  .eq(StringUtils.isNotBlank(unloadGoods.getWarn().toString()), "warn", unloadGoods.getWarn());
-            }
-		    else
-            {
-                queryWrapper.eq(StringUtils.isNotBlank(unloadGoods.getTaskId()), "task_id", unloadGoods.getTaskId())
-                        .eq(StringUtils.isNotBlank(unloadGoods.getProgramId()), "program_id", unloadGoods.getProgramId());
-            }
-		}
-		IPage<UnloadGoods> list = unloadGoodsService.page(page, queryWrapper);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(list);
-		return message;
+		PageInfo<UnloadGoods> pageInfo = new PageInfo<>(unloadList);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return ms;
 		
 	}
 	

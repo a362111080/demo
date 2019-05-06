@@ -338,6 +338,7 @@ public class TaskController {
 							Igoods.setModifier(user.getId());
 							Igoods.setCreatetime(new Date());
 							Igoods.setModifytime(new Date());
+							Igoods.setSupplierId(model.getCussupid());
 							taskService.InsertGoods(Igoods);
 							//写入库存表
 							 if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId())>0)
@@ -374,9 +375,9 @@ public class TaskController {
                                 IDetails.setId(UuidUtil.get32UUID());
                                 IDetails.setShopId(user.getShopId());
                                 IDetails.setCompanyId(user.getCompanyId());
-                                IDetails.setBillId(UuidUtil.get32UUID());
-                                IDetails.setGoodsCategoryId(UuidUtil.get32UUID());
-                                IDetails.setSpecificationId(UuidUtil.get32UUID());
+                                IDetails.setBillId(Billid);
+                                IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
+                                IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
                                 IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
                                 IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
                                 IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
@@ -387,7 +388,7 @@ public class TaskController {
                                 IDetails.setDr(true);
                                 sumQuantity= sumQuantity.add(model.getUnloadDetails().get(n).getQuantity());
                                 Amount=Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-                                taskService.insertBillDetails(IDetails);
+                                //taskService.insertBillDetails(IDetails);
                         }
 						//写入账单统计数据
 						Bill  Ibill=new Bill();
@@ -395,6 +396,7 @@ public class TaskController {
 						Ibill.setShopId(user.getShopId());
 						Ibill.setCompanyId(user.getCompanyId());
 						Ibill.setBillDate(new Date());
+						Ibill.setBillNo("");
 						Ibill.setType(TaskEnums.Type.Unload.index().toString());
 						Ibill.setQuantity(sumQuantity);
 						Ibill.setAmount(Amount);
@@ -404,7 +406,7 @@ public class TaskController {
 						Ibill.setModifier(user.getId());
 						Ibill.setModifytime(new Date());
 						Ibill.setDr(true);
-                        taskService.insertBill(Ibill);
+                        //taskService.insertBill(Ibill);
 						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 					}
