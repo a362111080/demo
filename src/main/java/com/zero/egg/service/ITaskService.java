@@ -1,10 +1,7 @@
 package com.zero.egg.service;
 
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
+import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 
 import java.util.List;
@@ -32,4 +29,8 @@ public interface ITaskService extends IService<Task> {
     boolean insertStock(Stock istock);
 
     boolean updateStock(String specificationId);
+
+    boolean insertBillDetails(BillDetails iDetails);
+
+    boolean insertBill(Bill ibill);
 }

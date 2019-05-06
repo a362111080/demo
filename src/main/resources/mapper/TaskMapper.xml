@@ -30,23 +30,23 @@
         </where>
     </select>
     <update id="UpdateUnloadDetl" parameterType="java.lang.String">
-            update bd_unload_goods set dr=0
+            update bd_unload_goods set dr=1
             where task_id = #{id,jdbcType=VARCHAR}
     </update>
     <select id="GetUnloadDetl"  resultType="com.zero.egg.model.UnloadGoods">
         select * from bd_unload_goods  k
         where k.task_id= #{id,jdbcType=VARCHAR}
-        and a.dr=1
+        and k.dr=0
     </select>
     <insert id="InsertGoods" parameterType="Goods">
     insert into bd_goods(id,shop_id,company_id,supplier_id,specification_id,goods_category_id,goods_no,marker,mode,weight,remark,creator,createtime,modifier,modifytime,dr)
     values(#{id},#{shopId},#{companyId},#{supplierId},#{specificationId},#{goodsCategoryId},
-    #{goodsNo},#{marker},#{mode},#{weight},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},1)
+    #{goodsNo},#{marker},#{mode},#{weight},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
     <select id="IsExtis"  resultType="int">
         select sum(1) from bd_stock  k
         where k.specification_id= #{SpecificationId,jdbcType=VARCHAR}
-        and k.dr=1
+        and k.dr=0
     </select>
     <insert id="insertStock" parameterType="Stock">
     insert into bd_stock(id,shop_id,company_id,supplier_id,specification_id,quantity,remark,creator,createtime,modifier,modifytime,dr)
@@ -54,6 +54,15 @@
     </insert>
     <update id="updateStock" parameterType="java.lang.String">
             update bd_stock set quantity=quantity+1
-            where specification_id = #{specificationId,jdbcType=VARCHAR}
+            where specification_id = #{specificationId,jdbcType=VARCHAR}  and dr=0
     </update>
+    <insert id="insertBillDetails" parameterType="BillDetails">
+        insert into bd_bill_details(id,shop_id,company_id,bill_id,goods_category_id,specification_id,price,quantity,amount,creator,createtime,modifier,modifytime,dr)
+        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{specificationId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
+    </insert>
+    <insert id="insertBill" parameterType="Bill">
+        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,'type',quantity,amount,status,creator,createtime,modifier,modifytime,dr)
+        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{specificationId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
+    </insert>
+
 </mapper>

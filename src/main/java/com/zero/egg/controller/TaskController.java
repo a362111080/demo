@@ -1,45 +1,33 @@
 package com.zero.egg.controller;
 
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.zero.egg.model.*;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
-import com.zero.egg.service.IGoodsService;
-import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.service.IStockService;
-import com.zero.egg.service.ITaskProgramService;
-import com.zero.egg.service.ITaskService;
+import com.zero.egg.service.*;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -304,7 +292,7 @@ public class TaskController {
 			model.setModifytime(new Date());
 			if(null!=model.getId())
 			{
-				if (Integer.parseInt(model.getStatus())==0)
+				if (Integer.parseInt(model.getStatus())==1)
 				{
 					//取消任务
 					//1.更改任务状态；
@@ -376,8 +364,31 @@ public class TaskController {
 							 }
 
 						}
-
-						String Billid=UuidUtil.get32UUID();
+                        String Billid=UuidUtil.get32UUID();
+						BigDecimal  sumQuantity=BigDecimal.ZERO;
+                        BigDecimal  Amount=BigDecimal.ZERO;
+                        for (int n=0;n<model.getUnloadDetails().size();n++)
+                        {
+                                //写入账单明细
+                                BillDetails  IDetails=new BillDetails();
+                                IDetails.setId(UuidUtil.get32UUID());
+                                IDetails.setShopId(user.getShopId());
+                                IDetails.setCompanyId(user.getCompanyId());
+                                IDetails.setBillId(UuidUtil.get32UUID());
+                                IDetails.setGoodsCategoryId(UuidUtil.get32UUID());
+                                IDetails.setSpecificationId(UuidUtil.get32UUID());
+                                IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
+                                IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
+                                IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
+                                IDetails.setCreatetime(new Date());
+                                IDetails.setCreator(user.getId());
+                                IDetails.setModifier(user.getId());
+                                IDetails.setModifytime(new Date());
+                                IDetails.setDr(true);
+                                sumQuantity= sumQuantity.add(model.getUnloadDetails().get(n).getQuantity());
+                                Amount=Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
+                                taskService.insertBillDetails(IDetails);
+                        }
 						//写入账单统计数据
 						Bill  Ibill=new Bill();
 						Ibill.setId(Billid);
@@ -385,14 +396,15 @@ public class TaskController {
 						Ibill.setCompanyId(user.getCompanyId());
 						Ibill.setBillDate(new Date());
 						Ibill.setType(TaskEnums.Type.Unload.index().toString());
-						Ibill.setQuantity(model.getQuantity());
-						Ibill.setAmount(model.getAmount());
-						Ibill.setStatus("1");
+						Ibill.setQuantity(sumQuantity);
+						Ibill.setAmount(Amount);
+						Ibill.setStatus("0");
 						Ibill.setCreatetime(new Date());
 						Ibill.setCreator(user.getId());
 						Ibill.setModifier(user.getId());
 						Ibill.setModifytime(new Date());
 						Ibill.setDr(true);
+                        taskService.insertBill(Ibill);
 					}
 
 				}

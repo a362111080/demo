@@ -1,21 +1,19 @@
 package com.zero.egg.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.TaskEnums;
-import com.baomidou.mybatisplus.annotation.IdType;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -100,19 +98,11 @@ public class Task implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
-    private String billno;
-
-    @TableField(exist = false)
-    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
     private String cussupid;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
-    private BigDecimal quantity;
-
-    @TableField(exist = false)
-    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
-    private BigDecimal amount;
+    public List<BillDetails>  UnloadDetails;
 
 
 

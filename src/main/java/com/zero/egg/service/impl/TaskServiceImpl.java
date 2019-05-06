@@ -1,10 +1,7 @@
 package com.zero.egg.service.impl;
 
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
+import com.zero.egg.model.*;
 import com.zero.egg.dao.TaskMapper;
-import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.service.ITaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -60,5 +57,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     @Override
     public boolean updateStock(String specificationId) {
         return mapper.updateStock(specificationId);
+}
+
+    @Override
+    public boolean insertBillDetails(BillDetails iDetails) {
+        return mapper.insertBillDetails(iDetails);
+    }
+
+    @Override
+    public boolean insertBill(Bill ibill) {
+        return mapper.insertBill(ibill);
 }
 }

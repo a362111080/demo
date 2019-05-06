@@ -1,10 +1,7 @@
 package com.zero.egg.dao;
 
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
+import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 
 import java.util.List;
@@ -33,4 +30,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 
     boolean insertStock(Stock istock);
 
+    boolean insertBillDetails(BillDetails iDetails);
+
+    boolean insertBill(Bill ibill);
 }
