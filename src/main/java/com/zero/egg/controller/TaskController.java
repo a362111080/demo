@@ -405,6 +405,13 @@ public class TaskController {
 						Ibill.setModifytime(new Date());
 						Ibill.setDr(true);
                         taskService.insertBill(Ibill);
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 
 				}
