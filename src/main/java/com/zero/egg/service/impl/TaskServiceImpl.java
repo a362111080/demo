@@ -68,4 +68,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     public boolean insertBill(Bill ibill) {
         return mapper.insertBill(ibill);
 }
+
+    @Override
+    public int GetActiveTaskBySupplier(String supplierId) {
+        return mapper.GetActiveTaskBySupplier(supplierId);
+    }
+
+    @Override
+    public boolean UnloadProChange(Task task) {
+        return mapper.UnloadProChange(task);
+    }
+
+    @Override
+    public int IsExtisUnloadTaskProgram(Task Task) {
+        return mapper.IsExtisUnloadTaskProgram(Task);
+    }
+
+    @Override
+    public boolean UnloadProStop(String taskid) {
+        return mapper.UnloadProStop(taskid);
+    }
 }

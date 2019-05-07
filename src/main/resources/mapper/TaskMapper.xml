@@ -33,6 +33,18 @@
             update bd_unload_goods set dr=1
             where task_id = #{id,jdbcType=VARCHAR}
     </update>
+    <update id="UnloadProChange" parameterType="Task">
+            update bd_task_program set active=1
+            where task_id = #{id,jdbcType=VARCHAR} and program_id=#{newProgram,jdbcType=VARCHAR}
+    </update>
+
+    <update id="UnloadProStop" parameterType="java.lang.String">
+            update bd_task_program set active=0
+            where task_id = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+
     <select id="GetUnloadDetl"  resultType="com.zero.egg.model.UnloadGoods">
         select * from bd_unload_goods  k
         where k.task_id= #{id,jdbcType=VARCHAR}
@@ -48,6 +60,18 @@
         where k.specification_id= #{SpecificationId,jdbcType=VARCHAR}
         and k.dr=0
     </select>
+    <select id="GetActiveTaskBySupplier"  resultType="int">
+        select COUNT(1) as sumVal from bd_task  k
+        where k.supplier_id= #{supplierId,jdbcType=VARCHAR}
+        and k.dr=0 and  k.status in ('3','0') and type =1
+    </select>
+    <select id="IsExtisUnloadTaskProgram"  resultType="int">
+        select COUNT(1) as sumVal from bd_task_program  k
+        where k.program_id= #{newProgram,jdbcType=VARCHAR}
+        and k.task_id= #{id,jdbcType=VARCHAR}
+    </select>
+
+
     <insert id="insertStock" parameterType="Stock">
     insert into bd_stock(id,shop_id,company_id,specification_id,quantity,remark,creator,createtime,modifier,modifytime,dr)
     values(#{id},#{shopId},#{companyId},#{specificationId},#{quantity},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)

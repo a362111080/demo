@@ -72,39 +72,97 @@ public class TaskController {
 	
 	@LoginToken
 	@ApiOperation(value="新增卸货任务")
-	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
-	public Message<Object> unloadAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
-			,HttpServletRequest request) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Object> message = new Message<Object>();
-		task.setId(UuidUtil.get32UUID());
-		task.setCreatetime(new Date());
-		task.setModifytime(new Date());
-		task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
-		task.setType(TaskEnums.Type.Unload.index().toString());
+	@RequestMapping(value="/unloadadd",method=RequestMethod.POST)
+	public Message unloadAdd(@RequestBody  Task task) {
+		Message message = new Message();
 		//当前登录用户
-		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		task.setModifier(loginUser.getId());
-		task.setCreator(loginUser.getId());
-		task.setDr(false);
-		if (taskService.save(task)) {
-			TaskProgram taskProgram = new TaskProgram();
-			taskProgram.setId(UuidUtil.get32UUID());
-			taskProgram.setProgramId(programId);
-			taskProgram.setTaskId(task.getId());
-			taskProgram.setActive(true);
-			if (taskProgramService.save(taskProgram)) {
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			}else {
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		try {
+
+			if (taskService.GetActiveTaskBySupplier(task.getSupplierId())<1) {
+				task.setId(UuidUtil.get32UUID());
+				task.setCreatetime(new Date());
+				task.setModifytime(new Date());
+				task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
+				task.setType(TaskEnums.Type.Unload.index().toString());
+				task.setModifier(user.getId());
+				task.setCreator(user.getId());
+				task.setShopId(user.getShopId());
+				task.setEquipmentNo("");
+				task.setCompanyId(user.getCompanyId());
+				task.setDr(false);
+				if (taskService.save(task)) {
+					//卸货任务新增成功后，写入任务方案表
+					TaskProgram taskProgram = new TaskProgram();
+					taskProgram.setId(UuidUtil.get32UUID());
+					taskProgram.setProgramId(task.getProgramId());
+					taskProgram.setTaskId(task.getId());
+					taskProgram.setActive(true);
+					if (taskProgramService.save(taskProgram)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				} else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("新增卸货任务失败");
+				}
 			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("当前供应商存在未完成的任务，无法新建任务");
+			}
+		}
+		catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
 		}
 		return message;
 	}
-	
+
+
+	@ApiOperation(value="更换卸货任务方案")
+	@RequestMapping(value="/unloadprochange",method=RequestMethod.POST)
+	public Message unloadprochange(@RequestBody  Task task) {
+		Message message = new Message();
+
+		try {
+			//停用当前任务所有方案
+			taskService.UnloadProStop(task.getId());
+
+			if (taskService.IsExtisUnloadTaskProgram(task) > 0) {
+				//新方案本身存在，更新活跃状态
+				taskService.UnloadProChange(task);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			} else {
+				//新方案不存在，新增任务方案
+				TaskProgram taskProgram = new TaskProgram();
+				taskProgram.setId(UuidUtil.get32UUID());
+				taskProgram.setProgramId(task.getNewProgram());
+				taskProgram.setTaskId(task.getId());
+				taskProgram.setActive(true);
+				if (taskProgramService.save(taskProgram)) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				} else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("更换卸货方案失败");
+				}
+			}
+		} catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
+		}
+		return message;
+	}
+
+
 	@LoginToken
 	@ApiOperation(value="更换任务状态")
 	@PostMapping(value="/changeprogram.do")
