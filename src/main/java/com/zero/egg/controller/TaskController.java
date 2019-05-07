@@ -355,7 +355,7 @@ public class TaskController {
 								   Istock.setCompanyId(IUnloadList.get(m).getCompanyId());
 								   Istock.setSpecificationId(IUnloadList.get(m).getSpecificationId());
 								   Istock.setQuantity(BigDecimal.ONE);
-								   Istock.setRemark("卸货结束新增");
+								   Istock.setRemark("卸货新增");
 								   Istock.setCreator(user.getId());
 								   Istock.setModifier(user.getId());
 								   Istock.setCreatetime(new Date());
@@ -377,7 +377,9 @@ public class TaskController {
                                 IDetails.setCompanyId(user.getCompanyId());
                                 IDetails.setBillId(Billid);
                                 IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
-                                IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
+                                IDetails.setProgramId(model.getUnloadDetails().get(n).getProgramId());
+                                //卸货账单明细无规格信息
+                                //IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
                                 IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
                                 IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
                                 IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
@@ -388,25 +390,24 @@ public class TaskController {
                                 IDetails.setDr(true);
                                 sumQuantity= sumQuantity.add(model.getUnloadDetails().get(n).getQuantity());
                                 Amount=Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-                                //taskService.insertBillDetails(IDetails);
+                                taskService.insertBillDetails(IDetails);
                         }
 						//写入账单统计数据
 						Bill  Ibill=new Bill();
 						Ibill.setId(Billid);
 						Ibill.setShopId(user.getShopId());
 						Ibill.setCompanyId(user.getCompanyId());
+						Ibill.setCussupId(model.getCussupid());
 						Ibill.setBillDate(new Date());
-						Ibill.setBillNo("");
 						Ibill.setType(TaskEnums.Type.Unload.index().toString());
 						Ibill.setQuantity(sumQuantity);
 						Ibill.setAmount(Amount);
-						Ibill.setStatus("0");
 						Ibill.setCreatetime(new Date());
 						Ibill.setCreator(user.getId());
 						Ibill.setModifier(user.getId());
 						Ibill.setModifytime(new Date());
 						Ibill.setDr(true);
-                        //taskService.insertBill(Ibill);
+                        taskService.insertBill(Ibill);
 						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 					}

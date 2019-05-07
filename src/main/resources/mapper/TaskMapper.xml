@@ -57,12 +57,13 @@
             where specification_id = #{specificationId,jdbcType=VARCHAR}  and dr=0
     </update>
     <insert id="insertBillDetails" parameterType="BillDetails">
-        insert into bd_bill_details(id,shop_id,company_id,bill_id,goods_category_id,specification_id,price,quantity,amount,creator,createtime,modifier,modifytime,dr)
-        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{specificationId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
+        insert into bd_bill_details(id,shop_id,company_id,bill_id,goods_category_id,program_id,price,quantity,amount,creator,createtime,modifier,modifytime,dr)
+        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{programId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
     <insert id="insertBill" parameterType="Bill">
-        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,'type',quantity,amount,status,creator,createtime,modifier,modifytime,dr)
-        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{specificationId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
+        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,type,quantity,amount,status,creator,createtime,modifier,modifytime,dr)
+        values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
+               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
 
 </mapper>

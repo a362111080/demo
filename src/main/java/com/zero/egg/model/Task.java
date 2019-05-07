@@ -104,7 +104,4 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
     public List<BillDetails>  UnloadDetails;
 
-
-
-
 }
