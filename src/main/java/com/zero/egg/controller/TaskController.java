@@ -405,7 +405,9 @@ public class TaskController {
 					//1.更改任务状态；
 					if (taskService.updateById(model)) {
 						//写入账单明细
+
 						List<UnloadGoods>  IUnloadList=taskService.GetUnloadDetl(model.getId());
+						String SupplierId=IUnloadList.get(0).getSupplierId();
 						for (int m=0;m<IUnloadList.size();m++)
 						{
 							//写入商品表
@@ -422,7 +424,7 @@ public class TaskController {
 							Igoods.setModifier(user.getId());
 							Igoods.setCreatetime(new Date());
 							Igoods.setModifytime(new Date());
-							Igoods.setSupplierId(model.getCussupid());
+							Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
 							taskService.InsertGoods(Igoods);
 							//写入库存表
 							 if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId())>0)
@@ -481,7 +483,7 @@ public class TaskController {
 						Ibill.setId(Billid);
 						Ibill.setShopId(user.getShopId());
 						Ibill.setCompanyId(user.getCompanyId());
-						Ibill.setCussupId(model.getCussupid());
+						Ibill.setCussupId(SupplierId);
 						Ibill.setBillDate(new Date());
 						Ibill.setType(TaskEnums.Type.Unload.index().toString());
 						Ibill.setQuantity(sumQuantity);
