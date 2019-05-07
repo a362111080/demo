@@ -31,4 +31,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     int GetTaskUnloadCount(String taskId);
 
     List<UnloadGoods> GetUnloadList(UnloadGoodsRequest unloadGoods);
+
+    String GetTaskStatusBySupplier(String supplierId);
 }

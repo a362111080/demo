@@ -1,31 +1,11 @@
 package com.zero.egg.controller;
 
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.zero.egg.api.ApiConstants;
-import com.zero.egg.model.Supplier;
-import com.zero.egg.requestDTO.LoginUser;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadCountResponseDto;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
@@ -33,11 +13,19 @@ import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
-import com.zero.egg.tool.UuidUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -89,55 +77,53 @@ public class UnloadGoodsController {
 				model.setCreatetime(new Date());
 			}
 
-			//根据重量对应规程方案判断是否预警
-			if (null!=model.getWeight() && null !=model.getProgramId())
-			{
-				//小于方案最小称重则预警，返回标识以及是否预警结果
-				UnLoadResponseDto  res=unloadGoodsService.CheckWeight(model.getWeight(),model.getProgramId());
-				if (null!=res)
-				{
-					model.setSpecificationId(res.getSpecificationId());
-					if(res.getNumerical().compareTo(BigDecimal.ZERO)!=0)
-					{
-						//存在去皮数值   显示标识为实际称重减去去皮值
-						model.setMarker(model.getWeight().add(res.getNumerical()).toString());
-						model.setWarn(false);
-
-					}
-					else
-					{
-						model.setMarker(res.getMarker());
-						model.setWarn(false);
-					}
-				}
-				else
-				{
-					//无返回结果代表小于最低称重范围，进行预警
-					model.setMarker("");
-					model.setWarn(true);
-				}
-			}
-
-			int strval=unloadGoodsService.AddUnloadDetl(model);
-			if (strval>0) {
-				UnLoadCountResponseDto dto=new UnLoadCountResponseDto();
-				dto.setMarker(model.getMarker());
-				if(null != model.getTaskId())
-				{
-					//获取当前卸货任务已卸货数量，含本次
-					int count=unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
-					dto.setCount(count);
-					message.setData(dto);
-				}
-
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			}
-			else
+			//判断当前卸货任务状态是否在执行中，通过供应商查找任务
+			String  status=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
+			if (status=="3")
 			{
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+				message.setMessage("当前任务已暂停，请稍后再操作");
+			}
+			else {
+				//根据重量对应规程方案判断是否预警
+				if (null != model.getWeight() && null != model.getProgramId()) {
+					//小于方案最小称重则预警，返回标识以及是否预警结果
+					UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
+					if (null != res) {
+						model.setSpecificationId(res.getSpecificationId());
+						if (res.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
+							//存在去皮数值   显示标识为实际称重减去去皮值
+							model.setMarker(model.getWeight().add(res.getNumerical()).toString());
+							model.setWarn(false);
 
+						} else {
+							model.setMarker(res.getMarker());
+							model.setWarn(false);
+						}
+					} else {
+						//无返回结果代表小于最低称重范围，进行预警
+						model.setMarker("");
+						model.setWarn(true);
+					}
+				}
+				int strval = unloadGoodsService.AddUnloadDetl(model);
+				if (strval > 0) {
+					UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
+					dto.setMarker(model.getMarker());
+					if (null != model.getTaskId()) {
+						//获取当前卸货任务已卸货数量，含本次
+						int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+						dto.setCount(count);
+						message.setData(dto);
+					}
+
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				} else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.FAILED);
+
+				}
 			}
 			return message;
 

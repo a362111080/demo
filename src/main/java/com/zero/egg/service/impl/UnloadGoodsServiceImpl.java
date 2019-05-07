@@ -57,4 +57,9 @@ public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, Unloa
 
         return  mapper.GetUnloadList(unloadGoods);
     }
+
+    @Override
+    public String GetTaskStatusBySupplier(String supplierId) {
+        return  mapper.GetTaskStatusBySupplier(supplierId);
+    }
 }

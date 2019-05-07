@@ -30,4 +30,7 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
     int GetTaskUnloadCount(String taskId);
 
     List<UnloadGoods> GetUnloadList(UnloadGoodsRequest unloadGoods);
+
+    String GetTaskStatusBySupplier(String supplierId);
+
 }

@@ -28,6 +28,12 @@
         where  a.task_id=#{taskId} and  a.dr=0
     </select>
 
+    <select id="GetTaskStatusBySupplier" parameterType="java.lang.String" resultType="java.lang.String">
+        select status from  bd_task  a
+        where  a.supplier_id=#{supplierId} and  a.dr=0
+    </select>
+
+
     <select id="GetUnloadList"  resultType="com.zero.egg.model.UnloadGoods">
         SELECT a.*,b.name as categoryName FROM bd_unload_goods a
         left join bd_category b on a.goods_category_id=b.id
