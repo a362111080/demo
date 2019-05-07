@@ -56,7 +56,7 @@ public class TaskController {
 	private HttpServletRequest request;
 	
 	@LoginToken
-	@ApiOperation(value="查询卸货任务")
+	@ApiOperation(value="查询任务（卸货出货通用）")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public Message<PageInfo<Task>> unloadList(
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
@@ -164,7 +164,7 @@ public class TaskController {
 
 
 	@LoginToken
-	@ApiOperation(value="更换任务状态")
+	@ApiOperation(value="更换任务状态（不可用）")
 	@PostMapping(value="/changeprogram.do")
 	public Message<Object> changeProgram(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="taskProgram",value="任务主键、方案主键,状态（true-活动/false-不活动）") TaskProgram taskProgram) {
@@ -232,7 +232,7 @@ public class TaskController {
 		return message;
 	}
 	@LoginToken
-	@ApiOperation(value="取消出货任务")
+	@ApiOperation(value="取消出货任务（不可用）")
 	@PostMapping(value="/cancel-shipment.do")
 	public Message<Object> cancelShipment(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="task",value="任务主键") Task task) {
@@ -258,49 +258,10 @@ public class TaskController {
 		}
 		return message;
 	}
-	
+
+
 	@LoginToken
-	@ApiOperation(value="查询出货任务")
-	@RequestMapping(value="/shipment-task-list.data",method=RequestMethod.POST)
-	public Message<IPage<Task>> shipmentlist(
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
-		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<IPage<Task>> message = new Message<IPage<Task>>();
-		Page<Task> page = new Page<>();
-		page.setCurrent(task.getCurrent());
-		page.setSize(task.getSize());
-		QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("dr", false);//查询未删除信息
-		if (task != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(task.getCompanyId()),"company_id", task.getCompanyId())
-			.eq(StringUtils.isNotBlank(task.getShopId()),"shop_id", task.getShopId())
-			.eq(StringUtils.isNotBlank(task.getStatus()),"status", task.getStatus())
-			.eq("type", TaskEnums.Type.Shipment.index().toString());
-		}
-		IPage<Task> list = taskService.page(page, queryWrapper);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(list);
-		return message;
-		
-	}
-	
-	@LoginToken
-	@ApiOperation(value="根据任务主键查询任务")
-	@RequestMapping(value="/getTaskById.data",method=RequestMethod.POST)
-	public Message<Task> getTaskById(
-			@RequestBody @ApiParam(required=false,name="task",value="任务主键") TaskRequest task) {
-		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Task> message = new Message<Task>();
-		Task task2 =taskService.getById(task.getId());
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(task2);
-		return message;
-	}
-	
-	@LoginToken
-	@ApiOperation(value="新增出货任务")
+	@ApiOperation(value="新增出货任务（不可用）")
 	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
 	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
 			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
