@@ -81,6 +81,7 @@ public class UnloadGoodsController {
 			String  status=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
 			if (status=="3")
 			{
+				//任务已暂停
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 				message.setMessage("当前任务已暂停，请稍后再操作");
 			}
