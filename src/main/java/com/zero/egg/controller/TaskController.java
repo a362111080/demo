@@ -297,7 +297,7 @@ public class TaskController {
 					//取消任务
 					//1.更改任务状态；
 					if (taskService.updateById(model)) {
-						//2.删除卸货明细
+						//2.更改卸货明细状态
 						if(taskService.UpdateUnloadDetl(model.getId()))
 						{
 							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -308,6 +308,32 @@ public class TaskController {
 							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 							message.setMessage(UtilConstants.ResponseMsg.FAILED);
 						}
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+				else if (Integer.parseInt(model.getStatus())==3)
+				{
+					//1.更改任务状态； 暂停
+					if (taskService.updateById(model)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+				else if (Integer.parseInt(model.getStatus())==0)
+				{
+					//1.更改任务状态；执行中
+					if (taskService.updateById(model)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 					}
 					else
 					{
