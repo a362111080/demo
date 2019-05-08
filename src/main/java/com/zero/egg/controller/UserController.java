@@ -91,8 +91,8 @@ public class UserController {
 	}
 	
 	
-	//@LoginToken
-	@PassToken
+	@LoginToken
+	//@PassToken
 	@ApiOperation(value="新增员工")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public Message<Object> add(
