@@ -63,7 +63,7 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "设备号",required=false)
     private String  equipmentNo;
 
-    @ApiModelProperty(value = "状态",required=false)
+    @ApiModelProperty(value = "状态( 0:执行中  1：已取消  2：已完成   3：已暂停)", required = false)
     private String status;
     
     @ApiModelProperty(value = "类型",hidden=true)
