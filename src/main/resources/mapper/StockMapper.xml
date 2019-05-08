@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.StockMapper">
 
-<select id="listByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
+	<select id="listByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
 	SELECT s.id as stockId,s.quantity,s.specification_id,sp.program_id as programId, sp.weight_min as weightMin,sp.weight_max as weightMax
 	,sp.marker,sp.mode,sp.numerical,sp.warn
 	FROM bd_stock s  
@@ -10,25 +10,30 @@
 	INNER JOIN bd_specification_program p ON sp.program_id = p.id
 	INNER JOIN bd_category c ON p.category_id = c.id
 	${ew.customSqlSegment}
-</select>
+	</select>
 
 
-<select id="categoryCountListByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
+	<select id="categoryCountListByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
 	SELECT quantity,s.id as stockId FROM bd_stock s  
 	INNER JOIN bd_specification sp ON s.specification_id = sp.id
 	INNER JOIN bd_specification_program p ON sp.program_id = p.id
 	INNER JOIN bd_category c ON p.category_id = c.id
 	${ew.customSqlSegment}
-</select>
+	</select>
 
-<select id="categoryListByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
+	<select id="categoryListByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
 	SELECT DISTINCT c.id as categoryId , c.name as categoryName FROM bd_stock s  
 	INNER JOIN bd_specification sp ON s.specification_id = sp.id
 	INNER JOIN bd_specification_program p ON sp.program_id = p.id
 	INNER JOIN bd_category c ON p.category_id = c.id
 	${ew.customSqlSegment}
-</select>
+	</select>
 
+	<select id="markerListByCondition" resultType="java.lang.String">
+		SELECT sp.marker FROM bd_stock s
+		INNER JOIN bd_specification sp ON s.specification_id = sp.id
+		${ew.customSqlSegment}
+	</select>
 
 
 </mapper>

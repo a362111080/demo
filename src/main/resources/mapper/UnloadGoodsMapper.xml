@@ -11,20 +11,40 @@
         where k.program_id=#{programId}  and k.weight_min <![CDATA[ <= ]]> #{weight}  and k.weight_max <![CDATA[ > ]]> #{weight}
     </select>
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.marker,a.supplier_id,a.task_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
+        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
-        where  a.task_id=#{taskId} and  a.dr=1
-        GROUP BY  a.task_id,b.id,a.marker,a.supplier_id
+        left join bd_specification_program pro on pro.id=a.program_id
+        where  a.task_id=#{taskId} and  a.dr=0
+        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id
     </select>
     <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
-        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime} and  a.dr=1
+        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime} and  a.dr=0
         GROUP BY  a.shop_id,b.id
     </select>
 
     <select id="GetTaskUnloadCount"  resultType="int">
-        select sum(1) as sumVal from  bd_unload_goods  a
-        where  a.task_id=#{taskId} and  a.dr=1
+        select COUNT(1) as sumVal from  bd_unload_goods  a
+        where  a.task_id=#{taskId} and  a.dr=0
     </select>
+
+    <select id="GetTaskStatusBySupplier" parameterType="java.lang.String" resultType="java.lang.String">
+        select status from  bd_task  a
+        where  a.supplier_id=#{supplierId} and  a.dr=0  and a.status='3'
+    </select>
+
+
+    <select id="GetUnloadList"  resultType="com.zero.egg.model.UnloadGoods">
+        SELECT a.*,b.name as categoryName FROM bd_unload_goods a
+        left join bd_category b on a.goods_category_id=b.id
+        where task_id=#{taskId}
+        <if test="programId != null and programId !=''">
+            and a.program_id=#{programId,jdbcType=VARCHAR}
+        </if>
+        <if test="warn != null and warn !=''">
+            and a.warn=#{warn,jdbcType=BOOLEAN}
+        </if>
+    </select>
+
 </mapper>

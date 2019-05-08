@@ -48,13 +48,14 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "客商名称",required=false)
     private String suppliername;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "方案id",required=false)
     private String programId;
 
     @ApiModelProperty(value = "方案名称",required=false)
     private String programName;
 
-
+    @TableField(exist = false)
     @ApiModelProperty(value = "品种名称",required=false)
     private String categoryname;
 
@@ -100,11 +101,14 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
     private String cussupid;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "更好任务方案使用",hidden=true)
+    private String newProgram;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
     public List<BillDetails>  UnloadDetails;
-
-
 
 
 }

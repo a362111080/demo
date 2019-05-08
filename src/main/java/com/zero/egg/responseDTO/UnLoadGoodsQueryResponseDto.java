@@ -50,6 +50,13 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     private String taskId;
 
     /**
+     * 任务id
+     */
+    @ApiModelProperty(value = "方案名")
+    private String programname;
+
+
+    /**
      * 当前方案合计卸货数量
      */
     @ApiModelProperty(value = "当前方案合计卸货数量")

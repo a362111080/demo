@@ -33,4 +33,12 @@ public interface TaskMapper extends BaseMapper<Task> {
     boolean insertBillDetails(BillDetails iDetails);
 
     boolean insertBill(Bill ibill);
+
+    int GetActiveTaskBySupplier(String supplierId);
+
+    boolean UnloadProChange(Task task);
+
+    int IsExtisUnloadTaskProgram(Task newProgrem);
+
+    boolean UnloadProStop(String taskid);
 }

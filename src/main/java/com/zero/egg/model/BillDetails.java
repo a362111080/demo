@@ -1,18 +1,17 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -49,6 +48,9 @@ public class BillDetails  implements Serializable {
 
     @ApiModelProperty(value = "规格主键",required=false)
     private String specificationId;
+
+    @ApiModelProperty(value = "方案主键",required=false)
+    private String programId;
 
     @ApiModelProperty(value = "单价",required=false)
     private BigDecimal price;

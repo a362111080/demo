@@ -33,4 +33,12 @@ public interface ITaskService extends IService<Task> {
     boolean insertBillDetails(BillDetails iDetails);
 
     boolean insertBill(Bill ibill);
+
+    int GetActiveTaskBySupplier(String supplierId);
+
+    boolean UnloadProChange(Task task);
+
+    int IsExtisUnloadTaskProgram(Task task);
+
+    boolean UnloadProStop(String id);
 }

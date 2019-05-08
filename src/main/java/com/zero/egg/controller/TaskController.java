@@ -56,7 +56,7 @@ public class TaskController {
 	private HttpServletRequest request;
 	
 	@LoginToken
-	@ApiOperation(value="查询卸货任务")
+	@ApiOperation(value="查询任务（卸货出货通用）")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public Message<PageInfo<Task>> unloadList(
 			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
@@ -72,41 +72,99 @@ public class TaskController {
 	
 	@LoginToken
 	@ApiOperation(value="新增卸货任务")
-	@RequestMapping(value="/unloadadd.do",method=RequestMethod.POST)
-	public Message<Object> unloadAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
-			,HttpServletRequest request) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Object> message = new Message<Object>();
-		task.setId(UuidUtil.get32UUID());
-		task.setCreatetime(new Date());
-		task.setModifytime(new Date());
-		task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
-		task.setType(TaskEnums.Type.Unload.index().toString());
+	@RequestMapping(value="/unloadadd",method=RequestMethod.POST)
+	public Message unloadAdd(@RequestBody  Task task) {
+		Message message = new Message();
 		//当前登录用户
-		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		task.setModifier(loginUser.getId());
-		task.setCreator(loginUser.getId());
-		task.setDr(false);
-		if (taskService.save(task)) {
-			TaskProgram taskProgram = new TaskProgram();
-			taskProgram.setId(UuidUtil.get32UUID());
-			taskProgram.setProgramId(programId);
-			taskProgram.setTaskId(task.getId());
-			taskProgram.setActive(true);
-			if (taskProgramService.save(taskProgram)) {
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			}else {
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		try {
+
+			if (taskService.GetActiveTaskBySupplier(task.getSupplierId())<1) {
+				task.setId(UuidUtil.get32UUID());
+				task.setCreatetime(new Date());
+				task.setModifytime(new Date());
+				task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
+				task.setType(TaskEnums.Type.Unload.index().toString());
+				task.setModifier(user.getId());
+				task.setCreator(user.getId());
+				task.setShopId(user.getShopId());
+				task.setEquipmentNo("");
+				task.setCompanyId(user.getCompanyId());
+				task.setDr(false);
+				if (taskService.save(task)) {
+					//卸货任务新增成功后，写入任务方案表
+					TaskProgram taskProgram = new TaskProgram();
+					taskProgram.setId(UuidUtil.get32UUID());
+					taskProgram.setProgramId(task.getProgramId());
+					taskProgram.setTaskId(task.getId());
+					taskProgram.setActive(true);
+					if (taskProgramService.save(taskProgram)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				} else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("新增卸货任务失败");
+				}
 			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("当前供应商存在未完成的任务，无法新建任务");
+			}
+		}
+		catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
 		}
 		return message;
 	}
-	
+
+
+	@ApiOperation(value="更换卸货任务方案")
+	@RequestMapping(value="/unloadprochange",method=RequestMethod.POST)
+	public Message unloadprochange(@RequestBody  Task task) {
+		Message message = new Message();
+
+		try {
+			//停用当前任务所有方案
+			taskService.UnloadProStop(task.getId());
+
+			if (taskService.IsExtisUnloadTaskProgram(task) > 0) {
+				//新方案本身存在，更新活跃状态
+				taskService.UnloadProChange(task);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			} else {
+				//新方案不存在，新增任务方案
+				TaskProgram taskProgram = new TaskProgram();
+				taskProgram.setId(UuidUtil.get32UUID());
+				taskProgram.setProgramId(task.getNewProgram());
+				taskProgram.setTaskId(task.getId());
+				taskProgram.setActive(true);
+				if (taskProgramService.save(taskProgram)) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				} else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("更换卸货方案失败");
+				}
+			}
+		} catch (Exception e) {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			return message;
+		}
+		return message;
+	}
+
+
 	@LoginToken
-	@ApiOperation(value="更换任务状态")
+	@ApiOperation(value="更换任务状态（不可用）")
 	@PostMapping(value="/changeprogram.do")
 	public Message<Object> changeProgram(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="taskProgram",value="任务主键、方案主键,状态（true-活动/false-不活动）") TaskProgram taskProgram) {
@@ -174,7 +232,7 @@ public class TaskController {
 		return message;
 	}
 	@LoginToken
-	@ApiOperation(value="取消出货任务")
+	@ApiOperation(value="取消出货任务（不可用）")
 	@PostMapping(value="/cancel-shipment.do")
 	public Message<Object> cancelShipment(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="task",value="任务主键") Task task) {
@@ -200,49 +258,10 @@ public class TaskController {
 		}
 		return message;
 	}
-	
+
+
 	@LoginToken
-	@ApiOperation(value="查询出货任务")
-	@RequestMapping(value="/shipment-task-list.data",method=RequestMethod.POST)
-	public Message<IPage<Task>> shipmentlist(
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
-		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<IPage<Task>> message = new Message<IPage<Task>>();
-		Page<Task> page = new Page<>();
-		page.setCurrent(task.getCurrent());
-		page.setSize(task.getSize());
-		QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("dr", false);//查询未删除信息
-		if (task != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(task.getCompanyId()),"company_id", task.getCompanyId())
-			.eq(StringUtils.isNotBlank(task.getShopId()),"shop_id", task.getShopId())
-			.eq(StringUtils.isNotBlank(task.getStatus()),"status", task.getStatus())
-			.eq("type", TaskEnums.Type.Shipment.index().toString());
-		}
-		IPage<Task> list = taskService.page(page, queryWrapper);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(list);
-		return message;
-		
-	}
-	
-	@LoginToken
-	@ApiOperation(value="根据任务主键查询任务")
-	@RequestMapping(value="/getTaskById.data",method=RequestMethod.POST)
-	public Message<Task> getTaskById(
-			@RequestBody @ApiParam(required=false,name="task",value="任务主键") TaskRequest task) {
-		//ListResponse<Task> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Task> message = new Message<Task>();
-		Task task2 =taskService.getById(task.getId());
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(task2);
-		return message;
-	}
-	
-	@LoginToken
-	@ApiOperation(value="新增出货任务")
+	@ApiOperation(value="新增出货任务（不可用）")
 	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
 	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
 			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
@@ -297,7 +316,7 @@ public class TaskController {
 					//取消任务
 					//1.更改任务状态；
 					if (taskService.updateById(model)) {
-						//2.删除卸货明细
+						//2.更改卸货明细状态
 						if(taskService.UpdateUnloadDetl(model.getId()))
 						{
 							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -315,13 +334,41 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
+				else if (Integer.parseInt(model.getStatus())==3)
+				{
+					//1.更改任务状态； 暂停
+					if (taskService.updateById(model)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+				else if (Integer.parseInt(model.getStatus())==0)
+				{
+					//1.更改任务状态；执行中
+					if (taskService.updateById(model)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}
+					else
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
 				else if (Integer.parseInt(model.getStatus())==2)
 				{
 					//卸货完成
 					//1.更改任务状态；
 					if (taskService.updateById(model)) {
 						//写入账单明细
+
 						List<UnloadGoods>  IUnloadList=taskService.GetUnloadDetl(model.getId());
+						String SupplierId=IUnloadList.get(0).getSupplierId();
 						for (int m=0;m<IUnloadList.size();m++)
 						{
 							//写入商品表
@@ -338,6 +385,7 @@ public class TaskController {
 							Igoods.setModifier(user.getId());
 							Igoods.setCreatetime(new Date());
 							Igoods.setModifytime(new Date());
+							Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
 							taskService.InsertGoods(Igoods);
 							//写入库存表
 							 if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId())>0)
@@ -354,7 +402,7 @@ public class TaskController {
 								   Istock.setCompanyId(IUnloadList.get(m).getCompanyId());
 								   Istock.setSpecificationId(IUnloadList.get(m).getSpecificationId());
 								   Istock.setQuantity(BigDecimal.ONE);
-								   Istock.setRemark("卸货结束新增");
+								   Istock.setRemark("卸货新增");
 								   Istock.setCreator(user.getId());
 								   Istock.setModifier(user.getId());
 								   Istock.setCreatetime(new Date());
@@ -374,9 +422,11 @@ public class TaskController {
                                 IDetails.setId(UuidUtil.get32UUID());
                                 IDetails.setShopId(user.getShopId());
                                 IDetails.setCompanyId(user.getCompanyId());
-                                IDetails.setBillId(UuidUtil.get32UUID());
-                                IDetails.setGoodsCategoryId(UuidUtil.get32UUID());
-                                IDetails.setSpecificationId(UuidUtil.get32UUID());
+                                IDetails.setBillId(Billid);
+                                IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
+                                IDetails.setProgramId(model.getUnloadDetails().get(n).getProgramId());
+                                //卸货账单明细无规格信息
+                                //IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
                                 IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
                                 IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
                                 IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
@@ -394,11 +444,11 @@ public class TaskController {
 						Ibill.setId(Billid);
 						Ibill.setShopId(user.getShopId());
 						Ibill.setCompanyId(user.getCompanyId());
+						Ibill.setCussupId(SupplierId);
 						Ibill.setBillDate(new Date());
 						Ibill.setType(TaskEnums.Type.Unload.index().toString());
 						Ibill.setQuantity(sumQuantity);
 						Ibill.setAmount(Amount);
-						Ibill.setStatus("0");
 						Ibill.setCreatetime(new Date());
 						Ibill.setCreator(user.getId());
 						Ibill.setModifier(user.getId());

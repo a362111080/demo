@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 import com.zero.egg.model.UnloadGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
 
@@ -27,4 +28,9 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForDay(String shopId, String unloadTime);
 
     int GetTaskUnloadCount(String taskId);
+
+    List<UnloadGoods> GetUnloadList(UnloadGoodsRequest unloadGoods);
+
+    String GetTaskStatusBySupplier(String supplierId);
+
 }
