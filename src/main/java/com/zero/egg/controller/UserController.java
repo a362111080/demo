@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
@@ -91,6 +92,7 @@ public class UserController {
 	
 	
 	@LoginToken
+	//@PassToken
 	@ApiOperation(value="新增员工")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public Message<Object> add(
@@ -131,6 +133,7 @@ public class UserController {
 	}
 	
 	@LoginToken
+	//@PassToken
 	@ApiOperation(value="根据id删除员工信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
 	public Message<Object> del(HttpServletRequest request,@RequestParam @ApiParam(required=true,name="id",value="员工id") String id) {

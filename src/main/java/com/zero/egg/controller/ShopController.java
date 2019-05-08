@@ -120,21 +120,13 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
-	public Message<Object> add(@RequestBody @ApiParam(required=true,name="shop",value="店铺信息:编号，名称，地址，联系电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") Shop shop
+	public Message<Object> add(@RequestBody @ApiParam(required=true,name="shop",value="店铺信息:(全部必填)编号，名称，地址，联系电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") Shop shop
 			,HttpServletRequest request) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		shop.setModifier(loginUser.getId());
-		shop.setCreator(loginUser.getId());
-		if (shopService.save(shop)) {
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		}else {
-			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.FAILED);
-		}
+		message =shopService.save(shop, loginUser);
 		return message;
 	}
 	
