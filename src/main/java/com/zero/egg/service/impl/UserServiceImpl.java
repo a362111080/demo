@@ -48,11 +48,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	@Override
 	public Message<IPage<User>> listPage(UserRequest user, LoginUser loginUser) {
 		Message<IPage<User>> message = new Message<IPage<User>>();
-		if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
+		if (loginUser != null) {
+			if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
 			user.setCompanyId(loginUser.getCompanyId());
-		}
-		if (StringUtils.isNotBlank(loginUser.getShopId())) {
-			user.setShopId(loginUser.getShopId());
+			}
+			if (StringUtils.isNotBlank(loginUser.getShopId())) {
+				user.setShopId(loginUser.getShopId());
+			}
 		}
 		Page<User> page = new Page<>();
 		page.setCurrent(user.getCurrent());
@@ -76,11 +78,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	@Override
 	public Message<List<User>> listAll(UserRequest user, LoginUser loginUser) {
 		Message<List<User>> message = new Message<List<User>>();
-		if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
+		if (loginUser != null) {
+			if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
 			user.setCompanyId(loginUser.getCompanyId());
-		}
-		if (StringUtils.isNotBlank(loginUser.getShopId())) {
-			user.setShopId(loginUser.getShopId());
+			}
+			if (StringUtils.isNotBlank(loginUser.getShopId())) {
+				user.setShopId(loginUser.getShopId());
+			}
 		}
 		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("dr", false);//查询未删除信息
@@ -108,11 +112,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	@Override
 	public Message<Object> save(User user, LoginUser loginUser) {
 		Message<Object> message = new Message<Object>();
-		if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
+		if (loginUser != null) {
+			if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
 			user.setCompanyId(loginUser.getCompanyId());
-		}
-		if (StringUtils.isNotBlank(loginUser.getShopId())) {
-			user.setShopId(loginUser.getShopId());
+			}
+			if (StringUtils.isNotBlank(loginUser.getShopId())) {
+				user.setShopId(loginUser.getShopId());
+			}
 		}
 		user.setId(UuidUtil.get32UUID());
 		user.setCreatetime(new Date());
@@ -135,47 +141,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		String shopId = user.getShopId();
 		Shop shop = shopService.getById(shopId);
 		if (shop != null) {
-			Integer count;
 			boolean checkResult = true;
-			QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-			queryWrapper.eq("shop_id", user.getShopId())
-			.eq("dr", false);
 			//检查人员类型数量是否有空余
 			if (UserEnums.Type.Pc.index().equals(user.getType())) {
-				count = shop.getPcClient();
-				queryWrapper.eq("type", UserEnums.Type.Pc.index());
-				List<User> userList = list(queryWrapper);
-				if (userList != null && userList.size() >= count) {
+				if (shop.getAddiblePcClient() <= 0) {
 					message.setMessage("Pc客户端名额已用完");
 					checkResult = false;
+				}else {
+					shop.setAddiblePcClient(shop.getAddiblePcClient()-1);
 				}
 			}else if (UserEnums.Type.Boss.index().equals(user.getType())) {
-				count = shop.getBossClient();
-				queryWrapper.eq("type", UserEnums.Type.Boss.index());
-				List<User> userList = list(queryWrapper);
-				if (userList != null && userList.size() >= count) {
+				if (shop.getAddibleBossClient() <= 0) {
 					message.setMessage("Boss客户端名额已用完");
 					checkResult = false;
+				}else {
+					shop.setAddibleBossClient(shop.getAddibleBossClient()-1);
 				}
 			}else if (UserEnums.Type.Staff.index().equals(user.getType())) {
-				count = shop.getStaffClient();
-				queryWrapper.eq("type", UserEnums.Type.Staff.index());
-				List<User> userList = list(queryWrapper);
-				if (userList != null && userList.size() >= count) {
+				if (shop.getAddibleStaffClient() <= 0) {
 					message.setMessage("员工客户端名额已用完");
 					checkResult = false;
+				}else {
+					shop.setAddibleStaffClient(shop.getAddibleStaffClient()-1);
 				}
 			}else if (UserEnums.Type.Device.index().equals(user.getType())) {
-				count = shop.getDeviceClient();
-				queryWrapper.eq("type", UserEnums.Type.Device.index());
-				List<User> userList = list(queryWrapper);
-				if (userList != null && userList.size() >= count) {
+				if (shop.getAddibleDeviceClient() <= 0) {
 					message.setMessage("设备客户端名额已用完");
 					checkResult = false;
+				}else {
+					shop.setAddibleDeviceClient(shop.getAddibleDeviceClient()-1);
 				}
 			}
 			if (checkResult) {
 				if (save(user)) {
+					shopService.updateById(shop);
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 				}else {
@@ -208,6 +207,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 					user.setModifier(loginUser.getId());
 					user.setModifytime(new Date());
 					if (updateById(user)) {//逻辑删除
+						//回滚店铺的员工端数量
+						if (UserEnums.Type.Pc.index().equals(oldUser.getType())) {
+							shop.setAddiblePcClient(shop.getAddiblePcClient()+1);
+						}else if (UserEnums.Type.Boss.index().equals(oldUser.getType())) {
+							shop.setAddibleBossClient(shop.getAddibleBossClient()+1);
+						}else if (UserEnums.Type.Staff.index().equals(oldUser.getType())) {
+							shop.setAddibleStaffClient(shop.getAddibleStaffClient()+1);
+						}else if (UserEnums.Type.Device.index().equals(oldUser.getType())) {
+							shop.setAddibleDeviceClient(shop.getAddibleDeviceClient()+1);
+						}
+						shopService.updateById(shop);
 						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 						
@@ -239,6 +249,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		List<String> idsList = StringTool.splitToList(ids, ",");
 		if (idsList !=null) {
 			List<User> userList = new ArrayList<>();
+			List<Shop> shops = new ArrayList<>();
 			for (String id : idsList) {
 				User oldUser = getById(ids);
 				if (UserEnums.Status.Normal.index().equals(oldUser.getStatus())) {
@@ -246,6 +257,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 					message.setMessage("有员工为离职，删除失败");
 					return message;
 				}
+				Shop shop = shopService.getById(oldUser.getShopId());
+				//回滚店铺的员工端数量
+				if (UserEnums.Type.Pc.index().equals(oldUser.getType())) {
+					shop.setAddiblePcClient(shop.getAddiblePcClient()+1);
+				}else if (UserEnums.Type.Boss.index().equals(oldUser.getType())) {
+					shop.setAddibleBossClient(shop.getAddibleBossClient()+1);
+				}else if (UserEnums.Type.Staff.index().equals(oldUser.getType())) {
+					shop.setAddibleStaffClient(shop.getAddibleStaffClient()+1);
+				}else if (UserEnums.Type.Device.index().equals(oldUser.getType())) {
+					shop.setAddibleDeviceClient(shop.getAddibleDeviceClient()+1);
+				}
+				shops.add(shop);
 				//添加删除用户对象
 				User user = new User();
 				user.setDr(true);
@@ -255,6 +278,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 				userList.add(user);
 			}
 			if (updateBatchById(userList)) {//逻辑删除
+				for (Shop shop : shops) {
+					//回滚店铺的员工端数量
+					shopService.updateById(shop);
+				}
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}else {

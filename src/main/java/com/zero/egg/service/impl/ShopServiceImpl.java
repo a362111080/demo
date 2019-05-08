@@ -1,16 +1,18 @@
 package com.zero.egg.service.impl;
 
-import com.zero.egg.model.Shop;
-import com.zero.egg.dao.ShopMapper;
-import com.zero.egg.enums.CompanyUserEnums;
-import com.zero.egg.service.IShopService;
-import com.zero.egg.tool.UuidUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zero.egg.dao.ShopMapper;
+import com.zero.egg.enums.CompanyUserEnums;
+import com.zero.egg.model.Shop;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.service.IShopService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.UtilConstants;
+import com.zero.egg.tool.UuidUtil;
 
 /**
  * <p>
@@ -31,6 +33,31 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		shop.setStatus(CompanyUserEnums.Status.Normal.index().toString());
 		shop.setDr(false);
 		return super.save(shop);
+	}
+
+	@Override
+	public Message<Object> save(Shop shop, LoginUser loginUser) {
+		Message<Object> message = new Message<>();
+		shop.setId(UuidUtil.get32UUID());
+		shop.setCreatetime(new Date());
+		shop.setModifytime(new Date());
+		shop.setStatus(CompanyUserEnums.Status.Normal.index().toString());
+		shop.setDr(false);
+		shop.setModifier(loginUser.getId());
+		shop.setCreator(loginUser.getId());
+		shop.setAddibleBossClient(shop.getBossClient());
+		shop.setAddibleDeviceClient(shop.getDeviceClient());
+		shop.setAddiblePcClient(shop.getPcClient());
+		shop.setAddibleStaffClient(shop.getStaffClient());
+		if (save(shop)) {
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}else {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		}
+		return null;
+		
 	}
 
 }
