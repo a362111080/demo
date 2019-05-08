@@ -9,17 +9,17 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Bill;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
+import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -133,7 +133,7 @@ public class BillController {
 	}
 
 
-	@ApiOperation(value = "查询账单供应商列表", notes = "分页查询，各种条件查询")
+	@ApiOperation(value = "查询供应商列表（账单）", notes = "往来交易为条件")
 	@RequestMapping(value = "/getsupplierlist", method = RequestMethod.POST)
 	public Message GetSupplierList(@RequestBody SupplierRequestDTO model) {
 		Message ms = new Message();
@@ -148,6 +148,22 @@ public class BillController {
 		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return ms;
+	}
+
+	@ApiOperation(value="查询客户列表（账单）",notes = "往来交易为条件")
+	@RequestMapping(value = "/getcustomerlist",method = RequestMethod.POST)
+	public Message GetSupplierList(@RequestBody CustomerRequestDTO model) {
+		Message ms = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(user.getShopId());
+		model.setCompanyId(user.getCompanyId());
+		PageHelper.startPage(1, 999);
+		List<Customer> Customer=billService.GetCustomerList(model);
+		PageInfo<Customer> pageInfo = new PageInfo<>(Customer);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return  ms;
 	}
 
 

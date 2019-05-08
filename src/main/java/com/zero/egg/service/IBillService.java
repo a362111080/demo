@@ -2,7 +2,9 @@ package com.zero.egg.service;
 
 import com.zero.egg.model.Bill;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 
 import java.util.List;
@@ -18,4 +20,6 @@ import java.util.List;
 public interface IBillService extends IService<Bill> {
 
     List<Supplier> GetSupplierList(SupplierRequestDTO model);
+
+    List<Customer> GetCustomerList(CustomerRequestDTO model);
 }

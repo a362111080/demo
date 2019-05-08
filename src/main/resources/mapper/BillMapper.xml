@@ -22,4 +22,27 @@
             and k.dr=0  and  k.id in (select DISTINCT n.cussup_id   from  bd_bill n where n.dr=0)
         </where>
     </select>
+    <select id="GetCustomerList" parameterType="CustomerRequestDTO" resultType="com.zero.egg.model.Customer">
+        select  k.*,lv1.id as city1,lv2.id as city2 from bd_customer k
+        left join bd_city   lv3  on lv3.id=k.city_id
+        left join bd_city   lv2  on lv2.id=lv3.parent_id
+        left join bd_city   lv1  on lv1.id=lv2.parent_id
+        <where>
+            <if test="shortname != null and shortname !=''">
+                and k.short_name LIKE '%${shortname}%'
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr=0  and  k.id in (select DISTINCT n.cussup_id   from  bd_bill n where n.dr=0)
+        </where>
+    </select>
+
+
 </mapper>

@@ -4,6 +4,7 @@ package com.zero.egg.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
@@ -79,7 +80,7 @@ public class UnloadGoodsController {
 
 			//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 			String  status=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
-			if (status=="3")
+			if (status== TaskEnums.Status.Unexecuted.toString())
 			{
 				//任务已暂停
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
