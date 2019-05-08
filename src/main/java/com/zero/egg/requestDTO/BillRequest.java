@@ -38,4 +38,7 @@ public class BillRequest extends PageDTO{
 	    @ApiModelProperty(value = "状态",required=true)
 	    private String status;
 
+		@ApiModelProperty(value = "查询关键字",required=true)
+		private String keyword;
+
 }

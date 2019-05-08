@@ -3,8 +3,10 @@ package com.zero.egg.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.BillEnums;
@@ -84,5 +86,18 @@ public class Bill implements Serializable {
     public String getStatusName() {
 		return BillEnums.Status.note(Integer.parseInt(this.status));
 	}
-    
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
+    public List<BillDetails> UnloadDetails;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "账单姓名",hidden=true)
+    public String csname;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "账单代号",hidden=true)
+    public String shortname;
+
 }

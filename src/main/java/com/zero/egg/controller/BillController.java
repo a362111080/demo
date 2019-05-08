@@ -15,6 +15,7 @@ import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.responseDTO.BillReport;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
@@ -132,7 +133,7 @@ public class BillController {
 		return message;
 	}
 
-
+	@LoginToken
 	@ApiOperation(value = "查询供应商列表（账单）", notes = "往来交易为条件")
 	@RequestMapping(value = "/getsupplierlist", method = RequestMethod.POST)
 	public Message GetSupplierList(@RequestBody SupplierRequestDTO model) {
@@ -149,7 +150,7 @@ public class BillController {
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return ms;
 	}
-
+	@LoginToken
 	@ApiOperation(value="查询客户列表（账单）",notes = "往来交易为条件")
 	@RequestMapping(value = "/getcustomerlist",method = RequestMethod.POST)
 	public Message GetSupplierList(@RequestBody CustomerRequestDTO model) {
@@ -165,11 +166,21 @@ public class BillController {
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return  ms;
 	}
+	@LoginToken
+	@ApiOperation(value="查询账单列表",notes = "含多条件查询")
+	@RequestMapping(value = "/getBilllist",method = RequestMethod.POST)
+	public Message GetBillList(@RequestBody BillRequest model) {
+		Message ms = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(user.getShopId());
+		model.setCompanyId(user.getCompanyId());
+		PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
+		List<Bill> Customer=billService.getBilllist(model);
+		PageInfo<Bill> pageInfo = new PageInfo<>(Customer);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return  ms;
+	}
 
-	//select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,
-	//CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
-	//CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as short_name
-	//from bd_bill a
-	//left join bd_supplier  b on a.cussup_id=b.id
-	//left join bd_customer  c on a.cussup_id=c.id
 }

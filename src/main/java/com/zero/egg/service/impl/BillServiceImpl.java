@@ -5,6 +5,7 @@ import com.zero.egg.dao.BillMapper;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.service.IBillService;
@@ -37,5 +38,10 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     public List<Customer> GetCustomerList(CustomerRequestDTO model) {
         return mapper.GetCustomerList(model);
 
+    }
+
+    @Override
+    public List<Bill> getBilllist(BillRequest model) {
+        return mapper.getBilllist(model);
     }
 }

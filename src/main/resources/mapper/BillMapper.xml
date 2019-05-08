@@ -43,6 +43,27 @@
             and k.dr=0  and  k.id in (select DISTINCT n.cussup_id   from  bd_bill n where n.dr=0)
         </where>
     </select>
-
+    <select id="getBilllist" parameterType="BillRequest" resultType="com.zero.egg.model.Bill">
+        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,
+        CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
+        CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as shortname
+        from bd_bill a
+        left join bd_supplier  b on a.cussup_id=b.id
+        left join bd_customer  c on a.cussup_id=c.id
+        <where>
+            <if test="keyword != null and keyword !=''">
+                and (c.short_name LIKE '%${keyword}%' or b.short_name LIKE '%${keyword}%' or b.name LIKE '%${keyword}%' or c.name LIKE '%${keyword}%' )
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and a.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and a.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null  and status !=''">
+                and a.status=#{status,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
 
 </mapper>
