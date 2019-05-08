@@ -1,10 +1,15 @@
 package com.zero.egg.service.impl;
 
-import com.zero.egg.model.Bill;
-import com.zero.egg.dao.BillMapper;
-import com.zero.egg.service.IBillService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zero.egg.dao.BillMapper;
+import com.zero.egg.model.Bill;
+import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.service.IBillService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +22,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IBillService {
 
+
+    @Autowired
+    private BillMapper mapper;
+
+    @Override
+    public List<Supplier> GetSupplierList(SupplierRequestDTO model) {
+        return mapper.GetSupplierList(model);
+    }
 }

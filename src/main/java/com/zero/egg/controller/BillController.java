@@ -1,6 +1,30 @@
 package com.zero.egg.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.api.ApiConstants;
+import com.zero.egg.model.Bill;
+import com.zero.egg.model.Supplier;
+import com.zero.egg.requestDTO.BillRequest;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.service.IBillService;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.StringTool;
+import com.zero.egg.tool.UtilConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,33 +32,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.api.ApiConstants;
-import com.zero.egg.model.Bill;
-import com.zero.egg.requestDTO.BillRequest;
-import com.zero.egg.requestDTO.LoginUser;
-import com.zero.egg.service.IBillService;
-import com.zero.egg.tool.Message;
-import com.zero.egg.tool.StringTool;
-import com.zero.egg.tool.UtilConstants;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 /**
  * <p>
@@ -51,10 +48,13 @@ public class BillController {
 	
 	@Autowired
 	private IBillService billService;
+
+	@Autowired
+	private HttpServletRequest request;
 	
 	@LoginToken
 	//@PassToken
-	@ApiOperation(value="分页查询财务账单")
+	@ApiOperation(value="分页查询财务账单（不可用）")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
 	public Message<IPage<Bill>> list(
 			@RequestBody @ApiParam(required=false,name="bill"
@@ -101,7 +101,7 @@ public class BillController {
 	}
 	
 	@LoginToken
-	@ApiOperation(value="批量修改账单状态(挂账/销账)")
+	@ApiOperation(value="批量修改账单状态(挂账/销账)（不可用）")
 	@RequestMapping(value="/batchupdate.do",method=RequestMethod.POST)
 	public Message<Object> batchUpdateStatus(HttpServletRequest request
 			,@RequestParam @ApiParam(required=true,name="ids",value="账单ids,逗号拼接") String ids
@@ -131,5 +131,24 @@ public class BillController {
 		
 		return message;
 	}
+
+
+	@ApiOperation(value = "查询账单供应商列表", notes = "分页查询，各种条件查询")
+	@RequestMapping(value = "/getsupplierlist", method = RequestMethod.POST)
+	public Message GetSupplierList(@RequestBody SupplierRequestDTO model) {
+		Message ms = new Message();
+		//当前登录用户
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(user.getShopId());
+		model.setCompanyId(user.getCompanyId());
+		PageHelper.startPage(1, 999);
+		List<Supplier> Supplier = billService.GetSupplierList(model);
+		PageInfo<Supplier> pageInfo = new PageInfo<>(Supplier);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return ms;
+	}
+
 
 }

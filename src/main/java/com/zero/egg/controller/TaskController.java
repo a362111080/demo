@@ -3,8 +3,6 @@ package com.zero.egg.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
@@ -20,7 +18,6 @@ import com.zero.egg.tool.UuidUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +56,7 @@ public class TaskController {
 	@ApiOperation(value="查询任务（卸货出货通用）")
 	@RequestMapping(value="/unloadlist.data",method=RequestMethod.POST)
 	public Message<PageInfo<Task>> unloadList(
-			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键,状态（1执行中/-1完成）") TaskRequest task) {
+			@RequestBody @ApiParam(required=false,name="task",value="查询字段：企业主键、店铺主键") TaskRequest task) {
 		Message<PageInfo<Task>> ms = new Message<PageInfo<Task>>();
 		PageHelper.startPage(task.getCurrent().intValue(), task.getSize().intValue());
 		List<Task> ResponseDto=taskService.QueryTaskList(task);
@@ -83,7 +80,7 @@ public class TaskController {
 				task.setId(UuidUtil.get32UUID());
 				task.setCreatetime(new Date());
 				task.setModifytime(new Date());
-				task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
+				task.setStatus(TaskEnums.Status.Execute.index().toString());
 				task.setType(TaskEnums.Type.Unload.index().toString());
 				task.setModifier(user.getId());
 				task.setCreator(user.getId());
@@ -311,7 +308,7 @@ public class TaskController {
 			model.setModifytime(new Date());
 			if(null!=model.getId())
 			{
-				if (Integer.parseInt(model.getStatus())==1)
+				if (model.getStatus()==TaskEnums.Status.CANCELED.toString())
 				{
 					//取消任务
 					//1.更改任务状态；
@@ -334,7 +331,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (Integer.parseInt(model.getStatus())==3)
+				else if (model.getStatus()==TaskEnums.Status.Unexecuted.toString())
 				{
 					//1.更改任务状态； 暂停
 					if (taskService.updateById(model)) {
@@ -347,7 +344,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (Integer.parseInt(model.getStatus())==0)
+				else if (model.getStatus()==TaskEnums.Status.Execute.toString())
 				{
 					//1.更改任务状态；执行中
 					if (taskService.updateById(model)) {
@@ -360,7 +357,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (Integer.parseInt(model.getStatus())==2)
+				else if (model.getStatus()==TaskEnums.Status.Finish.toString())
 				{
 					//卸货完成
 					//1.更改任务状态；
