@@ -5,17 +5,17 @@ public class UserEnums {
 	
 	public enum Status {
 
-		Normal(1,"正常"),Disable(-1,"离职");
+		Normal("1","正常"),Disable("-1","离职");
 
-	    private Integer index;
+	    private String index;
 	    private String note;
 
-	    Status(Integer index,String note){
+	    Status(String index,String note){
 	        this.index = index;
 	        this.note = note;
 	    }
 
-	    public Integer index() {
+	    public String index() {
 	        return index;
 	    }
 
@@ -34,7 +34,7 @@ public class UserEnums {
 	        return null;
 	    }
 	    
-	    public static Integer index(String note) {
+	    public static String index(String note) {
 	    	Status[] temp = Status.values();
 	    	for(int i=0;i<temp.length;i++){
 	        	Status item = temp[i];
@@ -80,6 +80,48 @@ public class UserEnums {
 			Type[] temp = Type.values();
 			for(int i=0;i<temp.length;i++){
 				Type item = temp[i];
+				if(item.note.equals(note)){
+					return item.index;
+				}
+			}
+			return null;
+		}
+	}
+	public enum Sex {
+		
+		Man(0,"男"),Women(1,"女");
+		
+		private Integer index;
+		private String note;
+		
+		Sex(Integer index,String note){
+			this.index = index;
+			this.note = note;
+		}
+		
+		public Integer index() {
+			return index;
+		}
+		
+		public String note() {
+			return note;
+		}
+		
+		public static String note(Integer index){
+			Sex[] temp = Sex.values();
+			for(int i=0;i<temp.length;i++){
+				Sex item = temp[i];
+				if(item.index.equals(index)){
+					return item.note;
+				}
+			}
+			return null;
+		}
+		
+		public static Integer index(String note) {
+			Sex[] temp = Sex.values();
+			for(int i=0;i<temp.length;i++){
+				Sex item = temp[i];
 				if(item.note.equals(note)){
 					return item.index;
 				}

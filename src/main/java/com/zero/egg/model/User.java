@@ -53,7 +53,7 @@ public class User implements Serializable {
     @ApiModelProperty(value = "姓名",required=false)
     private String name;
 
-    @ApiModelProperty(value = "性别",required=false)
+    @ApiModelProperty(value = "性别（0男，1女）",required=false)
     private Integer sex;
 
     @ApiModelProperty(value = "联系方式",required=false)
@@ -62,7 +62,7 @@ public class User implements Serializable {
     @ApiModelProperty(value = "密码",required=true)
     private String password;
 
-    @ApiModelProperty(value = "状态",hidden=true)
+    @ApiModelProperty(value = "状态（1正常,-1离职）",hidden=true)
     private String status;
 
     @ApiModelProperty(value = "创建人",hidden=true)
@@ -87,5 +87,8 @@ public class User implements Serializable {
 
     public String getTypeName() {
     	return UserEnums.Type.note(this.type);
+    }
+    public String getSexName() {
+    	return UserEnums.Sex.note(this.sex);
     }
 }
