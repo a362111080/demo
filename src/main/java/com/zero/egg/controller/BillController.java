@@ -166,5 +166,10 @@ public class BillController {
 		return  ms;
 	}
 
-
+	//select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,
+	//CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
+	//CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as short_name
+	//from bd_bill a
+	//left join bd_supplier  b on a.cussup_id=b.id
+	//left join bd_customer  c on a.cussup_id=c.id
 }
