@@ -1,10 +1,9 @@
 package com.zero.egg.tool;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Map;
-
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author hhfeng
@@ -30,6 +29,12 @@ public class Message<T> {
 	 */
 	 @ApiModelProperty(value = "返回对象")
 	private T data ;
+
+	/**
+	 * 返回对象2
+	 */
+	@ApiModelProperty(value = "返回对象")
+	private T totaldata ;
 	/**
 	 * 返回map
 	 */

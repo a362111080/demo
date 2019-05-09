@@ -8,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
@@ -16,16 +17,20 @@ import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.responseDTO.BillReport;
+import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -175,9 +180,89 @@ public class BillController {
 		model.setShopId(user.getShopId());
 		model.setCompanyId(user.getCompanyId());
 		PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
-		List<Bill> Customer=billService.getBilllist(model);
-		PageInfo<Bill> pageInfo = new PageInfo<>(Customer);
+		List<Bill> BillList=billService.getBilllist(model);
+		PageInfo<Bill> pageInfo = new PageInfo<>(BillList);
 		ms.setData(pageInfo);
+
+        BillReport  report=new BillReport();
+        for (int i=0;i<BillList.size();i++)
+        {
+            if (BillList.get(i).getDr())
+            {
+                report.setCompleteCount(report.getCompleteCount().add(BigDecimal.ONE));
+            }
+            else
+            {
+                report.setUnCompleteCount(report.getUnCompleteCount().add(BigDecimal.ONE));
+            }
+            if (BillList.get(i).getType().equals(TaskEnums.Type.Unload.index().toString()))
+            {
+                //支出
+                report.setInCount(report.getInCount().add(BillList.get(i).getAmount()));
+                //进货
+                List<CategorySum> CategorySum=billService.getBillCategorySum(BillList.get(i).getId());
+                if (report.getInCategorySum()==null) {
+                    report.setInCategorySum(CategorySum);
+                }
+                else {
+                    for (int n = 0; n < CategorySum.size(); n++) {
+                        boolean exists = false;
+                        Integer index = 0;
+                        for (int m = 0; m < report.getInCategorySum().size(); m++) {
+                            if (report.getInCategorySum().get(m).getGoodsCategoryId() == CategorySum.get(n).getGoodsCategoryId()) {
+                                exists = true;
+                                index = m;
+                                break;
+                            } else {
+                                exists = false;
+                            }
+                        }
+                        if (exists) {
+                            //如果集合中已存在  加上数量
+                            report.getInCategorySum().get(index).setCountNum(report.getInCategorySum().get(index).getCountNum().add(CategorySum.get(n).getCountNum()));
+                        } else {
+                            //如果集合不存在，直接加入集合
+                            report.getInCategorySum().add(CategorySum.get(n));
+                        }
+
+                    }
+                }
+            }
+            if (BillList.get(i).getType().equals(TaskEnums.Type.Shipment.index().toString())) {
+                //收入
+                report.setOutCount(report.getOutCount().add(BillList.get(i).getAmount()));
+                //出货
+                List<CategorySum> CategorySum = billService.getBillCategorySum(BillList.get(i).getId());
+                if (report.getOutCategorySum() == null) {
+                    report.setOutCategorySum(CategorySum);
+                } else {
+                    for (int n = 0; n < CategorySum.size(); n++) {
+                        boolean exists = false;
+                        Integer index = 0;
+                        if (report.getOutCategorySum() != null) {
+                            for (int m = 0; m < report.getOutCategorySum().size(); m++) {
+                                if (report.getOutCategorySum().get(m).getGoodsCategoryId() == CategorySum.get(n).getGoodsCategoryId()) {
+                                    exists = true;
+                                    index = m;
+                                    break;
+                                } else {
+                                    exists = false;
+                                }
+                            }
+                        }
+                        if (exists) {
+                            //如果集合中已存在  加上数量
+                            report.getOutCategorySum().get(index).setCountNum(report.getOutCategorySum().get(index).getCountNum().add(CategorySum.get(n).getCountNum()));
+                        } else {
+                            //如果集合不存在，直接加入集合
+                            report.getOutCategorySum().add(CategorySum.get(n));
+                        }
+
+                    }
+                }
+            }
+        }
+        ms.setTotaldata(report);
 		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return  ms;

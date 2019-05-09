@@ -8,6 +8,7 @@ import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.service.IBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,10 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     @Override
     public List<Bill> getBilllist(BillRequest model) {
         return mapper.getBilllist(model);
+    }
+
+    @Override
+    public List<CategorySum> getBillCategorySum(String id) {
+        return mapper.getBillCategorySum(id);
     }
 }

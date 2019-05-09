@@ -1,17 +1,19 @@
 package com.zero.egg.responseDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-import java.util.Dictionary;
+import java.math.BigDecimal;
 import java.util.List;
 
+@Data
 public class BillReport {
 
     @ApiModelProperty(value = "总收入")
-    private String InCount;
+    private BigDecimal InCount=BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总支出")
-    private String OutCount;
+    private BigDecimal OutCount=BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总进货数量按品种")
     private List<CategorySum> InCategorySum;
@@ -19,21 +21,11 @@ public class BillReport {
     @ApiModelProperty(value = "总出货数量按品种")
     private List<CategorySum> OutCategorySum;
 
-
-    public  class   CategorySum
-    {
-        //品种
-        private  String goodsCategoryId;
-
-        //数量
-        private  Integer CountNum;
-    }
-
     @ApiModelProperty(value = "已结清数量")
-    private int CompleteCount;
+    private BigDecimal CompleteCount=BigDecimal.ZERO;
 
     @ApiModelProperty(value = "未结清数量")
-    private int UnCompleteCount;
+    private BigDecimal UnCompleteCount=BigDecimal.ZERO;
 }
 
 

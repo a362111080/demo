@@ -1,12 +1,13 @@
 package com.zero.egg.service;
 
-import com.zero.egg.model.Bill;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.Bill;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.responseDTO.CategorySum;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public interface IBillService extends IService<Bill> {
 
     List<Bill> getBilllist(BillRequest model);
 
+    List<CategorySum> getBillCategorySum(String id);
 }

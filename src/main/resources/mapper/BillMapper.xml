@@ -44,7 +44,7 @@
         </where>
     </select>
     <select id="getBilllist" parameterType="BillRequest" resultType="com.zero.egg.model.Bill">
-        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,
+        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,a.dr,a.shop_id,a.company_id,a.id,
         CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
         CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as shortname
         from bd_bill a
@@ -65,5 +65,10 @@
             </if>
         </where>
     </select>
-
+    <select id="getBillCategorySum" parameterType="String" resultType="com.zero.egg.responseDTO.CategorySum">
+        select b.name as goodsCategoryName,sum(a.quantity) as CountNum,b.id as goodsCategoryId from bd_bill_details   a
+        left join bd_category b on a.goods_category_id=b.id
+        where bill_id=#{id,jdbcType=INTEGER}
+        group by b.name,b.id
+    </select>
 </mapper>

@@ -1,12 +1,13 @@
 package com.zero.egg.dao;
 
-import com.zero.egg.model.Bill;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zero.egg.model.Bill;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
+import com.zero.egg.responseDTO.CategorySum;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface BillMapper extends BaseMapper<Bill> {
     List<Customer> GetCustomerList(CustomerRequestDTO model);
 
     List<Bill> getBilllist(BillRequest model);
+
+    List<CategorySum> getBillCategorySum(String id);
 }
