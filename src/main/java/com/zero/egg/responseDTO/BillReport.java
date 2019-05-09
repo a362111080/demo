@@ -12,8 +12,14 @@ public class BillReport {
     @ApiModelProperty(value = "总收入")
     private BigDecimal InCount=BigDecimal.ZERO;
 
+    @ApiModelProperty(value = "总进货数")
+    private BigDecimal InPcs=BigDecimal.ZERO;
+
     @ApiModelProperty(value = "总支出")
     private BigDecimal OutCount=BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "总出货数")
+    private BigDecimal OutPcs=BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总进货数量按品种")
     private List<CategorySum> InCategorySum;

@@ -199,6 +199,7 @@ public class BillController {
             {
                 //支出
                 report.setInCount(report.getInCount().add(BillList.get(i).getAmount()));
+				report.setInPcs(report.getInPcs().add(BillList.get(i).getQuantity()));
                 //进货
                 List<CategorySum> CategorySum=billService.getBillCategorySum(BillList.get(i).getId());
                 if (report.getInCategorySum()==null) {
@@ -209,7 +210,7 @@ public class BillController {
                         boolean exists = false;
                         Integer index = 0;
                         for (int m = 0; m < report.getInCategorySum().size(); m++) {
-                            if (report.getInCategorySum().get(m).getGoodsCategoryId() == CategorySum.get(n).getGoodsCategoryId()) {
+                            if (report.getInCategorySum().get(m).getGoodsCategoryId().equals(CategorySum.get(n).getGoodsCategoryId())) {
                                 exists = true;
                                 index = m;
                                 break;
@@ -231,6 +232,7 @@ public class BillController {
             if (BillList.get(i).getType().equals(TaskEnums.Type.Shipment.index().toString())) {
                 //收入
                 report.setOutCount(report.getOutCount().add(BillList.get(i).getAmount()));
+				report.setOutPcs(report.getOutPcs().add(BillList.get(i).getQuantity()));
                 //出货
                 List<CategorySum> CategorySum = billService.getBillCategorySum(BillList.get(i).getId());
                 if (report.getOutCategorySum() == null) {
@@ -241,7 +243,7 @@ public class BillController {
                         Integer index = 0;
                         if (report.getOutCategorySum() != null) {
                             for (int m = 0; m < report.getOutCategorySum().size(); m++) {
-                                if (report.getOutCategorySum().get(m).getGoodsCategoryId() == CategorySum.get(n).getGoodsCategoryId()) {
+                                if (report.getOutCategorySum().get(m).getGoodsCategoryId().equals(CategorySum.get(n).getGoodsCategoryId())) {
                                     exists = true;
                                     index = m;
                                     break;
