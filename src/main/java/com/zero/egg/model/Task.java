@@ -46,6 +46,7 @@ public class Task implements Serializable {
     private String cussupId;
 
     @ApiModelProperty(value = "客商名称",required=false)
+    @TableField(exist = false)
     private String cussupName;
 
     @TableField(exist = false)
@@ -53,6 +54,7 @@ public class Task implements Serializable {
     private String programId;
 
     @ApiModelProperty(value = "方案名称",required=false)
+    @TableField(exist = false)
     private String programName;
 
     @TableField(exist = false)

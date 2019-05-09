@@ -3,6 +3,8 @@ package com.zero.egg.service;
 import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 
 import java.util.List;
 
@@ -41,4 +43,12 @@ public interface ITaskService extends IService<Task> {
     int IsExtisUnloadTaskProgram(Task task);
 
     boolean UnloadProStop(String id);
+
+    /**
+     * 新增出货任务
+     *
+     * @param task
+     * @return
+     */
+    Message addShipmentTask(Task task) throws ServiceException;
 }

@@ -84,45 +84,51 @@ public interface UtilConstants {
          * 生成编码成功
          */
         public static final String GENERATE_CODE_SUCCESS = "生成编码成功";
+
+        /**
+         * 有活动中的任务
+         */
+        public static final String TAST_EXIST = "有活动中的任务";
     }
 
     /**
      * @author hhf
-     *Title: WarehouseState
-     *@date 2018年11月19日 
-     *Description: 仓库状态
+     * Title: WarehouseState
+     * @date 2018年11月19日
+     * Description: 仓库状态
      */
-    public static  class WarehouseState {
-    	/**
-    	 * 启用
-    	 */
-    	public static final int enabled = 1;
-    	/**
-    	 * 不启用
-    	 */
-    	public static final int disable = -1;
-	}
+    public static class WarehouseState {
+        /**
+         * 启用
+         */
+        public static final int enabled = 1;
+        /**
+         * 不启用
+         */
+        public static final int disable = -1;
+    }
+
     /**
      * @author hhf
-     *Title: GoodsState
-     *@date 2018年11月19日 
-     *Description: 商品状态
+     * Title: GoodsState
+     * @date 2018年11月19日
+     * Description: 商品状态
      */
-    public static class GoodsState{
-    	/**
-    	 * 正常库存商品
-    	 */
-    	public static final int inStore = 1;
-    	
-    	/**
-    	 * 损坏
-    	 */
-    	public static final int damage = -1;
-    	/**
-    	 * 已售
-    	 */
-    	public static final int sold = 2;
-    	
+    public static class GoodsState {
+        /**
+         * 正常库存商品
+         */
+        public static final int inStore = 1;
+
+        /**
+         * 损坏
+         */
+        public static final int damage = -1;
+        /**
+         * 已售
+         */
+        public static final int sold = 2;
+
     }
 
     /**

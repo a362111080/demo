@@ -258,38 +258,33 @@ public class TaskController {
 
 
 	@LoginToken
-	@ApiOperation(value="新增出货任务（不可用）")
-	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
-	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-            , @RequestBody @ApiParam(required = true, name = "task", value = "供应商主键、备注，设备号") Task task
-			, HttpServletRequest request) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<Object> message = new Message<Object>();
-		task.setId(UuidUtil.get32UUID());
-		task.setCreatetime(new Date());
-		task.setModifytime(new Date());
-		task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
-		task.setType(TaskEnums.Type.Shipment.index().toString());
-		//当前登录用户
-		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		task.setModifier(loginUser.getId());
-		task.setCreator(loginUser.getId());
-		task.setDr(false);
-		if (taskService.save(task)) {
-			TaskProgram taskProgram = new TaskProgram();
-			taskProgram.setId(UuidUtil.get32UUID());
-			taskProgram.setProgramId(programId);
-			taskProgram.setTaskId(task.getId());
-			taskProgram.setActive(true);
-			if (taskProgramService.save(taskProgram)) {
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			}else {
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
-			}
-		}
-		return message;
+    @ApiOperation(value = "新增出货任务")
+    @RequestMapping(value = "/shipmenttaskadd", method = RequestMethod.POST)
+    public Message shipmentTaskAdd(@RequestBody @ApiParam(required = true, name = "task",
+            value = "cussupId(客商主键)") Task task) {
+        Message message;
+        try {
+            //非空判断
+            if (null == task || null == task.getCussupId() || "".equals(task.getCussupId())) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return message;
+            }
+            //当前登录用户
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            task.setModifier(loginUser.getId());
+            task.setCreator(loginUser.getId());
+            task.setCompanyId(loginUser.getCompanyId());
+            task.setShopId(loginUser.getShopId());
+            message = taskService.addShipmentTask(task);
+
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(e.getMessage());
+        }
+        return message;
 	}
 
 
