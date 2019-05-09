@@ -39,7 +39,7 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @Api(value="财务账单详情")
-@RequestMapping("/bill-details")
+@RequestMapping("/billdetails")
 public class BillDetailsController {
 
 	@Autowired
@@ -49,26 +49,22 @@ public class BillDetailsController {
 	
 	@LoginToken
 	@ApiOperation(value="根据账单主键查询账单详情")
-	@RequestMapping(value="/get-billid.data",method=RequestMethod.POST)
-	public Message<List<BillDetails>> getByBillId(@RequestParam @ApiParam(required=true,name="bill_id",value="账单id") String billId) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-		Message<List<BillDetails>> message = new Message<List<BillDetails>>();
-		QueryWrapper<BillDetails> queryWrapper = new QueryWrapper<BillDetails>();
-		queryWrapper.eq("bill_id", billId);
-		queryWrapper.eq("dr", false);
-		List<BillDetails> companyUserList = billDetailsService.list(queryWrapper);
-		message.setData(companyUserList);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		return message;
+	@RequestMapping(value="/getbilldetsils",method=RequestMethod.POST)
+	public Message getByBillId(@RequestBody  Bill bill) {
+		Message ms = new Message();
+		List<BillDetails> companyUserList = billDetailsService.getbilldetsils(bill);
+
+		ms.setData(companyUserList);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return ms;
 	}
 	
 	@LoginToken
 	@ApiOperation(value="更新账单详情金额")
-	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
+	@RequestMapping(value="/editAmount",method=RequestMethod.POST)
 	public Message<Object> edit(HttpServletRequest request,
-			@RequestBody  @ApiParam(required=true,name="billDetails",value="账单主键、账单详情参数集合（账单明细主键、金额）") BillDetails billDetails,HttpSession session) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+			@RequestBody  @ApiParam(required=true,name="billDetails",value="账单主键、账单详情参数集合（账单明细主键、金额）") BillDetails billDetails) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);

@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -46,11 +47,23 @@ public class BillDetails  implements Serializable {
     @ApiModelProperty(value = "商品分类",required=false)
     private String goodsCategoryId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "商品名称",hidden=true)
+    public String goodsCategoryName;
+
     @ApiModelProperty(value = "规格主键",required=false)
     private String specificationId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "规格标识",hidden=true)
+    public String marker;
+
     @ApiModelProperty(value = "方案主键",required=false)
     private String programId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "规格名称",hidden=true)
+    public String programName;
 
     @ApiModelProperty(value = "单价",required=false)
     private BigDecimal price;

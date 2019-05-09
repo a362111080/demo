@@ -107,21 +107,18 @@ public class BillController {
 	}
 	
 	@LoginToken
-	@ApiOperation(value="批量修改账单状态(挂账/销账)（不可用）")
-	@RequestMapping(value="/batchupdate.do",method=RequestMethod.POST)
-	public Message<Object> batchUpdateStatus(HttpServletRequest request
-			,@RequestParam @ApiParam(required=true,name="ids",value="账单ids,逗号拼接") String ids
-			,@ApiParam(required=true,name="status",value="状态：1挂账，-1销账") @RequestParam String status) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@ApiOperation(value="批量修改账单状态(挂账/销账)")
+	@RequestMapping(value="/billstateupdate",method=RequestMethod.POST)
+	public Message<Object> batchUpdateStatus( @RequestBody Bill model) {
 		Message<Object> message = new Message<Object>();
-		List<String> idsList = StringTool.splitToList(ids, ",");
+		List<String> idsList = StringTool.splitToList(model.getIds(), ",");
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (idsList !=null) {
 			List<Bill> billList = new ArrayList<>();
 			for (String id : idsList) {
 				Bill bill = new Bill();
 				bill.setId(id);
-				bill.setStatus(status);
+				bill.setStatus(model.getStatus());
 				bill.setModifier(loginUser.getId());
 				bill.setModifytime(new Date());
 				billList.add(bill);
@@ -187,8 +184,9 @@ public class BillController {
         BillReport  report=new BillReport();
         for (int i=0;i<BillList.size();i++)
         {
-            if (BillList.get(i).getDr())
+            if (BillList.get(i).getStatus()!="1")
             {
+            	//1挂账  -1 销账
                 report.setCompleteCount(report.getCompleteCount().add(BigDecimal.ONE));
             }
             else

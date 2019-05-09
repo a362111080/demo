@@ -1,7 +1,10 @@
 package com.zero.egg.dao;
 
+import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface BillDetailsMapper extends BaseMapper<BillDetails> {
 
+    List<BillDetails> getbilldetsils(Bill bill);
 }
