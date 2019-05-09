@@ -305,6 +305,7 @@ public class StockController {
      * @return
      */
     @PostMapping(value = "/liststockmarker")
+    @ApiOperation(value = "库存下存在的标记列表")
     @LoginToken
     public Message<StockMarkerListResponseDTO> listStockMarker(HttpServletRequest request) {
         Message message;

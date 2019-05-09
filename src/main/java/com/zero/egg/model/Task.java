@@ -43,10 +43,10 @@ public class Task implements Serializable {
     private String companyId;
 
     @ApiModelProperty(value = "客商主键",required=false)
-    private String supplierId;
+    private String cussupId;
 
     @ApiModelProperty(value = "客商名称",required=false)
-    private String suppliername;
+    private String cussupName;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "方案id",required=false)

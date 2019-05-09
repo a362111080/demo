@@ -76,7 +76,7 @@ public class TaskController {
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		try {
 
-			if (taskService.GetActiveTaskBySupplier(task.getSupplierId())<1) {
+            if (taskService.GetActiveTaskBySupplier(task.getCussupId()) < 1) {
 				task.setId(UuidUtil.get32UUID());
 				task.setCreatetime(new Date());
 				task.setModifytime(new Date());
@@ -261,8 +261,8 @@ public class TaskController {
 	@ApiOperation(value="新增出货任务（不可用）")
 	@RequestMapping(value="/shipment-task-add.do",method=RequestMethod.POST)
 	public Message<Object> shipmentTaskAdd(@RequestParam @ApiParam(required = true,name="programId",value="方案主键") String programId
-			,@RequestBody @ApiParam(required=true,name="task",value="店铺主键、企业主键、供应商主键、备注，设备号") Task task
-			,HttpServletRequest request) {
+            , @RequestBody @ApiParam(required = true, name = "task", value = "供应商主键、备注，设备号") Task task
+			, HttpServletRequest request) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		task.setId(UuidUtil.get32UUID());
