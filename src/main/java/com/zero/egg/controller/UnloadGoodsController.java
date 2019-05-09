@@ -3,6 +3,7 @@ package com.zero.egg.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.UnloadGoods;
@@ -13,6 +14,7 @@ import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
 import com.zero.egg.service.IUnloadGoodsService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,24 +65,29 @@ public class UnloadGoodsController {
 		return ms;
 		
 	}
-	
 
 
+	@LoginToken
 	@ApiOperation(value="新增卸货记录")
 	@RequestMapping(value = "/addunloaddetl",method = RequestMethod.POST)
 	public Message<Object> AddSupplier(@RequestBody  UnloadGoods model) {
 		Message<Object> message = new Message<Object>();
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		try {
-			//实际根据界面传值
-			if (null != model  && checkShopAndCompanyExist(user, model)) {
-				model.setCreator(user.getName());
-				model.setCreatetime(new Date());
-			}
+
+			model.setCreator(user.getId());
+			model.setCreatetime(new Date());
+			model.setModifier(user.getId());
+			model.setModifytime(new Date());
+			model.setShopId(user.getShopId());
+			model.setCompanyId(user.getCompanyId());
 
 			//判断当前卸货任务状态是否在执行中，通过供应商查找任务
-			String  status=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
-			if (status== TaskEnums.Status.Unexecuted.toString())
+			String  info=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
+			String taskId= StringTool.splitToList(info, "|").get(1);
+			model.setTaskId(taskId);
+			String status= StringTool.splitToList(info, "|").get(0);
+			if (status == TaskEnums.Status.Unexecuted.toString())
 			{
 				//任务已暂停
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -92,6 +99,7 @@ public class UnloadGoodsController {
 					//小于方案最小称重则预警，返回标识以及是否预警结果
 					UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
 					if (null != res) {
+						model.setMode(res.getMode());
 						model.setSpecificationId(res.getSpecificationId());
 						if (res.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
 							//存在去皮数值   显示标识为实际称重减去去皮值
@@ -106,6 +114,8 @@ public class UnloadGoodsController {
 						//无返回结果代表小于最低称重范围，进行预警
 						model.setMarker("");
 						model.setWarn(true);
+						model.setMode("无匹配方式");
+						model.setSpecificationId("无规格");
 					}
 				}
 				int strval = unloadGoodsService.AddUnloadDetl(model);
@@ -118,7 +128,6 @@ public class UnloadGoodsController {
 						dto.setCount(count);
 						message.setData(dto);
 					}
-
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 				} else {

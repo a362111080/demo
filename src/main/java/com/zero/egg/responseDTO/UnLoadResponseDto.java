@@ -23,4 +23,9 @@ public class UnLoadResponseDto implements Serializable {
     @ApiModelProperty(value = "对应规格编码")
     private String specificationId;
 
+
+    //返回标识
+    @ApiModelProperty(value = "方式")
+    private String mode;
+
 }
