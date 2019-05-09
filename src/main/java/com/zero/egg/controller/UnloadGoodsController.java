@@ -84,9 +84,9 @@ public class UnloadGoodsController {
 
 			//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 			String  info=unloadGoodsService.GetTaskStatusBySupplier(model.getSupplierId());
-			String taskId= StringTool.splitToList(info, "|").get(1);
+			String taskId= StringTool.splitToList(info, ",").get(1);
 			model.setTaskId(taskId);
-			String status= StringTool.splitToList(info, "|").get(0);
+			String status= StringTool.splitToList(info, ",").get(0);
 			if (status == TaskEnums.Status.Unexecuted.toString())
 			{
 				//任务已暂停
