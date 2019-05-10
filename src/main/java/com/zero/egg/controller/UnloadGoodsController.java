@@ -87,6 +87,8 @@ public class UnloadGoodsController {
 			String taskId= StringTool.splitToList(info, ",").get(1);
 			model.setTaskId(taskId);
 			String status= StringTool.splitToList(info, ",").get(0);
+			String Programid=StringTool.splitToList(info, ",").get(2);
+			model.setProgramId(Programid);
 			if (status == TaskEnums.Status.Unexecuted.toString())
 			{
 				//任务已暂停
