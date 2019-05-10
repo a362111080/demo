@@ -357,13 +357,11 @@ public class TaskController {
                     //1.更改任务状态；
                     if (taskService.updateById(model)) {
                         //2.更改卸货明细状态
-                        if (taskService.UpdateUnloadDetl(model.getId())) {
-                            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                        } else {
-                            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-                        }
+
+						taskService.UpdateUnloadDetl(model.getId());
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
                     } else {
                         message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                         message.setMessage(UtilConstants.ResponseMsg.FAILED);
