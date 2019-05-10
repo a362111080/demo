@@ -303,7 +303,7 @@ public class TaskController {
 			model.setModifytime(new Date());
 			if(null!=model.getId())
 			{
-				if (model.getStatus()==TaskEnums.Status.CANCELED.toString())
+				if (model.getStatus().equals(TaskEnums.Status.CANCELED.index().toString()))
 				{
 					//取消任务
 					//1.更改任务状态；
@@ -326,7 +326,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (model.getStatus()==TaskEnums.Status.Unexecuted.toString())
+				else if (model.getStatus().equals(TaskEnums.Status.Unexecuted.index().toString()))
 				{
 					//1.更改任务状态； 暂停
 					if (taskService.updateById(model)) {
@@ -339,7 +339,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (model.getStatus()==TaskEnums.Status.Execute.toString())
+				else if (model.getStatus().equals(TaskEnums.Status.Execute.index().toString()))
 				{
 					//1.更改任务状态；执行中
 					if (taskService.updateById(model)) {
@@ -352,7 +352,7 @@ public class TaskController {
 						message.setMessage(UtilConstants.ResponseMsg.FAILED);
 					}
 				}
-				else if (model.getStatus()==TaskEnums.Status.Finish.toString())
+				else if (model.getStatus().equals(TaskEnums.Status.Finish.index().toString()))
 				{
 					//卸货完成
 					//1.更改任务状态；
@@ -377,6 +377,7 @@ public class TaskController {
 							Igoods.setModifier(user.getId());
 							Igoods.setCreatetime(new Date());
 							Igoods.setModifytime(new Date());
+							Igoods.setWeight(IUnloadList.get(m).getWeight());
 							Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
 							taskService.InsertGoods(Igoods);
 							//写入库存表
