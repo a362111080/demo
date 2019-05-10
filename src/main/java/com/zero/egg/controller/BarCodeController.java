@@ -126,7 +126,7 @@ public class BarCodeController {
 
     /**
      * 前端需要把母二维码信息加上printNum后请求改接口
-     *
+     * 打印一定数量二维码
      * @param printBarCodeRequestDTO
      * @return
      */

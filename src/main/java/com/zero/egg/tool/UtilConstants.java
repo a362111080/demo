@@ -89,6 +89,10 @@ public interface UtilConstants {
          * 有活动中的任务
          */
         public static final String TAST_EXIST = "有活动中的任务";
+        /**
+         * 查无此货
+         */
+        public static final String NO_SUCH_GOOD = "查无此货";
     }
 
     /**
@@ -171,6 +175,11 @@ public interface UtilConstants {
          * 微信用户信息(openid)前缀
          */
         public static final String WXUSER_REDIS_SESSION = "wxuser-redis-session:";
+
+        /**
+         * 出货任务前缀
+         */
+        public static final String SHIPMENTGOOD_TASK = "shipmentgood-task:";
     }
 
 }

@@ -1,18 +1,17 @@
 package com.zero.egg.responseDTO;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class GoodsResponse {
 
-	@ApiModelProperty(value = "主键")
+    @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
@@ -24,15 +23,18 @@ public class GoodsResponse {
 
     @ApiModelProperty(value = "供应商主键")
     private String supplierId;
-    
+
     @ApiModelProperty(value = "供应商")
     private String supplierName;
 
     @ApiModelProperty(value = "规格主键")
     private String specificationId;
-    
+
     @ApiModelProperty(value = "商品分类主键")
     private String goodsCategoryId;
+
+    @ApiModelProperty(value = "商品类别名")
+    private String categoryName;
 
     @ApiModelProperty(value = "商品编码")
     private String goodsNo;
@@ -63,4 +65,10 @@ public class GoodsResponse {
 
     @ApiModelProperty(value = "删除标识")
     private Boolean dr;
+
+    @ApiModelProperty(value = "员工主键")
+    private String employeeId;
+
+    @ApiModelProperty(value = "员工姓名")
+    private String employeeName;
 }

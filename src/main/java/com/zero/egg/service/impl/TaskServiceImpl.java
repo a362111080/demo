@@ -2,10 +2,12 @@ package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
@@ -18,6 +20,7 @@ import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +39,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private TaskMapper mapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
     public List<Task> QueryTaskList(TaskRequest task) {
@@ -103,6 +109,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     }
 
     @Override
+    @Transactional
     public Message addShipmentTask(Task task) {
 
         Message message = new Message();
@@ -129,6 +136,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 task.setType(TaskEnums.Type.Shipment.index().toString());
                 task.setDr(false);
                 mapper.insert(task);
+                String customerName = customerMapper.selectOne(new QueryWrapper<Customer>()
+                        .select("name")
+                        .eq("id", task.getCussupId()))
+                        .getName();
+                task.setCussupName(customerName);
+                message.setData(task);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }

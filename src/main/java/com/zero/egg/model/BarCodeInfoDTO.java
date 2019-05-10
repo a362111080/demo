@@ -2,6 +2,8 @@ package com.zero.egg.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 二维详细信息DTO
  *
@@ -10,8 +12,9 @@ import lombok.Data;
  * @Date 2019/5/3 3:53
  **/
 @Data
-public class BarCodeInfoDTO {
+public class BarCodeInfoDTO implements Serializable {
 
+    private static final long serialVersionUID = 2619796349552165567L;
     /**
      * 供应商id
      */

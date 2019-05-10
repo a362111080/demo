@@ -1,10 +1,10 @@
 package com.zero.egg.responseDTO;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class ShipmentGoodsResponse {
@@ -18,7 +18,7 @@ public class ShipmentGoodsResponse {
 		@ApiModelProperty(value = "企业主键")
 	    private String companyId;
 
-		@ApiModelProperty(value = "客户书剑")
+    @ApiModelProperty(value = "客户主键")
 	    private String customerId;
 
 		@ApiModelProperty(value = "规格主键")
