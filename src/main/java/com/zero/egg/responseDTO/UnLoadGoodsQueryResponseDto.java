@@ -57,6 +57,13 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
 
 
     /**
+     * 任务id
+     */
+    @ApiModelProperty(value = "单价")
+    private BigDecimal price;
+
+
+    /**
      * 当前方案合计卸货数量
      */
     @ApiModelProperty(value = "当前方案合计卸货数量")

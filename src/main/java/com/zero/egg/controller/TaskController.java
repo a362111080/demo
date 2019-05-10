@@ -121,7 +121,7 @@ public class TaskController {
 		return message;
 	}
 
-
+	@LoginToken
 	@ApiOperation(value="更换卸货任务方案")
 	@RequestMapping(value="/unloadprochange",method=RequestMethod.POST)
 	public Message unloadprochange(@RequestBody  Task task) {
