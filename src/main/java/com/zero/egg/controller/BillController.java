@@ -177,6 +177,10 @@ public class BillController {
 		model.setShopId(user.getShopId());
 		model.setCompanyId(user.getCompanyId());
 		PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
+		if (null!= model.getEndtime())
+        {
+            model.setEndtime(model.getEndtime()+" 23:59:59");
+        }
 		List<Bill> BillList=billService.getBilllist(model);
 		PageInfo<Bill> pageInfo = new PageInfo<>(BillList);
 		ms.setData(pageInfo);

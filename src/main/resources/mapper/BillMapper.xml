@@ -63,6 +63,12 @@
             <if test="status != null  and status !=''">
                 and a.status=#{status,jdbcType=INTEGER}
             </if>
+            <if test="begintime != null  and begintime !=''">
+                and a.bill_date <![CDATA[ >= ]]> #{begintime,jdbcType=INTEGER}
+            </if>
+            <if test="endtime != null  and endtime !=''">
+                and a.bill_date <![CDATA[ <= ]]> #{endtime,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
     <select id="getBillCategorySum" parameterType="String" resultType="com.zero.egg.responseDTO.CategorySum">

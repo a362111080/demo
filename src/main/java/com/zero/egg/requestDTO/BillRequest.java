@@ -1,12 +1,11 @@
 package com.zero.egg.requestDTO;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.zero.egg.tool.PageDTO;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class BillRequest extends PageDTO{
@@ -40,5 +39,11 @@ public class BillRequest extends PageDTO{
 
 		@ApiModelProperty(value = "查询关键字",required=true)
 		private String keyword;
+
+		@ApiModelProperty(value = "开始时间",required=true)
+		private String begintime;
+
+		@ApiModelProperty(value = "结束时间",required=true)
+		private String endtime;
 
 }
