@@ -144,10 +144,12 @@ public class TaskController {
     }
 
 
-    @ApiOperation(value = "更换卸货任务方案")
-    @RequestMapping(value = "/unloadprochange", method = RequestMethod.POST)
-    public Message unloadprochange(@RequestBody Task task) {
-        Message message = new Message();
+
+	@LoginToken
+	@ApiOperation(value="更换卸货任务方案")
+	@RequestMapping(value="/unloadprochange",method=RequestMethod.POST)
+	public Message unloadprochange(@RequestBody  Task task) {
+		Message message = new Message();
 
         try {
             //停用当前任务所有方案

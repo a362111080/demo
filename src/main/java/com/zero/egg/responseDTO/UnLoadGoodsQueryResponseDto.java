@@ -56,6 +56,7 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     private String programname;
 
 
+
     /**
      * 当前方案合计卸货数量
      */
