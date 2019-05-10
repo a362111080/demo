@@ -23,6 +23,8 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     @ApiModelProperty(value = "鸡蛋类别名称")
     private String name;
 
+    @ApiModelProperty(value = "鸡蛋类别id")
+    private String goodsCategoryId;
 
     /**
      * 方案标识
@@ -48,6 +50,13 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
      */
     @ApiModelProperty(value = "任务id")
     private String taskId;
+
+
+    /**
+     * 任务id
+     */
+    @ApiModelProperty(value = "方案id")
+    private String programId;
 
     /**
      * 任务id

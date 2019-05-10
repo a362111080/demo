@@ -11,11 +11,11 @@
         where k.program_id=#{programId}  and k.weight_min <![CDATA[ <= ]]> #{weight}  and k.weight_max <![CDATA[ > ]]> #{weight}  and k.dr=0
     </select>
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id from  bd_unload_goods  a
+        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
         left join bd_specification_program pro on pro.id=a.program_id
         where  a.task_id=#{taskId} and  a.dr=0
-        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id
+        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id
     </select>
     <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
