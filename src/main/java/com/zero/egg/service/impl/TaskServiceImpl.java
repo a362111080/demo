@@ -1,7 +1,9 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.TaskEnums;
@@ -42,6 +44,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private JedisUtil.Strings jedisStrings;
+
+    @Autowired
+    private JedisUtil.Keys jedisKeys;
+
 
     @Override
     public List<Task> QueryTaskList(TaskRequest task) {
@@ -136,6 +145,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 task.setType(TaskEnums.Type.Shipment.index().toString());
                 task.setDr(false);
                 mapper.insert(task);
+                String taskId = task.getId();
+                /**
+                 * 把任务状态存入redis,用作出货前判断是否还能出货
+                 */
+                jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId()
+                                + task.getCussupId() + taskId + "status"
+                        , TaskEnums.Status.Execute.index().toString());
                 String customerName = customerMapper.selectOne(new QueryWrapper<Customer>()
                         .select("name")
                         .eq("id", task.getCussupId()))
@@ -151,4 +167,37 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             throw new ServiceException("addShipmentTask failed");
         }
     }
+
+    @Override
+    @Transactional
+    public Message cancelShipmentTask(Task task, String taskId, String customerId) throws ServiceException {
+        Message message = new Message();
+        try {
+            /**
+             * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId 的Redis数据删除
+             * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
+             *    的Redis数据改为TaskEnums.Status.CANCELED.index().toString()
+             * 3.在MySQL中对应的出货任务,status改为TaskEnums.Status.CANCELED.index().toString(),dr改为1(true)
+             */
+            jedisKeys.del(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.CANCELED.index().toString());
+            task.setDr(true);
+            task.setStatus(TaskEnums.Status.CANCELED.index().toString());
+            mapper.update(task, new UpdateWrapper<Task>()
+                    .eq("id", taskId)
+                    .eq("shop_id", task.getShopId())
+                    .eq("company_id", task.getCompanyId())
+                    .eq("cussup_id", customerId)
+                    .eq("dr", 0));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("cancelShipmentTask failed:" + e);
+            throw new ServiceException("cancelShipmentTask failed");
+        }
+
+        return message;
+    }
+
+
 }
