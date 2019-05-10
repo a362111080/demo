@@ -9,6 +9,13 @@ public class ApiConstants {
 	 * 1为企业用户，2位店铺员工
 	 */
 	public final static String LOGIN_TYPE = "login_type";
+
+    /**
+     * Company(0,"企业端"),Pc(1,"PC客户端"),Boss(2,"Boss移动端"),Staff(3,"员工端"),Device(4,"设备端");
+     */
+    public final static String USER_TYPE = "user_type";
+
+
 	
 	 /**
      * 返回状态常量

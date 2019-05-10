@@ -3,6 +3,7 @@ package com.zero.egg.interceptor;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
@@ -91,6 +92,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         loginUser.setCompanyId(companyUser.getCompanyId());
                         request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                         request.setAttribute(ApiConstants.LOGIN_TYPE, 1);
+                        request.setAttribute(ApiConstants.USER_TYPE, UserEnums.Type.Company.index());
                     }
                 } else {
                     // 当前登录用户@CurrentUser
@@ -103,6 +105,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     loginUser.setShopId(user.getShopId());
                     request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                     request.setAttribute(ApiConstants.LOGIN_TYPE, 2);
+                    request.setAttribute(ApiConstants.USER_TYPE, user.getType());
                 }
                 return true;
             }

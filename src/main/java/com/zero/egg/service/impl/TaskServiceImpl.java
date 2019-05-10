@@ -182,6 +182,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             jedisKeys.del(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.CANCELED.index().toString());
             task.setDr(true);
+            task.setModifytime(new Date());
             task.setStatus(TaskEnums.Status.CANCELED.index().toString());
             mapper.update(task, new UpdateWrapper<Task>()
                     .eq("id", taskId)
@@ -194,6 +195,35 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         } catch (Exception e) {
             log.error("cancelShipmentTask failed:" + e);
             throw new ServiceException("cancelShipmentTask failed");
+        }
+
+        return message;
+    }
+
+    @Override
+    @Transactional
+    public Message emplyeeFinishTask(Task task, String taskId, String customerId) {
+        Message message = new Message();
+        try {
+            /**
+             * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
+             *    的Redis数据改为TaskEnums.Status.CANCELED.index().toString()
+             * 2.在MySQL中对应的出货任务,status改为TaskEnums.Status.Unexecuted.index().toString()
+             */
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Unexecuted.index().toString());
+            task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
+            task.setModifytime(new Date());
+            mapper.update(task, new UpdateWrapper<Task>()
+                    .eq("id", taskId)
+                    .eq("shop_id", task.getShopId())
+                    .eq("company_id", task.getCompanyId())
+                    .eq("cussup_id", customerId)
+                    .eq("dr", 0));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("emplyeeFinishTask failed:" + e);
+            throw new ServiceException("emplyeeFinishTask failed");
         }
 
         return message;

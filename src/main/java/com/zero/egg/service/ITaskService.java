@@ -62,4 +62,14 @@ public interface ITaskService extends IService<Task> {
      * @throws ServiceException
      */
     Message cancelShipmentTask(Task task, String taskId, String customerId) throws ServiceException;
+
+    /**
+     * 员工端完成(暂停)出货任务
+     *
+     * @param task
+     * @param taskId
+     * @param customerId
+     * @return
+     */
+    Message emplyeeFinishTask(Task task, String taskId, String customerId) throws ServiceException;
 }

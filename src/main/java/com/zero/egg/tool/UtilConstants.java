@@ -101,6 +101,16 @@ public interface UtilConstants {
          * 该任务已结束或已取消
          */
         public static final String TASK_FINISH_OR_CANCELED = "该任务已结束或已取消";
+
+        /**
+         * 该任务已结束或已取消或者已经完成(员工端的完成等同于暂停任务)
+         */
+        public static final String TASK_FINISH_OR_CANCELED_OR_UNEXECUTED = "该任务已结束或已取消或者已经完成";
+
+        /**
+         * 该设备无权限
+         */
+        public static final String NO_PERMISSION = "该设备无权限";
     }
 
     /**
