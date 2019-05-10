@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
+import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
@@ -77,7 +78,10 @@ public class ShipmentGoodsController {
             @RequestBody @ApiParam(required = true, value = "1.二维码信息 2.任务主键 3.客户主键")
                     ShipmentGoodBarCodeRequestDTO shipmentGoodRequestDTO
             , HttpServletRequest request) {
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message message;
+
         /**
          * 非空判断
          */
@@ -89,9 +93,21 @@ public class ShipmentGoodsController {
             message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             return message;
         }
+        /**
+         * 任务状态确认,只有任务在进行中,才能进行出货
+         */
+        if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId()
+                + shipmentGoodRequestDTO.getTaskId() + "status")
+                || TaskEnums.Status.Execute.index().toString() != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId())) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.TASK_NOT_FOUND);
+            return message;
+        }
         try {
-            //当前登录用户
-            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+
             /**
              * 从入参中获取二维码信息并解密
              * 转换成二维码对象后获取商品编码

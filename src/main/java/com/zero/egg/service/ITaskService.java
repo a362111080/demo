@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author Hhaifeng
@@ -51,4 +51,15 @@ public interface ITaskService extends IService<Task> {
      * @return
      */
     Message addShipmentTask(Task task) throws ServiceException;
+
+    /**
+     * 取消出货任务(PC端取消任务)
+     *
+     * @param task
+     * @param taskId
+     * @param customerId
+     * @return
+     * @throws ServiceException
+     */
+    Message cancelShipmentTask(Task task, String taskId, String customerId) throws ServiceException;
 }

@@ -93,6 +93,14 @@ public interface UtilConstants {
          * 查无此货
          */
         public static final String NO_SUCH_GOOD = "查无此货";
+        /**
+         * 该任务已结束或暂停
+         */
+        public static final String TASK_NOT_FOUND = "该任务已结束或暂停";
+        /**
+         * 该任务已结束或已取消
+         */
+        public static final String TASK_FINISH_OR_CANCELED = "该任务已结束或已取消";
     }
 
     /**
