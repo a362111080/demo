@@ -5,17 +5,23 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CustomerMapper;
+import com.zero.egg.dao.GoodsMapper;
+import com.zero.egg.dao.ShipmentGoodsMapper;
+import com.zero.egg.dao.StockMapper;
 import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
+import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.service.ITaskService;
+import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
@@ -24,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +57,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private JedisUtil.Keys jedisKeys;
+
+    @Autowired
+    private StockMapper stockMapper;
+
+    @Autowired
+    private ShipmentGoodsMapper shipmentGoodsMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
 
 
     @Override
@@ -207,7 +223,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         try {
             /**
              * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
-             *    的Redis数据改为TaskEnums.Status.CANCELED.index().toString()
+             *    的Redis数据改为TaskEnums.Status.Unexecuted.index().toString()
              * 2.在MySQL中对应的出货任务,status改为TaskEnums.Status.Unexecuted.index().toString()
              */
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Unexecuted.index().toString());
@@ -224,6 +240,88 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         } catch (Exception e) {
             log.error("emplyeeFinishTask failed:" + e);
             throw new ServiceException("emplyeeFinishTask failed");
+        }
+
+        return message;
+    }
+
+    @Override
+    @Transactional
+    public Message RealFinishTask(Task task, String taskId, String customerId) throws ServiceException {
+        Message message = new Message();
+        try {
+            /**
+             * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
+             *    的Redis数据改为TaskEnums.Status.Finish.index().toString()
+             * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId的数据取出来转换回列表
+             * 3.统计里面的数据存入出货商品表同时减去库存中的数量
+             * 4.在MySQL中对应的出货任务,status改为TaskEnums.Status.Finish.index().toString(),dr设为1(true)
+             */
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
+            String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
+            List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
+            ShipmentGoods shipmentGoods = null;
+            Goods goods = null;
+            Stock stock = null;
+            BigDecimal quantity;
+            BigDecimal subOne = new BigDecimal(BigDecimal.ROUND_DOWN);
+            for (GoodsResponse goodsResponse : goodsResponseList) {
+                shipmentGoods = new ShipmentGoods();
+                shipmentGoods.setCompanyId(task.getCompanyId());
+                shipmentGoods.setShopId(task.getShopId());
+                shipmentGoods.setCustomerId(customerId);
+                shipmentGoods.setTaskId(taskId);
+                shipmentGoods.setSpecificationId(goodsResponse.getSpecificationId());
+                shipmentGoods.setGoodsCategoryId(goodsResponse.getGoodsCategoryId());
+                shipmentGoods.setGoodsNo(goodsResponse.getGoodsNo());
+                shipmentGoods.setMode(goodsResponse.getMode());
+                shipmentGoods.setMarker(goodsResponse.getMarker());
+                shipmentGoods.setWeight(goodsResponse.getWeight());
+                shipmentGoods.setRemark(goodsResponse.getRemark());
+                shipmentGoods.setCreatetime(new Date());
+                shipmentGoods.setModifytime(new Date());
+                shipmentGoods.setModifier(task.getCreator());
+                shipmentGoods.setCreator(task.getCreator());
+                shipmentGoods.setDr(false);
+                /**
+                 * 1.新增到出货商品表里
+                 * 2.从商品表里删除
+                 * 3.从库存里对应规格数量-1
+                 * 4.//TODO 统计员工工作量
+                 */
+                shipmentGoodsMapper.insert(shipmentGoods);
+                goods = new Goods();
+                goods.setDr(true);
+                goodsMapper.update(goods, new UpdateWrapper<Goods>()
+                        .eq("goods_no", goodsResponse.getGoodsNo())
+                        .eq("company_id", task.getCompanyId())
+                        .eq("shop_id", task.getShopId())
+                );
+                stock = stockMapper.selectOne(new QueryWrapper<Stock>().select("id", "quantity")
+                        .eq("specificationId", goodsResponse.getSpecificationId())
+                        .eq("company_id", task.getCompanyId())
+                        .eq("shop_id", task.getShopId())
+                );
+                quantity = stock.getQuantity().subtract(subOne);
+                stock.setQuantity(quantity);
+                stockMapper.updateById(stock);
+
+            }
+            //4.在MySQL中对应的出货任务,status改为TaskEnums.Status.Finish.index().toString(),dr设为1(true)
+            task.setStatus(TaskEnums.Status.Finish.index().toString());
+            task.setModifytime(new Date());
+            task.setDr(true);
+            mapper.update(task, new UpdateWrapper<Task>()
+                    .eq("id", taskId)
+                    .eq("shop_id", task.getShopId())
+                    .eq("company_id", task.getCompanyId())
+                    .eq("cussup_id", customerId)
+                    .eq("dr", 0));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("RealFinishTask failed:" + e);
+            throw new ServiceException("RealFinishTask failed");
         }
 
         return message;

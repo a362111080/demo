@@ -111,6 +111,11 @@ public interface UtilConstants {
          * 该设备无权限
          */
         public static final String NO_PERMISSION = "该设备无权限";
+
+        /**
+         * 请确认员工已经完成任务
+         */
+        public static final String ASURE_EMPLOYEE_FINISH = "请确认员工已经完成任务";
     }
 
     /**

@@ -148,7 +148,7 @@ public class ShipmentGoodsController {
             String customerId = shipmentGoodsRequest.getCustomerId();
             String taskId = shipmentGoodsRequest.getTaskId();
             /**
-             * 如果redis里存在相关出货任务key  或者  存在,但是value为null,就返回查询成功,但是内容为null
+             * 如果redis里存在相关出货任务key  或者  存在kry,但是value为null,就返回查询成功,但是内容为null
              * 否则,直接从redis里面取出对应value,并转化为list集合存进Data里返回
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK

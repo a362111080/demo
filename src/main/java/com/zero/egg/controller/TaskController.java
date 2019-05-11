@@ -145,12 +145,11 @@ public class TaskController {
     }
 
 
-
-	@LoginToken
-	@ApiOperation(value="更换卸货任务方案")
-	@RequestMapping(value="/unloadprochange",method=RequestMethod.POST)
-	public Message unloadprochange(@RequestBody  Task task) {
-		Message message = new Message();
+    @LoginToken
+    @ApiOperation(value = "更换卸货任务方案")
+    @RequestMapping(value = "/unloadprochange", method = RequestMethod.POST)
+    public Message unloadprochange(@RequestBody Task task) {
+        Message message = new Message();
 
         try {
             //停用当前任务所有方案
@@ -372,9 +371,9 @@ public class TaskController {
                     if (taskService.updateById(model)) {
                         //2.更改卸货明细状态
 
-						taskService.UpdateUnloadDetl(model.getId());
-						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                        taskService.UpdateUnloadDetl(model.getId());
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 
                     } else {
                         message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -535,10 +534,6 @@ public class TaskController {
             String taskId = task.getId();
             //客户id
             String customerId = task.getCussupId();
-            task.setModifier(loginUser.getId());
-            //企业和店铺id以登陆者信息为准
-            task.setCompanyId(loginUser.getCompanyId());
-            task.setShopId(loginUser.getShopId());
             /**
              * 如果redis里面所存对应的任务状态为已完成或已取消或者已暂停,返回对应消息
              */
@@ -554,6 +549,10 @@ public class TaskController {
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED_OR_UNEXECUTED);
                 return message;
             }
+            task.setModifier(loginUser.getId());
+            //企业和店铺id以登陆者信息为准
+            task.setCompanyId(loginUser.getCompanyId());
+            task.setShopId(loginUser.getShopId());
             message = taskService.emplyeeFinishTask(task, taskId, customerId);
         } catch (Exception e) {
             log.error("emplyeeFinishTask failed:" + e);
@@ -570,5 +569,123 @@ public class TaskController {
         return message;
     }
 
+    @PostMapping(value = "/finishshipmenttask")
+    @LoginToken
+    @ApiOperation(value = "完成出货任务(PC端或者老板移动端完成任务)")
+    public Message finishShipmentTask(@RequestBody @ApiParam(required = true, name = "task", value = "1.cussupId(客商主键) 2.任务主键") Task task) {
+        Message message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            /**
+             * 权限判断,只有PC端和老板移动端能完成任务
+             */
+            if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
+                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
+                return message;
+            }
+            /**
+             * 非空判断
+             */
+            if (task == null || null == task.getId()
+                    || null == task.getCussupId()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                return message;
+            }
+            //任务id
+            String taskId = task.getId();
+            //客户id
+            String customerId = task.getCussupId();
+            /**
+             * 如果员工没有完成(暂停)任务,则返回提示
+             */
+            if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
+                    || !TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.ASURE_EMPLOYEE_FINISH);
+                return message;
+            }
+            /**
+             * 正常完成出货流程
+             */
+            //企业和店铺id以登陆者信息为准
+            task.setCompanyId(loginUser.getCompanyId());
+            task.setShopId(loginUser.getShopId());
+            task.setCreator(loginUser.getId());
+            message = taskService.RealFinishTask(task, taskId, customerId);
+        } catch (Exception e) {
+            log.error("FinishShipmentTask failed:" + e);
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+        }
+        return message;
+    }
 
+    @PostMapping(value = "/forcefinishshipmenttask")
+    @LoginToken
+    @ApiOperation(value = "老板强制完成出货任务(PC端或者老板移动端完成任务)")
+    public Message forceFinishShipmentTask(@RequestBody @ApiParam(required = true, name = "task", value = "1.cussupId(客商主键) 2.任务主键") Task task) {
+        Message message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            /**
+             * 权限判断,只有PC端和老板移动端能完成任务
+             */
+            if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
+                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
+                return message;
+            }
+            /**
+             * 非空判断
+             */
+            if (task == null || null == task.getId()
+                    || null == task.getCussupId()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                return message;
+            }
+            //任务id
+            String taskId = task.getId();
+            //客户id
+            String customerId = task.getCussupId();
+            /**
+             * 正常完成出货流程
+             */
+            //企业和店铺id以登陆者信息为准
+            task.setCompanyId(loginUser.getCompanyId());
+            task.setShopId(loginUser.getShopId());
+            task.setCreator(loginUser.getId());
+            message = taskService.RealFinishTask(task, taskId, customerId);
+        } catch (Exception e) {
+            log.error("FinishShipmentTask failed:" + e);
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+        }
+        return message;
+    }
 }
