@@ -205,6 +205,26 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
         return message;
     }
 
+    @Override
+    public Message listData(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException {
+        Message message = new Message();
+        List<SpecificationProgram> specificationProgramList;
+        try {
+            specificationProgramList = specificationProgramMapper.selectList(new QueryWrapper<SpecificationProgram>()
+                    .eq("category_id", specificationProgramRequestDTO.getCategoryId())
+                    .eq("dr", 0)
+                    .eq("shop_id", specificationProgramRequestDTO.getShopId())
+                    .eq("company_id", specificationProgramRequestDTO.getCompanyId()));
+            message.setData(specificationProgramList);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.info("listDataAndDetl error", e.toString());
+            throw new ServiceException("listDataAndDetl error");
+        }
+    }
+
 
     /**
      * 同个企业同个店铺同一种类型只能存在独一无二的方案名

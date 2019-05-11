@@ -44,4 +44,12 @@ public interface SpecificationProgramService {
      * @throws ServiceException
      */
     public Message updateSpecificationProgram(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException;
+
+    /**
+     * 根据品种id列出所有方案(下拉列表用)
+     *
+     * @param specificationProgramRequestDTO
+     * @return
+     */
+    Message listData(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException;
 }

@@ -337,6 +337,37 @@ public class BaseInfoController {
     }
 
     /**
+     * 根据品种id列出所有方案(下拉列表用)
+     *
+     * @Param [specificationProgramRequestDTO]
+     * @Return com.zero.egg.tool.Message
+     **/
+    @ApiOperation(value = "根据品种id列出所有方案(下拉列表用)", notes = "{\"categoryId\":\"\"}")
+    @RequestMapping(value = "/standard/liststandard", method = RequestMethod.POST)
+    @LoginToken
+    public Message listStandardForTables(@RequestBody @ApiParam(required = true,
+            name = "categoryRequestDTO",
+            value = "1.品种id") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+        Message message = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getCategoryId()
+                    && checkShopAndCompanyExist(user, specificationProgramRequestDTO)) {
+                message = specificationProgramService.listData(specificationProgramRequestDTO);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+            }
+            return message;
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+    }
+
+    /**
      * 添加一条方案细节
      *
      * @Param [specificationRequestDTO]
@@ -675,7 +706,7 @@ public class BaseInfoController {
      * @return
      */
     private boolean checkShopAndCompanyExist(LoginUser user, SpecificationProgramRequestDTO specificationProgramRequestDTO) {
-        boolean flag = (null != specificationProgramRequestDTO.getShopId() && null != specificationProgramRequestDTO.getCompanyId()) ? true : false;
+        boolean flag = (null != user.getShopId() && null != user.getCompanyId()) ? true : false;
         specificationProgramRequestDTO.setCompanyId(user.getCompanyId());
         specificationProgramRequestDTO.setShopId(user.getShopId());
         specificationProgramRequestDTO.setModifier(user.getName());
@@ -690,7 +721,7 @@ public class BaseInfoController {
      * @return
      */
     private boolean checkShopAndCompanyExist(LoginUser user, SpecificationRequestDTO specificationRequestDTO) {
-        boolean flag = (null != specificationRequestDTO.getShopId() && null != specificationRequestDTO.getCompanyId()) ? true : false;
+        boolean flag = (null != user.getShopId() && null != user.getCompanyId()) ? true : false;
         specificationRequestDTO.setCompanyId(user.getCompanyId());
         specificationRequestDTO.setShopId(user.getShopId());
         specificationRequestDTO.setModifier(user.getName());
