@@ -108,6 +108,7 @@ public class WXLoginController {
                 map.put("userType", type);
                 map.put("userTypeName", UserEnums.Type.note(type));
                 map.put("user", user);
+                map.put("wxSessionkey", wxSessionkey);
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
