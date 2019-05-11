@@ -1,8 +1,10 @@
 package com.zero.egg.interceptor;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.User;
@@ -75,10 +77,18 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 }
 
                 String userId = claims.getId();
-                User user = userService.getById(userId);
+                QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+                userQueryWrapper.eq("id", userId)
+                        .eq("dr", false)
+                        .eq("status", UserEnums.Status.Normal.index().toString());
+                User user = userService.getOne(userQueryWrapper);
                 LoginUser loginUser = new LoginUser();
                 if (user == null) {
-                    CompanyUser companyUser = companyUserService.getById(userId);
+                	QueryWrapper<CompanyUser> cUserQueryWrapper = new QueryWrapper<>();
+                    cUserQueryWrapper.eq("id", userId)
+                            .eq("dr", false)
+                            .eq("status", CompanyUserEnums.Status.Normal.index().toString());
+                    CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                     if (companyUser == null) {
                         response.setStatus(401);
                         throw new ServiceException("401", "用户不存在，请重新登录");
