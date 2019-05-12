@@ -94,6 +94,7 @@ public class UnloadGoodsController {
 				model.setSupplierId(bar.getSupplierId());
 				model.setGoodsCategoryId(bar.getCategoryId());
 				model.setGoodsNo(bar.getCurrentCode());
+
 				//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 				String info = unloadGoodsService.GetTaskStatusBySupplier(bar.getSupplierId());
 
@@ -130,10 +131,14 @@ public class UnloadGoodsController {
 							model.setMode("无匹配方式");
 							model.setSpecificationId("无规格");
 						}
+
+
 					}
 					int strval = unloadGoodsService.AddUnloadDetl(model);
 					if (strval > 0) {
 						UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
+						dto.setSupplierName(bar.getSupplierName());
+						dto.setCategoryName(bar.getCategoryName());
 						dto.setMarker(model.getMarker());
 						if (null != model.getTaskId()) {
 							//获取当前卸货任务已卸货数量，含本次
