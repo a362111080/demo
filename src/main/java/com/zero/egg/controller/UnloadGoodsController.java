@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
+import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
@@ -58,8 +59,12 @@ public class UnloadGoodsController {
 		PageHelper.startPage(unloadGoods.getCurrent().intValue(), unloadGoods.getSize().intValue());
 		List<UnloadGoods> unloadList = unloadGoodsService.GetUnloadList(unloadGoods);
 
+		//查询当前任务的 激活的品种id  方案id
+		UnLoadGoodsQueryResponseDto ts=unloadGoodsService.GetTaskProgram(unloadGoods.getTaskId());
+		ts.setId(unloadGoods.getTaskId());
 		PageInfo<UnloadGoods> pageInfo = new PageInfo<>(unloadList);
 		ms.setData(pageInfo);
+		ms.setTotaldata(ts);
 		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return ms;
