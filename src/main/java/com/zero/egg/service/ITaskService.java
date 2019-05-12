@@ -3,6 +3,7 @@ package com.zero.egg.service;
 import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 
@@ -30,7 +31,7 @@ public interface ITaskService extends IService<Task> {
 
     boolean insertStock(Stock istock);
 
-    boolean updateStock(String specificationId);
+    boolean updateStock(UnloadReport unloadReport);
 
     boolean insertBillDetails(BillDetails iDetails);
 
@@ -83,4 +84,6 @@ public interface ITaskService extends IService<Task> {
      * @throws ServiceException
      */
     Message RealFinishTask(Task task, String taskId, String customerId) throws ServiceException;
+
+    List<UnloadReport> GetUnloadReport(String taskid);
 }

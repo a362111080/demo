@@ -36,8 +36,9 @@
     </select>
 
     <select id="GetTaskProgram"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select a.program_id as programId,b.category_id as goodsCategoryId,a.task_id from bd_task_program  a
+        select a.program_id as programId,b.category_id as goodsCategoryId,a.task_id,e.status from bd_task_program  a
         left join bd_specification_program  b on a.program_id=b.id
+        left join bd_task  e on e.id=a.task_id
         where a.active=1  and a.task_id= #{taskId,jdbcType=VARCHAR}
     </select>
 

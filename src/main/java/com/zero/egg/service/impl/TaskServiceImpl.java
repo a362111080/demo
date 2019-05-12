@@ -20,6 +20,7 @@ import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.GoodsResponse;
+import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
@@ -99,8 +100,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     }
 
     @Override
-    public boolean updateStock(String specificationId) {
-        return mapper.updateStock(specificationId);
+    public boolean updateStock(UnloadReport unloadReport) {
+        return mapper.updateStock(unloadReport);
     }
 
     @Override
@@ -330,6 +331,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         }
 
         return message;
+    }
+
+    @Override
+    public List<UnloadReport> GetUnloadReport(String taskid) {
+        return mapper.GetUnloadReport(taskid);
     }
 
 

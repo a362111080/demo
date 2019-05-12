@@ -61,6 +61,7 @@ public class UnloadGoodsController {
 
 		//查询当前任务的 激活的品种id  方案id
 		UnLoadGoodsQueryResponseDto ts=unloadGoodsService.GetTaskProgram(unloadGoods.getTaskId());
+
 		ts.setId(unloadGoods.getTaskId());
 		PageInfo<UnloadGoods> pageInfo = new PageInfo<>(unloadList);
 		ms.setData(pageInfo);
