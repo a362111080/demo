@@ -53,6 +53,14 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
 
 
     /**
+     * 任务状态
+     */
+    @ApiModelProperty(value = "任务状态")
+    private String status;
+
+
+
+    /**
      * 任务id
      */
     @ApiModelProperty(value = "方案id")
