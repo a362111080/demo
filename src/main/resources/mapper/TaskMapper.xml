@@ -79,13 +79,11 @@
     </select>
 
 
-
-
     <insert id="insertStock" parameterType="Stock">
     insert into bd_stock(id,shop_id,company_id,specification_id,quantity,remark,creator,createtime,modifier,modifytime,dr)
     values(#{id},#{shopId},#{companyId},#{specificationId},#{quantity},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
-    <update id="updateStock" parameterType="UnloadReport">
+    <update id="updateStock" parameterType="com.zero.egg.responseDTO.UnloadReport">
             update bd_stock set quantity=quantity+ #{sumval,jdbcType=DECIMAL}
             where specification_id = #{specificationId,jdbcType=VARCHAR}  and dr=0
     </update>
