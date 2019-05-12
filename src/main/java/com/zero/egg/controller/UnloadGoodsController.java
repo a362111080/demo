@@ -140,6 +140,7 @@ public class UnloadGoodsController {
 						dto.setSupplierName(bar.getSupplierName());
 						dto.setCategoryName(bar.getCategoryName());
 						dto.setMarker(model.getMarker());
+						dto.setWarn(model.getWarn());
 						if (null != model.getTaskId()) {
 							//获取当前卸货任务已卸货数量，含本次
 							int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());

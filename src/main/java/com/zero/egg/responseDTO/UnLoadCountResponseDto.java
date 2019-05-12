@@ -22,4 +22,8 @@ public class UnLoadCountResponseDto {
     @ApiModelProperty(value = "店铺名",hidden=true)
     private String supplierName;
 
+    @ApiModelProperty(value = "是否预警",hidden=true)
+    private Boolean warn;
+
+
 }
