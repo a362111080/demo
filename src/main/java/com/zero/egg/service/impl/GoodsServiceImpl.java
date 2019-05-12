@@ -3,8 +3,9 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
+import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.GoodsMapper;
-import com.zero.egg.model.BarCodeInfoDTO;
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Goods;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.service.IGoodsService;
@@ -33,6 +34,9 @@ import java.util.List;
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements IGoodsService {
 
     @Autowired
+    private BarCodeMapper barCodeMapper;
+
+    @Autowired
     private JedisUtil.Strings jedisStrings;
 
     @Autowired
@@ -46,22 +50,24 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     @Transactional
-    public Message querySingleGoodByBarCodeInfo(BarCodeInfoDTO infoDTO, String employeeId
+    public Message querySingleGoodByBarCodeInfo(String barCodeId, String employeeId
             , String employeeName, String taskId, String customerId) {
         Message message = new Message();
         List<GoodsResponse> goodsResponseList;
         try {
+            BarCode barCode = barCodeMapper.selectById(barCodeId);
             QueryWrapper<Goods> queryWrapper = new QueryWrapper<Goods>()
-                    .eq("g.company_id", infoDTO.getCompanyId())
-                    .eq("g.shop_id", infoDTO.getShopId())
-                    .eq("g.goods_no", infoDTO.getCurrentCode())
-                    .eq("g.supplier_id", infoDTO.getSupplierId())
-                    .eq("g.goods_category_id", infoDTO.getCategoryId())
+                    .eq("g.company_id", barCode.getCompanyId())
+                    .eq("g.shop_id", barCode.getShopId())
+                    .eq("g.goods_no", barCode.getCurrentCode())
+                    .eq("g.supplier_id", barCode.getSupplierId())
+                    .eq("g.goods_category_id", barCode.getCategoryId())
                     .eq("g.dr", 0);
             GoodsResponse goods = baseMapper.queryGoodWhileShiping(queryWrapper);
             if (null == goods) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_GOOD);
+                return message;
             }
             goods.setEmployeeId(employeeId);
             goods.setEmployeeName(employeeName);
@@ -75,22 +81,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
              */
             //第一次扫码出货时,redis没有相关任务键
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + infoDTO.getCompanyId() + infoDTO.getShopId() + customerId + taskId)
+                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)
                     || null != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + infoDTO.getCompanyId() + infoDTO.getShopId() + customerId + taskId)) {
+                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)) {
                 goodsResponseList = new ArrayList<>();
                 goodsResponseList.add(goods);
                 String goodsJson = JsonUtils.objectToJson(goodsResponseList);
                 jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + infoDTO.getCompanyId() + infoDTO.getShopId() + customerId + taskId, goodsJson);
+                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId, goodsJson);
             } else {
                 String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + infoDTO.getCompanyId() + infoDTO.getShopId() + customerId + taskId);
+                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId);
                 goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
                 goodsResponseList.add(goods);
                 String newGoodsJson = JsonUtils.objectToJson(goodsResponseList);
                 jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + infoDTO.getCompanyId() + infoDTO.getShopId() + customerId + taskId, newGoodsJson);
+                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId, newGoodsJson);
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
