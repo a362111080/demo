@@ -12,5 +12,5 @@ public interface BarCodeService {
 
     Message GetBarCodeList(BarCodeListRequestDTO listRequestDTO);
 
-    Message PrintBarCode(String barCodeId, int pageNum);
+    Message PrintBarCode(String barCodeId, int pageNum, String loginUserId);
 }

@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,12 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .select("name")
                     .eq("id", barCode.getCategoryId()))
                     .getName();
+            String supplierName = supplierMapper.selectOne(new QueryWrapper<Supplier>()
+                    .select("name")
+                    .eq("id", barCode.getSupplierId()))
+                    .getName();
+            barCode.setCategoryName(categoryName);
+            barCode.setSupplierName(supplierName);
             mapper.insert(barCode);
             /**
              * 二维码信息包含二维码id
@@ -163,8 +170,10 @@ public class BarCodeServiceImpl implements BarCodeService {
 
     @Override
     @Transactional
-    public Message PrintBarCode(String barCodeId, int printNum) {
-        BarCode barCode = new BarCode();
+    public Message PrintBarCode(String barCodeId, int printNum, String loginUserId) {
+        //母二维码信息
+        BarCode barCode;
+        //子二维码信息
         BarCode newBarCode = new BarCode();
         Message message = new Message();
         PrintBarCodeResponseDTO barCodeResponseDTO = new PrintBarCodeResponseDTO();
@@ -190,16 +199,23 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("id", barCode.getShopId()))
                     .getName();
             for (int i = 0; i < printNum; i++) {
-                newBarCode.setId(null);
+                newBarCode = new BarCode();
                 //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
                 int count = mapper.selectCount(new QueryWrapper<BarCode>()
                         .eq("shop_id", barCode.getShopId())
                         .eq("company_id", barCode.getCompanyId())
                         .eq("supplier_id", barCode.getSupplierId())
                         .eq("category_id", barCode.getCategoryId()));
+                TransferUtil.copyProperties(newBarCode, barCode);
+//                newBarCode.setCurrentCode(currentCode);
+//                newBarCode.setCategoryName(categoryName);
                 currentCode = barCode.getCode() + g1.format(count);
-                newBarCode.setCurrentCode(currentCode);
-                newBarCode.setCategoryName(categoryName);
+                newBarCode.setId(null);
+                //覆盖母二维码的创建人,创建时间
+                newBarCode.setCreatetime(new Date());
+                newBarCode.setModifytime(new Date());
+                newBarCode.setCreator(loginUserId);
+                newBarCode.setModifier(loginUserId);
                 mapper.insert(newBarCode);
                 String text = newBarCode.getId();
                 String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName);

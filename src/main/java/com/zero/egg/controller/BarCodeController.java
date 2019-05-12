@@ -153,7 +153,7 @@ public class BarCodeController {
 //                barCodeRequestDTO.setModifier(user.getName());
 //                barCodeRequestDTO.setCreatetime(new Date());
 //                barCodeRequestDTO.setModifytime(new Date());
-                message = bcService.PrintBarCode(barCodeId, printBarCodeRequestDTO.getPrintNum());
+                message = bcService.PrintBarCode(barCodeId, printBarCodeRequestDTO.getPrintNum(), user.getId());
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
             } else {
