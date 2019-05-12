@@ -28,7 +28,7 @@ public class BarCodeInfoDTO implements Serializable {
     /**
      * 供应商识别码
      */
-//    private String code;
+    private String code;
 
     /**
      * 类别id
