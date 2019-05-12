@@ -20,6 +20,7 @@ import com.zero.egg.model.TaskProgram;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
 import com.zero.egg.service.IStockService;
@@ -430,18 +431,25 @@ public class TaskController {
                                     Igoods.setWeight(IUnloadList.get(m).getWeight());
                                     Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
                                     taskService.InsertGoods(Igoods);
+
+                                }
+
+                                //写入库存表
+                                List<UnloadReport>  UnloadReport=taskService.GetUnloadReport(model.getId());
+                                for ( int u =0;u<UnloadReport.size();u++)
+                                {
                                     //写入库存表
-                                    if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId()) > 0) {
+                                    if (taskService.IsExtis(UnloadReport.get(u).getSpecificationId()) > 0) {
                                         //库存已存在该批次，原基础数量+1
-                                        taskService.updateStock(IUnloadList.get(m).getSpecificationId());
+                                        taskService.updateStock(UnloadReport.get(u));
                                     } else {
                                         //库存不存在规格，新增库存规格   数量为1
                                         Stock Istock = new Stock();
                                         Istock.setId(UuidUtil.get32UUID());
-                                        Istock.setShopId(IUnloadList.get(m).getShopId());
-                                        Istock.setCompanyId(IUnloadList.get(m).getCompanyId());
-                                        Istock.setSpecificationId(IUnloadList.get(m).getSpecificationId());
-                                        Istock.setQuantity(BigDecimal.ONE);
+                                        Istock.setShopId(UnloadReport.get(u).getShopId());
+                                        Istock.setCompanyId(UnloadReport.get(u).getCompanyId());
+                                        Istock.setSpecificationId(UnloadReport.get(u).getSpecificationId());
+                                        Istock.setQuantity(UnloadReport.get(u).getSumval());
                                         Istock.setRemark("卸货新增");
                                         Istock.setCreator(user.getId());
                                         Istock.setModifier(user.getId());
@@ -450,8 +458,8 @@ public class TaskController {
                                         Istock.setDr(true);
                                         taskService.insertStock(Istock);
                                     }
-
                                 }
+
                                 String Billid = UuidUtil.get32UUID();
                                 for (int n = 0; n < model.getUnloadDetails().size(); n++) {
                                     //写入账单明细

@@ -68,8 +68,17 @@
     <select id="IsExtisUnloadTaskProgram"  resultType="int">
         select COUNT(1) as sumVal from bd_task_program  k
         where k.program_id= #{newProgram,jdbcType=VARCHAR}
-        and k.task_id= #{id,jdbcType=VARCHAR}
+        and k.task_id= #{taskid,jdbcType=VARCHAR}
     </select>
+
+    <select id="GetUnloadReport"  resultType="com.zero.egg.responseDTO.UnloadReport">
+        select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval
+        from bd_unload_goods  k where k.task_id='88e1dbecd4b842b8abf8e9ceeb4d1e87'
+        where k.task_id=#{id,jdbcType=VARCHAR}
+        group by k.shop_id,k.company_id,k.specification_id
+    </select>
+
+
 
 
     <insert id="insertStock" parameterType="Stock">
@@ -77,7 +86,7 @@
     values(#{id},#{shopId},#{companyId},#{specificationId},#{quantity},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
     <update id="updateStock" parameterType="java.lang.String">
-            update bd_stock set quantity=quantity+1
+            update bd_stock set quantity=quantity+ #{sumval}
             where specification_id = #{specificationId,jdbcType=VARCHAR}  and dr=0
     </update>
     <insert id="insertBillDetails" parameterType="BillDetails">

@@ -3,6 +3,7 @@ package com.zero.egg.dao;
 import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.responseDTO.UnloadReport;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 
     int IsExtis(String specificationId);
 
-    boolean updateStock(String specificationId);
+    boolean updateStock(UnloadReport specificationId);
 
     boolean insertStock(Stock istock);
 
@@ -41,4 +42,7 @@ public interface TaskMapper extends BaseMapper<Task> {
     int IsExtisUnloadTaskProgram(Task newProgrem);
 
     boolean UnloadProStop(String taskid);
+
+    List<UnloadReport> GetUnloadReport(String taskid);
+
 }
