@@ -28,5 +28,5 @@ public class ShipmentGoodBarCodeRequestDTO implements Serializable {
     private String taskId;
 
     @ApiModelProperty(value = "客户主键")
-    private String CustomerId;
+    private String customerId;
 }

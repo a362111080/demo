@@ -8,7 +8,6 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
-import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
@@ -18,7 +17,6 @@ import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -99,8 +97,8 @@ public class ShipmentGoodsController {
         if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                 + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId()
                 + shipmentGoodRequestDTO.getTaskId() + "status")
-                || TaskEnums.Status.Execute.index().toString() != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId())) {
+                || !TaskEnums.Status.Execute.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId() + "status"))) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.TASK_NOT_FOUND);
@@ -109,20 +107,16 @@ public class ShipmentGoodsController {
         try {
 
             /**
-             * 从入参中获取二维码信息并解密
-             * 转换成二维码对象后获取商品编码
+             * 从入参中获取二维码信息(二维码主键id)
              */
             String taskId = shipmentGoodRequestDTO.getTaskId();
             String customerId = shipmentGoodRequestDTO.getCustomerId();
-            String infoDTOStr = AESUtil.decrypt(shipmentGoodRequestDTO.getBarCodeString(), AESUtil.KEY);
-            BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
-            infoDTO.setCompanyId(loginUser.getCompanyId());
-            infoDTO.setShopId(loginUser.getShopId());
-            message = goodService.querySingleGoodByBarCodeInfo(infoDTO, loginUser.getId(), loginUser.getName(), taskId, customerId);
+            String barCodeId = shipmentGoodRequestDTO.getBarCodeString();
+            message = goodService.querySingleGoodByBarCodeInfo(barCodeId, loginUser.getId(), loginUser.getName(), taskId, customerId);
         } catch (Exception e) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(e.getMessage());
+            message.setMessage(e.toString());
         }
         return message;
 
@@ -130,6 +124,7 @@ public class ShipmentGoodsController {
 
     @LoginToken
     @ApiOperation(value = "查询当前出货任务的商品(出货列表用)")
+    @PostMapping(value = "/shipmentgoodslist")
     public Message shipmentTastList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键")
                                             ShipmentGoodsRequest shipmentGoodsRequest, HttpServletRequest request) {
         Message message = new Message();

@@ -260,6 +260,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
             String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
             List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
+            if (null == goodsResponseList || goodsResponseList.size() == 0) {
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                return message;
+            }
             ShipmentGoods shipmentGoods = null;
             Goods goods = null;
             Stock stock = null;

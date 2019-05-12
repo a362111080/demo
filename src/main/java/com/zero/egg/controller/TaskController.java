@@ -266,7 +266,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能取消任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
@@ -549,13 +549,13 @@ public class TaskController {
              * 如果redis里面所存对应的任务状态为已完成或已取消或者已暂停,返回对应消息
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status")
                     || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED_OR_UNEXECUTED);
                 return message;
@@ -592,7 +592,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能完成任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
@@ -658,7 +658,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能完成任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
