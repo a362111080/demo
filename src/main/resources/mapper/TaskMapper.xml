@@ -28,7 +28,7 @@
             <if test="equipmentNo != null and equipmentNo !=''">
                 and a.equipment_no=#{equipmentNo,jdbcType=VARCHAR}
             </if>
-                 and a.dr=0
+                 and a.dr=0   order  by  a.createtime
         </where>
     </select>
     <update id="UpdateUnloadDetl" parameterType="java.lang.String">
