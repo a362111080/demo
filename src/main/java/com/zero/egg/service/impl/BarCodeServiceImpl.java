@@ -99,7 +99,7 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("id", barCode.getShopId()))
                     .getName();
             //生成二维码,返回二维码地址
-            String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix", shopName, categoryName);
+            String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix", shopName, categoryName, null);
             barCode.setMatrixAddr(matrixAddr);
             //将二维码地址更新到数据库
             int effectNum = mapper.updateById(barCode);
@@ -216,9 +216,10 @@ public class BarCodeServiceImpl implements BarCodeService {
                 newBarCode.setModifytime(new Date());
                 newBarCode.setCreator(loginUserId);
                 newBarCode.setModifier(loginUserId);
+                newBarCode.setCurrentCode(currentCode);
                 mapper.insert(newBarCode);
                 String text = newBarCode.getId();
-                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName);
+                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName, currentCode);
                 newBarCode.setMatrixAddr(matrixAddr);
                 mapper.updateById(newBarCode);
                 barCodeDTO = new SinglePrintBarCodeDTO();
