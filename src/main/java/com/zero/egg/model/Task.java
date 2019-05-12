@@ -57,6 +57,11 @@ public class Task implements Serializable {
     @TableField(exist = false)
     private String programName;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "品种id",required=false)
+    private String categoryId;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "品种名称",required=false)
     private String categoryname;

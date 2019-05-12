@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.TaskMapper">
     <select id="QueryTaskList"  resultType="com.zero.egg.model.Task">
-        SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as cussupId FROM  bd_task  a
+        SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as cussupId,
+        c.category_id as categoryId
+        FROM  bd_task  a
         left join bd_task_program b on a.id=b.task_id   and b.active=1
         left join bd_specification_program c on b.program_id=c.id
         left join bd_supplier d on d.id=a.cussup_id
