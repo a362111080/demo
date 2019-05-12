@@ -432,7 +432,6 @@ public class TaskController {
                                     Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
                                     taskService.InsertGoods(Igoods);
                                 }
-
                                 //写入库存表
                                 List<UnloadReport>  UnloadReport=taskService.GetUnloadReport(model.getId());
                                 for ( int u =0;u<UnloadReport.size();u++)

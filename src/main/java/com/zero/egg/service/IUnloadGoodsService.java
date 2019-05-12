@@ -1,5 +1,6 @@
 package com.zero.egg.service;
 
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -36,4 +37,7 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
 
 
     UnLoadGoodsQueryResponseDto GetTaskProgram(String taskId);
+
+    BarCode GetBarCodeInfo(String qrCode);
+
 }

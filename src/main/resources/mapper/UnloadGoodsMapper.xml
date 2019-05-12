@@ -55,4 +55,8 @@
         </if>
     </select>
 
+    <select id="GetBarCodeInfo"  resultType="com.zero.egg.model.BarCode">
+       select * from bd_barcode  k where k.id=#{qrCode,jdbcType=VARCHAR}
+    </select>
+
 </mapper>
