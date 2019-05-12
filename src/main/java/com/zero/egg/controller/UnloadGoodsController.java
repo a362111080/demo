@@ -93,6 +93,7 @@ public class UnloadGoodsController {
 				model.setCompanyId(bar.getCompanyId());
 				model.setSupplierId(bar.getSupplierId());
 				model.setGoodsCategoryId(bar.getCategoryId());
+				model.setGoodsNo(bar.getCurrentCode());
 				//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 				String info = unloadGoodsService.GetTaskStatusBySupplier(bar.getSupplierId());
 
