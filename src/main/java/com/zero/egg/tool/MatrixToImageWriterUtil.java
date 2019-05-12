@@ -13,8 +13,10 @@ import com.zero.egg.config.FileUploadProperteis;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
@@ -36,7 +38,10 @@ public class MatrixToImageWriterUtil {
     private static final int HEIGHT = 300;
     // 二维码的图片格式
     private static final String FORMAT = "png";
-
+    //字体大小
+    private static final int FONTSIZE = 16;
+    //字体类型
+    private static final int FONTSTYLE = 5;
     private static String basePath = FileUploadProperteis.getUploadImgBasePath();
 
     private MatrixToImageWriterUtil() {
@@ -54,7 +59,7 @@ public class MatrixToImageWriterUtil {
         return image;
     }
 
-    public static String writeToFile(String targetAddr, String text, String name) throws Exception {
+    public static String writeToFile(String targetAddr, String text, String name, String shopName, String categoryName) throws Exception {
         makeDirPath(targetAddr);
         /**
          * 对二维码数据进行加密
@@ -71,6 +76,9 @@ public class MatrixToImageWriterUtil {
         if (!ImageIO.write(image, FORMAT, outputFile)) {
             throw new IOException("Could not write an image of format " + FORMAT + " to " + outputFile);
         }
+        pressTextShop("店铺名:" + shopName, outputFile);
+        pressTextCategoty("品种:" + categoryName, outputFile);
+        pressTextGoodNo("商品编码:" + shopName, outputFile);
         return relativeAddr;
     }
 
@@ -117,6 +125,96 @@ public class MatrixToImageWriterUtil {
         String resultStr = result.getText();
 //        return AESUtil.decrypt(resultStr, AESUtil.KEY);
         return resultStr;
+    }
+
+    /**
+     * 给二维码上方图片加上文字(商品编码)
+     *
+     * @param pressText 文字
+     * @param qrFile    二维码文件
+     */
+    public static void pressTextGoodNo(String pressText, File qrFile) throws Exception {
+        pressText = new String(pressText.getBytes(), "utf-8");
+        Image src = ImageIO.read(qrFile);
+        int imageW = src.getWidth(null);
+        int imageH = src.getHeight(null);
+        BufferedImage image = new BufferedImage(imageW, imageH, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.createGraphics();
+        g.drawImage(src, 0, 0, imageW, imageH, null);
+        //设置画笔的颜色
+        g.setColor(Color.BLACK);
+        //设置字体
+        Font font = new Font("宋体", FONTSTYLE, FONTSIZE);
+        FontMetrics metrics = g.getFontMetrics(font);
+        //文字在图片中的坐标
+        int startX = (imageW - metrics.stringWidth(pressText)) / 2;
+        int startY = metrics.getHeight() + 16;
+        g.setFont(font);
+        g.drawString(pressText, startX, startY);
+        g.dispose();
+        FileOutputStream out = new FileOutputStream(qrFile);
+        ImageIO.write(image, "png", out);
+        out.close();
+    }
+
+    /**
+     * 给二维码上方图片加上文字(品种)
+     *
+     * @param pressText 文字
+     * @param qrFile    二维码文件
+     */
+    public static void pressTextCategoty(String pressText, File qrFile) throws Exception {
+        pressText = new String(pressText.getBytes(), "utf-8");
+        Image src = ImageIO.read(qrFile);
+        int imageW = src.getWidth(null);
+        int imageH = src.getHeight(null);
+        BufferedImage image = new BufferedImage(imageW, imageH, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.createGraphics();
+        g.drawImage(src, 0, 0, imageW, imageH, null);
+        //设置画笔的颜色
+        g.setColor(Color.BLACK);
+        //设置字体
+        Font font = new Font("宋体", FONTSTYLE, FONTSIZE);
+        FontMetrics metrics = g.getFontMetrics(font);
+        //文字在图片中的坐标
+        int startX = (imageW - metrics.stringWidth(pressText)) / 2;
+        int startY = imageH - metrics.getHeight();
+        g.setFont(font);
+        g.drawString(pressText, startX, startY);
+        g.dispose();
+        FileOutputStream out = new FileOutputStream(qrFile);
+        ImageIO.write(image, "png", out);
+        out.close();
+    }
+
+    /**
+     * 给二维码下方图片加上文字(店铺名)
+     *
+     * @param pressText 文字
+     * @param qrFile    二维码文件
+     */
+    public static void pressTextShop(String pressText, File qrFile) throws Exception {
+        pressText = new String(pressText.getBytes(), "utf-8");
+        Image src = ImageIO.read(qrFile);
+        int imageW = src.getWidth(null);
+        int imageH = src.getHeight(null);
+        BufferedImage image = new BufferedImage(imageW, imageH, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.createGraphics();
+        g.drawImage(src, 0, 0, imageW, imageH, null);
+        //设置画笔的颜色
+        g.setColor(Color.BLACK);
+        //设置字体
+        Font font = new Font("宋体", FONTSTYLE, FONTSIZE);
+        FontMetrics metrics = g.getFontMetrics(font);
+        //文字在图片中的坐标
+        int startX = (imageW - metrics.stringWidth(pressText)) / 2;
+        int startY = metrics.getHeight();
+        g.setFont(font);
+        g.drawString(pressText, startX, startY);
+        g.dispose();
+        FileOutputStream out = new FileOutputStream(qrFile);
+        ImageIO.write(image, "png", out);
+        out.close();
     }
 
     /**
