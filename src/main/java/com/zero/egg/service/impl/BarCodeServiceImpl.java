@@ -72,12 +72,16 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("supplier_id", barCode.getSupplierId())
                     .eq("category_id", barCode.getCategoryId())
                     .eq("dr", 0));
-            if (count > 1) {
+            if (count > 0) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
                 return message;
             }
 //            BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
+            String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>()
+                    .select("name")
+                    .eq("id", barCode.getCategoryId()))
+                    .getName();
             mapper.insert(barCode);
             /**
              * 二维码信息包含二维码id
@@ -88,7 +92,7 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("id", barCode.getShopId()))
                     .getName();
             //生成二维码,返回二维码地址
-            String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix", shopName, barCode.getCategoryName());
+            String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, "BaseMatrix", shopName, categoryName);
             barCode.setMatrixAddr(matrixAddr);
             //将二维码地址更新到数据库
             int effectNum = mapper.updateById(barCode);
@@ -177,6 +181,14 @@ public class BarCodeServiceImpl implements BarCodeService {
             /**8位编码前面补0格式*/
             DecimalFormat g1 = new DecimalFormat("00000000");
             String currentCode = null;
+            String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>()
+                    .select("name")
+                    .eq("id", barCode.getCategoryId()))
+                    .getName();
+            String shopName = shopMapper.selectOne(new QueryWrapper<Shop>()
+                    .select("name")
+                    .eq("id", barCode.getShopId()))
+                    .getName();
             for (int i = 0; i < printNum; i++) {
                 newBarCode.setId(null);
                 //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
@@ -187,14 +199,10 @@ public class BarCodeServiceImpl implements BarCodeService {
                         .eq("category_id", barCode.getCategoryId()));
                 currentCode = barCode.getCode() + g1.format(count);
                 newBarCode.setCurrentCode(currentCode);
-                newBarCode.setCategoryName(barCode.getCategoryName());
+                newBarCode.setCategoryName(categoryName);
                 mapper.insert(newBarCode);
                 String text = newBarCode.getId();
-                String shopName = shopMapper.selectOne(new QueryWrapper<Shop>()
-                        .select("name")
-                        .eq("id", barCode.getShopId()))
-                        .getName();
-                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, barCode.getCategoryName());
+                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName);
                 newBarCode.setMatrixAddr(matrixAddr);
                 mapper.updateById(newBarCode);
                 barCodeDTO = new SinglePrintBarCodeDTO();
