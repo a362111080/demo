@@ -181,17 +181,20 @@ public class ShipmentGoodsController {
     @ApiOperation(value = "查询出货商品(出货完成用)")
     @RequestMapping(value = "/shipment-list.data", method = RequestMethod.POST)
     public Message<IPage<ShipmentGoodsResponse>> shipmentlist(
-            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键,任务主键,创建人，创建时间,商品编号") ShipmentGoodsRequest shipmentGoods) {
+            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：,任务主键,创建人，创建时间,商品编号")
+                    ShipmentGoodsRequest shipmentGoods, HttpServletRequest request) {
         //ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
         Message<IPage<ShipmentGoodsResponse>> message = new Message<IPage<ShipmentGoodsResponse>>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Page<ShipmentGoods> page = new Page<>();
         page.setCurrent(shipmentGoods.getCurrent());
         page.setSize(shipmentGoods.getSize());
         QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("s.dr", false);//查询未删除信息
         if (shipmentGoods != null) {
-            queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+            queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getCreator()), "s.creator", shipmentGoods.getCreator())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getGoodsNo()), "s.goods_no", shipmentGoods.getGoodsNo())
@@ -212,16 +215,18 @@ public class ShipmentGoodsController {
     @ApiOperation(value = "统计出货商品")
     @PostMapping(value = "/shipment-statistics.data")
     public Message<List<Map<String, Object>>> statistics(
-            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键,任务主键）") ShipmentGoods shipmentGoods
-    ) {
+            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：任务主键）")
+                    ShipmentGoods shipmentGoods, HttpServletRequest request) {
         //BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
         List<Map<String, Object>> resultList = new ArrayList<>();
         QueryWrapper<ShipmentGoods> programqueryWrapper = new QueryWrapper<>();
         programqueryWrapper.eq("s.dr", false);//查询未删除信息
         if (shipmentGoods != null) {
-            programqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+            programqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                     .groupBy("sp.program_id");
         }
@@ -237,8 +242,8 @@ public class ShipmentGoodsController {
                 QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
                 categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
                 if (shipmentGoods != null) {
-                    categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                            .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+                    categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                            .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                             .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                             .eq("sp.program_id", shipmentGoodsResponse.getProgramId()).groupBy(true, "p.category_id");
                 }
@@ -252,8 +257,8 @@ public class ShipmentGoodsController {
                     QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
                     queryWrapper.eq("s.dr", false);//查询未删除信息
                     if (shipmentGoods != null) {
-                        queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                                .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+                        queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                                .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                                 .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                                 .eq(StringUtils.isNotBlank(shipmentGoodsResponse.getProgramId()), "sp.program_id", shipmentGoodsResponse.getProgramId())
                                 .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
@@ -288,17 +293,17 @@ public class ShipmentGoodsController {
     //@PassToken
     @ApiOperation(value = "每日出货品种数目统计")
     @PostMapping(value = "/today-statistics")
-    public Message<List<Map<String, Object>>> todayStatistics(@RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键）") ShipmentGoods shipmentGoods) {
+    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request) {
         //BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
         //店铺今天出货品种
         QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
         categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
-        if (shipmentGoods != null) {
-            categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
-                    .groupBy(true, "p.category_id");
-        }
+        categoryqueryWrapper.eq("s.company_id", loginUser.getCompanyId())
+                .eq("s.shop_id", loginUser.getShopId())
+                .groupBy(true, "p.category_id");
         List<ShipmentGoodsResponse> listCategory = shipmentGoodsService.todaycountcategory(categoryqueryWrapper);
         List<Map<String, Object>> categoryList = new ArrayList<>();
         for (ShipmentGoodsResponse shipmentGoodsResponse2 : listCategory) {
@@ -309,12 +314,10 @@ public class ShipmentGoodsController {
             map.put("categoryName", shipmentGoodsResponse2.getCategoryName());
             QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("s.dr", false);//查询未删除信息
-            if (shipmentGoods != null) {
-                queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                        .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
-                        .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
-                        .groupBy("s.specification_id", "s.marker");
-            }
+            queryWrapper.eq(StringUtils.isNotBlank(loginUser.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(loginUser.getShopId()), "s.shop_id", loginUser.getShopId())
+                    .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
+                    .groupBy("s.specification_id", "s.marker");
             List<ShipmentGoodsResponse> shipList = shipmentGoodsService.todaycountspecification(queryWrapper);
             for (ShipmentGoodsResponse shipmentGoodsResponse3 : shipList) {
                 count += shipmentGoodsResponse3.getCount();
