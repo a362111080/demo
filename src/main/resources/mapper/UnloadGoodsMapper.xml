@@ -53,6 +53,8 @@
         <if test="warn != null and warn !=''">
             and a.warn=#{warn,jdbcType=BOOLEAN}
         </if>
+        order by a.goods_category_id
+
     </select>
 
     <select id="GetBarCodeInfo"  resultType="com.zero.egg.model.BarCode">
