@@ -431,7 +431,6 @@ public class TaskController {
                                     Igoods.setWeight(IUnloadList.get(m).getWeight());
                                     Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
                                     taskService.InsertGoods(Igoods);
-
                                 }
 
                                 //写入库存表
