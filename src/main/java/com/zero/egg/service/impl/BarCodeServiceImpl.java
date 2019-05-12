@@ -213,7 +213,7 @@ public class BarCodeServiceImpl implements BarCodeService {
         infoDTO.setCompanyId(barCode.getCompanyId());
         infoDTO.setSupplierId(barCode.getSupplierId());
         infoDTO.setSupplierName(supplier.getName());
-        infoDTO.setCode(barCode.getCode());
+//        infoDTO.setCode(barCode.getCode());
         infoDTO.setShopId(barCode.getShopId());
         infoDTO.setShopName(shop.getName());
         return infoDTO;

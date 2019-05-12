@@ -59,12 +59,12 @@ public class MatrixToImageWriterUtil {
         /**
          * 对二维码数据进行加密
          */
-        String aesText = AESUtil.encrypt(text, AESUtil.KEY);
+//        String aesText = AESUtil.encrypt(text, AESUtil.KEY);
         String relativeAddr = targetAddr + name + "." + FORMAT;
         log.debug("current relativeAddr is:" + relativeAddr);
         Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");    // 内容所使用字符集编码
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(aesText, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, hints);
+        BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, hints);
         log.debug(basePath + relativeAddr);
         File outputFile = new File(basePath + relativeAddr);
         BufferedImage image = toBufferedImage(bitMatrix);
@@ -115,7 +115,8 @@ public class MatrixToImageWriterUtil {
         hints.put(DecodeHintType.CHARACTER_SET, "utf-8");
         result = new MultiFormatReader().decode(bitmap, hints);
         String resultStr = result.getText();
-        return AESUtil.decrypt(resultStr, AESUtil.KEY);
+//        return AESUtil.decrypt(resultStr, AESUtil.KEY);
+        return resultStr;
     }
 
     /**
