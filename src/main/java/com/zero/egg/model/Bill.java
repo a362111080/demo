@@ -62,6 +62,9 @@ public class Bill implements Serializable {
     @ApiModelProperty(value = "金额",required=false)
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "实收金额",required=false)
+    private BigDecimal realAmount;
+
     @ApiModelProperty(value = "状态",hidden=true)
     private String status;
 

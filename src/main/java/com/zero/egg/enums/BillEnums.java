@@ -5,7 +5,7 @@ public class BillEnums {
 	
 	public enum Status {
 
-		Normal(1,"挂账"),Disable(-1,"销账");
+		Normal(1,"未结清"),Disable(-1,"已结清");
 
 	    private Integer index;
 	    private String note;

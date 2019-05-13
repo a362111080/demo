@@ -28,4 +28,10 @@ public class BillDetailsServiceImpl extends ServiceImpl<BillDetailsMapper, BillD
     public List<BillDetails> getbilldetsils(Bill bill) {
         return  mapper.getbilldetsils(bill);
     }
+
+    @Override
+    public Boolean updateDetails(BillDetails iDetails) {
+
+        return  mapper.updateDetails(iDetails);
+    }
 }
