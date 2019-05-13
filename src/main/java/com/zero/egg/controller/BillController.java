@@ -111,11 +111,10 @@ public class BillController {
 	@RequestMapping(value="/billstateupdate",method=RequestMethod.POST)
 	public Message<Object> batchUpdateStatus( @RequestBody Bill model) {
 		Message<Object> message = new Message<Object>();
-		List<String> idsList = StringTool.splitToList(model.getIds(), ",");
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		if (idsList !=null) {
+		if (model.getIds() !=null) {
 			List<Bill> billList = new ArrayList<>();
-			for (String id : idsList) {
+			for (String id : model.getIds()) {
 				Bill bill = new Bill();
 				bill.setId(id);
 				bill.setStatus(model.getStatus());

@@ -102,6 +102,6 @@ public class Bill implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "勾选的账单id",hidden=true)
-    public String ids;
+    private List<String> ids;
 
 }
