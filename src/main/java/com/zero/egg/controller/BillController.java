@@ -111,11 +111,10 @@ public class BillController {
 	@RequestMapping(value="/billstateupdate",method=RequestMethod.POST)
 	public Message<Object> batchUpdateStatus( @RequestBody Bill model) {
 		Message<Object> message = new Message<Object>();
-		List<String> idsList = StringTool.splitToList(model.getIds(), ",");
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		if (idsList !=null) {
+		if (model.getIds() !=null) {
 			List<Bill> billList = new ArrayList<>();
-			for (String id : idsList) {
+			for (String id : model.getIds()) {
 				Bill bill = new Bill();
 				bill.setId(id);
 				bill.setStatus(model.getStatus());
@@ -177,20 +176,19 @@ public class BillController {
 		model.setShopId(user.getShopId());
 		model.setCompanyId(user.getCompanyId());
 		PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
-		if (null!= model.getEndtime())
+		if (null!= model.getEndtime() && model.getEndtime() !="" )
         {
             model.setEndtime(model.getEndtime()+" 23:59:59");
         }
 		List<Bill> BillList=billService.getBilllist(model);
 		PageInfo<Bill> pageInfo = new PageInfo<>(BillList);
 		ms.setData(pageInfo);
-
         BillReport  report=new BillReport();
         for (int i=0;i<BillList.size();i++)
         {
-            if (BillList.get(i).getStatus()!="1")
+            if (BillList.get(i).getStatus().equals("-1"))
             {
-            	//1挂账  -1 销账
+            	//1未结清  -1 已结清
                 report.setCompleteCount(report.getCompleteCount().add(BigDecimal.ONE));
             }
             else

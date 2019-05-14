@@ -13,4 +13,17 @@ public class UnLoadCountResponseDto {
     //净重去皮数值，没有则为0
     @ApiModelProperty(value = "净重去皮数值，没有则为0")
     private int Count;
+
+
+
+    @ApiModelProperty(value = "鸡蛋品种",hidden=true)
+    private String categoryName;
+
+    @ApiModelProperty(value = "店铺名",hidden=true)
+    private String supplierName;
+
+    @ApiModelProperty(value = "是否预警",hidden=true)
+    private Boolean warn;
+
+
 }

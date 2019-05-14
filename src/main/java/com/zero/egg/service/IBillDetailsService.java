@@ -18,4 +18,5 @@ public interface IBillDetailsService extends IService<BillDetails> {
 
     List<BillDetails> getbilldetsils(Bill bill);
 
+    Boolean updateDetails(BillDetails iDetails);
 }

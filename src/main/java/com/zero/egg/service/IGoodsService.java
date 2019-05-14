@@ -2,7 +2,6 @@ package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.model.Goods;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.tool.Message;
@@ -25,9 +24,8 @@ public interface IGoodsService extends IService<Goods> {
     /**
      * 根据二维码信息查询商品信息(出货用)
      *
-     * @param infoDTO
      * @return
      * @throws ServiceException
      */
-    Message querySingleGoodByBarCodeInfo(BarCodeInfoDTO infoDTO, String employeeId, String employeeName, String taskId, String customerId) throws ServiceException;
+    Message querySingleGoodByBarCodeInfo(String barCodeId, String employeeId, String employeeName, String taskId, String customerId) throws ServiceException;
 }

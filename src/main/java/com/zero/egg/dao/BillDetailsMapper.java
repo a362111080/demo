@@ -17,4 +17,7 @@ import java.util.List;
 public interface BillDetailsMapper extends BaseMapper<BillDetails> {
 
     List<BillDetails> getbilldetsils(Bill bill);
+
+    Boolean updateDetails(BillDetails iDetails);
+
 }

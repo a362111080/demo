@@ -8,7 +8,6 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
-import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
@@ -18,7 +17,6 @@ import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -99,8 +97,8 @@ public class ShipmentGoodsController {
         if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                 + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId()
                 + shipmentGoodRequestDTO.getTaskId() + "status")
-                || TaskEnums.Status.Execute.index().toString() != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId())) {
+                || !TaskEnums.Status.Execute.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId() + "status"))) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.TASK_NOT_FOUND);
@@ -109,20 +107,16 @@ public class ShipmentGoodsController {
         try {
 
             /**
-             * 从入参中获取二维码信息并解密
-             * 转换成二维码对象后获取商品编码
+             * 从入参中获取二维码信息(二维码主键id)
              */
             String taskId = shipmentGoodRequestDTO.getTaskId();
             String customerId = shipmentGoodRequestDTO.getCustomerId();
-            String infoDTOStr = AESUtil.decrypt(shipmentGoodRequestDTO.getBarCodeString(), AESUtil.KEY);
-            BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
-            infoDTO.setCompanyId(loginUser.getCompanyId());
-            infoDTO.setShopId(loginUser.getShopId());
-            message = goodService.querySingleGoodByBarCodeInfo(infoDTO, loginUser.getId(), loginUser.getName(), taskId, customerId);
+            String barCodeId = shipmentGoodRequestDTO.getBarCodeString();
+            message = goodService.querySingleGoodByBarCodeInfo(barCodeId, loginUser.getId(), loginUser.getName(), taskId, customerId);
         } catch (Exception e) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(e.getMessage());
+            message.setMessage(e.toString());
         }
         return message;
 
@@ -130,6 +124,7 @@ public class ShipmentGoodsController {
 
     @LoginToken
     @ApiOperation(value = "查询当前出货任务的商品(出货列表用)")
+    @PostMapping(value = "/shipmentgoodslist")
     public Message shipmentTastList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键")
                                             ShipmentGoodsRequest shipmentGoodsRequest, HttpServletRequest request) {
         Message message = new Message();
@@ -153,7 +148,7 @@ public class ShipmentGoodsController {
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
-                    || null != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    || null == jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -181,17 +176,20 @@ public class ShipmentGoodsController {
     @ApiOperation(value = "查询出货商品(出货完成用)")
     @RequestMapping(value = "/shipment-list.data", method = RequestMethod.POST)
     public Message<IPage<ShipmentGoodsResponse>> shipmentlist(
-            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键,任务主键,创建人，创建时间,商品编号") ShipmentGoodsRequest shipmentGoods) {
+            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：,任务主键,创建人，创建时间,商品编号")
+                    ShipmentGoodsRequest shipmentGoods, HttpServletRequest request) {
         //ListResponse<ShipmentGoodsResponse> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
         Message<IPage<ShipmentGoodsResponse>> message = new Message<IPage<ShipmentGoodsResponse>>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Page<ShipmentGoods> page = new Page<>();
         page.setCurrent(shipmentGoods.getCurrent());
         page.setSize(shipmentGoods.getSize());
         QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("s.dr", false);//查询未删除信息
         if (shipmentGoods != null) {
-            queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+            queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getCreator()), "s.creator", shipmentGoods.getCreator())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getGoodsNo()), "s.goods_no", shipmentGoods.getGoodsNo())
@@ -212,16 +210,18 @@ public class ShipmentGoodsController {
     @ApiOperation(value = "统计出货商品")
     @PostMapping(value = "/shipment-statistics.data")
     public Message<List<Map<String, Object>>> statistics(
-            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键,任务主键）") ShipmentGoods shipmentGoods
-    ) {
+            @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：任务主键）")
+                    ShipmentGoods shipmentGoods, HttpServletRequest request) {
         //BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
         List<Map<String, Object>> resultList = new ArrayList<>();
         QueryWrapper<ShipmentGoods> programqueryWrapper = new QueryWrapper<>();
         programqueryWrapper.eq("s.dr", false);//查询未删除信息
         if (shipmentGoods != null) {
-            programqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+            programqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                     .groupBy("sp.program_id");
         }
@@ -237,8 +237,8 @@ public class ShipmentGoodsController {
                 QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
                 categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
                 if (shipmentGoods != null) {
-                    categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                            .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+                    categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                            .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                             .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                             .eq("sp.program_id", shipmentGoodsResponse.getProgramId()).groupBy(true, "p.category_id");
                 }
@@ -252,8 +252,8 @@ public class ShipmentGoodsController {
                     QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
                     queryWrapper.eq("s.dr", false);//查询未删除信息
                     if (shipmentGoods != null) {
-                        queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                                .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
+                        queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                                .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
                                 .eq(StringUtils.isNotBlank(shipmentGoods.getTaskId()), "s.task_id", shipmentGoods.getTaskId())
                                 .eq(StringUtils.isNotBlank(shipmentGoodsResponse.getProgramId()), "sp.program_id", shipmentGoodsResponse.getProgramId())
                                 .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
@@ -288,17 +288,17 @@ public class ShipmentGoodsController {
     //@PassToken
     @ApiOperation(value = "每日出货品种数目统计")
     @PostMapping(value = "/today-statistics")
-    public Message<List<Map<String, Object>>> todayStatistics(@RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键）") ShipmentGoods shipmentGoods) {
+    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request) {
         //BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
         //店铺今天出货品种
         QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
         categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
-        if (shipmentGoods != null) {
-            categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                    .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
-                    .groupBy(true, "p.category_id");
-        }
+        categoryqueryWrapper.eq("s.company_id", loginUser.getCompanyId())
+                .eq("s.shop_id", loginUser.getShopId())
+                .groupBy(true, "p.category_id");
         List<ShipmentGoodsResponse> listCategory = shipmentGoodsService.todaycountcategory(categoryqueryWrapper);
         List<Map<String, Object>> categoryList = new ArrayList<>();
         for (ShipmentGoodsResponse shipmentGoodsResponse2 : listCategory) {
@@ -309,12 +309,10 @@ public class ShipmentGoodsController {
             map.put("categoryName", shipmentGoodsResponse2.getCategoryName());
             QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("s.dr", false);//查询未删除信息
-            if (shipmentGoods != null) {
-                queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", shipmentGoods.getCompanyId())
-                        .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", shipmentGoods.getShopId())
-                        .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
-                        .groupBy("s.specification_id", "s.marker");
-            }
+            queryWrapper.eq(StringUtils.isNotBlank(loginUser.getCompanyId()), "s.company_id", loginUser.getCompanyId())
+                    .eq(StringUtils.isNotBlank(loginUser.getShopId()), "s.shop_id", loginUser.getShopId())
+                    .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
+                    .groupBy("s.specification_id", "s.marker");
             List<ShipmentGoodsResponse> shipList = shipmentGoodsService.todaycountspecification(queryWrapper);
             for (ShipmentGoodsResponse shipmentGoodsResponse3 : shipList) {
                 count += shipmentGoodsResponse3.getCount();

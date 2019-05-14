@@ -10,21 +10,11 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.enums.UserEnums;
-import com.zero.egg.model.Bill;
-import com.zero.egg.model.BillDetails;
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.ShipmentGoods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
-import com.zero.egg.model.TaskProgram;
-import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
-import com.zero.egg.service.IGoodsService;
-import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.service.IStockService;
-import com.zero.egg.service.ITaskProgramService;
-import com.zero.egg.service.ITaskService;
+import com.zero.egg.responseDTO.UnloadReport;
+import com.zero.egg.service.*;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
@@ -34,11 +24,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -266,7 +252,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能取消任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
@@ -294,12 +280,14 @@ public class TaskController {
             /**
              * 如果redis里面所存对应的任务状态为已完成或已取消,返回对应消息
              */
+            log.info(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"));
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status")
                     || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED);
                 return message;
@@ -399,101 +387,133 @@ public class TaskController {
                     }
                 } else if (model.getStatus().equals(TaskEnums.Status.Finish.index().toString())) {
                     //卸货完成
-                    //1.更改任务状态；
-                    if (taskService.updateById(model)) {
-                        //写入账单明细
+                    BigDecimal sumQuantity = BigDecimal.ZERO;
+                    BigDecimal Amount = BigDecimal.ZERO;
+                    List<UnloadGoods> IUnloadList = taskService.GetUnloadDetl(model.getId());
+                    for (int k = 0; k < model.getUnloadDetails().size(); k++) {
+                        sumQuantity = sumQuantity.add(model.getUnloadDetails().get(k).getQuantity());
+                        Amount = Amount.add(model.getUnloadDetails().get(k).getPrice().multiply(model.getUnloadDetails().get(k).getQuantity()));
+                    }
+                    if (IUnloadList.size() > 0) {
+                        if (IUnloadList.size() == sumQuantity.intValue()) {
+                            //1.更改任务状态；
+                            if (taskService.updateById(model)) {
+                                //写入账单明细
+                                String SupplierId = IUnloadList.get(0).getSupplierId();
+                                for (int m = 0; m < IUnloadList.size(); m++) {
+                                    //写入商品表
+                                    Goods Igoods = new Goods();
+                                    Igoods.setId(UuidUtil.get32UUID());
+                                    Igoods.setShopId(IUnloadList.get(m).getShopId());
+                                    Igoods.setCompanyId(IUnloadList.get(m).getCompanyId());
+                                    Igoods.setSpecificationId(IUnloadList.get(m).getSpecificationId());
+                                    Igoods.setGoodsCategoryId(IUnloadList.get(m).getGoodsCategoryId());
+                                    Igoods.setGoodsNo(IUnloadList.get(m).getGoodsNo());
+                                    Igoods.setMarker(IUnloadList.get(m).getMarker());
+                                    Igoods.setMode(IUnloadList.get(m).getMode());
+                                    Igoods.setCreator(user.getId());
+                                    Igoods.setModifier(user.getId());
+                                    Igoods.setCreatetime(new Date());
+                                    Igoods.setModifytime(new Date());
+                                    Igoods.setWeight(IUnloadList.get(m).getWeight());
+                                    Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
+                                    taskService.InsertGoods(Igoods);
+                                }
+                                //写入库存表
+                                String Billcategoryname="";
+                                List<UnloadReport> UnloadReport = taskService.GetUnloadReport(model.getId());
+                                for (int u = 0; u < UnloadReport.size(); u++) {
 
-                        List<UnloadGoods> IUnloadList = taskService.GetUnloadDetl(model.getId());
-                        String SupplierId = IUnloadList.get(0).getSupplierId();
-                        for (int m = 0; m < IUnloadList.size(); m++) {
-                            //写入商品表
-                            Goods Igoods = new Goods();
-                            Igoods.setId(UuidUtil.get32UUID());
-                            Igoods.setShopId(IUnloadList.get(m).getShopId());
-                            Igoods.setCompanyId(IUnloadList.get(m).getCompanyId());
-                            Igoods.setSpecificationId(IUnloadList.get(m).getSpecificationId());
-                            Igoods.setGoodsCategoryId(IUnloadList.get(m).getGoodsCategoryId());
-                            Igoods.setGoodsNo(IUnloadList.get(m).getGoodsNo());
-                            Igoods.setMarker(IUnloadList.get(m).getMarker());
-                            Igoods.setMode(IUnloadList.get(m).getMode());
-                            Igoods.setCreator(user.getId());
-                            Igoods.setModifier(user.getId());
-                            Igoods.setCreatetime(new Date());
-                            Igoods.setModifytime(new Date());
-                            Igoods.setWeight(IUnloadList.get(m).getWeight());
-                            Igoods.setSupplierId(IUnloadList.get(m).getSupplierId());
-                            taskService.InsertGoods(Igoods);
-                            //写入库存表
-                            if (taskService.IsExtis(IUnloadList.get(m).getSpecificationId()) > 0) {
-                                //库存已存在该批次，原基础数量+1
-                                taskService.updateStock(IUnloadList.get(m).getSpecificationId());
+                                    //拼接账单品种
+                                    String Categoryname=UnloadReport.get(u).getCategoryname();
+                                    if (null !=Categoryname )
+                                    {
+                                        if (!Billcategoryname.contains(Categoryname) && Billcategoryname!="")
+                                        {
+                                            Billcategoryname=Billcategoryname+"/"+Categoryname;
+                                        }
+                                        else
+                                        {
+                                            Billcategoryname=Categoryname;
+                                        }
+                                    }
+
+                                    //写入库存表
+                                    if (taskService.IsExtis(UnloadReport.get(u).getSpecificationId()) > 0) {
+                                        //库存已存在该批次，原基础数量+1
+                                        taskService.updateStock(UnloadReport.get(u));
+                                    } else {
+                                        //库存不存在规格，新增库存规格   数量为1
+                                        Stock Istock = new Stock();
+                                        Istock.setId(UuidUtil.get32UUID());
+                                        Istock.setShopId(UnloadReport.get(u).getShopId());
+                                        Istock.setCompanyId(UnloadReport.get(u).getCompanyId());
+                                        Istock.setSpecificationId(UnloadReport.get(u).getSpecificationId());
+                                        Istock.setQuantity(UnloadReport.get(u).getSumval());
+                                        Istock.setRemark("卸货新增");
+                                        Istock.setCreator(user.getId());
+                                        Istock.setModifier(user.getId());
+                                        Istock.setCreatetime(new Date());
+                                        Istock.setModifytime(new Date());
+                                        Istock.setDr(true);
+                                        taskService.insertStock(Istock);
+                                    }
+                                }
+
+                                String Billid = UuidUtil.get32UUID();
+                                for (int n = 0; n < model.getUnloadDetails().size(); n++) {
+                                    //写入账单明细
+                                    BillDetails IDetails = new BillDetails();
+                                    IDetails.setId(UuidUtil.get32UUID());
+                                    IDetails.setShopId(user.getShopId());
+                                    IDetails.setCompanyId(user.getCompanyId());
+                                    IDetails.setBillId(Billid);
+                                    IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
+                                    IDetails.setProgramId(model.getUnloadDetails().get(n).getProgramId());
+                                    //卸货账单明细无规格信息
+                                    //IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
+                                    IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
+                                    IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
+                                    IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
+                                    IDetails.setCreatetime(new Date());
+                                    IDetails.setCreator(user.getId());
+                                    IDetails.setModifier(user.getId());
+                                    IDetails.setModifytime(new Date());
+                                    IDetails.setDr(true);
+                                    taskService.insertBillDetails(IDetails);
+                                }
+                                //写入账单统计数据
+                                Bill Ibill = new Bill();
+                                Ibill.setId(Billid);
+                                Ibill.setShopId(user.getShopId());
+                                Ibill.setCompanyId(user.getCompanyId());
+                                Ibill.setCussupId(SupplierId);
+                                Ibill.setBillDate(new Date());
+                                Ibill.setType(TaskEnums.Type.Unload.index().toString());
+                                Ibill.setQuantity(sumQuantity);
+                                Ibill.setAmount(Amount);
+                                Ibill.setRealAmount(Amount);
+                                Ibill.setCategoryname(Billcategoryname);
+                                Ibill.setCreatetime(new Date());
+                                Ibill.setCreator(user.getId());
+                                Ibill.setModifier(user.getId());
+                                Ibill.setModifytime(new Date());
+                                Ibill.setDr(true);
+                                taskService.insertBill(Ibill);
+                                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                             } else {
-                                //库存不存在规格，新增库存规格   数量为1
-                                Stock Istock = new Stock();
-                                Istock.setId(UuidUtil.get32UUID());
-                                Istock.setShopId(IUnloadList.get(m).getShopId());
-                                Istock.setCompanyId(IUnloadList.get(m).getCompanyId());
-                                Istock.setSpecificationId(IUnloadList.get(m).getSpecificationId());
-                                Istock.setQuantity(BigDecimal.ONE);
-                                Istock.setRemark("卸货新增");
-                                Istock.setCreator(user.getId());
-                                Istock.setModifier(user.getId());
-                                Istock.setCreatetime(new Date());
-                                Istock.setModifytime(new Date());
-                                Istock.setDr(true);
-                                taskService.insertStock(Istock);
+                                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                                message.setMessage(UtilConstants.ResponseMsg.FAILED);
                             }
-
+                        } else {
+                            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                            message.setMessage("卸货数量不一致，请重新操作！");
                         }
-                        String Billid = UuidUtil.get32UUID();
-                        BigDecimal sumQuantity = BigDecimal.ZERO;
-                        BigDecimal Amount = BigDecimal.ZERO;
-                        for (int n = 0; n < model.getUnloadDetails().size(); n++) {
-                            //写入账单明细
-                            BillDetails IDetails = new BillDetails();
-                            IDetails.setId(UuidUtil.get32UUID());
-                            IDetails.setShopId(user.getShopId());
-                            IDetails.setCompanyId(user.getCompanyId());
-                            IDetails.setBillId(Billid);
-                            IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
-                            IDetails.setProgramId(model.getUnloadDetails().get(n).getProgramId());
-                            //卸货账单明细无规格信息
-                            //IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
-                            IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
-                            IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
-                            IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-                            IDetails.setCreatetime(new Date());
-                            IDetails.setCreator(user.getId());
-                            IDetails.setModifier(user.getId());
-                            IDetails.setModifytime(new Date());
-                            IDetails.setDr(true);
-                            sumQuantity = sumQuantity.add(model.getUnloadDetails().get(n).getQuantity());
-                            Amount = Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-                            taskService.insertBillDetails(IDetails);
-                        }
-                        //写入账单统计数据
-                        Bill Ibill = new Bill();
-                        Ibill.setId(Billid);
-                        Ibill.setShopId(user.getShopId());
-                        Ibill.setCompanyId(user.getCompanyId());
-                        Ibill.setCussupId(SupplierId);
-                        Ibill.setBillDate(new Date());
-                        Ibill.setType(TaskEnums.Type.Unload.index().toString());
-                        Ibill.setQuantity(sumQuantity);
-                        Ibill.setAmount(Amount);
-                        Ibill.setCreatetime(new Date());
-                        Ibill.setCreator(user.getId());
-                        Ibill.setModifier(user.getId());
-                        Ibill.setModifytime(new Date());
-                        Ibill.setDr(true);
-                        taskService.insertBill(Ibill);
-                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                     } else {
                         message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                        message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                        message.setMessage("无卸货记录，请重新操作！");
                     }
-
                 }
             } else {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -538,13 +558,13 @@ public class TaskController {
              * 如果redis里面所存对应的任务状态为已完成或已取消或者已暂停,返回对应消息
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status")
                     || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED_OR_UNEXECUTED);
                 return message;
@@ -581,7 +601,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能完成任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
@@ -647,7 +667,7 @@ public class TaskController {
              * 权限判断,只有PC端和老板移动端能完成任务
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
-                    || request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);

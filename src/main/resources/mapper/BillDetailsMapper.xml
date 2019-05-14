@@ -8,4 +8,12 @@
         left join bd_specification d on d.id=a.specification_id
         where  a.bill_id=#{id,jdbcType=INTEGER}
     </select>
+    <update id="updateDetails" parameterType="BillDetails">update bd_bill_details
+        <set>
+            <if test="price!= null and price!=''">price= #{price,jdbcType=VARCHAR},</if>
+            <if test="amount!= null and amount!=''">amount= #{amount,jdbcType=VARCHAR},</if>
+        </set>where id= #{id,jdbcType=VARCHAR}
+    </update>
+
+
 </mapper>

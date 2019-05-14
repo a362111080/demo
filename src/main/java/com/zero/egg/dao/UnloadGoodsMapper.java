@@ -1,6 +1,8 @@
 package com.zero.egg.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zero.egg.model.BarCode;
+import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
@@ -33,4 +35,8 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     List<UnloadGoods> GetUnloadList(UnloadGoodsRequest unloadGoods);
 
     String GetTaskStatusBySupplier(String supplierId);
+
+    UnLoadGoodsQueryResponseDto GetTaskProgram(String taskId);
+
+    BarCode GetBarCodeInfo(String qrCode);
 }

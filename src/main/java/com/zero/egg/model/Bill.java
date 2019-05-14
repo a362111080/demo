@@ -1,21 +1,20 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.BillEnums;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -62,6 +61,9 @@ public class Bill implements Serializable {
     @ApiModelProperty(value = "金额",required=false)
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "实收金额",required=false)
+    private BigDecimal realAmount;
+
     @ApiModelProperty(value = "状态",hidden=true)
     private String status;
 
@@ -79,6 +81,10 @@ public class Bill implements Serializable {
 
     @ApiModelProperty(value = "更新时间",hidden=true)
     private Date modifytime;
+
+
+    @ApiModelProperty(value = "账单品种",hidden=false)
+    private String categoryname;
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
@@ -102,6 +108,6 @@ public class Bill implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "勾选的账单id",hidden=true)
-    public String ids;
+    private List<String> ids;
 
 }

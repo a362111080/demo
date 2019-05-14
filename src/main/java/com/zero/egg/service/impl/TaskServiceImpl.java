@@ -20,6 +20,7 @@ import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.GoodsResponse;
+import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
@@ -99,8 +100,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     }
 
     @Override
-    public boolean updateStock(String specificationId) {
-        return mapper.updateStock(specificationId);
+    public boolean updateStock(UnloadReport unloadReport) {
+        return mapper.updateStock(unloadReport);
     }
 
     @Override
@@ -162,17 +163,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 task.setDr(false);
                 mapper.insert(task);
                 String taskId = task.getId();
+                String customerName = customerMapper.selectOne(new QueryWrapper<Customer>()
+                        .select("name")
+                        .eq("id", task.getCussupId()))
+                        .getName();
+                task.setCussupName(customerName);
                 /**
                  * 把任务状态存入redis,用作出货前判断是否还能出货
                  */
                 jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId()
                                 + task.getCussupId() + taskId + "status"
                         , TaskEnums.Status.Execute.index().toString());
-                String customerName = customerMapper.selectOne(new QueryWrapper<Customer>()
-                        .select("name")
-                        .eq("id", task.getCussupId()))
-                        .getName();
-                task.setCussupName(customerName);
                 message.setData(task);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -190,14 +191,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         Message message = new Message();
         try {
             /**
-             * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId 的Redis数据删除
+             * 1.在MySQL中对应的出货任务,status改为TaskEnums.Status.CANCELED.index().toString(),dr改为1(true)
              * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
              *    的Redis数据改为TaskEnums.Status.CANCELED.index().toString()
-             * 3.在MySQL中对应的出货任务,status改为TaskEnums.Status.CANCELED.index().toString(),dr改为1(true)
              */
-            jedisKeys.del(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
-            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.CANCELED.index().toString());
-            task.setDr(true);
+//            jedisKeys.del(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
+//            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.CANCELED.index().toString());
+//            task.setDr(true);
             task.setModifytime(new Date());
             task.setStatus(TaskEnums.Status.CANCELED.index().toString());
             mapper.update(task, new UpdateWrapper<Task>()
@@ -206,6 +206,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.CANCELED.index().toString());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
@@ -222,11 +223,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         Message message = new Message();
         try {
             /**
-             * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
+             * 1.在MySQL中对应的出货任务,status改为TaskEnums.Status.Unexecuted.index().toString()
+             * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
              *    的Redis数据改为TaskEnums.Status.Unexecuted.index().toString()
-             * 2.在MySQL中对应的出货任务,status改为TaskEnums.Status.Unexecuted.index().toString()
              */
-            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Unexecuted.index().toString());
             task.setStatus(TaskEnums.Status.Unexecuted.index().toString());
             task.setModifytime(new Date());
             mapper.update(task, new UpdateWrapper<Task>()
@@ -235,6 +235,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Unexecuted.index().toString());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
@@ -252,14 +253,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         try {
             /**
              * 1.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
-             *    的Redis数据改为TaskEnums.Status.Finish.index().toString()
+             *    的Redis数据改为TaskEnums.Status.Finish.index().toString()   (放到最后一步,防止不回滚)
              * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId的数据取出来转换回列表
              * 3.统计里面的数据存入出货商品表同时减去库存中的数量
              * 4.在MySQL中对应的出货任务,status改为TaskEnums.Status.Finish.index().toString(),dr设为1(true)
              */
-            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
             String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
             List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
+            if (null == goodsResponseList || goodsResponseList.size() == 0) {
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                return message;
+            }
             ShipmentGoods shipmentGoods = null;
             Goods goods = null;
             Stock stock = null;
@@ -298,7 +303,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         .eq("shop_id", task.getShopId())
                 );
                 stock = stockMapper.selectOne(new QueryWrapper<Stock>().select("id", "quantity")
-                        .eq("specificationId", goodsResponse.getSpecificationId())
+                        .eq("specification_id", goodsResponse.getSpecificationId())
                         .eq("company_id", task.getCompanyId())
                         .eq("shop_id", task.getShopId())
                 );
@@ -310,21 +315,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             //4.在MySQL中对应的出货任务,status改为TaskEnums.Status.Finish.index().toString(),dr设为1(true)
             task.setStatus(TaskEnums.Status.Finish.index().toString());
             task.setModifytime(new Date());
-            task.setDr(true);
             mapper.update(task, new UpdateWrapper<Task>()
                     .eq("id", taskId)
                     .eq("shop_id", task.getShopId())
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
+            jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
         } catch (Exception e) {
             log.error("RealFinishTask failed:" + e);
             throw new ServiceException("RealFinishTask failed");
         }
+    }
 
-        return message;
+    @Override
+    public List<UnloadReport> GetUnloadReport(String taskid) {
+        return mapper.GetUnloadReport(taskid);
     }
 
 

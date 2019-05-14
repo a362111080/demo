@@ -44,7 +44,7 @@
         </where>
     </select>
     <select id="getBilllist" parameterType="BillRequest" resultType="com.zero.egg.model.Bill">
-        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,a.dr,a.shop_id,a.company_id,a.id,
+        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,a.dr,a.shop_id,a.company_id,a.id,a.real_amount as realAmount,a.categoryname,
         CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
         CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as shortname
         from bd_bill a
@@ -61,13 +61,13 @@
                 and a.shop_id=#{shopId,jdbcType=VARCHAR}
             </if>
             <if test="status != null  and status !=''">
-                and a.status=#{status,jdbcType=INTEGER}
+                and a.status=#{status,jdbcType=VARCHAR}
             </if>
             <if test="begintime != null  and begintime !=''">
-                and a.bill_date <![CDATA[ >= ]]> #{begintime,jdbcType=INTEGER}
+                and a.bill_date <![CDATA[ >= ]]> #{begintime,jdbcType=VARCHAR}
             </if>
             <if test="endtime != null  and endtime !=''">
-                and a.bill_date <![CDATA[ <= ]]> #{endtime,jdbcType=INTEGER}
+                and a.bill_date <![CDATA[ <= ]]> #{endtime,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

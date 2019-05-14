@@ -2,16 +2,13 @@ package com.zero.egg.controller;
 
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
-import com.zero.egg.model.BarCodeInfoDTO;
 import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.PrintBarCodeRequestDTO;
 import com.zero.egg.service.BarCodeService;
-import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.MatrixToImageWriterUtil;
 import com.zero.egg.tool.Message;
-import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
@@ -142,20 +139,21 @@ public class BarCodeController {
                     && !"".equals(printBarCodeRequestDTO.getMatrixAddr())
                     && printBarCodeRequestDTO.getPrintNum() > 0) {
                 LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-                String infoDTOStr = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
-                BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
-                BarCodeRequestDTO barCodeRequestDTO = new BarCodeRequestDTO();
-                TransferUtil.copyProperties(barCodeRequestDTO, infoDTO);
+                String barCodeId = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
+//                String infoDTOStr = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
+//                BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
+//                BarCodeRequestDTO barCodeRequestDTO = new BarCodeRequestDTO();
+//                TransferUtil.copyProperties(barCodeRequestDTO, infoDTO);
                 /**
                  * 覆盖母条码的创建人,创建时间,修改人,修改时间
                  */
-                barCodeRequestDTO.setCompanyId(user.getCompanyId());
-                barCodeRequestDTO.setShopId(user.getShopId());
-                barCodeRequestDTO.setCreator(user.getName());
-                barCodeRequestDTO.setModifier(user.getName());
-                barCodeRequestDTO.setCreatetime(new Date());
-                barCodeRequestDTO.setModifytime(new Date());
-                message = bcService.PrintBarCode(barCodeRequestDTO, infoDTO, printBarCodeRequestDTO.getPrintNum());
+//                barCodeRequestDTO.setCompanyId(user.getCompanyId());
+//                barCodeRequestDTO.setShopId(user.getShopId());
+//                barCodeRequestDTO.setCreator(user.getName());
+//                barCodeRequestDTO.setModifier(user.getName());
+//                barCodeRequestDTO.setCreatetime(new Date());
+//                barCodeRequestDTO.setModifytime(new Date());
+                message = bcService.PrintBarCode(barCodeId, printBarCodeRequestDTO.getPrintNum(), user.getId());
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
             } else {
