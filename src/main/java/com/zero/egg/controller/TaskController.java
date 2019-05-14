@@ -295,12 +295,14 @@ public class TaskController {
             /**
              * 如果redis里面所存对应的任务状态为已完成或已取消,返回对应消息
              */
+            log.info(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"));
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status")
                     || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
                     || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED);
                 return message;
@@ -407,7 +409,7 @@ public class TaskController {
                         sumQuantity = sumQuantity.add(model.getUnloadDetails().get(k).getQuantity());
                         Amount = Amount.add(model.getUnloadDetails().get(k).getPrice().multiply(model.getUnloadDetails().get(k).getQuantity()));
                     }
-                    if (IUnloadList.size()>0) {
+                    if (IUnloadList.size() > 0) {
                         if (IUnloadList.size() == sumQuantity.intValue()) {
                             //1.更改任务状态；
                             if (taskService.updateById(model)) {
@@ -433,9 +435,8 @@ public class TaskController {
                                     taskService.InsertGoods(Igoods);
                                 }
                                 //写入库存表
-                                List<UnloadReport>  UnloadReport=taskService.GetUnloadReport(model.getId());
-                                for ( int u =0;u<UnloadReport.size();u++)
-                                {
+                                List<UnloadReport> UnloadReport = taskService.GetUnloadReport(model.getId());
+                                for (int u = 0; u < UnloadReport.size(); u++) {
                                     //写入库存表
                                     if (taskService.IsExtis(UnloadReport.get(u).getSpecificationId()) > 0) {
                                         //库存已存在该批次，原基础数量+1
@@ -506,8 +507,7 @@ public class TaskController {
                             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                             message.setMessage("卸货数量不一致，请重新操作！");
                         }
-                    }
-                    else {
+                    } else {
                         message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                         message.setMessage("无卸货记录，请重新操作！");
                     }
