@@ -490,6 +490,7 @@ public class TaskController {
                                 Ibill.setType(TaskEnums.Type.Unload.index().toString());
                                 Ibill.setQuantity(sumQuantity);
                                 Ibill.setAmount(Amount);
+                                Ibill.setRealAmount(Amount);
                                 Ibill.setCreatetime(new Date());
                                 Ibill.setCreator(user.getId());
                                 Ibill.setModifier(user.getId());

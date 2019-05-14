@@ -10,8 +10,8 @@
     </select>
     <update id="updateDetails" parameterType="BillDetails">update bd_bill_details
         <set>
-            <if test="price!= null and price!=''">name= #{price,jdbcType=VARCHAR},</if>
-            <if test="amount!= null and amount!=''">amount= #{shortname,jdbcType=VARCHAR},</if>
+            <if test="price!= null and price!=''">price= #{price,jdbcType=VARCHAR},</if>
+            <if test="amount!= null and amount!=''">amount= #{amount,jdbcType=VARCHAR},</if>
         </set>where id= #{id,jdbcType=VARCHAR}
     </update>
 

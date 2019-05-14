@@ -1,23 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.zero.egg.model.UnloadGoods;
-import com.zero.egg.tool.UuidUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Bill;
@@ -27,10 +10,18 @@ import com.zero.egg.service.IBillDetailsService;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -73,10 +64,9 @@ public class BillDetailsController {
 		//当前登录用户
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		BigDecimal Amount = BigDecimal.ZERO;
-		for (int n = 0; n <= model.getUnloadDetails().size(); n++) {
+		for (int n = 0; n < model.getUnloadDetails().size(); n++) {
 			BillDetails IDetails = new BillDetails();
 			IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
-			IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
 			IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
 			IDetails.setModifier(user.getId());
 			IDetails.setModifytime(new Date());
