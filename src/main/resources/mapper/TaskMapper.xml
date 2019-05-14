@@ -72,10 +72,13 @@
     </select>
 
     <select id="GetUnloadReport"  resultType="com.zero.egg.responseDTO.UnloadReport">
-        select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval
+        select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval,ca.name as categoryname
         from bd_unload_goods  k
+         left join bd_specification  n on n.id=k.specification_id
+         left join bd_specification_program  m on m.id=n.program_id
+         left join bd_category  ca on ca.id=m.category_id
         where k.task_id=#{id,jdbcType=VARCHAR}
-        group by k.shop_id,k.company_id,k.specification_id
+        group by k.shop_id,k.company_id,k.specification_id,ca.name
     </select>
 
 
@@ -92,9 +95,9 @@
         values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{programId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
     <insert id="insertBill" parameterType="Bill">
-        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,type,quantity,amount,status,creator,createtime,modifier,modifytime,dr,real_amount)
+        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,type,quantity,amount,status,creator,createtime,modifier,modifytime,dr,real_amount,categoryname)
         values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
-               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount})
+               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname})
     </insert>
 
 </mapper>

@@ -19,4 +19,7 @@ public class UnloadReport {
 
     @ApiModelProperty(value = "规格主键",required=false)
     private String specificationId;
+
+    @ApiModelProperty(value = "品种名称",required=false)
+    private String categoryname;
 }

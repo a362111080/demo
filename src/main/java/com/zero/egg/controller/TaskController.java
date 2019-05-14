@@ -10,22 +10,11 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.enums.UserEnums;
-import com.zero.egg.model.Bill;
-import com.zero.egg.model.BillDetails;
-import com.zero.egg.model.Goods;
-import com.zero.egg.model.ShipmentGoods;
-import com.zero.egg.model.Stock;
-import com.zero.egg.model.Task;
-import com.zero.egg.model.TaskProgram;
-import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.UnloadReport;
-import com.zero.egg.service.IGoodsService;
-import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.service.IStockService;
-import com.zero.egg.service.ITaskProgramService;
-import com.zero.egg.service.ITaskService;
+import com.zero.egg.service.*;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
@@ -35,11 +24,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -435,8 +420,24 @@ public class TaskController {
                                     taskService.InsertGoods(Igoods);
                                 }
                                 //写入库存表
+                                String Billcategoryname="";
                                 List<UnloadReport> UnloadReport = taskService.GetUnloadReport(model.getId());
                                 for (int u = 0; u < UnloadReport.size(); u++) {
+
+                                    //拼接账单品种
+                                    String Categoryname=UnloadReport.get(u).getCategoryname();
+                                    if (null !=Categoryname )
+                                    {
+                                        if (!Billcategoryname.contains(Categoryname) && Billcategoryname!="")
+                                        {
+                                            Billcategoryname=Billcategoryname+"/"+Categoryname;
+                                        }
+                                        else
+                                        {
+                                            Billcategoryname=Categoryname;
+                                        }
+                                    }
+
                                     //写入库存表
                                     if (taskService.IsExtis(UnloadReport.get(u).getSpecificationId()) > 0) {
                                         //库存已存在该批次，原基础数量+1
@@ -492,6 +493,7 @@ public class TaskController {
                                 Ibill.setQuantity(sumQuantity);
                                 Ibill.setAmount(Amount);
                                 Ibill.setRealAmount(Amount);
+                                Ibill.setCategoryname(Billcategoryname);
                                 Ibill.setCreatetime(new Date());
                                 Ibill.setCreator(user.getId());
                                 Ibill.setModifier(user.getId());
