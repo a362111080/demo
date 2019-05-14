@@ -45,13 +45,13 @@ public class UserController {
 	@ApiOperation(value="分页查询员工")
 	@RequestMapping(value="/list.data",method=RequestMethod.POST)
 	public Message<IPage<User>> list(
-			@RequestBody @ApiParam(required=false,name="user",value="查询字段：可选（名称 、编号、状态）") UserRequest user
+			@RequestBody @ApiParam(required=false,name="userRequest",value="查询字段：可选（名称 、编号、状态）") UserRequest userRequest
 			,HttpServletRequest request) {
 		//ListResponse<User> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<IPage<User>> message = new Message<IPage<User>>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		message = userService.listPage(user, loginUser);
+		message = userService.listPage(userRequest, loginUser);
 		return message;
 		
 	}
@@ -59,7 +59,7 @@ public class UserController {
 	@LoginToken
 	@ApiOperation(value="根据Id查询员工")
 	@RequestMapping(value="/get.data",method=RequestMethod.POST)
-	public Message<User> getById(@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
+	public Message<User> getById(@RequestBody @ApiParam(required=false,name="userRequest",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<User> message = new Message<User>();
 		User user = userService.getById(userRequest.getId());
@@ -120,7 +120,7 @@ public class UserController {
 	@LoginToken
 	@ApiOperation(value="员工离职")
 	@RequestMapping(value="/user-dimission.do",method=RequestMethod.POST)
-	public Message<Object> edit(HttpServletRequest request,@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
+	public Message<Object> edit(HttpServletRequest request,@RequestBody @ApiParam(required=false,name="userRequest",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -135,7 +135,7 @@ public class UserController {
 	@ApiOperation(value="根据id删除员工信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
 	public Message<Object> del(HttpServletRequest request,
-			@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
+			@RequestBody @ApiParam(required=false,name="userRequest",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -147,7 +147,7 @@ public class UserController {
 	@ApiOperation(value="批量删除员工信息")
 	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
 	public Message<Object> batchDel(HttpServletRequest request,
-			@RequestBody @ApiParam(required=false,name="user",value="员工主键字符串") UserRequest userRequest) {
+			@RequestBody @ApiParam(required=false,name="userRequest",value="员工主键字符串") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
