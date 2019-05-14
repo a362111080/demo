@@ -6,8 +6,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 @Data
 public class UserRequest extends PageDTO{
-	 @ApiModelProperty(value = "店铺主键",required=false)
-	    private String shopId;
+	
+		@ApiModelProperty(value = "员工主键",required=false)
+	    private String id;
+		
+		@ApiModelProperty(value = "员工主键字符串(逗号隔开)",required=false)
+		private String ids;
+		
+		@ApiModelProperty(value = "店铺主键",required=false)
+		private String shopId;
 
 	    @ApiModelProperty(value = "企业主键",required=false)
 	    private String companyId;

@@ -9,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
-import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
@@ -61,10 +59,10 @@ public class UserController {
 	@LoginToken
 	@ApiOperation(value="根据Id查询员工")
 	@RequestMapping(value="/get.data",method=RequestMethod.POST)
-	public Message<User> getById(@RequestParam @ApiParam(required=true,name="id",value="员工id") String id) {
+	public Message<User> getById(@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<User> message = new Message<User>();
-		User user = userService.getById(id);
+		User user = userService.getById(userRequest.getId());
 		if (user != null) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -122,12 +120,12 @@ public class UserController {
 	@LoginToken
 	@ApiOperation(value="员工离职")
 	@RequestMapping(value="/user-dimission.do",method=RequestMethod.POST)
-	public Message<Object> edit(HttpServletRequest request,@RequestParam @ApiParam(required=true,name="id",value="员工id") String id) {
+	public Message<Object> edit(HttpServletRequest request,@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		User user = new User();
-		user.setId(id);
+		user.setId(userRequest.getId());
 		message =userService.updateById(user, loginUser);
 		return message;
 	}
@@ -136,22 +134,24 @@ public class UserController {
 	//@PassToken
 	@ApiOperation(value="根据id删除员工信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
-	public Message<Object> del(HttpServletRequest request,@RequestParam @ApiParam(required=true,name="id",value="员工id") String id) {
+	public Message<Object> del(HttpServletRequest request,
+			@RequestBody @ApiParam(required=false,name="user",value="员工主键") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		message =userService.deleteById(id,loginUser);
+		message =userService.deleteById(userRequest.getId(),loginUser);
 		return message;
 	}
 	
 	@LoginToken
 	@ApiOperation(value="批量删除员工信息")
 	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
-	public Message<Object> batchDel(HttpServletRequest request,@RequestParam @ApiParam(required=true,name="ids",value="员工ids,逗号拼接") String ids) {
+	public Message<Object> batchDel(HttpServletRequest request,
+			@RequestBody @ApiParam(required=false,name="user",value="员工主键字符串") UserRequest userRequest) {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		message =userService.deleteBatchById(ids, loginUser);
+		message =userService.deleteBatchById(userRequest.getIds(), loginUser);
 		return message;
 	}
 }
