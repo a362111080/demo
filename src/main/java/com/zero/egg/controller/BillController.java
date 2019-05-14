@@ -176,7 +176,7 @@ public class BillController {
 		model.setShopId(user.getShopId());
 		model.setCompanyId(user.getCompanyId());
 		PageHelper.startPage(model.getCurrent().intValue(),model.getSize().intValue());
-		if (null!= model.getEndtime())
+		if (null!= model.getEndtime() && model.getEndtime() !="" )
         {
             model.setEndtime(model.getEndtime()+" 23:59:59");
         }
