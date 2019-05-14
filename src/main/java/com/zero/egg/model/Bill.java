@@ -83,7 +83,7 @@ public class Bill implements Serializable {
     private Date modifytime;
 
 
-    @ApiModelProperty(value = "账单品种",hidden=true)
+    @ApiModelProperty(value = "账单品种",hidden=false)
     private String categoryname;
 
     @ApiModelProperty(value = "删除标识",hidden=true)

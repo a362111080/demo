@@ -183,7 +183,6 @@ public class BillController {
 		List<Bill> BillList=billService.getBilllist(model);
 		PageInfo<Bill> pageInfo = new PageInfo<>(BillList);
 		ms.setData(pageInfo);
-
         BillReport  report=new BillReport();
         for (int i=0;i<BillList.size();i++)
         {
