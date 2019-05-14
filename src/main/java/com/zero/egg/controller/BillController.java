@@ -186,9 +186,9 @@ public class BillController {
         BillReport  report=new BillReport();
         for (int i=0;i<BillList.size();i++)
         {
-            if (BillList.get(i).getStatus()!="1")
+            if (BillList.get(i).getStatus().equals("-1"))
             {
-            	//1挂账  -1 销账
+            	//1未结清  -1 已结清
                 report.setCompleteCount(report.getCompleteCount().add(BigDecimal.ONE));
             }
             else
