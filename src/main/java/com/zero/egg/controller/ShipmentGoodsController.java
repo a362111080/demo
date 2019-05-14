@@ -148,7 +148,7 @@ public class ShipmentGoodsController {
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
-                    || null != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    || null == jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

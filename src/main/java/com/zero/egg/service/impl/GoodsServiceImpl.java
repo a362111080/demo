@@ -80,9 +80,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
              * 4.把List转换成json字符串,存redis
              */
             //第一次扫码出货时,redis没有相关任务键
+            log.info(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId));
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)
-                    || null != jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    || null == jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)) {
                 goodsResponseList = new ArrayList<>();
                 goodsResponseList.add(goods);
