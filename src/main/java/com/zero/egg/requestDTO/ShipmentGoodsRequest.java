@@ -1,14 +1,17 @@
 package com.zero.egg.requestDTO;
 
-import java.util.Date;
-
 import com.zero.egg.tool.PageDTO;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ShipmentGoodsRequest extends PageDTO{
+
+    @ApiModelProperty(value = "整理类型:1->列表 2->整理归类", required = false)
+    private Integer sortType;
+
 	@ApiModelProperty(value = "店铺主键",required=false)
     private String shopId;
 

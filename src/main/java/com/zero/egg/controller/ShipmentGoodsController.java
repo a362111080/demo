@@ -125,14 +125,14 @@ public class ShipmentGoodsController {
     @LoginToken
     @ApiOperation(value = "查询当前出货任务的商品(出货列表用)")
     @PostMapping(value = "/shipmentgoodslist")
-    public Message shipmentTastList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键")
+    public Message shipmentTastList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键 3.sortType")
                                             ShipmentGoodsRequest shipmentGoodsRequest, HttpServletRequest request) {
         Message message = new Message();
         /**
          * 非空判断
          */
         if (shipmentGoodsRequest == null || null == shipmentGoodsRequest.getTaskId()
-                || null == shipmentGoodsRequest.getCustomerId()) {
+                || null == shipmentGoodsRequest.getCustomerId() || null == shipmentGoodsRequest.getSortType()) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             return message;
@@ -158,7 +158,41 @@ public class ShipmentGoodsController {
                 List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                message.setData(goodsResponseList);
+                switch (shipmentGoodsRequest.getSortType()) {
+                    //列表
+                    case 1:
+                        message.setData(goodsResponseList);
+                        break;
+                    //整理归类
+                    case 2:
+                        Map<String, Map<String, Integer>> resultMap = new HashMap<>();
+                        Map<String, List<String>> categoryResultMap = new HashMap();
+                        //按照品种名分类
+                        for (GoodsResponse goodsResponse : goodsResponseList) {
+                            String categoryName = goodsResponse.getCategoryName();
+                            if (categoryResultMap.keySet().contains(categoryName)) {
+                                categoryResultMap.get(categoryName).add(goodsResponse.getMarker());
+                            } else {
+                                List<String> tempList = new ArrayList<>();
+                                tempList.add(goodsResponse.getMarker());
+                                categoryResultMap.put(categoryName, tempList);
+                            }
+                        }
+                        //再按照按标记分类
+                        for (Map.Entry<String, List<String>> entry : categoryResultMap.entrySet()) {
+                            Map<String, Integer> map = new HashMap();
+                            for (String temp : entry.getValue()) {
+                                Integer count = map.get(temp);
+                                map.put(temp, (count == null) ? 1 : count + 1);
+                            }
+                            map.put("total", entry.getValue().size());
+                            resultMap.put(entry.getKey(), map);
+                        }
+                        message.setMap(resultMap);
+                        break;
+                    default:
+                        message.setData(goodsResponseList);
+                }
             }
 
         } catch (Exception e) {
