@@ -1,7 +1,12 @@
 package com.zero.egg.dao;
 
-import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zero.egg.model.Bill;
+import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.Goods;
+import com.zero.egg.model.Stock;
+import com.zero.egg.model.Task;
+import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.UnloadReport;
 
@@ -18,6 +23,14 @@ import java.util.List;
 public interface TaskMapper extends BaseMapper<Task> {
 
     List<Task> QueryTaskList(TaskRequest task);
+
+    /**
+     * 查正在进行的任务和员工停止的(暂停状态)的出货任务列表
+     *
+     * @param task
+     * @return
+     */
+    List<Task> QueryShipmentTaskList(TaskRequest task);
 
     boolean UpdateUnloadDetl(String id);
 

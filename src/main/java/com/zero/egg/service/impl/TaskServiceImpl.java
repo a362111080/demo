@@ -71,7 +71,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Override
     public List<Task> QueryTaskList(TaskRequest task) {
-        return mapper.QueryTaskList(task);
+        if (task.getType().equals(TaskEnums.Type.Shipment.index().toString())) {
+            return mapper.QueryShipmentTaskList(task);
+        } else {
+            return mapper.QueryTaskList(task);
+        }
     }
 
     @Override

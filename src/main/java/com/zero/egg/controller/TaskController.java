@@ -70,6 +70,10 @@ public class TaskController {
     public Message<PageInfo<Task>> unloadList(
             @RequestBody @ApiParam(required = false, name = "task", value = "查询字段：企业主键、店铺主键") TaskRequest task) {
         Message<PageInfo<Task>> ms = new Message<PageInfo<Task>>();
+        //当前登录用户
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        task.setCompanyId(user.getCompanyId());
+        task.setShopId(user.getShopId());
         PageHelper.startPage(task.getCurrent().intValue(), task.getSize().intValue());
         List<Task> ResponseDto = taskService.QueryTaskList(task);
         PageInfo<Task> pageInfo = new PageInfo<>(ResponseDto);

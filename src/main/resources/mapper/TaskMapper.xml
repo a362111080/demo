@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.TaskMapper">
-    <select id="QueryTaskList"  resultType="com.zero.egg.model.Task">
-        SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as cussupId,
+    <select id="QueryTaskList" resultType="com.zero.egg.model.Task">
+        SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as
+        cussupId,
         c.category_id as categoryId
-        FROM  bd_task  a
-        left join bd_task_program b on a.id=b.task_id   and b.active=1
+        FROM bd_task a
+        left join bd_task_program b on a.id=b.task_id and b.active=1
         left join bd_specification_program c on b.program_id=c.id
         left join bd_supplier d on d.id=a.cussup_id
         left join bd_category e on e.id=c.category_id
@@ -28,7 +29,7 @@
             <if test="equipmentNo != null and equipmentNo !=''">
                 and a.equipment_no=#{equipmentNo,jdbcType=VARCHAR}
             </if>
-                 and a.dr=0   order  by  a.createtime
+            and a.dr=0 order by a.createtime
         </where>
     </select>
     <update id="UpdateUnloadDetl" parameterType="java.lang.String">
@@ -45,7 +46,7 @@
             where task_id = #{id,jdbcType=VARCHAR}
     </update>
 
-    <select id="GetUnloadDetl"  resultType="com.zero.egg.model.UnloadGoods">
+    <select id="GetUnloadDetl" resultType="com.zero.egg.model.UnloadGoods">
         select * from bd_unload_goods  k
         where k.task_id= #{id,jdbcType=VARCHAR}
         and k.dr=0
@@ -55,23 +56,23 @@
     values(#{id},#{shopId},#{companyId},#{supplierId},#{specificationId},#{goodsCategoryId},
     #{goodsNo},#{marker},#{mode},#{weight},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
-    <select id="IsExtis"  resultType="int">
+    <select id="IsExtis" resultType="int">
         select COUNT(1) as sumVal from bd_stock  k
         where k.specification_id= #{SpecificationId,jdbcType=VARCHAR}
         and k.dr=0
     </select>
-    <select id="GetActiveTaskBySupplier"  resultType="int">
+    <select id="GetActiveTaskBySupplier" resultType="int">
         select COUNT(1) as sumVal from bd_task  k
         where k.cussup_id= #{supplierId,jdbcType=VARCHAR}
         and k.dr=0 and  k.status in ('3','0') and type =1
     </select>
-    <select id="IsExtisUnloadTaskProgram"  resultType="int">
+    <select id="IsExtisUnloadTaskProgram" resultType="int">
         select COUNT(1) as sumVal from bd_task_program  k
         where k.program_id= #{newProgram,jdbcType=VARCHAR}
         and k.task_id= #{taskid,jdbcType=VARCHAR}
     </select>
 
-    <select id="GetUnloadReport"  resultType="com.zero.egg.responseDTO.UnloadReport">
+    <select id="GetUnloadReport" resultType="com.zero.egg.responseDTO.UnloadReport">
         select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval,ca.name as categoryname
         from bd_unload_goods  k
          left join bd_specification  n on n.id=k.specification_id
@@ -79,6 +80,24 @@
          left join bd_category  ca on ca.id=m.category_id
         where k.task_id=#{id,jdbcType=VARCHAR}
         group by k.shop_id,k.company_id,k.specification_id,ca.name
+    </select>
+    <select id="QueryShipmentTaskList" resultType="com.zero.egg.model.Task">
+        SELECT
+            t.id,
+            t.cussup_id as cussupid,
+            t.remark,
+            t.`status`,
+            t.type,
+            c.`name` AS cussupName
+        FROM
+            bd_task t
+        LEFT JOIN bd_customer c ON t.cussup_id = c.id
+        WHERE
+            t.type = 2
+        AND t.dr = 0
+        AND t.`status` IN (0, 3)
+        AND t.company_id=#{companyId,jdbcType=VARCHAR}
+        AND t.shop_id=#{shopId,jdbcType=VARCHAR}
     </select>
 
 
