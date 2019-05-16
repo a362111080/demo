@@ -2,6 +2,7 @@ package com.zero.egg.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.city;
@@ -37,6 +38,7 @@ public class CustomerManageController {
      * @Description 新增客户
      * @Return   是否成功
      **/
+    @LoginToken
     @ApiOperation(value="新增客户")
     @RequestMapping(value = "/addcustomer",method = RequestMethod.POST)
     public Message AddCustomer(@RequestBody Customer model){
@@ -44,11 +46,12 @@ public class CustomerManageController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             //实际根据界面传值
-            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
-                model.setCreator(user.getName());
-                model.setCreatetime(new Date());
-            }
-
+            model.setCreator(user.getId());
+            model.setCreatetime(new Date());
+            model.setShopid(user.getShopId());
+            model.setCompanyid(user.getCompanyId());
+            model.setModifier(user.getId());
+            model.setModifytime(new Date());
             int strval=CustomerSv.AddCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -73,6 +76,7 @@ public class CustomerManageController {
      * @Description 更新客户(删除共用，不作物理删除，更新状态为无效状态) 
      * @Return   是否成功
      **/
+    @LoginToken
     @ApiOperation(value="修改客户信息",notes="客户id不能为空")
     @RequestMapping(value = "/updatecustomer",method = RequestMethod.POST)
     public Message UpdateSupplier(@RequestBody  Customer model) {
@@ -80,10 +84,10 @@ public class CustomerManageController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             //店铺编码  实际根据界面传值
-            if (null != model && null != model.getName() && checkShopAndCompanyExist(user, model)) {
-                model.setCreator(user.getName());
-                model.setCreatetime(new Date());
-            }
+            model.setModifier(user.getId());
+            model.setModifytime(new Date());
+            model.setShopid(user.getShopId());
+            model.setCompanyid(user.getCompanyId());
             int strval=CustomerSv.UpdateCustomer(model);
             if (strval>0) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
