@@ -21,9 +21,14 @@
 
 
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId from  bd_unload_goods  a
+        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,war.warNum
+        from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
         left join bd_specification_program pro on pro.id=a.program_id
+        left join (
+          select m.task_id, m.program_id, sum(1) as warNum,m.goods_category_id from bd_unload_goods m where m.warn=true  and m.task_id=#{taskId}
+          GROUP BY m.task_id,m.program_id,m.goods_category_id
+          ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id
         where  a.task_id=#{taskId} and  a.dr=0
         GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id
     </select>

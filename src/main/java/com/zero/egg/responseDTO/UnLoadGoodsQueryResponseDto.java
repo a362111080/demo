@@ -1,11 +1,10 @@
 package com.zero.egg.responseDTO;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import io.swagger.annotations.ApiModelProperty;
 
 @Data
 public class UnLoadGoodsQueryResponseDto implements Serializable {
@@ -79,5 +78,12 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
      */
     @ApiModelProperty(value = "当前方案合计卸货数量")
     private BigDecimal sumVal;
+
+    /**
+     * 当前方案预警卸货数量
+     */
+    @ApiModelProperty(value = "当前方案合计卸货数量")
+    private BigDecimal warNum;
+
 
 }
