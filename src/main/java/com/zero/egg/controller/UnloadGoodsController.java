@@ -7,7 +7,6 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.BarCode;
-import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
@@ -89,15 +88,23 @@ public class UnloadGoodsController {
 			//根据二维码id 获取相关信息
 			BarCode  bar=unloadGoodsService.GetBarCodeInfo(model.getQrCode());
 			if (null !=bar) {
+
+				//判断商品码是否存在
+				if (unloadGoodsService.GoodNoIsExists(bar.getCurrentCode())>0)
+				{
+					//存在  终止操作，返回信息
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("请勿重复扫码！");
+					return message;
+				}
+
 				model.setShopId(bar.getShopId());
 				model.setCompanyId(bar.getCompanyId());
 				model.setSupplierId(bar.getSupplierId());
 				model.setGoodsCategoryId(bar.getCategoryId());
 				model.setGoodsNo(bar.getCurrentCode());
-
 				//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 				String info = unloadGoodsService.GetTaskStatusBySupplier(bar.getSupplierId());
-
 				String taskId = StringTool.splitToList(info, ",").get(1);
 				model.setTaskId(taskId);
 				String status = StringTool.splitToList(info, ",").get(0);
@@ -125,35 +132,46 @@ public class UnloadGoodsController {
 								model.setWarn(false);
 							}
 						} else {
-							//无返回结果代表小于最低称重范围，进行预警
-							model.setMarker("");
+							UnLoadResponseDto war = unloadGoodsService.CheckWeightForWarning(model.getProgramId());
+							//无返回结果代表小于最低称重范围，进行预警，同时返回最小标识
+							if (war.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
+								//存在去皮数值   显示标识为实际称重减去去皮值
+								model.setMarker(model.getWeight().add(war.getNumerical()).toString());
+							} else {
+								model.setMarker(war.getMarker());
+							}
+							model.setMode(war.getMode());
+							model.setSpecificationId(war.getSpecificationId());
 							model.setWarn(true);
-							model.setMode("无匹配方式");
-							model.setSpecificationId("无规格");
 						}
+						int strval = unloadGoodsService.AddUnloadDetl(model);
+						if (strval > 0) {
+							UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
+							dto.setSupplierName(bar.getSupplierName());
+							dto.setCategoryName(bar.getCategoryName());
+							dto.setMarker(model.getMarker());
+							dto.setWarn(model.getWarn());
+							if (null != model.getTaskId()) {
+								//获取当前卸货任务已卸货数量，含本次
+								int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+								dto.setCount(count);
+								message.setData(dto);
+							}
+							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						} else {
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.FAILED);
 
-
+						}
 					}
-					int strval = unloadGoodsService.AddUnloadDetl(model);
-					if (strval > 0) {
-						UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
-						dto.setSupplierName(bar.getSupplierName());
-						dto.setCategoryName(bar.getCategoryName());
-						dto.setMarker(model.getMarker());
-						dto.setWarn(model.getWarn());
-						if (null != model.getTaskId()) {
-							//获取当前卸货任务已卸货数量，含本次
-							int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
-							dto.setCount(count);
-							message.setData(dto);
-						}
-						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-					} else {
+					else
+					{
 						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+						message.setMessage("参数错误！");
 
 					}
+
 				}
 				return message;
 			}

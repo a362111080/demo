@@ -8,8 +8,18 @@
     </insert>
     <select id="CheckWeight"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
         SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode  FROM bd_specification  k
-        where k.program_id=#{programId}  and k.weight_min <![CDATA[ <= ]]> #{weight}  and k.weight_max <![CDATA[ > ]]> #{weight}  and k.dr=0
+        where k.program_id=#{programId}
+          and k.weight_min <![CDATA[ <= ]]> #{weight}
+          and k.weight_max <![CDATA[ > ]]> #{weight}
+          and k.dr=0
     </select>
+    <select id="CheckWeightForWarning"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
+        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode  FROM bd_specification  k
+        where k.program_id=#{programId}
+        order by k.weight_min limit 1
+    </select>
+
+
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId from  bd_unload_goods  a
         left join  bd_category  b  on  a.goods_category_id=b.id
@@ -58,7 +68,10 @@
     </select>
 
     <select id="GetBarCodeInfo"  resultType="com.zero.egg.model.BarCode">
-       select * from bd_barcode  k where k.id=#{qrCode,jdbcType=VARCHAR}
+       select * from bd_barcode  k where k.id=#{qrCode,jdbcType=VARCHAR}  and  k.dr=0
+    </select>
+    <select id="GoodNoIsExists"  parameterType="java.lang.String" resultType="int">
+        select COUNT(1) from bd_unload_goods  k where k.goods_no=#{currentCode,jdbcType=VARCHAR}  and  k.dr=0
     </select>
 
 </mapper>

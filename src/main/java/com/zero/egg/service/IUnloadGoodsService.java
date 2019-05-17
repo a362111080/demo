@@ -1,9 +1,8 @@
 package com.zero.egg.service;
 
-import com.zero.egg.model.BarCode;
-import com.zero.egg.model.Task;
-import com.zero.egg.model.UnloadGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.BarCode;
+import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
 import com.zero.egg.responseDTO.UnLoadResponseDto;
@@ -40,4 +39,7 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
 
     BarCode GetBarCodeInfo(String qrCode);
 
+    UnLoadResponseDto CheckWeightForWarning(String programId);
+
+    int GoodNoIsExists(String currentCode);
 }
