@@ -232,9 +232,10 @@ public class StockController {
             Map<String, Object> gapMap = new HashMap<>();
             int weighCount = 0;
             if (goodsList != null && goodsList.size() > 0) {
-                weightMax = weightMin.add(new BigDecimal(i));
+                weightMax = weightMin.add(new BigDecimal(1));
                 for (GoodsResponse goodsResponse : goodsList) {
-                    if (goodsResponse.getWeight().compareTo(weightMin) == 1 && goodsResponse.getWeight().compareTo(weightMax) == -1) {
+                    if ((goodsResponse.getWeight().compareTo(weightMin) == 1 || goodsResponse.getWeight().compareTo(weightMin) == 0)
+                            && goodsResponse.getWeight().compareTo(weightMax) == -1) {
                         weighCount += 1;
                     }
                 }
