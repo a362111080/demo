@@ -78,6 +78,13 @@ public class StockController {
         Message<IPage<StockResponse>> message = new Message<IPage<StockResponse>>();
         try {
             LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            //非空判断
+            if (null == stockRequest || null == stockRequest.getCategoryId() || "".equals(stockRequest.getCategoryId())) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return message;
+            }
             Page<Stock> page = new Page<>();
             stockRequest.setCompanyId(user.getCompanyId());
             stockRequest.setShopId(user.getShopId());
@@ -94,6 +101,7 @@ public class StockController {
                         .eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.marker", stockRequest.getMarker())
                         .eq(StringUtils.isNotBlank(stockRequest.getMode()), "sp.mode", stockRequest.getMode())
                         .eq(StringUtils.isNotBlank(stockRequest.getWarn()), "sp.warn", stockRequest.getWarn())
+                        .eq("c.id", stockRequest.getCategoryId())
                         .eq(StringUtils.isNotBlank(stockRequest.getNumerical()), "sp.numerical", stockRequest.getNumerical())
                         .ge(StringUtils.isNotBlank(stockRequest.getWeightMin()), "sp.weight_min", stockRequest.getWeightMin())
                         .le(StringUtils.isNotBlank(stockRequest.getWeightMax()), "sp.weight_max", stockRequest.getWeightMax())

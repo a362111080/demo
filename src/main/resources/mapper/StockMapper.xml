@@ -4,7 +4,7 @@
 
     <select id="listByCondition" resultType="com.zero.egg.responseDTO.StockResponse">
 	SELECT s.id as stockId,s.quantity,s.specification_id,sp.program_id as programId, sp.weight_min as weightMin,sp.weight_max as weightMax
-	,sp.marker,sp.mode,sp.numerical,sp.warn,p.name AS programName
+	,sp.marker,sp.mode,sp.numerical,sp.warn,p.name AS programName,c.id AS categoryId,c.name AS categoryName
 	FROM bd_stock s  
 	INNER JOIN bd_specification sp ON s.specification_id = sp.id 
 	INNER JOIN bd_specification_program p ON sp.program_id = p.id
