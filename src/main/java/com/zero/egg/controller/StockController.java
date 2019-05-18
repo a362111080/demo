@@ -4,6 +4,8 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Category;
@@ -211,9 +213,14 @@ public class StockController {
             return message;
         }
         List<GoodsResponse> goodsList = goodsService.listByCondition(queryWrapper);
+        PageHelper.startPage(Integer.parseInt(String.valueOf(stockRequest.getCurrent()))
+                , Integer.parseInt(String.valueOf(stockRequest.getSize())));
+        List<GoodsResponse> goodsShowList = goodsService.listByCondition(queryWrapper);
+        PageInfo<GoodsResponse> pageInfo = new PageInfo<>(goodsShowList);
+
         Map<String, Object> map = new HashMap<>();
         if (goodsList != null && goodsList.size() > 0) {
-            map.put("goodsList", goodsList);
+            map.put("goodsList", pageInfo);
             map.put("amount", goodsList.size());
         } else {
             map.put("goodsList", "");
