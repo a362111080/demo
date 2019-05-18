@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -308,16 +307,24 @@ public class StockController {
     @PostMapping(value = "/liststockmarker")
     @ApiOperation(value = "当前企业当前店铺下库存里对应鸡蛋品种的所有标记列表")
     @LoginToken
-    public Message<StockMarkerListResponseDTO> listStockMarker(@RequestParam String categoryId, HttpServletRequest request) {
+    public Message<StockMarkerListResponseDTO> listStockMarker(@RequestBody @ApiParam(required = false, name = "stockRequest"
+            , value = "品种主键") StockRequest stockRequest, HttpServletRequest request) {
         Message message;
         try {
             LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
             QueryWrapper<Stock> queryWrapper = new QueryWrapper<>();
+            //空值判断
+            if (null == stockRequest || null == stockRequest.getCategoryId() || "".equals(stockRequest.getCategoryId())) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return message;
+            }
             //基础查询条件为当前企业当前店铺未失效的记录
             queryWrapper.eq("s.company_id", user.getCompanyId())
                     .eq("s.shop_id", user.getShopId())
                     .eq("s.dr", false)
-                    .eq("c.id", categoryId);
+                    .eq("c.id", stockRequest.getCategoryId());
             message = stockService.markerListByCondition(queryWrapper);
         } catch (Exception e) {
             log.error("listStockMarker failed:" + e);
