@@ -5,7 +5,7 @@ public class BillEnums {
 	
 	public enum Status {
 
-		Normal(1,"未结清"),Disable(-1,"已结清");
+        Normal(1, "未结清"), Disable(-1, "已结清"), Not_Generated(0, "未生成");
 
 	    private Integer index;
 	    private String note;

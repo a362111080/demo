@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.zero.egg.model.Stock;
 import com.zero.egg.requestDTO.StockRequest;
+import com.zero.egg.responseDTO.MarkerListResponseDTO;
 import com.zero.egg.responseDTO.StockResponse;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,5 +32,5 @@ public interface StockMapper extends BaseMapper<Stock> {
 
     List<StockResponse> categoryCountListByCondition(@Param(Constants.WRAPPER) QueryWrapper<StockRequest> wrapper);
 
-    List<String> markerListByCondition(@Param(Constants.WRAPPER) QueryWrapper<Stock> wrapper);
+    List<MarkerListResponseDTO> markerListByCondition(@Param(Constants.WRAPPER) QueryWrapper<Stock> wrapper);
 }

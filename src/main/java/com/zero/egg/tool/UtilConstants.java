@@ -32,6 +32,11 @@ public interface UtilConstants {
          * 系统处理未知异常
          */
         public static final int EXCEPTION_HEAD = -1;
+
+        /**
+         * 员工未结束
+         */
+        public static final int EMPLOYEE_NOT_FINISH = -2;
     }
 
     /**

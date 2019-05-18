@@ -87,7 +87,10 @@ public class Bill implements Serializable {
     private String categoryname;
 
     @ApiModelProperty(value = "删除标识",hidden=true)
-    private Boolean dr;
+    private Boolean dr = false;
+
+    @ApiModelProperty(value = "关联的任务主键")
+    private String taskId;
 
     public String getStatusName() {
 		return BillEnums.Status.note(Integer.parseInt(this.status));

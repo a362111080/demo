@@ -17,5 +17,5 @@ public class StockMarkerListResponseDTO implements Serializable {
 
     private static final long serialVersionUID = -4460233471917870628L;
 
-    private List<String> markerList;
+    private List<MarkerListResponseDTO> markerList;
 }

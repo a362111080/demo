@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -300,14 +301,14 @@ public class StockController {
     }
 
     /**
-     * 当前企业当前店铺下库存里标记列表
+     * 当前企业当前店铺下库存里对应鸡蛋品种的所有标记列表
      *
      * @return
      */
     @PostMapping(value = "/liststockmarker")
-    @ApiOperation(value = "库存下存在的标记列表")
+    @ApiOperation(value = "当前企业当前店铺下库存里对应鸡蛋品种的所有标记列表")
     @LoginToken
-    public Message<StockMarkerListResponseDTO> listStockMarker(HttpServletRequest request) {
+    public Message<StockMarkerListResponseDTO> listStockMarker(@RequestParam String categoryId, HttpServletRequest request) {
         Message message;
         try {
             LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -315,7 +316,8 @@ public class StockController {
             //基础查询条件为当前企业当前店铺未失效的记录
             queryWrapper.eq("s.company_id", user.getCompanyId())
                     .eq("s.shop_id", user.getShopId())
-                    .eq("s.dr", false);
+                    .eq("s.dr", false)
+                    .eq("c.id", categoryId);
             message = stockService.markerListByCondition(queryWrapper);
         } catch (Exception e) {
             log.error("listStockMarker failed:" + e);

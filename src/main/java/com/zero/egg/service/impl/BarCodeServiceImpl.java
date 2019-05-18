@@ -207,8 +207,6 @@ public class BarCodeServiceImpl implements BarCodeService {
                         .eq("supplier_id", barCode.getSupplierId())
                         .eq("category_id", barCode.getCategoryId()));
                 TransferUtil.copyProperties(newBarCode, barCode);
-//                newBarCode.setCurrentCode(currentCode);
-//                newBarCode.setCategoryName(categoryName);
                 currentCode = barCode.getCode() + g1.format(count);
                 newBarCode.setId(null);
                 //覆盖母二维码的创建人,创建时间

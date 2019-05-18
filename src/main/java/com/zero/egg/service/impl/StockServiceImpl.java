@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.StockMapper;
 import com.zero.egg.model.Stock;
 import com.zero.egg.requestDTO.StockRequest;
+import com.zero.egg.responseDTO.MarkerListResponseDTO;
 import com.zero.egg.responseDTO.StockMarkerListResponseDTO;
 import com.zero.egg.responseDTO.StockResponse;
 import com.zero.egg.service.IStockService;
@@ -58,7 +59,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         Message<StockMarkerListResponseDTO> message = new Message<>();
         StockMarkerListResponseDTO stockMarkerListResponseDTO = new StockMarkerListResponseDTO();
         try {
-            List<String> markerList = super.baseMapper.markerListByCondition(queryWrapper);
+            List<MarkerListResponseDTO> markerList = super.baseMapper.markerListByCondition(queryWrapper);
             stockMarkerListResponseDTO.setMarkerList(markerList);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

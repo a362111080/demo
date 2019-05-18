@@ -140,19 +140,6 @@ public class BarCodeController {
                     && printBarCodeRequestDTO.getPrintNum() > 0) {
                 LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
                 String barCodeId = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
-//                String infoDTOStr = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
-//                BarCodeInfoDTO infoDTO = JsonUtils.jsonToPojo(infoDTOStr, BarCodeInfoDTO.class);
-//                BarCodeRequestDTO barCodeRequestDTO = new BarCodeRequestDTO();
-//                TransferUtil.copyProperties(barCodeRequestDTO, infoDTO);
-                /**
-                 * 覆盖母条码的创建人,创建时间,修改人,修改时间
-                 */
-//                barCodeRequestDTO.setCompanyId(user.getCompanyId());
-//                barCodeRequestDTO.setShopId(user.getShopId());
-//                barCodeRequestDTO.setCreator(user.getName());
-//                barCodeRequestDTO.setModifier(user.getName());
-//                barCodeRequestDTO.setCreatetime(new Date());
-//                barCodeRequestDTO.setModifytime(new Date());
                 message = bcService.PrintBarCode(barCodeId, printBarCodeRequestDTO.getPrintNum(), user.getId());
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);

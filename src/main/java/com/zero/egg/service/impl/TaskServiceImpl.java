@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
+import com.zero.egg.dao.BillDetailsMapper;
+import com.zero.egg.dao.BillMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.dao.StockMapper;
 import com.zero.egg.dao.TaskMapper;
+import com.zero.egg.enums.BillEnums;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
@@ -32,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +56,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private BillMapper billMapper;
+
+    @Autowired
+    private BillDetailsMapper billDetailsMapper;
 
     @Autowired
     private JedisUtil.Strings jedisStrings;
@@ -261,6 +271,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
              * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId的数据取出来转换回列表
              * 3.统计里面的数据存入出货商品表同时减去库存中的数量
              * 4.在MySQL中对应的出货任务,status改为TaskEnums.Status.Finish.index().toString(),dr设为1(true)
+             * 5,生成一条账单信息
              */
             String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
             List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
@@ -325,6 +336,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
+            //5.生成一条ststus为0(未生成的)账单
+            int shipmentBillCount = billMapper.selectCount(new QueryWrapper<Bill>()
+                    .eq("type", TaskEnums.Type.Shipment.index().toString()));
+            /**8位编码前面补0格式*/
+            DecimalFormat g1 = new DecimalFormat("00000000");
+            Bill bill = new Bill();
+            bill.setBillNo("BLS" + (g1.format(shipmentBillCount)));
+            bill.setTaskId(taskId);
+            bill.setCussupId(customerId);
+            bill.setStatus(BillEnums.Status.Not_Generated.index().toString());
+            bill.setType(TaskEnums.Type.Shipment.index().toString());
+            bill.setCompanyId(task.getCompanyId());
+            bill.setShopId(task.getShopId());
+            bill.setBillDate(new Date());
+            bill.setCreator(task.getCreator());
+            bill.setCreatetime(new Date());
+            billMapper.insert(bill);
+            String billId = bill.getId();
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

@@ -633,7 +633,7 @@ public class TaskController {
                     || !TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
                 message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setState(UtilConstants.ResponseCode.EMPLOYEE_NOT_FINISH);
                 message.setMessage(UtilConstants.ResponseMsg.ASURE_EMPLOYEE_FINISH);
                 return message;
             }
