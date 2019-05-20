@@ -21,16 +21,23 @@
 
 
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.supplier_id,a.task_id,b.id,sum(1) as sumVal,pro.name as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,war.warNum
+        select info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as sumVal,sum(info.warNum) as  warNum,info.mode,info.specification_id
+        from (
+        select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,
+        case when sp.mode='1' then  CONCAT('实重','(',sp.weight_min,'~',sp.weight_max,')')  else   pro.name end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
+        case when sp.mode='1' then  a.specification_id else '' end as specification_id,war.warNum,sp.mode
         from  bd_unload_goods  a
-        left join  bd_category  b  on  a.goods_category_id=b.id
+        left join bd_category  b  on  a.goods_category_id=b.id
+        left join bd_specification  sp on sp.id=a.specification_id
         left join bd_specification_program pro on pro.id=a.program_id
         left join (
-          select m.task_id, m.program_id, sum(1) as warNum,m.goods_category_id from bd_unload_goods m where m.warn=true  and m.task_id=#{taskId}
-          GROUP BY m.task_id,m.program_id,m.goods_category_id
-          ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id
+        select m.task_id, m.program_id, sum(1) as warNum,m.goods_category_id,m.specification_id from bd_unload_goods m where m.warn=true  and m.task_id=#{taskId}
+        GROUP BY m.task_id,m.program_id,m.goods_category_id,m.specification_id
+        ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id and a.specification_id=war.specification_id
         where  a.task_id=#{taskId} and  a.dr=0
-        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id
+        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode)  info
+        group by info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id
+        order by info.goodsCategoryId,info.programname desc
     </select>
     <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
