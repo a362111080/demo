@@ -475,7 +475,7 @@ public class TaskController {
                                     IDetails.setGoodsCategoryId(model.getUnloadDetails().get(n).getGoodsCategoryId());
                                     IDetails.setProgramId(model.getUnloadDetails().get(n).getProgramId());
                                     //卸货账单明细无规格信息
-                                    //IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
+                                    IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
                                     IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
                                     IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
                                     IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
