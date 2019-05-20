@@ -10,11 +10,23 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.enums.UserEnums;
-import com.zero.egg.model.*;
+import com.zero.egg.model.Bill;
+import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.Goods;
+import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.model.Stock;
+import com.zero.egg.model.Task;
+import com.zero.egg.model.TaskProgram;
+import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.QueryBlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.UnloadReport;
-import com.zero.egg.service.*;
+import com.zero.egg.service.IGoodsService;
+import com.zero.egg.service.IShipmentGoodsService;
+import com.zero.egg.service.IStockService;
+import com.zero.egg.service.ITaskProgramService;
+import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
@@ -24,7 +36,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -424,21 +440,21 @@ public class TaskController {
                                     taskService.InsertGoods(Igoods);
                                 }
                                 //写入库存表
-                                String Billcategoryname="";
+                                String Billcategoryname = "";
                                 List<UnloadReport> UnloadReport = taskService.GetUnloadReport(model.getId());
                                 for (int u = 0; u < UnloadReport.size(); u++) {
 
                                     //拼接账单品种
-                                    String Categoryname=UnloadReport.get(u).getCategoryname();
+                                    String Categoryname = UnloadReport.get(u).getCategoryname();
                                     if (null !=Categoryname )
                                     {
                                         if (!Billcategoryname.contains(Categoryname) && Billcategoryname!="")
                                         {
-                                            Billcategoryname=Billcategoryname+"/"+Categoryname;
+                                            Billcategoryname = Billcategoryname + "/" + Categoryname;
                                         }
                                         else
                                         {
-                                            Billcategoryname=Categoryname;
+                                            Billcategoryname = Categoryname;
                                         }
                                     }
 
@@ -699,6 +715,51 @@ public class TaskController {
             task.setShopId(loginUser.getShopId());
             task.setCreator(loginUser.getId());
             message = taskService.RealFinishTask(task, taskId, customerId);
+        } catch (Exception e) {
+            log.error("FinishShipmentTask failed:" + e);
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+        }
+        return message;
+    }
+
+    @PostMapping(value = "/queryblanbillsortlist")
+    @LoginToken
+    @ApiOperation(value = "查询空账单详情)")
+    public Message queryBlanBillSortList(@RequestBody @ApiParam(required = true, name = "task"
+            , value = "1.任务主键") QueryBlankBillGoodsRequestDTO requestDTO) {
+        Message message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            /**
+             * 权限判断,只有PC端和老板移动端能完成任务
+             */
+            if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
+                    && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
+                return message;
+            }
+            //非空判断
+            if (requestDTO == null || null == requestDTO.getTaskId()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                return message;
+            }
+            //企业和店铺id以登陆者信息为准
+            requestDTO.setCompanyId(loginUser.getCompanyId());
+            requestDTO.setShopId(loginUser.getShopId());
+            message = taskService.queryBlankGoods(requestDTO);
+
         } catch (Exception e) {
             log.error("FinishShipmentTask failed:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

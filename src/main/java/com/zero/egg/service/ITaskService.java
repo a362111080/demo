@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 import com.zero.egg.model.*;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.requestDTO.QueryBlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.tool.Message;
@@ -86,4 +87,12 @@ public interface ITaskService extends IService<Task> {
     Message RealFinishTask(Task task, String taskId, String customerId) throws ServiceException;
 
     List<UnloadReport> GetUnloadReport(String taskid);
+
+    /**
+     * 查询空账单的出货信息
+     *
+     * @param requestDTO
+     * @return
+     */
+    Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO);
 }

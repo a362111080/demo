@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
+import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
@@ -15,14 +16,19 @@ import com.zero.egg.enums.BillEnums;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.Category;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
+import com.zero.egg.requestDTO.QueryBlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.TaskRequest;
+import com.zero.egg.responseDTO.BlankBillGoodsDetail;
+import com.zero.egg.responseDTO.BlankBillGoodsResponseDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
+import com.zero.egg.responseDTO.NewShipmentTaskResponseDTO;
 import com.zero.egg.responseDTO.UnloadReport;
 import com.zero.egg.service.ITaskService;
 import com.zero.egg.tool.JsonUtils;
@@ -36,8 +42,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -77,6 +88,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private GoodsMapper goodsMapper;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
 
 
     @Override
@@ -285,6 +299,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             Stock stock = null;
             BigDecimal quantity;
             BigDecimal subOne = new BigDecimal(BigDecimal.ROUND_DOWN);
+            Set<String> categoryNameSet = new HashSet<>();
             for (GoodsResponse goodsResponse : goodsResponseList) {
                 shipmentGoods = new ShipmentGoods();
                 shipmentGoods.setCompanyId(task.getCompanyId());
@@ -303,6 +318,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 shipmentGoods.setModifier(task.getCreator());
                 shipmentGoods.setCreator(task.getCreator());
                 shipmentGoods.setDr(false);
+                categoryNameSet.add(goodsResponse.getCategoryName());
                 /**
                  * 1.新增到出货商品表里
                  * 2.从商品表里删除
@@ -340,9 +356,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             int shipmentBillCount = billMapper.selectCount(new QueryWrapper<Bill>()
                     .eq("type", TaskEnums.Type.Shipment.index().toString()));
             /**8位编码前面补0格式*/
+            String categoryName = String.join("/", categoryNameSet);
             DecimalFormat g1 = new DecimalFormat("00000000");
             Bill bill = new Bill();
             bill.setBillNo("BLS" + (g1.format(shipmentBillCount)));
+            bill.setCategoryname(categoryName);
             bill.setTaskId(taskId);
             bill.setCussupId(customerId);
             bill.setStatus(BillEnums.Status.Not_Generated.index().toString());
@@ -355,6 +373,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             billMapper.insert(bill);
             String billId = bill.getId();
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
+            NewShipmentTaskResponseDTO responseDTO = new NewShipmentTaskResponseDTO();
+            responseDTO.setBillId(billId);
+            responseDTO.setTaskId(taskId);
+            message.setData(responseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
@@ -367,6 +389,56 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     @Override
     public List<UnloadReport> GetUnloadReport(String taskid) {
         return mapper.GetUnloadReport(taskid);
+    }
+
+    @Override
+    @Transactional
+    public Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO) {
+        Message message = new Message();
+        try {
+            List<ShipmentGoods> goodsList = shipmentGoodsMapper.selectList(new QueryWrapper<ShipmentGoods>()
+                    .eq("task_id", requestDTO.getTaskId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("dr", 0));
+            Map<String, List<ShipmentGoods>> stringListMap = new HashMap<>();
+            for (ShipmentGoods shipmentGoods : goodsList) {
+                String categoryId = shipmentGoods.getGoodsCategoryId();
+                if (stringListMap.keySet().contains(categoryId)) {
+                    stringListMap.get(categoryId).add(shipmentGoods);
+                } else {
+                    List<ShipmentGoods> tempShipmentList = new ArrayList<>();
+                    tempShipmentList.add(shipmentGoods);
+                    stringListMap.put(categoryId, tempShipmentList);
+                }
+            }
+            BlankBillGoodsResponseDTO responseDTO = new BlankBillGoodsResponseDTO();
+            List<BlankBillGoodsDetail> blankBillGoodsDetailList = new ArrayList<>();
+            BlankBillGoodsDetail blankBillGoodsDetail = new BlankBillGoodsDetail();
+            for (Map.Entry<String, List<ShipmentGoods>> entry : stringListMap.entrySet()) {
+                responseDTO.setCategoryId(entry.getKey());
+                String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>()
+                        .select("name").eq("id", entry.getKey())
+                        .eq("shop_id", requestDTO.getShopId())
+                        .eq("company_id", requestDTO.getCompanyId())
+                        .eq("dr", 0)).getName();
+                responseDTO.setCategoryName(categoryName);
+                BigDecimal totalWeight = BigDecimal.ZERO;
+//                Map<String, List<BlankBillGoodsDetail>> stringListMap = new HashMap<>();
+                for (ShipmentGoods shipmentGoods : entry.getValue()) {
+                    blankBillGoodsDetail.setMarker(shipmentGoods.getMarker());
+                }
+            }
+
+
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("emplyeeFinishTask failed:" + e);
+            throw new ServiceException("emplyeeFinishTask failed");
+        }
+
+        return message;
     }
 
 

@@ -20,14 +20,16 @@ import com.zero.egg.responseDTO.BillReport;
 import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
-import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -51,13 +53,13 @@ import java.util.List;
 @Api(value="财务账单")
 @RequestMapping("/bill")
 public class BillController {
-	
+
 	@Autowired
 	private IBillService billService;
 
 	@Autowired
 	private HttpServletRequest request;
-	
+
 	@LoginToken
 	//@PassToken
 	@ApiOperation(value="分页查询财务账单（不可用）")
@@ -82,19 +84,19 @@ public class BillController {
 			//去本月第一天
 			LocalDateTime firstDayOfThisMonth;
 			// 取本月最后一天，再也不用计算是28，29，30还是31：
-			LocalDateTime lastDayOfThisMonth; 
+			LocalDateTime lastDayOfThisMonth;
 			if (bill.getBillDate() == null) {
 				today = LocalDateTime.now();
-				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
-				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth()); 
+				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
 			}else {
 				Instant instant = bill.getBillDate().toInstant();
 			    ZoneId zone = ZoneId.systemDefault();
 			    today = LocalDateTime.ofInstant(instant, zone);
 				//去本月第一天
-				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth()); 
+				firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
 				// 取本月最后一天，再也不用计算是28，29，30还是31：
-				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth()); 
+				lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
 			}
 			queryWrapper.ge("bill_date", firstDayOfThisMonth);
 			queryWrapper.le("bill_date", lastDayOfThisMonth);
@@ -105,7 +107,7 @@ public class BillController {
 		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="批量修改账单状态(挂账/销账)")
 	@RequestMapping(value="/billstateupdate",method=RequestMethod.POST)
@@ -130,7 +132,7 @@ public class BillController {
 			message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
 			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 		}
-		
+
 		return message;
 	}
 
