@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class SpecificationServiceImpl implements SpecificationService {
                 throw new ServiceException("WeightMin>WeightMax");
             } else {
                 specification.setCreatetime(new Date());
+                specification.setWeightName("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                 specificationMapper.insert(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -93,7 +95,9 @@ public class SpecificationServiceImpl implements SpecificationService {
             if ((specification.getWeightMin().compareTo(specification.getWeightMax())) > 0) {
                 throw new ServiceException("WeightMin>WeightMax");
             } else {
+                specification.setWeightName("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                 specification.setModifytime(new Date());
+                specification.setDr(0);
                 specificationMapper.updateById(specification);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -164,8 +168,46 @@ public class SpecificationServiceImpl implements SpecificationService {
         }
     }
 
-	@Override
+    @Override
+    public List<String> listStandardDetlIDsByProgramId(String programId, String companyId, String shopId) {
+        Message message = new Message();
+        List<String> ids = new ArrayList<>();
+        List<Specification> specificationList = null;
+        try {
+            specificationList = specificationMapper.selectList(new QueryWrapper<Specification>()
+                    .select("id")
+                    .eq("program_id", programId)
+                    .eq("dr", 0)
+                    .eq("shop_id", shopId)
+                    .eq("company_id", companyId));
+            for (Specification specification : specificationList) {
+                ids.add(specification.getId());
+            }
+            return ids;
+        } catch (Exception e) {
+            log.info("listStandardDetlByStandDetlCode error", e);
+            throw new ServiceException("listStandardDetlByStandDetlCode error");
+        }
+    }
+
+    @Override
 	public Specification getById(Specification specification) {
 		return specificationMapper.selectById(specification.getId());
 	}
+
+    @Override
+    public void batchDeleteStandardDetlByIds(List<String> ids) {
+        Specification specification = new Specification();
+        try {
+            /**
+             * 只做逻辑删除
+             */
+            specification.setDr(1);
+            specificationMapper.update(specification, new UpdateWrapper<Specification>()
+                    .in("id", ids));
+        } catch (Exception e) {
+            log.info("batchDeleteStandardDetlByIds error", e);
+            throw new ServiceException("batchDeleteStandardDetlByIds error");
+        }
+    }
 }

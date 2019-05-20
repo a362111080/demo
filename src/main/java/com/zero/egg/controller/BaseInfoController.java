@@ -535,13 +535,13 @@ public class BaseInfoController {
     }
 
     /**
-     * 保存方案细节(包括新增和修改)
+     * 保存方案细节(包括新增和修改和删除)
      *
      * @return
      */
     @RequestMapping(value = "/standard/savestandarddetl", method = RequestMethod.POST)
     @LoginToken
-    @ApiOperation(value = "保存方案细节(包括新增和修改)", notes = "{\"specificationRequestDTOS\":[{\"id\":" +
+    @ApiOperation(value = "保存方案细节(包括新增和修改和删除)", notes = "{\"specificationRequestDTOS\":[{\"id\":" +
             "\"6d68494a6235753e635b58f005d594d2\",\"programId\":\"e61177ee779e4548b0c305d577232d57\",\"weightMin\":10," +
             "\"weightMax\":20,\"marker\":\"4811111\",\"mode\":2,\"numerical\":null,\"warn\":1},{\"programId\":" +
             "\"e61177ee779e4548b0c305d577232d57\",\"weightMin\":10,\"weightMax\":20,\"marker\":\"4811111\",\"mode\":2,\"" +
@@ -560,6 +560,10 @@ public class BaseInfoController {
                     && !saveSpecificationRequestDTO.getSpecificationRequestDTOS().isEmpty()
                     && null != user.getCompanyId() && null != user.getShopId()) {
                 String name = user.getName();
+                //获取当前方案下所有细节id集合并置为删除状态
+                List<String> ids = specificationService.listStandardDetlIDsByProgramId(saveSpecificationRequestDTO
+                        .getSpecificationRequestDTOS().get(0).getProgramId(), user.getCompanyId(), user.getShopId());
+                specificationService.batchDeleteStandardDetlByIds(ids);
                 /* 迭代方案细节列表,将店铺id和企业id赋予给方案细节,并判断方案细节的id是否为空,为空走新增流程,否则走编辑 */
                 List<SpecificationRequestDTO> dtoList = saveSpecificationRequestDTO.getSpecificationRequestDTOS();
                 for (SpecificationRequestDTO requestDTO : dtoList) {

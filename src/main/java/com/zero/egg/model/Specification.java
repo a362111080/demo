@@ -66,6 +66,11 @@ public class Specification {
     private Integer numerical;
 
     /**
+     * 去皮时,拼接"实重("+重量区间+")"
+     */
+    @ApiModelProperty(value = "去皮时,拼接\"实重(\"+重量区间+\")\"", required = false)
+    private String weightName;
+    /**
      * 是否预警(0:否,1:是)
      */
     @ApiModelProperty(value = "是否预警(0:否,1:是)",required=false)

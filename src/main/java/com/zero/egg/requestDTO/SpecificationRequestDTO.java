@@ -28,6 +28,12 @@ public class SpecificationRequestDTO implements Serializable {
     private String id;
 
     /**
+     * 去皮时,拼接"实重("+重量区间+")"
+     */
+    @ApiModelProperty(value = "去皮时,拼接\"实重(\"+重量区间+\")\"", required = false)
+    private String weightName;
+
+    /**
      * 方案id
      */
     @ApiModelProperty(value = "方案id",required=false)

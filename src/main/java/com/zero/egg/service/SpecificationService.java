@@ -4,6 +4,8 @@ import com.zero.egg.model.Specification;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
 
+import java.util.List;
+
 /**
  * 方案细节Service
  *
@@ -43,6 +45,20 @@ public interface SpecificationService {
      * @Return com.zero.egg.tool.Message
      **/
     public Message listStandardDetlByProgramId(SpecificationRequestDTO specificationRequestDTO);
+
+    /**
+     * 根据program_id列出所有方案细节id
+     *
+     * @return
+     */
+    public List<String> listStandardDetlIDsByProgramId(String programId, String companyId, String shopId);
     
     public Specification getById(Specification specification);
+
+    /**
+     * 根据id集合批量删除方案细节
+     *
+     * @param ids
+     */
+    void batchDeleteStandardDetlByIds(List<String> ids);
 }
