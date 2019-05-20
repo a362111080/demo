@@ -10,6 +10,7 @@ import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
+import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.StockMapper;
 import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.BillEnums;
@@ -20,6 +21,7 @@ import com.zero.egg.model.Category;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.model.Specification;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
@@ -27,6 +29,7 @@ import com.zero.egg.requestDTO.QueryBlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.BlankBillGoodsDetail;
 import com.zero.egg.responseDTO.BlankBillGoodsResponseDTO;
+import com.zero.egg.responseDTO.BlankBillResponseDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.responseDTO.NewShipmentTaskResponseDTO;
 import com.zero.egg.responseDTO.UnloadReport;
@@ -91,6 +94,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private SpecificationMapper specificationMapper;
 
 
     @Override
@@ -396,41 +402,118 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     public Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO) {
         Message message = new Message();
         try {
+            //1.根据任务id等信息,查询出货任务出的所有货物信息
             List<ShipmentGoods> goodsList = shipmentGoodsMapper.selectList(new QueryWrapper<ShipmentGoods>()
                     .eq("task_id", requestDTO.getTaskId())
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("company_id", requestDTO.getCompanyId())
                     .eq("dr", 0));
-            Map<String, List<ShipmentGoods>> stringListMap = new HashMap<>();
+            //2.将货物信息根据 品种 分类  品种id-->货物集合
+            Map<String, List<ShipmentGoods>> categoryGoodsList = new HashMap<>();
             for (ShipmentGoods shipmentGoods : goodsList) {
                 String categoryId = shipmentGoods.getGoodsCategoryId();
-                if (stringListMap.keySet().contains(categoryId)) {
-                    stringListMap.get(categoryId).add(shipmentGoods);
+                if (categoryGoodsList.keySet().contains(categoryId)) {
+                    categoryGoodsList.get(categoryId).add(shipmentGoods);
                 } else {
                     List<ShipmentGoods> tempShipmentList = new ArrayList<>();
                     tempShipmentList.add(shipmentGoods);
-                    stringListMap.put(categoryId, tempShipmentList);
+                    categoryGoodsList.put(categoryId, tempShipmentList);
                 }
             }
-            BlankBillGoodsResponseDTO responseDTO = new BlankBillGoodsResponseDTO();
-            List<BlankBillGoodsDetail> blankBillGoodsDetailList = new ArrayList<>();
-            BlankBillGoodsDetail blankBillGoodsDetail = new BlankBillGoodsDetail();
-            for (Map.Entry<String, List<ShipmentGoods>> entry : stringListMap.entrySet()) {
-                responseDTO.setCategoryId(entry.getKey());
-                String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>()
-                        .select("name").eq("id", entry.getKey())
+            //3. 再把货物集合根据标记方式分类   标记方式id-->货物集合
+            Map<String, List<ShipmentGoods>> specificationListMap = new HashMap<>();
+            for (List<ShipmentGoods> shipmentGoodsList : categoryGoodsList.values()) {
+                for (ShipmentGoods shipmentGoods : shipmentGoodsList) {
+                    String specificationId = shipmentGoods.getSpecificationId();
+                    if (specificationListMap.keySet().contains(specificationId)) {
+                        specificationListMap.get(specificationId).add(shipmentGoods);
+                    } else {
+                        List<ShipmentGoods> tempShipmentList = new ArrayList<>();
+                        tempShipmentList.add(shipmentGoods);
+                        specificationListMap.put(specificationId, tempShipmentList);
+                    }
+                }
+            }
+            //4 开始整理BlankBillGoodsDetail
+
+            Specification specification;
+           /* for (Map.Entry<String, List<ShipmentGoods>> entry : specificationListMap.entrySet()) {
+                blankBillGoodsDetail.setCount((long) entry.getValue().size());
+                blankBillGoodsDetail.setMode(Integer.parseInt(entry.getValue().get(0).getMode()));
+                BigDecimal totalWeight = BigDecimal.ZERO;
+                String specificationId = entry.getKey();
+                blankBillGoodsDetail.setSpecificationId(specificationId);
+                specification =  specificationMapper.selectOne(new QueryWrapper<Specification>()
+                        .eq("id", specificationId)
                         .eq("shop_id", requestDTO.getShopId())
                         .eq("company_id", requestDTO.getCompanyId())
-                        .eq("dr", 0)).getName();
-                responseDTO.setCategoryName(categoryName);
-                BigDecimal totalWeight = BigDecimal.ZERO;
-//                Map<String, List<BlankBillGoodsDetail>> stringListMap = new HashMap<>();
-                for (ShipmentGoods shipmentGoods : entry.getValue()) {
-                    blankBillGoodsDetail.setMarker(shipmentGoods.getMarker());
+                        .eq("dr", 0));
+                //如果mode为1(去皮),则需要做额外处理
+                if (blankBillGoodsDetail.getMode() == 1) {
+                    //循环出货商品,累加重量
+                    for (ShipmentGoods shipmentGoods : entry.getValue()) {
+                        totalWeight = totalWeight.add(shipmentGoods.getWeight());
+                    }
+                    blankBillGoodsDetail.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
+                    blankBillGoodsDetail.setTotalWeight(totalWeight);
+                } else {
+                    blankBillGoodsDetail.setMarker(specification.getMarker());
+                    blankBillGoodsDetail.setTotalWeight(BigDecimal.ZERO);
                 }
+            }*/
+            //5
+            BlankBillGoodsResponseDTO responseDTO;
+            List<BlankBillGoodsResponseDTO> billGoodsResponseDTOS = new ArrayList<>();
+            BlankBillResponseDTO blankBillResponseDTO = new BlankBillResponseDTO(); //最重Data
+            for (Map.Entry<String, List<ShipmentGoods>> entryOut : categoryGoodsList.entrySet()) {
+                responseDTO = new BlankBillGoodsResponseDTO();
+                responseDTO.setCategoryId(entryOut.getKey());
+                String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>().select("name")
+                        .eq("id", entryOut.getKey())
+                        .eq("shop_id", requestDTO.getShopId())
+                        .eq("company_id", requestDTO.getCompanyId())
+                        .eq("dr", 0))
+                        .getName();
+                responseDTO.setCategoryName(categoryName);
+
+                BlankBillGoodsDetail blankBillGoodsDetail;
+                List<BlankBillGoodsDetail> blankBillGoodsDetails = new ArrayList<>();
+                for (Map.Entry<String, List<ShipmentGoods>> entryIn : specificationListMap.entrySet()) {
+                    //如果内循环的品种id和外循环的品种id一致,才进行归类操作
+                    if ((entryIn.getValue().get(0).getGoodsCategoryId()).equals(entryOut.getKey())) {
+                        blankBillGoodsDetail = new BlankBillGoodsDetail();
+                        blankBillGoodsDetail.setCount((long) entryIn.getValue().size());
+                        blankBillGoodsDetail.setMode(Integer.parseInt(entryIn.getValue().get(0).getMode()));
+                        BigDecimal totalWeight = BigDecimal.ZERO;
+                        String specificationId = entryIn.getKey();
+                        blankBillGoodsDetail.setSpecificationId(specificationId);
+                        specification = specificationMapper.selectOne(new QueryWrapper<Specification>()
+                                .eq("id", specificationId)
+                                .eq("shop_id", requestDTO.getShopId())
+                                .eq("company_id", requestDTO.getCompanyId())
+                                .eq("dr", 0));
+                        //如果mode为1(去皮),则需要做额外处理
+                        if (blankBillGoodsDetail.getMode() == 1) {
+                            //循环出货商品,累加重量
+                            for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
+                                totalWeight = totalWeight.add(shipmentGoods.getWeight());
+                            }
+                            blankBillGoodsDetail.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
+                            blankBillGoodsDetail.setTotalWeight(totalWeight);
+                        } else {
+                            blankBillGoodsDetail.setMarker(specification.getMarker());
+                            blankBillGoodsDetail.setTotalWeight(BigDecimal.ZERO);
+                        }
+                        blankBillGoodsDetails.add(blankBillGoodsDetail);
+                        blankBillGoodsDetail = null;
+                    }
+                    responseDTO.setBlankBillGoodsDetailList(blankBillGoodsDetails);
+                }
+                billGoodsResponseDTOS.add(responseDTO);
+                responseDTO = null;
             }
-
-
+            blankBillResponseDTO.setBillGoodsResponseDTOS(billGoodsResponseDTOS);
+            message.setData(blankBillResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
