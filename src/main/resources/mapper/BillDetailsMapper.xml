@@ -3,7 +3,7 @@
 <mapper namespace="com.zero.egg.dao.BillDetailsMapper">
     <select id="getbilldetsils"  resultType="com.zero.egg.model.BillDetails">
         select b.name as goodsCategoryName,d.marker,a.*,
-        case when IFNULL(a.specification_id ,'')='' then c.name else  CONCAT('实重','(',d.weight_min,'~',d.weight_max,')') end as programName
+        case when IFNULL(a.specification_id ,'')='' then CONCAT(c.name,' ','常规') else  CONCAT(c.name,'(','实重',d.weight_min,'~',d.weight_max,')') end as programName
         from bd_bill_details a
         left join bd_category b on b.id=a.goods_category_id
         left join bd_specification_program c on c.id=a.program_id
