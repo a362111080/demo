@@ -446,14 +446,10 @@ public class TaskController {
 
                                     //拼接账单品种
                                     String Categoryname = UnloadReport.get(u).getCategoryname();
-                                    if (null !=Categoryname )
-                                    {
-                                        if (!Billcategoryname.contains(Categoryname) && Billcategoryname!="")
-                                        {
+                                    if (null != Categoryname) {
+                                        if (!Billcategoryname.contains(Categoryname) && Billcategoryname != "") {
                                             Billcategoryname = Billcategoryname + "/" + Categoryname;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             Billcategoryname = Categoryname;
                                         }
                                     }
@@ -733,7 +729,7 @@ public class TaskController {
     @LoginToken
     @ApiOperation(value = "查询空账单详情)")
     public Message queryBlanBillSortList(@RequestBody @ApiParam(required = true, name = "task"
-            , value = "1.任务主键") QueryBlankBillGoodsRequestDTO requestDTO) {
+            , value = "1.任务主键 2.账单编号  3.账单id") QueryBlankBillGoodsRequestDTO requestDTO) {
         Message message = new Message<Object>();
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);

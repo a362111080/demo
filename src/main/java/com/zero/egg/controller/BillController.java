@@ -13,6 +13,7 @@ import com.zero.egg.model.Bill;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
+import com.zero.egg.requestDTO.BlankBillRequestDTO;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -271,5 +273,19 @@ public class BillController {
 		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return  ms;
 	}
+
+    /**
+     * 更新出货(暂时只针对出货)任务的账单信息写账单细节
+     *
+     * @param blankBillRequestDTO
+     * @return
+     */
+    @LoginToken
+    @PostMapping("/updateblankbill")
+    @ApiOperation(value = "查询账单列表", notes = "含多条件查询")
+    public Message updateBillAndDetails(@RequestBody BlankBillRequestDTO blankBillRequestDTO) {
+
+        return null;
+    }
 
 }

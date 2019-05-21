@@ -381,7 +381,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status", TaskEnums.Status.Finish.index().toString());
             NewShipmentTaskResponseDTO responseDTO = new NewShipmentTaskResponseDTO();
             responseDTO.setBillId(billId);
-            responseDTO.setTaskId(taskId);
             message.setData(responseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -516,12 +515,33 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 responseDTO = null;
             }
             blankBillResponseDTO.setBillGoodsResponseDTOS(billGoodsResponseDTOS);
+            Bill bill = billMapper.selectOne(new QueryWrapper<Bill>().select("id,bill_no")
+                    .eq("task_id", requestDTO.getTaskId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("company_id", requestDTO.getCompanyId()));
+            blankBillResponseDTO.setBillId(bill.getId());
+            blankBillResponseDTO.setBillNo(bill.getBillNo());
+
+            String customerId = mapper.selectOne(new QueryWrapper<Task>()
+                    .select("cussup_id")
+                    .eq("id", requestDTO.getTaskId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("company_id", requestDTO.getCompanyId()))
+                    .getCussupId();
+            String customerName = customerMapper.selectOne(new QueryWrapper<Customer>().select("name")
+                    .eq("id", customerId)
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("dr", 0))
+                    .getName();
+            blankBillResponseDTO.setCustomerId(customerId);
+            blankBillResponseDTO.setCustomerName(customerName);
             message.setData(blankBillResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
-            log.error("emplyeeFinishTask failed:" + e);
-            throw new ServiceException("emplyeeFinishTask failed");
+            log.error("queryBlankGoods failed:" + e);
+            throw new ServiceException("queryBlankGoods failed");
         }
 
         return message;

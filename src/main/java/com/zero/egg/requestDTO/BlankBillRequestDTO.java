@@ -1,4 +1,4 @@
-package com.zero.egg.responseDTO;
+package com.zero.egg.requestDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,14 +8,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @ClassName BlankBillResponseDTO
+ * @ClassName BlankBillRequestDTO
  * @Author lyming
  * @Date 2019/5/20 20:39
  **/
 @Data
-public class BlankBillResponseDTO implements Serializable {
+public class BlankBillRequestDTO implements Serializable {
 
-    private static final long serialVersionUID = 3420993517274939392L;
+
+    private static final long serialVersionUID = 8634714243329477777L;
 
     @ApiModelProperty(value = "账单id", required = false)
     private String billId;
@@ -35,5 +36,5 @@ public class BlankBillResponseDTO implements Serializable {
     @ApiModelProperty(value = "合作商店铺名", required = false)
     private String customerName;
 
-    List<BlankBillGoodsResponseDTO> billGoodsResponseDTOS;
+    List<BlankBillGoodsRequestDTO> blankBillGoodsRequestDTOS;
 }

@@ -38,4 +38,15 @@ public class BlankBillGoodsDetail implements Serializable {
      * 数量
      */
     private Long count;
+
+    /**
+     * 单价
+     */
+    private BigDecimal unitPrice;
+
+    /**
+     * 小计
+     */
+    private BigDecimal subtotal;
+
 }
