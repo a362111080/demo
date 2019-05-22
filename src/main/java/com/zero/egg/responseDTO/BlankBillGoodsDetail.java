@@ -16,6 +16,11 @@ public class BlankBillGoodsDetail implements Serializable {
     private static final long serialVersionUID = 8974798696362183715L;
 
     /**
+     * 所属方案id
+     */
+    private String programId;
+
+    /**
      * 方案细节(规格)id
      */
     private String specificationId;
@@ -37,16 +42,16 @@ public class BlankBillGoodsDetail implements Serializable {
     /**
      * 数量
      */
-    private Long count;
+    private Long quantity;
 
     /**
      * 单价
      */
-    private BigDecimal unitPrice;
+    private BigDecimal price;
 
     /**
      * 小计
      */
-    private BigDecimal subtotal;
+    private BigDecimal amount;
 
 }

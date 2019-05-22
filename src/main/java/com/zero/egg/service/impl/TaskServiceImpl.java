@@ -481,7 +481,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     //如果内循环的品种id和外循环的品种id一致,才进行归类操作
                     if ((entryIn.getValue().get(0).getGoodsCategoryId()).equals(entryOut.getKey())) {
                         blankBillGoodsDetail = new BlankBillGoodsDetail();
-                        blankBillGoodsDetail.setCount((long) entryIn.getValue().size());
+                        blankBillGoodsDetail.setQuantity((long) entryIn.getValue().size());
                         blankBillGoodsDetail.setMode(Integer.parseInt(entryIn.getValue().get(0).getMode()));
                         BigDecimal totalWeight = BigDecimal.ZERO;
                         String specificationId = entryIn.getKey();
@@ -491,13 +491,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                                 .eq("shop_id", requestDTO.getShopId())
                                 .eq("company_id", requestDTO.getCompanyId())
                                 .eq("dr", 0));
+                        blankBillGoodsDetail.setProgramId(specification.getProgramId());
                         //如果mode为1(去皮),则需要做额外处理
                         if (blankBillGoodsDetail.getMode() == 1) {
                             //循环出货商品,累加重量
                             for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
                                 totalWeight = totalWeight.add(shipmentGoods.getWeight());
                                 //需要减去去皮值*数量
-                                BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillGoodsDetail.getCount());
+                                BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillGoodsDetail.getQuantity());
                                 totalWeight = totalWeight.subtract(needToSubtract);
                             }
                             blankBillGoodsDetail.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
