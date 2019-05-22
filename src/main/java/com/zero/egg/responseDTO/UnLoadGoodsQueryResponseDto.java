@@ -91,4 +91,6 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     @ApiModelProperty(value = "称重方式")
     private String mode;
 
+    @ApiModelProperty(value = "规格id")
+    private String  specificationId;
 }

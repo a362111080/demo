@@ -24,7 +24,7 @@
                 and a.status in (${status})
             </if>
             <if test="supplierId != null and supplierId !=''">
-                and a.supplier_id=#{supplierId,jdbcType=VARCHAR}
+                and a.cussup_id=#{supplierId,jdbcType=VARCHAR}
             </if>
             <if test="equipmentNo != null and equipmentNo !=''">
                 and a.equipment_no=#{equipmentNo,jdbcType=VARCHAR}
