@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.BrokenGoods;
+import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.responseDTO.BrokenGoodsReponse;
 
@@ -22,5 +23,10 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
 	
 	
 	BrokenGoodsReponse findById(QueryWrapper<BrokenGoodsRequest> queryWrapper);
-	
+
+    Goods GetBrokenInfo(String goodsNo);
+
+    Goods GetStoBrokenInfo(String brokenGoodsNo);
+
+    Boolean updateGoodsDr(String brokenGoodsNo);
 }

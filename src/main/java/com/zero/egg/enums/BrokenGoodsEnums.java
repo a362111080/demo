@@ -5,7 +5,7 @@ public class BrokenGoodsEnums {
 	
 	public enum Status {
 
-		Normal(1,"未完成"),Disable(-1,"已完成");
+		Normal(1,"开始售后"),Disable(-1,"售后完成"),Working(0,"正在售后");
 
 	    private Integer index;
 	    private String note;

@@ -1,22 +1,19 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.pagehelper.StringUtil;
 import com.zero.egg.enums.BrokenGoodsEnums;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -72,16 +69,18 @@ public class BrokenGoods implements Serializable {
     @ApiModelProperty(value = "业务员",required=false)
     private String userId;
 
-    @ApiModelProperty(value = "换货订单号",required=false)
-    private String changeGoodsOrderNo;
+    @ApiModelProperty(value = "出货账单编号，自损无该字段信息",required=false)
+    private String billNo;
+
+    @ApiModelProperty(value = "损坏商品编码",required=false)
+    private String brokenGoodsNo;
 
     @ApiModelProperty(value = "类型",required=false)
     private String type;
     
-    
 
-    @ApiModelProperty(value = "派送订单号",required=false)
-    private String shipmentGoodsOrderNo;
+    @ApiModelProperty(value = "售后处理商品编码，自损无该字段信息",required=false)
+    private String changeGoodsNo;
 
     @ApiModelProperty(value = "换货商品状态",required=true)
     private String status;

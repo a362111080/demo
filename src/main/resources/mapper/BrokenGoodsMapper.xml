@@ -13,7 +13,29 @@
 	${ew.customSqlSegment}
 </select>
 
-
+	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods">
+		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,
+		 case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
+		 FROM bd_shipment_goods k
+		 left join bd_customer a on a.id=k.customer_id
+		 left join bd_category b on b.id=k.goods_category_id
+		 left join bd_bill c on c.task_id=k.task_id
+		 left join bd_specification d on d.id=k.specification_id
+		 where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+	</select>
+	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods">
+		SELECT k.*,a.name as suppliername ,b.name as categoryname,
+		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
+		FROM bd_goods k
+	    left join bd_supplier a on a.id=k.supplier_id
+	    left join bd_category b on b.id=k.goods_category_id
+		left join bd_specification d on d.id=k.specification_id
+		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+	</select>
+	<update id="updateGoodsDr" parameterType="java.lang.String">
+		update bd_goods set dr=1
+		where goods_no = #{brokenGoodsNo,jdbcType=VARCHAR}
+	</update>
 
 
 </mapper>

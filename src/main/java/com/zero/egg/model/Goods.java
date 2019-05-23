@@ -1,18 +1,18 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -80,5 +80,24 @@ public class Goods implements Serializable {
     @ApiModelProperty(value = "删除标识")
     private Boolean dr;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "客户名称",hidden=true)
+    public String customername;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "品种名称",hidden=true)
+    public String categoryname;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "账单号",hidden=true)
+    public String billNo;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "任务id",hidden=true)
+    public String taskId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "扫码显示标识",hidden=true)
+    public String brokenmarker;
 
 }

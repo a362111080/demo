@@ -1,5 +1,6 @@
 package com.zero.egg.dao;
 
+import com.zero.egg.model.Goods;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -25,5 +26,10 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
 	
 	
 	BrokenGoodsReponse findById(QueryWrapper<BrokenGoodsRequest> wrapper);
-	
+
+    Goods GetBrokenInfo(String goodsNo);
+
+    Goods GetStoBrokenInfo(String brokenGoodsNo);
+
+    Boolean updateGoodsDr(String brokenGoodsNo);
 }
