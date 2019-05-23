@@ -179,16 +179,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
              * 2.如果存在活动任务,则创建失败,并返回已有活动任务的提示
              * 3.如果不存在活动任务,则创建任务
              */
-            int count = mapper.selectCount(new QueryWrapper<Task>()
+            Task tempTask = mapper.selectOne(new QueryWrapper<Task>()
                     .eq("dr", 0)
                     .eq("shop_id", task.getShopId())
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", task.getCussupId())
                     .in("status", TaskEnums.Status.Execute.index().toString()
                             , TaskEnums.Status.Unexecuted.index().toString()));
-            if (count > 0) {
+            if (null != tempTask) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TAST_EXIST);
+                message.setData(tempTask);
             } else {
                 task.setCreatetime(new Date());
                 task.setModifytime(new Date());
