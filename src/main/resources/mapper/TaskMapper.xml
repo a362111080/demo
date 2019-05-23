@@ -98,6 +98,7 @@
         AND t.`status` IN (0, 3)
         AND t.company_id=#{companyId,jdbcType=VARCHAR}
         AND t.shop_id=#{shopId,jdbcType=VARCHAR}
+        ORDER BY t.createtime
     </select>
 
 
