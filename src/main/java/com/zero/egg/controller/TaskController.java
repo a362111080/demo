@@ -505,6 +505,7 @@ public class TaskController {
                                 Ibill.setCompanyId(user.getCompanyId());
                                 Ibill.setCussupId(SupplierId);
                                 Ibill.setBillDate(new Date());
+                                Ibill.setTaskId(model.getId());
                                 Ibill.setType(TaskEnums.Type.Unload.index().toString());
                                 Ibill.setQuantity(sumQuantity);
                                 Ibill.setAmount(Amount);
