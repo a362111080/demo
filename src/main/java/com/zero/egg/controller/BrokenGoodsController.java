@@ -4,6 +4,8 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.BrokenGoodsEnums;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +48,7 @@ import java.util.Map;
  */
 @RestController
 @Api(value="报损管理")
-@RequestMapping("/broken")
+	@RequestMapping("/broken")
 public class BrokenGoodsController {
 
 	@Autowired
@@ -58,64 +61,12 @@ public class BrokenGoodsController {
 
 	@Autowired
 	private HttpServletRequest request;
-	
-	@LoginToken
-	@ApiOperation(value="分页查询")
-	@PostMapping(value="/list")
-	public Message<IPage<BrokenGoodsReponse>> list(
-			@RequestBody @ApiParam(required=false,name="brokenGoodsRequest",value="查询字段：企业主键，店铺主键，客户主键，类型，状态，标记，方式，重量") BrokenGoodsRequest brokenGoodsRequest) {
-		Message<IPage<BrokenGoodsReponse>> message = new Message<>();
-		Page<BrokenGoods> page = new Page<>();
-		page.setCurrent(brokenGoodsRequest.getCurrent());
-		page.setSize(brokenGoodsRequest.getSize());
-		QueryWrapper<BrokenGoodsRequest> queryWrapper = new QueryWrapper<>();
-		if (brokenGoodsRequest != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(brokenGoodsRequest.getType()),"b.type", brokenGoodsRequest.getType())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getCompanyId()),"b.company_id", brokenGoodsRequest.getCompanyId())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getShopId()),"b.shop_id", brokenGoodsRequest.getShopId())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getCustomerId()),"b.customer_id", brokenGoodsRequest.getCustomerId())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getStatus()),"b.status", brokenGoodsRequest.getStatus())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getMarker()),"b.marker", brokenGoodsRequest.getMarker())
-			.eq(StringUtils.isNotBlank(brokenGoodsRequest.getMode()),"b.mode", brokenGoodsRequest.getMode())
-			.eq(brokenGoodsRequest.getWeight() != null,"b.weight", brokenGoodsRequest.getWeight())
-			;
-		}
-		IPage<BrokenGoodsReponse> list =brokenGoodsService.listByCondition(page, queryWrapper);
-		message.setData(list);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		return message;
-	}
-	
-	@LoginToken
-	@ApiOperation(value="根据报损id查询信息")
-	@PostMapping(value="/findbyid")
-	public Message<Map<String, Object>> findById(
-			@RequestBody @ApiParam(required=false,name="brokenGoodsRequest",value="报损id") BrokenGoodsRequest brokenGoodsRequest) {
-		Message<Map<String, Object>> message = new Message<>();
-		Map<String, Object> map = new HashMap<>();
-		QueryWrapper<BrokenGoodsRequest> queryWrapper = new QueryWrapper<>();
-		if (brokenGoodsRequest != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(brokenGoodsRequest.getId()),"id", brokenGoodsRequest.getId());
-		}
-		BrokenGoodsReponse brokenGoodsReponse =brokenGoodsService.findById(queryWrapper);
-		map.put("brokenGoods", brokenGoodsReponse);
-		QueryWrapper<ChangeGoods> ChangeGoodsWrapper = new QueryWrapper<>();
-		if (brokenGoodsReponse != null) {
-			queryWrapper.eq(StringUtils.isNotBlank(brokenGoodsReponse.getId()),"broken_id", brokenGoodsReponse.getId());
-		}
-		ChangeGoodsReponse changeGoodsReponse = changeGoodsService.findById(ChangeGoodsWrapper);
-		map.put("changeGoods", changeGoodsReponse);
-		message.setData(map);
-		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		return message;
-	}
+
 
 	@LoginToken
 	@ApiOperation(value="查询货物信息")
 	@PostMapping(value="/goodview")
-	public Message GetSupplierList(@RequestBody BrokenGoods brokenGoods)
+	public Message GetBrokenInfo(@RequestBody BrokenGoods brokenGoods)
 	{
 		Message message = new Message();
 		if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
@@ -152,6 +103,72 @@ public class BrokenGoodsController {
 		}
 		return message;
 	}
+
+	@LoginToken
+	@ApiOperation(value="查询货物信息")
+	@PostMapping(value="/brokentask")
+	public Message GetBrokenTask(@RequestBody BrokenGoodsRequest Request) {
+		Message message = new Message();
+		PageHelper.startPage(Request.getCurrent().intValue(), Request.getSize().intValue());
+		//获取报损任务
+		List<BrokenGoods> newBroken=brokenGoodsService.GetBrokenTask(Request);
+		PageInfo<BrokenGoods>  pageInfo = new PageInfo<>(newBroken);
+		message.setData(pageInfo);
+		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return message;
+	}
+
+	@LoginToken
+	@ApiOperation(value="扫码要替换的货")
+	@PostMapping(value="/brokenstep1")
+	public Message brokenstep1(@RequestBody BrokenGoodsRequest Request) {
+		Message message = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (null != Request.getGoodsNo())
+		{
+			BrokenGoods  newBroken=new BrokenGoods();
+			newBroken.setId(Request.getId());
+			newBroken.setChangeGoodsNo(Request.getGoodsNo());
+			newBroken.setStatus(BrokenGoodsEnums.Status.Normal.index().toString());
+			newBroken.setUserId(user.getId());
+			brokenGoodsService.updateById(newBroken);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		}
+		return message;
+	}
+
+	@LoginToken
+	@ApiOperation(value="扫码坏掉的货")
+	@PostMapping(value="/brokenstep2")
+	public Message brokenstep2(@RequestBody BrokenGoodsRequest Request) {
+		Message message = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (null != Request.getGoodsNo())
+		{
+			BrokenGoods  newBroken=new BrokenGoods();
+			newBroken.setId(Request.getId());
+			newBroken.setBrokenGoodsNo(Request.getGoodsNo());
+			newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
+			newBroken.setUserId(user.getId());
+			brokenGoodsService.updateById(newBroken);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		}
+		return message;
+	}
+
 
 
 	@LoginToken
@@ -218,6 +235,7 @@ public class BrokenGoodsController {
 					newBroken.setId(UuidUtil.get32UUID());
 					newBroken.setShopId(user.getShopId());
 					newBroken.setCompanyId(user.getCompanyId());
+					newBroken.setCustomerId(broken.getSupplierId());
 					newBroken.setSpecificationId(broken.getSpecificationId());
 					newBroken.setGoodsCategroyId(broken.getGoodsCategoryId());
 					newBroken.setMarker(broken.getMarker());
@@ -300,7 +318,7 @@ public class BrokenGoodsController {
 	@ApiOperation(value="修改报损状态")
 	@PostMapping(value="/changestutus")
 	public Message<Object> changeStutus(
-			@RequestBody @ApiParam(required=true,name="brokenGoods",value="报损主键，状态（1未完成，-1已完成）") BrokenGoods brokenGoods
+			@RequestBody @ApiParam(required=true,name="brokenGoods",value="报损主键，状态（1开始售后，-1完成售后，0 正在售后）") BrokenGoods brokenGoods
 			) {
 		Message<Object> message = new Message<>();
 		if (brokenGoodsService.updateById(brokenGoods)) {

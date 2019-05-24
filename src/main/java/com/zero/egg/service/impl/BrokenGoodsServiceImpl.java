@@ -12,6 +12,8 @@ import com.zero.egg.service.IBrokenGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -51,6 +53,11 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 	@Override
 	public Boolean updateGoodsDr(String brokenGoodsNo) {
 		return mapper.updateGoodsDr(brokenGoodsNo);
+	}
+
+	@Override
+	public List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request) {
+		return mapper.GetBrokenTask(request);
 	}
 
 }

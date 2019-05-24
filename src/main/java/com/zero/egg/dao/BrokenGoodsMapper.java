@@ -11,6 +11,8 @@ import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.responseDTO.BrokenGoodsReponse;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -32,4 +34,6 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
     Goods GetStoBrokenInfo(String brokenGoodsNo);
 
     Boolean updateGoodsDr(String brokenGoodsNo);
+
+    List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
 }

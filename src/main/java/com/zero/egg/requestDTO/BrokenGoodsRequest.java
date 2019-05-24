@@ -39,4 +39,7 @@ public class BrokenGoodsRequest extends PageDTO{
 	    
 	    @ApiModelProperty(value = "换货商品状态")
 	    private String status;
+
+		@ApiModelProperty(value = "换货商品状态")
+		private String goodsNo;
 }

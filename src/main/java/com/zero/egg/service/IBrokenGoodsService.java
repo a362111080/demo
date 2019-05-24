@@ -8,6 +8,8 @@ import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.responseDTO.BrokenGoodsReponse;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -29,4 +31,6 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
     Goods GetStoBrokenInfo(String brokenGoodsNo);
 
     Boolean updateGoodsDr(String brokenGoodsNo);
+
+    List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
 }

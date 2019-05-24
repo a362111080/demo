@@ -2,15 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.BrokenGoodsMapper">
 
-<select id="listByCondition" resultType="com.zero.egg.responseDTO.BrokenGoodsReponse">
-	SELECT b.*,sp.name as customerName,g.name as goodsName,c.name as categoryName,u.name as creatorName FROM bd_broken_goods b 
-	INNER JOIN bd_supplier sp ON b.customer_id = sp.id 
-	INNER JOIN bd_goods g on b.goods_no = g.goods_no
-	INNER JOIN bd_specification s ON b.specification_id = s.id
-	INNER JOIN bd_specification_program p ON s.program_id = p.id
-	INNER JOIN bd_category c ON p.category_id = c.id
-	LEFT JOIN bd_user u ON u.id = b.creator
-	${ew.customSqlSegment}
+<select id="GetBrokenTask" resultType="com.zero.egg.model.BrokenGoods">
+	SELECT a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,
+	case when a.mode=1 then   CONCAT('实重','(',f.weight_min,'~',f.weight_max,')')  else a.marker  end as brokenmarker
+	FROM bd_broken_goods a
+	left join bd_customer b on a.customer_id=b.id
+	left join bd_supplier c on a.customer_id=c.id
+	left join bd_category e on e.id=a.goods_categroy_id
+	left join bd_specification f on f.id=a.specification_id
+	where a.dr=0
+	<if test="type != null and type !=''">
+		and a.type=#{type,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status !=''">
+		and a.status=#{status,jdbcType=VARCHAR}
+	</if>
 </select>
 
 	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods">
@@ -24,12 +30,14 @@
 		 where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
 	</select>
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods">
-		SELECT k.*,a.name as suppliername ,b.name as categoryname,
+		SELECT k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,
 		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 		FROM bd_goods k
 	    left join bd_supplier a on a.id=k.supplier_id
 	    left join bd_category b on b.id=k.goods_category_id
 		left join bd_specification d on d.id=k.specification_id
+		left join bd_unload_goods  e on e.goods_no=k.goods_no
+		left join bd_bill f on f.task_id=e.task_id
 		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">

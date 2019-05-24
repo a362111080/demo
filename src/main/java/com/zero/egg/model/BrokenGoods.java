@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.BrokenGoodsEnums;
@@ -102,6 +103,20 @@ public class BrokenGoods implements Serializable {
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "客商名称",hidden=true)
+    public String customername;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "品种名称",hidden=true)
+    public String categroyname;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "显示标记",hidden=true)
+    public String brokenmarker;
 
     public String getStatusName() {
     	String statusName = "";
