@@ -37,6 +37,10 @@ public interface UtilConstants {
          * 员工未结束
          */
         public static final int EMPLOYEE_NOT_FINISH = -2;
+        /**
+         * 特定出货任务,出货商品为null
+         */
+        public static final int SHIPMENTGOODS_NULL = -3;
     }
 
     /**
@@ -121,6 +125,10 @@ public interface UtilConstants {
          * 请确认员工已经完成任务
          */
         public static final String ASURE_EMPLOYEE_FINISH = "请确认员工已经完成任务";
+        /**
+         * 该任务商品为空,建议直接取消任务
+         */
+        public static final String NULL_SHIPMENTGOODS = "该任务商品为空,建议直接取消任务";
     }
 
     /**

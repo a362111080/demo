@@ -295,12 +295,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
              * 5,生成一条账单信息
              */
             String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
-            List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
-            if (null == goodsResponseList || goodsResponseList.size() == 0) {
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
+            /**
+             * 如果出货列表为空,返回前端禁止完成任务的提示,并提示它可以取消任务,避免生成冗杂账单
+             */
+            if (null == goodsJson || "".equals(goodsJson)) {
+                message.setState(UtilConstants.ResponseCode.SHIPMENTGOODS_NULL);
+                message.setMessage(UtilConstants.ResponseMsg.NULL_SHIPMENTGOODS);
                 return message;
             }
+            List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
             ShipmentGoods shipmentGoods = null;
             Goods goods = null;
             Stock stock = null;
