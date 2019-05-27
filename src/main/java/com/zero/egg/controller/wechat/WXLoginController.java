@@ -102,7 +102,7 @@ public class WXLoginController {
                 User user = userService.getOne(userQueryWrapper);
                 int type = user.getType();
                 //生成token
-                String accessToken = TokenUtils.createJwtToken(user.getId());
+                String accessToken = TokenUtils.createJwtToken(user.getId(),wxSessionkey);
                 map = new HashMap<>();
                 map.put("token", accessToken);
                 map.put("userType", type);
