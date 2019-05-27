@@ -95,6 +95,14 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                         + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId);
                 goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
+                /**
+                 * 要判断商品不能重复被添加
+                 */
+                if (goodsResponseList.contains(goods)) {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                    return message;
+                }
                 goodsResponseList.add(goods);
                 String newGoodsJson = JsonUtils.objectToJson(goodsResponseList);
                 jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
