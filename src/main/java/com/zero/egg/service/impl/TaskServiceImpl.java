@@ -257,6 +257,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     public Message emplyeeFinishTask(Task task, String taskId, String customerId) {
         Message message = new Message();
         try {
+            String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId);
+
+            /**
+             * 如果出货列表为空,返回前端禁止完成任务的提示,并提示它可以取消任务,避免生成冗杂账单
+             */
+            if (null == goodsJson || "".equals(goodsJson)) {
+                message.setState(UtilConstants.ResponseCode.SHIPMENTGOODS_NULL);
+                message.setMessage(UtilConstants.ResponseMsg.NULL_SHIPMENTGOODS);
+                return message;
+            }
             /**
              * 1.在MySQL中对应的出货任务,status改为TaskEnums.Status.Unexecuted.index().toString()
              * 2.把key为UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId +"status"
