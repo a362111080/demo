@@ -18,6 +18,7 @@ import com.zero.egg.tool.UtilConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,6 +33,7 @@ import java.lang.reflect.Method;
  * @author jinbin
  * @date 2018-07-08 20:41
  */
+@Slf4j
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private IUserService userService;
@@ -119,6 +121,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if (user.getType().equals(UserEnums.Type.Boss.index())
                             || user.getType().equals(UserEnums.Type.Staff.index())) {
                         String wxSessionkey = claims.getSubject();
+                        log.info("==============================wxSessionkey::::"+wxSessionkey);
                         if (null == wxSessionkey || "".equals(wxSessionkey)) {
                             throw new ServiceException("401", "token令牌错误");
                         }
@@ -129,6 +132,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                                 && null != jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
                             throw new ServiceException("401", "token失效，请重新登录");
                         }
+                        log.info("==============================JedisWxSessionkey::::"
+                                +jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey));
                     }
                     loginUser.setId(user.getId());
                     loginUser.setCode(user.getCode());
