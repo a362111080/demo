@@ -129,7 +129,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                          * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
                          */
                         if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
-                                && null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
+                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
                             throw new ServiceException("401", "token失效，请重新登录");
                         }
                         log.info("==============================JedisWxSessionkey::::"
