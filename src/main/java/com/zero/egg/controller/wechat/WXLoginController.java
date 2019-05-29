@@ -95,14 +95,15 @@ public class WXLoginController {
             wechatAuth = wechatAuthService.getWechatAuthByOpenId(openId);
             Map<String, Object> map;
             //如果能查到微信信息且绑定了本地账号信息,则生成token,返回本地账号信息和token
-            if (null != wechatAuth && null != wechatAuth.getUserId() && null != wechatAuth.getType()) {
+            if (null != wechatAuth && null != wechatAuth.getUserId() && null != wechatAuth.getType()
+                    && !"".equals(wechatAuth.getUserId()) && !"".equals(wechatAuth.getType())) {
                 String userId = wechatAuth.getUserId();
                 QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
                 userQueryWrapper.eq("id", userId);
                 User user = userService.getOne(userQueryWrapper);
                 int type = user.getType();
                 //生成token
-                String accessToken = TokenUtils.createJwtToken(user.getId(),wxSessionkey);
+                String accessToken = TokenUtils.createJwtToken(user.getId(), wxSessionkey);
                 map = new HashMap<>();
                 map.put("token", accessToken);
                 map.put("userType", type);
@@ -114,7 +115,7 @@ public class WXLoginController {
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                 message.setMap(map);
                 return message;
-            } else {
+            } else if (null == wechatAuth) {
                 //完全查不到本系统的微信账号才去注册,避免重复注册
                 wechatAuth = new WechatAuth();
                 wechatAuth.setOpenid(openId);
