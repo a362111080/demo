@@ -114,7 +114,7 @@ public class WXLoginController {
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                 message.setMap(map);
                 return message;
-            } else if (null == wechatAuth) {
+            } else {
                 //完全查不到本系统的微信账号才去注册,避免重复注册
                 wechatAuth = new WechatAuth();
                 wechatAuth.setOpenid(openId);
