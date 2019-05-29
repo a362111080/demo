@@ -1,16 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
@@ -19,11 +9,19 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UserRequest;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -125,7 +123,7 @@ public class UserController {
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		User user = new User();
-		user.setId(userRequest.getId());
+		TransferUtil.copyProperties(user,userRequest);
 		message =userService.updateById(user, loginUser);
 		return message;
 	}

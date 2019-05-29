@@ -1,13 +1,13 @@
 package com.zero.egg.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UserRequest;
 import com.zero.egg.tool.Message;
+
+import java.util.List;
 
 /**
  * <p>
@@ -33,5 +33,13 @@ public interface IUserService extends IService<User> {
 	Message<Object> deleteBatchById(String ids,LoginUser loginUser);
 	
 	Message<Object> updateById(User entity,LoginUser loginUser);
+
+	/**
+	 * 停用用户
+	 * @param entity
+	 * @param loginUser
+	 * @return
+	 */
+	Message<Object> dismissById(User entity,LoginUser loginUser);
 
 }

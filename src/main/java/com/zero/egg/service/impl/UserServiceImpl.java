@@ -1,15 +1,5 @@
 package com.zero.egg.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,6 +18,14 @@ import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -297,6 +295,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 	@Override
 	public Message<Object> updateById(User user, LoginUser loginUser) {
+		Message<Object> message = new Message<>();
+		user.setModifier(loginUser.getId());
+		user.setModifytime(new Date());
+		if (updateById(user)) {
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}else {
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		}
+		return message;
+	}
+
+	@Override
+	public Message<Object> dismissById(User user, LoginUser loginUser) {
 		Message<Object> message = new Message<>();
 		user.setModifier(loginUser.getId());
 		user.setModifytime(new Date());

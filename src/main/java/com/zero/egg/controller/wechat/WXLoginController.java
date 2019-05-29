@@ -135,7 +135,7 @@ public class WXLoginController {
             message.setMap(map);
             return message;
         } catch (Exception e) {
-            log.error("wechat login failed:", e.toString());
+            log.error("wechat login failed:", e);
             message = new Message();
             message.setState(UtilConstants.WXState.FAIL);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
