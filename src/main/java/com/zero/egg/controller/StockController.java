@@ -100,9 +100,7 @@ public class StockController {
                         .eq(StringUtils.isNotBlank(stockRequest.getSpecificationId()), "s.specification_id", stockRequest.getSpecificationId())
                         .eq(StringUtils.isNotBlank(stockRequest.getProgramId()), "sp.program_id", stockRequest.getProgramId())
                         .eq(StringUtils.isNotBlank(stockRequest.getCategoryId()), "c.id", stockRequest.getCategoryId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.marker", stockRequest.getMarker())
-                        .eq(StringUtils.isNotBlank(stockRequest.getMode()), "sp.mode", stockRequest.getMode())
-                        .eq(StringUtils.isNotBlank(stockRequest.getWarn()), "sp.warn", stockRequest.getWarn())
+                        .eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.id", stockRequest.getMarker())
                         .eq("c.id", stockRequest.getCategoryId())
                         .eq(StringUtils.isNotBlank(stockRequest.getNumerical()), "sp.numerical", stockRequest.getNumerical())
                         .ge(StringUtils.isNotBlank(stockRequest.getWeightMin()), "sp.weight_min", stockRequest.getWeightMin())
@@ -121,44 +119,6 @@ public class StockController {
         return message;
     }
 
-    @LoginToken
-    @ApiOperation(value = "根据条件查询库存")
-    @RequestMapping(value = "/list.data", method = RequestMethod.POST)
-    public Message<List<StockResponse>> list(@RequestBody @ApiParam(required = false, name = "stockRequest", value = "根据需求自行确定搜索字段") StockRequest stockRequest
-            , HttpServletRequest request) {
-        Message<List<StockResponse>> message = new Message<List<StockResponse>>();
-        try {
-            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-            stockRequest.setShopId(user.getShopId());
-            stockRequest.setCompanyId(user.getCompanyId());
-            QueryWrapper<StockRequest> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("s.dr", false);//查询未删除信息
-            if (stockRequest != null) {
-                queryWrapper.eq(StringUtils.isNotBlank(stockRequest.getShopId()), "s.shop_id", stockRequest.getShopId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getCompanyId()), "s.company_id", stockRequest.getCompanyId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getSpecificationId()), "s.specification_id", stockRequest.getSpecificationId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getProgramId()), "sp.program_id", stockRequest.getProgramId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.marker", stockRequest.getMarker())
-                        .eq(StringUtils.isNotBlank(stockRequest.getMode()), "sp.mode", stockRequest.getMode())
-                        .eq(StringUtils.isNotBlank(stockRequest.getWarn()), "sp.warn", stockRequest.getWarn())
-                        .eq(StringUtils.isNotBlank(stockRequest.getNumerical()), "sp.numerical", stockRequest.getNumerical())
-                        .ge(StringUtils.isNotBlank(stockRequest.getWeightMin()), "sp.weight_min", stockRequest.getWeightMin())
-                        .le(StringUtils.isNotBlank(stockRequest.getWeightMax()), "sp.weight_max", stockRequest.getWeightMax())
-                ;
-            }
-            List<StockResponse> stockList = stockService.listByCondition(queryWrapper);
-            if (stockList != null) {
-                message.setData(stockList);
-            }
-            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-        } catch (Exception e) {
-            log.error("list.data error:" + e);
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-        }
-        return message;
-    }
 
     @LoginToken
     @ApiOperation(value = "库存中存在的品种")
