@@ -312,9 +312,7 @@ public class BillController {
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
                 return message;
             }
-            billService.updateBillAndDetails(blankBillRequestDTO, loginUser);
-            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message = billService.updateBillAndDetails(blankBillRequestDTO, loginUser);
         } catch (Exception e) {
             log.error("updateBillAndDetails failed:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

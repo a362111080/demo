@@ -129,6 +129,10 @@ public interface UtilConstants {
          * 该任务商品为空,建议直接取消任务
          */
         public static final String NULL_SHIPMENTGOODS = "该任务商品为空,建议直接取消任务";
+        /**
+         * 该账单不为空
+         */
+        public static final String NOT_BLANK_BILL = "该账单不为空";
     }
 
     /**

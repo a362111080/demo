@@ -1,5 +1,6 @@
 package com.zero.egg.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
@@ -19,6 +20,7 @@ import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,13 +72,27 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
 
     @Override
     @Transactional
-    public void updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser) {
+    public Message updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser) {
         Message message = new Message();
         try {
             /**
-             * 1.新增账单细节,统计每个方案细节的应收金额和整个账单的应收金额
-             * 2.更新账单信息
+             * 1.根据传入的账单status不为0,则不能修改
+             * 2.新增账单细节,统计每个方案细节的应收金额和整个账单的应收金额
+             * 3.更新账单信息 BillEnums.Status.Normal.toString()
              */
+            String currentsStutus = mapper.selectOne(new QueryWrapper<Bill>()
+                    .select("status")
+                    .eq("id", blankBillRequestDTO.getBillId())
+                    .eq("shop_id", loginUser.getShopId())
+                    .eq("company_id", loginUser.getCompanyId())
+                    .eq("dr", 0))
+                    .getStatus();
+            if (BillEnums.Status.Not_Generated.index().equals(currentsStutus)) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NOT_BLANK_BILL);
+                return message;
+            }
+
             String creator = loginUser.getId();
             String companyId = loginUser.getCompanyId();
             String shopId = loginUser.getShopId();
@@ -134,6 +150,9 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             bill.setQuantity(totalAuatity);
             bill.setStatus(BillEnums.Status.Normal.toString());
             mapper.updateById(bill);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
         } catch (Exception e) {
             log.error("updateBillAndDetails failed:" + e);
             throw new ServiceException("updateBillAndDetails failed");

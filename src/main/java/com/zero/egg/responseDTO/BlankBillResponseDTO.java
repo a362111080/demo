@@ -35,5 +35,7 @@ public class BlankBillResponseDTO implements Serializable {
     @ApiModelProperty(value = "合作商店铺名", required = false)
     private String customerName;
 
-    List<BlankBillGoodsResponseDTO> billGoodsResponseDTOS;
+    private  List<BlankBillGoodsResponseDTO> billGoodsResponseDTOS;
+
+    private List<BlankBillDTO> blankBillDTOList;
 }

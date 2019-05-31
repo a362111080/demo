@@ -10,6 +10,7 @@ import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.responseDTO.CategorySum;
+import com.zero.egg.tool.Message;
 
 import java.util.List;
 
@@ -37,5 +38,5 @@ public interface IBillService extends IService<Bill> {
      * @param blankBillRequestDTO
      * @return
      */
-    void updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser);
+    Message updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser);
 }
