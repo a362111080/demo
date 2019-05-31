@@ -234,10 +234,10 @@ public class BillController {
             }
             if (BillList.get(i).getType().equals(TaskEnums.Type.Shipment.index().toString())) {
                 //收入
-                if (null !=BillList.get(i).getAmount()) {
+                if (null != BillList.get(i).getAmount()) {
                     report.setOutCount(report.getOutCount().add(BillList.get(i).getAmount()));
                 }
-                if (null !=BillList.get(i).getQuantity()) {
+                if (null != BillList.get(i).getQuantity()) {
                     report.setOutPcs(report.getOutPcs().add(BillList.get(i).getQuantity()));
                 }
 
@@ -305,8 +305,9 @@ public class BillController {
             /**
              * 非空判断
              */
-            if (blankBillRequestDTO == null || null == blankBillRequestDTO.getBillId() || null == blankBillRequestDTO.getBlankBillGoodsRequestDTOS()
-                    || 0 == blankBillRequestDTO.getBlankBillGoodsRequestDTOS().size()) {
+            if (blankBillRequestDTO == null || null == blankBillRequestDTO.getBlankBillDTOList()
+                    || 0 > blankBillRequestDTO.getBlankBillDTOList().size()
+                    || null == blankBillRequestDTO.getBlankBillDTOList().get(0).getBillId()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);

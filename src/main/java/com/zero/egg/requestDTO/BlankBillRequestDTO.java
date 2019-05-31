@@ -1,5 +1,6 @@
 package com.zero.egg.requestDTO;
 
+import com.zero.egg.responseDTO.BlankBillDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,23 +19,11 @@ public class BlankBillRequestDTO implements Serializable {
 
     private static final long serialVersionUID = 8634714243329477777L;
 
-    @ApiModelProperty(value = "账单id", required = false)
-    private String billId;
-
-    @ApiModelProperty(value = "账单编号", required = false)
-    private String billNo;
-
     @ApiModelProperty(value = "应收金额", required = false)
     private BigDecimal amount;
 
     @ApiModelProperty(value = "实收金额", required = false)
     private BigDecimal realAmount;
 
-    @ApiModelProperty(value = "合作商id", required = false)
-    private String customerId;
-
-    @ApiModelProperty(value = "合作商店铺名", required = false)
-    private String customerName;
-
-    List<BlankBillGoodsRequestDTO> blankBillGoodsRequestDTOS;
+    private List<BlankBillDTO> blankBillDTOList;
 }

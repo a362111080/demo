@@ -28,8 +28,6 @@ import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.QueryBlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.BlankBillDTO;
-import com.zero.egg.responseDTO.BlankBillGoodsDetail;
-import com.zero.egg.responseDTO.BlankBillGoodsResponseDTO;
 import com.zero.egg.responseDTO.BlankBillResponseDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.responseDTO.NewShipmentTaskResponseDTO;
@@ -467,26 +465,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             }
             //4 开始整理BlankBillGoodsDetail
             Specification specification;
-            BlankBillGoodsResponseDTO responseDTO;
-            List<BlankBillGoodsResponseDTO> billGoodsResponseDTOS = new ArrayList<>();
             BlankBillResponseDTO blankBillResponseDTO = new BlankBillResponseDTO();
-            /**=====================方式二=====================**/
             BlankBillDTO blankBillDTO;
             List<BlankBillDTO> blankBillDTOList = new ArrayList<>();
-            /**=====================方式二=====================**/
             for (Map.Entry<String, List<ShipmentGoods>> entryOut : categoryGoodsList.entrySet()) {
-                responseDTO = new BlankBillGoodsResponseDTO();
-                responseDTO.setCategoryId(entryOut.getKey());
                 String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>().select("name")
                         .eq("id", entryOut.getKey())
                         .eq("shop_id", requestDTO.getShopId())
                         .eq("company_id", requestDTO.getCompanyId())
                         .eq("dr", 0))
                         .getName();
-                responseDTO.setCategoryName(categoryName);
-
-                BlankBillGoodsDetail blankBillGoodsDetail;
-                List<BlankBillGoodsDetail> blankBillGoodsDetails = new ArrayList<>();
                 for (Map.Entry<String, List<ShipmentGoods>> entryIn : specificationListMap.entrySet()) {
                     //如果内循环的品种id和外循环的品种id一致,才进行归类操作
                     if ((entryIn.getValue().get(0).getGoodsCategoryId()).equals(entryOut.getKey())) {
@@ -498,18 +486,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         blankBillDTO.setCustomerName(customerName);
                         blankBillDTO.setCategoryId(entryOut.getKey());
                         blankBillDTO.setCategoryName(categoryName);
-
-                        blankBillGoodsDetail = new BlankBillGoodsDetail();
-                        blankBillGoodsDetail.setQuantity((long) entryIn.getValue().size());
-                        blankBillGoodsDetail.setMode(Integer.parseInt(entryIn.getValue().get(0).getMode()));
-
                         blankBillDTO.setQuantity((long) entryIn.getValue().size());
                         blankBillDTO.setMode(Integer.parseInt(entryIn.getValue().get(0).getMode()));
 
                         BigDecimal totalWeight = BigDecimal.ZERO;
                         String specificationId = entryIn.getKey();
-                        blankBillGoodsDetail.setSpecificationId(specificationId);
-
                         blankBillDTO.setSpecificationId(specificationId);
 
                         specification = specificationMapper.selectOne(new QueryWrapper<Specification>()
@@ -517,50 +498,32 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                                 .eq("shop_id", requestDTO.getShopId())
                                 .eq("company_id", requestDTO.getCompanyId())
                                 .eq("dr", 0));
-                        blankBillGoodsDetail.setProgramId(specification.getProgramId());
-
                         blankBillDTO.setProgramId(specification.getProgramId());
 
                         //如果mode为1(去皮),则需要做额外处理
-                        if (blankBillGoodsDetail.getMode() == 1) {
+                        if (blankBillDTO.getMode() == 1) {
                             //循环出货商品,累加重量
                             for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
                                 totalWeight = totalWeight.add(shipmentGoods.getWeight());
                                 //需要减去去皮值*数量
-                                BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillGoodsDetail.getQuantity());
+                                BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillDTO.getQuantity());
                                 totalWeight = totalWeight.subtract(needToSubtract);
                             }
-                            blankBillGoodsDetail.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
-                            blankBillGoodsDetail.setTotalWeight(totalWeight);
-
                             blankBillDTO.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                             blankBillDTO.setTotalWeight(totalWeight);
 
                         } else {
-                            blankBillGoodsDetail.setMarker(specification.getMarker());
-                            blankBillGoodsDetail.setTotalWeight(BigDecimal.ZERO);
-
                             blankBillDTO.setMarker(specification.getMarker());
                             blankBillDTO.setTotalWeight(BigDecimal.ZERO);
                         }
-                        blankBillGoodsDetails.add(blankBillGoodsDetail);
                         blankBillDTOList.add(blankBillDTO);
-                        blankBillGoodsDetail = null;
                         blankBillDTO = null;
                     }
-                    responseDTO.setBlankBillGoodsDetailList(blankBillGoodsDetails);
                 }
-                billGoodsResponseDTOS.add(responseDTO);
-                responseDTO = null;
             }
-            blankBillResponseDTO.setBillGoodsResponseDTOS(billGoodsResponseDTOS);
 
             blankBillResponseDTO.setBlankBillDTOList(blankBillDTOList);
 
-            blankBillResponseDTO.setBillId(bill.getId());
-            blankBillResponseDTO.setBillNo(bill.getBillNo());
-            blankBillResponseDTO.setCustomerId(customerId);
-            blankBillResponseDTO.setCustomerName(customerName);
             message.setData(blankBillResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

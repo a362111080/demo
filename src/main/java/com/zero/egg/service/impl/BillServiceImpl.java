@@ -10,12 +10,11 @@ import com.zero.egg.model.BillDetails;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
-import com.zero.egg.requestDTO.BlankBillGoodsRequestDTO;
 import com.zero.egg.requestDTO.BlankBillRequestDTO;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
-import com.zero.egg.responseDTO.BlankBillGoodsDetail;
+import com.zero.egg.responseDTO.BlankBillDTO;
 import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
@@ -80,9 +79,13 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
              * 2.新增账单细节,统计每个方案细节的应收金额和整个账单的应收金额
              * 3.更新账单信息 BillEnums.Status.Normal.toString()
              */
+            //账单id
+            String billId = blankBillRequestDTO.getBlankBillDTOList().get(0).getBillId();
+            //实收金额
+            BigDecimal realAmount = blankBillRequestDTO.getRealAmount();
             String currentsStutus = mapper.selectOne(new QueryWrapper<Bill>()
                     .select("status")
-                    .eq("id", blankBillRequestDTO.getBillId())
+                    .eq("id", billId)
                     .eq("shop_id", loginUser.getShopId())
                     .eq("company_id", loginUser.getCompanyId())
                     .eq("dr", 0))
@@ -96,50 +99,44 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             String creator = loginUser.getId();
             String companyId = loginUser.getCompanyId();
             String shopId = loginUser.getShopId();
-            //账单id
-            String billId = blankBillRequestDTO.getBillId();
-            //实收金额
-            BigDecimal realAmount = blankBillRequestDTO.getRealAmount();
+
             //整个账单应收金额和数量
             BigDecimal amount = BigDecimal.ZERO;
             BigDecimal totalAuatity = BigDecimal.ZERO;
-            List<BlankBillGoodsRequestDTO> categoryBiilList = blankBillRequestDTO.getBlankBillGoodsRequestDTOS();
-            for (BlankBillGoodsRequestDTO blankBillGoodsRequestDTO : categoryBiilList) {
-                String categoryId = blankBillGoodsRequestDTO.getCategoryId();
-                List<BlankBillGoodsDetail> blankBillGoodsDetailList = blankBillGoodsRequestDTO.getBlankBillGoodsDetailList();
-                BillDetails billDetails = null;
-                for (BlankBillGoodsDetail blankBillGoodsDetail : blankBillGoodsDetailList) {
-                    billDetails = new BillDetails();
-                    billDetails.setCompanyId(companyId);
-                    billDetails.setShopId(shopId);
-                    billDetails.setBillId(billId);
-                    billDetails.setGoodsCategoryId(categoryId);
-                    billDetails.setProgramId(blankBillGoodsDetail.getProgramId());
-                    billDetails.setGoodsCategoryId(categoryId);
-                    billDetails.setSpecificationId(blankBillGoodsDetail.getSpecificationId());
-                    //前端新输入的单价
-                    BigDecimal price = blankBillGoodsDetail.getPrice();
-                    BigDecimal quantity = new BigDecimal(blankBillGoodsDetail.getQuantity());
-                    //细节应收金额后端重新计算
-                    //如果是去皮的方式,则按重量算价格
-                    BigDecimal detailAmount;
-                    if (1 == blankBillGoodsDetail.getMode()) {
-                        detailAmount = price.multiply(blankBillGoodsDetail.getTotalWeight());
-                    } else {
-                        detailAmount = price.multiply(quantity);
-                    }
-                    billDetails.setPrice(price);
-                    billDetails.setQuantity(quantity);
-                    billDetails.setAmount(detailAmount);
-                    billDetails.setCreator(creator);
-                    billDetails.setCreatetime(new Date());
-                    billDetails.setModifier(creator);
-                    billDetails.setModifytime(new Date());
-                    billDetails.setDr(false);
-                    billDetailsMapper.insert(billDetails);
-                    amount = amount.add(detailAmount);
-                    totalAuatity = totalAuatity.add(quantity);
+            List<BlankBillDTO> blankBillDTOList = blankBillRequestDTO.getBlankBillDTOList();
+            BillDetails billDetails = null;
+            for (BlankBillDTO blankBillDTO : blankBillDTOList) {
+                String categoryId = blankBillDTO.getCategoryId();
+                billDetails = new BillDetails();
+                billDetails.setCompanyId(companyId);
+                billDetails.setShopId(shopId);
+                billDetails.setBillId(billId);
+                billDetails.setGoodsCategoryId(categoryId);
+                billDetails.setProgramId(blankBillDTO.getProgramId());
+                billDetails.setGoodsCategoryId(categoryId);
+                billDetails.setSpecificationId(blankBillDTO.getSpecificationId());
+                //前端新输入的单价
+                BigDecimal price = blankBillDTO.getPrice();
+                BigDecimal quantity = new BigDecimal(blankBillDTO.getQuantity());
+                //细节应收金额后端重新计算
+                //如果是去皮的方式,则按重量算价格
+                BigDecimal subTotal;
+                if (1 == blankBillDTO.getMode()) {
+                    subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                } else {
+                    subTotal = price.multiply(quantity);
                 }
+                billDetails.setPrice(price);
+                billDetails.setQuantity(quantity);
+                billDetails.setAmount(subTotal);
+                billDetails.setCreator(creator);
+                billDetails.setCreatetime(new Date());
+                billDetails.setModifier(creator);
+                billDetails.setModifytime(new Date());
+                billDetails.setDr(false);
+                billDetailsMapper.insert(billDetails);
+                amount = amount.add(subTotal);
+                totalAuatity = totalAuatity.add(quantity);
             }
             Bill bill = new Bill();
             bill.setId(billId);

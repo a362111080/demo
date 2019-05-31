@@ -23,12 +23,6 @@ public class BlankBillDTO implements Serializable {
     @ApiModelProperty(value = "账单编号", required = false)
     private String billNo;
 
-    @ApiModelProperty(value = "应收金额", required = false)
-    private BigDecimal amount;
-
-    @ApiModelProperty(value = "实收金额", required = false)
-    private BigDecimal realAmount;
-
     @ApiModelProperty(value = "合作商id", required = false)
     private String customerId;
 
@@ -61,7 +55,6 @@ public class BlankBillDTO implements Serializable {
 
     @ApiModelProperty(value = "单价", required = false)
     private BigDecimal price;
-
 
     @ApiModelProperty(value = "小计", required = false)
     private BigDecimal subTotal;
