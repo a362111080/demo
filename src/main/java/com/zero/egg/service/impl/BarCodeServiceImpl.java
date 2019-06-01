@@ -200,12 +200,12 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .getName();
             for (int i = 0; i < printNum; i++) {
                 newBarCode = new BarCode();
-                //查询同一企业下同一店铺下同一供应商下同一鸡蛋类型的数量,初始应该为1(母二维码)
+                //查询同一企业下同一店铺下同一供应商下的数量,初始应该为1(母二维码)
                 int count = mapper.selectCount(new QueryWrapper<BarCode>()
                         .eq("shop_id", barCode.getShopId())
                         .eq("company_id", barCode.getCompanyId())
                         .eq("supplier_id", barCode.getSupplierId())
-                        .eq("category_id", barCode.getCategoryId()));
+                );
                 TransferUtil.copyProperties(newBarCode, barCode);
                 currentCode = barCode.getCode() + g1.format(count);
                 newBarCode.setId(null);
