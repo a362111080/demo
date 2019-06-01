@@ -82,6 +82,7 @@ public class SupplierManageController {
      * @Description 更新供应商(删除共用 ， 不作物理删除 ， 更新状态为无效状态)  可分为供应商/合作商
      * @Return 是否成功
      **/
+    @LoginToken
     @ApiOperation(value = "修改供应商信息", notes = "供应商id不能为空")
     @RequestMapping(value = "/updatesupplier", method = RequestMethod.POST)
     public Message UpdateSupplier(@RequestBody Supplier model) {
