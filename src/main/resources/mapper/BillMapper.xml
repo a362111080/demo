@@ -51,6 +51,13 @@
         left join bd_supplier  b on a.cussup_id=b.id
         left join bd_customer  c on a.cussup_id=c.id
         <where>
+
+            <if test="billNo != null and billNo !=''">
+                and a.bill_no  LIKE '%${billNo}%'
+            </if>
+            <if test="cussupId != null and cussupId !=''">
+                and a.cussup_id=#{cussupId,jdbcType=VARCHAR}
+            </if>
             <if test="keyword != null and keyword !=''">
                 and (c.short_name LIKE '%${keyword}%' or b.short_name LIKE '%${keyword}%' or b.name LIKE '%${keyword}%' or c.name LIKE '%${keyword}%' )
             </if>
