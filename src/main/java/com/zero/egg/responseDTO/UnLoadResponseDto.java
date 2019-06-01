@@ -28,4 +28,10 @@ public class UnLoadResponseDto implements Serializable {
     @ApiModelProperty(value = "方式")
     private String mode;
 
+
+    //返回预警
+    @ApiModelProperty(value = "是否预警")
+    private Boolean warn;
+
+
 }

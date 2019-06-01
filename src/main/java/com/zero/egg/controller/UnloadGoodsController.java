@@ -125,12 +125,13 @@ public class UnloadGoodsController {
 							if (res.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
 								//存在去皮数值   显示标识为实际称重减去去皮值
 								model.setMarker(model.getWeight().add(res.getNumerical()).toString());
-								model.setWarn(false);
+
 
 							} else {
 								model.setMarker(res.getMarker());
-								model.setWarn(false);
+
 							}
+							model.setWarn(res.getWarn());
 						} else {
 							UnLoadResponseDto war = unloadGoodsService.CheckWeightForWarning(model.getProgramId());
 							//无返回结果代表小于最低称重范围，进行预警，同时返回最小标识
@@ -142,7 +143,7 @@ public class UnloadGoodsController {
 							}
 							model.setMode(war.getMode());
 							model.setSpecificationId(war.getSpecificationId());
-							model.setWarn(true);
+							model.setWarn(res.getWarn());
 						}
 						int strval = unloadGoodsService.AddUnloadDetl(model);
 						if (strval > 0) {

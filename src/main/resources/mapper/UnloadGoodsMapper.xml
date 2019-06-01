@@ -7,7 +7,7 @@
     #{goodsNo},#{marker},#{mode},#{weight},#{warn},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
     <select id="CheckWeight"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
-        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode  FROM bd_specification  k
+        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode,k.warn  FROM bd_specification  k
         where k.program_id=#{programId}
           and k.weight_min <![CDATA[ <= ]]> #{weight}
           and k.weight_max <![CDATA[ > ]]> #{weight}
