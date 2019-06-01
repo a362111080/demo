@@ -70,6 +70,9 @@
                 and a.bill_date <![CDATA[ <= ]]> #{endtime,jdbcType=VARCHAR}
             </if>
         </where>
+        order by a.bill_date desc
+
+
     </select>
     <select id="getBillCategorySum" parameterType="String" resultType="com.zero.egg.responseDTO.CategorySum">
         select b.name as goodsCategoryName,sum(a.quantity) as CountNum,b.id as goodsCategoryId from bd_bill_details   a
