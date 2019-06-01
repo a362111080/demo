@@ -95,4 +95,10 @@ public interface ITaskService extends IService<Task> {
      * @return
      */
     Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO);
+
+    /**
+     * 结束卸货任务
+     * @return
+     */
+    Message finishUnloadTask();
 }
