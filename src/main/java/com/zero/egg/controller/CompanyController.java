@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.zero.egg.tool.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,10 +59,13 @@ public class CompanyController {
 	private ICompanyUserService iCompanyUserService;
 	@Autowired
 	private IShopService shopService;
+
+	@Autowired
+	private HttpServletRequest request;
 	
 	@LoginToken
 	@ApiOperation(value="查询企业")
-	@RequestMapping(value="/list.data",method=RequestMethod.POST)
+	@RequestMapping(value="/userlist",method=RequestMethod.POST)
 	public Message<IPage<Company>> list(HttpServletRequest request,
 			@RequestBody @ApiParam(required=false,name="company",value="查询字段：关键词（名称 、编号）、状态") CompanyRequest company) {
 		//ListResponse<Company> response = new ListResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
@@ -107,12 +111,15 @@ public class CompanyController {
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public Message<Object> add(HttpServletRequest request,@RequestBody @ApiParam(required=true,name="company",value="企业信息:编号，名称，电话") Company company
 			,HttpSession session) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		company.setModifier(loginUser.getId());
 		company.setCreator(loginUser.getId());
+		company.setModifytime(new Date());
+		company.setCreatetime(new Date());
+
+
 		if (iCompanyService.save(company)) {
 			
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -126,38 +133,96 @@ public class CompanyController {
 	
 
 	@LoginToken
-	@ApiOperation(value="新增企业、企业账号和店铺")
+	@ApiOperation(value="新增编辑企业、企业账号和店铺")
 	@Transactional(rollbackFor=Exception.class)
-	@RequestMapping(value="/add-company-shop.do",method=RequestMethod.POST)
-	public Message<Object> addCompanyAndShop(HttpServletRequest request
-			,@RequestBody @ApiParam(required=true,name="company",value="企业信息:编号，名称，电话") Company company
-			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业用户：企业信息:编号，名称，电话，企业主键，登录名,密码") CompanyUser companyUser
-			,@RequestParam @ApiParam(required=true,name="shopList",value="店铺数组,店铺信息：编号，名称，电话，企业主键，pc端数量,boss端数量,员工端数量，设备端数量，业务员，实施员") List<Shop> shopList
-			) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@RequestMapping(value="/addcompanyshop",method=RequestMethod.POST)
+	public Message<Object> addCompanyAndShop(@RequestBody  CompanyUser companyUser) {
+
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		company.setModifier(loginUser.getId());
-		company.setModifytime(new Date());
-		company.setModifier(loginUser.getId());
-		company.setCreator(loginUser.getId());
-		if (iCompanyService.save(company)) {
-			if (companyUser != null) {
+		Company  company=new Company();
+		if (null !=companyUser.getCompanyId()) {
+			company.setId(companyUser.getCompanyId());
+			company.setModifier(loginUser.getId());
+			company.setModifytime(new Date());
+			company.setCreatetime(new Date());
+			company.setCreator(loginUser.getId());
+			company.setName(companyUser.getCompanyname());
+			company.setBegintime(companyUser.getBegintime());
+			company.setEndtime(companyUser.getEndtime());
+			if (iCompanyService.updateById(company)) {
 				companyUser.setModifier(loginUser.getId());
 				companyUser.setCreator(loginUser.getId());
-				iCompanyUserService.save(companyUser);	
-			}
-			if (shopList != null && shopList.size()>0) {
-				for (Shop shop : shopList) {
-					shop.setModifier(loginUser.getId());
-					shop.setCreator(loginUser.getId());
-					shopService.save(shop);
+				companyUser.setModifytime(new Date());
+				companyUser.setCreatetime(new Date());
+				companyUser.setDr(false);
+				iCompanyUserService.updateById(companyUser);
+				if (companyUser.getShopList()  != null && companyUser.getShopList().size()>0) {
+					for (Shop shop : companyUser.getShopList()) {
+						if (null !=shop.getId())
+						{
+							shop.setCompanyId(companyUser.getCompanyId());
+							shop.setModifier(loginUser.getId());
+							shop.setCreator(loginUser.getId());
+							shopService.updateById(shop);
+						}
+						else
+						{
+							shop.setCompanyId(companyUser.getCompanyId());
+							shop.setId(UuidUtil.get32UUID());
+							shop.setModifier(loginUser.getId());
+							shop.setModifytime(new Date());
+							shop.setCreatetime(new Date());
+							shop.setCreator(loginUser.getId());
+							shop.setDr(false);
+							shopService.save(shop);
+						}
+					}
 				}
 			}
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
+		else
+		{
+			String  companyid= UuidUtil.get32UUID();
+			company.setId(companyid);
+			company.setModifier(loginUser.getId());
+			company.setModifytime(new Date());
+			company.setCreatetime(new Date());
+			company.setCreator(loginUser.getId());
+			company.setName(companyUser.getCompanyname());
+			company.setStatus(CompanyEnums.Status.Normal.index().toString());
+			company.setDr(false);
+			if (iCompanyService.save(company)) {
+				companyUser.setId(UuidUtil.get32UUID());
+				companyUser.setModifier(loginUser.getId());
+				companyUser.setCreator(loginUser.getId());
+				companyUser.setCompanyId(companyid);
+				companyUser.setModifytime(new Date());
+				companyUser.setCreatetime(new Date());
+				companyUser.setStatus(CompanyEnums.Status.Normal.index().toString());
+				companyUser.setDr(false);
+				iCompanyUserService.save(companyUser);
+				if (companyUser.getShopList()  != null && companyUser.getShopList().size()>0) {
+					for (Shop shop : companyUser.getShopList()) {
+						shop.setId(UuidUtil.get32UUID());
+						shop.setCompanyId(companyid);
+						shop.setModifier(loginUser.getId());
+						shop.setModifytime(new Date());
+						shop.setCreatetime(new Date());
+						shop.setCreator(loginUser.getId());
+						shop.setDr(false);
+						shopService.save(shop);
+					}
+				}
+			}
+
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+
 		return message;
 	}
 	

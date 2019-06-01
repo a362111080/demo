@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.ShopEnums;
@@ -61,7 +62,7 @@ public class Shop implements Serializable {
     
     @ApiModelProperty(value = "可用boss端数量",hidden=true)
     private Integer addibleBossClient;
-    
+
     @ApiModelProperty(value = "员工端数量",required=false)
     private Integer staffClient;
     
@@ -97,6 +98,23 @@ public class Shop implements Serializable {
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private boolean dr;
+
+    @ApiModelProperty(value = "省份",hidden=true)
+    private String cityId;
+
+    /**
+     * 省市区一级id
+     */
+    @ApiModelProperty(value = "省市区一级id", required = false)
+    @TableField(exist = false)
+    private String city1;
+    /**
+     * 省市区二级id
+     */
+    @ApiModelProperty(value = "省市区二级id", required = false)
+    @TableField(exist = false)
+    private String city2;
+
 
     public String getStatusName() {
 		return ShopEnums.Status.note(Integer.parseInt(this.status));

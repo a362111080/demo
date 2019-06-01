@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.ShopMapper">
 
+    <select id="getShopListByCompanid"  resultType="com.zero.egg.model.Shop">
+        select  a.*,lv1.id as city1,lv2.id as city2 from bd_shop  a
+        left join bd_city   lv3  on lv3.id=a.city_id
+        left join bd_city   lv2  on lv2.id=lv3.parent_id
+        left join bd_city   lv1  on lv1.id=lv2.parent_id
+        where a.company_id= #{companyId,jdbcType=VARCHAR}
+    </select>
+
+
 </mapper>

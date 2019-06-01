@@ -118,23 +118,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 } else {
                     // 当前登录用户@CurrentUser
                     //如果当前用户是移动端,则需验证微信登录是否过期
-                    if (user.getType().equals(UserEnums.Type.Boss.index())
-                            || user.getType().equals(UserEnums.Type.Staff.index())) {
-                        String wxSessionkey = claims.getSubject();
-                        log.info("==============================wxSessionkey::::"+wxSessionkey);
-                        if (null == wxSessionkey || "".equals(wxSessionkey)) {
-                            throw new ServiceException("401", "token令牌错误");
-                        }
-                        /**
-                         * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
-                         */
-                        if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
-                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
-                            throw new ServiceException("401", "token失效，请重新登录");
-                        }
-                        log.info("==============================JedisWxSessionkey::::"
-                                +jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey));
-                    }
+
                     loginUser.setId(user.getId());
                     loginUser.setCode(user.getCode());
                     loginUser.setName(user.getName());
