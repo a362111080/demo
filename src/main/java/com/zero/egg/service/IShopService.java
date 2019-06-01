@@ -20,4 +20,6 @@ public interface IShopService extends IService<Shop> {
 	Message<Object> save(Shop entity ,LoginUser loginUser) ;
 
     List<Shop> getShopListByCompanid(String companyId);
+
+    Integer getClietnUseCountByShopid(String shopId, Integer type);
 }

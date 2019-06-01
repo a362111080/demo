@@ -10,5 +10,10 @@
         where a.company_id= #{companyId,jdbcType=VARCHAR}
     </select>
 
+    <select id="getClietnUseCountByShopid"  resultType="int">
+       select count(*) from bd_user a  where
+       a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.type= #{type,jdbcType=INTEGER} and a.dr=0
+    </select>
+
 
 </mapper>

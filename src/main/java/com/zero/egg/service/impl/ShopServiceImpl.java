@@ -47,10 +47,6 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		shop.setDr(false);
 		shop.setModifier(loginUser.getId());
 		shop.setCreator(loginUser.getId());
-		shop.setAddibleBossClient(shop.getBossClient());
-		shop.setAddibleDeviceClient(shop.getDeviceClient());
-		shop.setAddiblePcClient(shop.getPcClient());
-		shop.setAddibleStaffClient(shop.getStaffClient());
 		if (save(shop)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -69,6 +65,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public List<Shop> getShopListByCompanid(String companyId) {
 		return mapper.getShopListByCompanid(companyId);
+	}
+
+	@Override
+	public Integer getClietnUseCountByShopid(String shopId, Integer type) {
+		return mapper.getClietnUseCountByShopid(shopId,type);
 	}
 
 }
