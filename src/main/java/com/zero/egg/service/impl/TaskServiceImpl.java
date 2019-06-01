@@ -535,5 +535,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         return message;
     }
 
+    @Override
+    public Message finishUnloadTask() {
+        return null;
+    }
+
 
 }

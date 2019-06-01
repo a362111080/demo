@@ -243,7 +243,7 @@ public class BillController {
 
                 //出货
                 List<CategorySum> CategorySum = billService.getBillCategorySum(BillList.get(i).getId());
-                if (report.getOutCategorySum() == null) {
+                if (report.getOutCategorySum() == null || report.getOutCategorySum().size() < 1) {
                     report.setOutCategorySum(CategorySum);
                 } else {
                     for (int n = 0; n < CategorySum.size(); n++) {

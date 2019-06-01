@@ -145,7 +145,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             bill.setModifier(creator);
             bill.setModifytime(new Date());
             bill.setQuantity(totalAuatity);
-            bill.setStatus(BillEnums.Status.Normal.toString());
+            bill.setStatus(BillEnums.Status.Normal.index().toString());
             mapper.updateById(bill);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
