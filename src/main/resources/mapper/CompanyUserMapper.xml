@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.CompanyUserMapper">
-
+    <select id="getCompanyinfolist" parameterType="CompanyUserRequest" resultType="com.zero.egg.responseDTO.CompanyinfoResponseDto">
+        select a.id,a.company_id,a.name,b.name as companyName,a.loginname,b.begintime,b.endtime,sum(c.pc_client) as pcClientCount,
+        sum(c.staff_client) as staffClientCount,sum(c.boss_client) as bossClientCount,sum(c.device_client) as deviceClientCount,a.createtime
+        from bd_company_user a
+        left join bd_company b on a.company_id=b.id
+        left join bd_shop c  on a.company_id=c.company_id
+        where a.dr=0
+        <where>
+            <if test="keyword != null and keyword !=''">
+                a.name LIKE '%${keyword}%'  or b.name LIKE '%${keyword}%'
+            </if>
+        </where>
+        GROUP BY  a.id,a.company_id,a.name,b.name,a.loginname,b.begintime,b.endtime,a.createtime
+    </select>
 </mapper>

@@ -2,7 +2,9 @@ package com.zero.egg.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -37,14 +39,9 @@ public class Company implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ApiModelProperty(value = "编码",required=false)
-    private String code;
 
     @ApiModelProperty(value = "名称",required=false)
     private String name;
-
-    @ApiModelProperty(value = "联系方式",required=false)
-    private String phone;
 
     @ApiModelProperty(value = "状态",hidden=true)
     private String status;
@@ -66,7 +63,18 @@ public class Company implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
-    
+    @ApiModelProperty(value = "开始时间",hidden=true)
+    private Date begintime;
+
+
+
+    @ApiModelProperty(value = "结束时间",hidden=true)
+    private Date endtime;
+
+
+
+
+
     public String getStatusName() {
 		return CompanyEnums.Status.note(Integer.parseInt(this.status));
 	}

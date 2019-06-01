@@ -3,6 +3,8 @@ package com.zero.egg.service.impl;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.dao.CompanyUserMapper;
 import com.zero.egg.enums.CompanyUserEnums;
+import com.zero.egg.requestDTO.CompanyUserRequest;
+import com.zero.egg.responseDTO.CompanyinfoResponseDto;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.UuidUtil;
@@ -10,9 +12,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.security.MD5Encoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,5 +45,13 @@ public class CompanyUserServiceImpl extends ServiceImpl<CompanyUserMapper, Compa
 			}
 		}
 		return super.save(entity);
+	}
+
+	@Autowired
+	private CompanyUserMapper mapper;
+
+	@Override
+	public List<CompanyinfoResponseDto> getCompanyinfolist(CompanyUserRequest model) {
+		return mapper.getCompanyinfolist(model);
 	}
 }

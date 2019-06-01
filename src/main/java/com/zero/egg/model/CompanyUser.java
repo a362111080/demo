@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.CompanyUserEnums;
@@ -13,6 +14,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -67,6 +69,26 @@ public class CompanyUser implements Serializable {
 
     @ApiModelProperty(value = "更新时间",hidden=true)
     private Date modifytime;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "开始时间",hidden=true)
+    private Date begintime;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "结束时间",hidden=true)
+    private Date endtime;
+
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "企业名称",hidden=true)
+    private String companyname;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "企业店铺信息",hidden=true)
+    private List<Shop> shopList;
+
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;

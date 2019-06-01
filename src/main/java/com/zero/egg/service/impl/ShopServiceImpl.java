@@ -1,7 +1,9 @@
 package com.zero.egg.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -58,6 +60,15 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		}
 		return null;
 		
+	}
+
+
+	@Autowired
+	private ShopMapper mapper;
+
+	@Override
+	public List<Shop> getShopListByCompanid(String companyId) {
+		return mapper.getShopListByCompanid(companyId);
 	}
 
 }

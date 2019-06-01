@@ -25,4 +25,7 @@ public class CompanyUserRequest extends PageDTO{
 	    @ApiModelProperty(value = "状态",required=false)
 	    private String status;
 
+		@ApiModelProperty(value = "关键字",required=false)
+		private String keyword;
+
 }

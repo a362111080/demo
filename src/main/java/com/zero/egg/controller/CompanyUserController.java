@@ -8,6 +8,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zero.egg.responseDTO.CompanyinfoResponseDto;
+import com.zero.egg.service.IShopService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,11 +47,14 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @Api(value="企业用户管理")
-@RequestMapping("/company-user")
+@RequestMapping("/companyuser")
 public class CompanyUserController {
 
 	@Autowired
 	private ICompanyUserService iCompanyUserService;
+
+	@Autowired
+	private IShopService shopService;
 	
 	@LoginToken
 	@ApiOperation(value="分页查询企业用户")
@@ -118,14 +125,13 @@ public class CompanyUserController {
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public Message<Object> add(HttpServletRequest request
 			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业信息:编号，名称，电话，企业主键") CompanyUser companyUser) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setPassword("888888");
 		companyUser.setModifier(loginUser.getId());
 		companyUser.setCreator(loginUser.getId());
-		if (iCompanyUserService.save(companyUser)) {//逻辑删除
+		if (iCompanyUserService.save(companyUser)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}else {
@@ -216,4 +222,25 @@ public class CompanyUserController {
 		
 		return message;
 	}
+
+
+	@ApiOperation(value = "查询企业用户列表", notes = "分页查询，各种条件查询")
+	@RequestMapping(value = "/getCompanyinfolist", method = RequestMethod.POST)
+	public Message GetSupplierList(@RequestBody CompanyUserRequest model) {
+		Message ms = new Message();
+		PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+		List<CompanyinfoResponseDto> Companyinfo = iCompanyUserService.getCompanyinfolist(model);
+
+		for (CompanyinfoResponseDto dt : Companyinfo) {
+			dt.setShopList(shopService.getShopListByCompanid(dt.getCompanyId()));
+		}
+
+		PageInfo<CompanyinfoResponseDto> pageInfo = new PageInfo<>(Companyinfo);
+		ms.setData(pageInfo);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return ms;
+	}
+
+
 }
