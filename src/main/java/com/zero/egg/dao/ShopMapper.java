@@ -17,4 +17,5 @@ public interface ShopMapper extends BaseMapper<Shop> {
 
     List<Shop> getShopListByCompanid(String companyId);
 
+    Integer getClietnUseCountByShopid(String shopId, Integer type);
 }
