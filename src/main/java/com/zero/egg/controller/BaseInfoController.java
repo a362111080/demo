@@ -563,7 +563,10 @@ public class BaseInfoController {
                 //获取当前方案下所有细节id集合并置为删除状态
                 List<String> ids = specificationService.listStandardDetlIDsByProgramId(saveSpecificationRequestDTO
                         .getSpecificationRequestDTOS().get(0).getProgramId(), user.getCompanyId(), user.getShopId());
-                specificationService.batchDeleteStandardDetlByIds(ids);
+                /** 如果该方案下细节书不为null**/
+                if (null != ids && 0 < ids.size()) {
+                    specificationService.batchDeleteStandardDetlByIds(ids);
+                }
                 /* 迭代方案细节列表,将店铺id和企业id赋予给方案细节,并判断方案细节的id是否为空,为空走新增流程,否则走编辑 */
                 List<SpecificationRequestDTO> dtoList = saveSpecificationRequestDTO.getSpecificationRequestDTOS();
                 for (SpecificationRequestDTO requestDTO : dtoList) {
