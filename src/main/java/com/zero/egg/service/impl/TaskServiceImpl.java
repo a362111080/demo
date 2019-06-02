@@ -505,10 +505,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                             //循环出货商品,累加重量
                             for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
                                 totalWeight = totalWeight.add(shipmentGoods.getWeight());
-                                //需要减去去皮值*数量
-                                BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillDTO.getQuantity());
-                                totalWeight = totalWeight.subtract(needToSubtract);
                             }
+                            //需要加上去皮值*数量
+                            BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillDTO.getQuantity());
+                            totalWeight = totalWeight.add(needToSubtract);
                             blankBillDTO.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                             blankBillDTO.setTotalWeight(totalWeight);
 
