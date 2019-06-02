@@ -644,7 +644,7 @@ public class TaskController {
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
                     || !TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId))) {
+                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EMPLOYEE_NOT_FINISH);
                 message.setMessage(UtilConstants.ResponseMsg.ASURE_EMPLOYEE_FINISH);
