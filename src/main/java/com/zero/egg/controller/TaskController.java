@@ -704,6 +704,15 @@ public class TaskController {
             String taskId = task.getId();
             //客户id
             String customerId = task.getCussupId();
+            //获取当前任务状态
+            String status = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status");
+            if (status.equals(TaskEnums.Status.Finish.index().toString())
+                    || status.equals(TaskEnums.Status.CANCELED.index().toString())) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED);
+                return message;
+            }
             /**
              * 正常完成出货流程
              */
