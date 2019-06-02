@@ -705,7 +705,7 @@ public class TaskController {
             //客户id
             String customerId = task.getCussupId();
             //获取当前任务状态
-            String status = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + task.getShopId() + customerId + taskId + "status");
+            String status = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status");
             if (status.equals(TaskEnums.Status.Finish.index().toString())
                     || status.equals(TaskEnums.Status.CANCELED.index().toString())) {
                 message = new Message();
