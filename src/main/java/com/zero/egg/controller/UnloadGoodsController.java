@@ -119,7 +119,7 @@ public class UnloadGoodsController {
                             message.setMessage("当前任务已暂停，请稍后再操作");
                         } else {
                             //根据重量对应规程方案判断是否预警
-                            if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().intValue() > 1) {
+                            if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().floatValue() > 1) {
                                 //小于方案最小称重则预警，返回标识以及是否预警结果
                                 UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
                                 if (null != res) {
