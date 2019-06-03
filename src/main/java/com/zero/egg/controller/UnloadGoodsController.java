@@ -105,7 +105,6 @@ public class UnloadGoodsController {
 				model.setGoodsNo(bar.getCurrentCode());
 				//判断当前卸货任务状态是否在执行中，通过供应商查找任务
 				String info = unloadGoodsService.GetTaskStatusBySupplier(bar.getSupplierId());
-
 				if (null!=info) {
 
 					String taskId = StringTool.splitToList(info, ",").get(1);
@@ -119,7 +118,7 @@ public class UnloadGoodsController {
 						message.setMessage("当前任务已暂停，请稍后再操作");
 					} else {
 						//根据重量对应规程方案判断是否预警
-						if (null != model.getWeight() && null != model.getProgramId()) {
+						if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().intValue() >1 ) {
 							//小于方案最小称重则预警，返回标识以及是否预警结果
 							UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
 							if (null != res) {
@@ -131,6 +130,7 @@ public class UnloadGoodsController {
 								} else {
 									model.setMarker(res.getMarker());
 								}
+
 								if (res.getWarn().equals("1")) {
 									model.setWarn(true);
 								} else {
@@ -160,8 +160,7 @@ public class UnloadGoodsController {
 							}
 						} else {
 							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-							message.setMessage("参数错误！");
-
+							message.setMessage("货位重量无效，请重新扫描！");
 						}
 
 					}
