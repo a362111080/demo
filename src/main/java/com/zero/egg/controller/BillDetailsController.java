@@ -70,6 +70,7 @@ public class BillDetailsController {
 			IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
 			IDetails.setModifier(user.getId());
 			IDetails.setModifytime(new Date());
+			IDetails.setId(model.getUnloadDetails().get(n).getId());
 			Amount = Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
 			billDetailsService.updateDetails(IDetails);
 		}
