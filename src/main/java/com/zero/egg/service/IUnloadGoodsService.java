@@ -42,4 +42,6 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
     UnLoadResponseDto CheckWeightForWarning(String programId);
 
     int GoodNoIsExists(String currentCode);
+
+    void RepaireUnloadTask(String taskId);
 }

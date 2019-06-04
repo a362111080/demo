@@ -42,4 +42,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     UnLoadResponseDto CheckWeightForWarning(String programId);
 
     int GoodNoIsExists(String currentCode);
+
+    void RepaireUnloadTask(String taskId);
 }

@@ -14,7 +14,6 @@ import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.TokenUtils;
-import com.zero.egg.tool.UtilConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
