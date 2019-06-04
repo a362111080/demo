@@ -141,7 +141,7 @@ public class UnloadGoodsController {
                                 int strval = unloadGoodsService.AddUnloadDetl(model);
                                 if (strval > 0) {
                                 	//任务自检
-									//unloadGoodsService.RepaireUnloadTask(model.getTaskId());
+									unloadGoodsService.RepaireUnloadTask(model.getTaskId());
                                     UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
                                     dto.setSupplierName(bar.getSupplierName());
                                     dto.setCategoryName(bar.getCategoryName());
