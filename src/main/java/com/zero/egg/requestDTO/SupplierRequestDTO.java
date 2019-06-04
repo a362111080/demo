@@ -77,4 +77,12 @@ public class SupplierRequestDTO extends PageDTO implements Serializable {
      */
     private String shortname;
 
+
+    /**
+     * 查询条件
+     */
+    private String name;
+
+
+
 }
