@@ -45,6 +45,9 @@
             <if test="shortname != null and shortname !=''">
                 and k.short_name LIKE '%${shortname}%'
             </if>
+            <if test="name != null and name !=''">
+                and k.name LIKE '%${name}%'
+            </if>
             <if test="companyId != null and companyId !=''">
                 and k.company_id=#{companyId,jdbcType=VARCHAR}
             </if>
