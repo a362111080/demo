@@ -84,4 +84,9 @@ public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, Unloa
     public int GoodNoIsExists(String currentCode) {
         return  mapper.GoodNoIsExists(currentCode);
     }
+
+    @Override
+    public void RepaireUnloadTask(String taskId) {
+          mapper.RepaireUnloadTask(taskId);
+    }
 }
