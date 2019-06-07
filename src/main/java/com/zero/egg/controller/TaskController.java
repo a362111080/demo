@@ -300,14 +300,12 @@ public class TaskController {
             /**
              * 如果redis里面所存对应的任务状态为已完成或已取消,返回对应消息
              */
-            log.info(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"));
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status")
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status")
                     || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status"))
                     || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId + "status"))) {
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status"))) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.TASK_FINISH_OR_CANCELED);
                 return message;

@@ -2,7 +2,9 @@ package com.zero.egg.service;
 
 import com.Apptest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.model.Category;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,6 +43,40 @@ public class BaseInfoServiceTest extends Apptest {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private JedisUtil.Sets sets;
+
+    @Autowired
+    private JedisUtil.SortSets sortSets;
+
+    @Autowired
+    private ShipmentGoodsMapper shipmentGoodsMapper;
+
+
+    @Test
+    public void testZadd(){
+//        ShipmentGoods shipmentGoods1 = shipmentGoodsMapper.selectById("01b399a8efcef63bfcb961c4a58c17e7");
+//        ShipmentGoods shipmentGoods2 = shipmentGoodsMapper.selectById("063be559414e84c2dabd6c028ba100ae");
+//        ShipmentGoods shipmentGoods3 = shipmentGoodsMapper.selectById("063c52025a2e36ac8bb69cc55da3ed0a");
+//        ShipmentGoods shipmentGoods4 = shipmentGoodsMapper.selectById("06f12b7b0bbb6e6b1726ce3dfcaa1d9d");
+//        ShipmentGoods shipmentGoods5 = shipmentGoodsMapper.selectById("077fe856e97eedbdc96ec08addaf75f0");
+//        long effectiveNum = sortSets.zadd("test",Double.valueOf(12345) , JsonUtils.objectToJson(shipmentGoods1));
+//        sortSets.zadd("test",Double.valueOf(new Date().getTime()) , JsonUtils.objectToJson(shipmentGoods2));
+//        sortSets.zadd("test",Double.valueOf(new Date().getTime()) , JsonUtils.objectToJson(shipmentGoods3));
+//        sortSets.zadd("test",Double.valueOf(new Date().getTime()) , JsonUtils.objectToJson(shipmentGoods4));
+//        sortSets.zadd("test",Double.valueOf(new Date().getTime()) , JsonUtils.objectToJson(shipmentGoods5));
+//        List<ShipmentGoods> list = sortSets.
+        Set<String> set =  sortSets.zrevrange("test",0,-1);
+////        JsonUtils.jsonToList()
+        System.out.println(set.size());
+//        String jsonString = JsonUtils.objectToJson(set);
+//        System.out.println(jsonString);
+//        List<ShipmentGoods> list = JsonUtils.jsonToList(jsonString, ShipmentGoods.class);
+//        System.out.println(list);
+//        System.out.println(effectiveNum);
+//        System.out.println(9/10);
+    }
 
 
     @Test

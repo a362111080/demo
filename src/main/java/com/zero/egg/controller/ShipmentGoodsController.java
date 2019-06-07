@@ -19,6 +19,7 @@ import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
 import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.PageDTO;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -65,6 +67,9 @@ public class ShipmentGoodsController {
 
     @Autowired
     private JedisUtil.Keys jedisKeys;
+
+    @Autowired
+    private JedisUtil.SortSets sortSets;
 
     @Autowired
     private CategoryService categoryService;
@@ -94,25 +99,18 @@ public class ShipmentGoodsController {
         /**
          * 任务状态确认,只有任务在进行中,才能进行出货
          */
-        if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId()
-                + shipmentGoodRequestDTO.getTaskId() + "status")
+        if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + loginUser.getCompanyId() + ":" + loginUser.getShopId()
+                + ":" + shipmentGoodRequestDTO.getCustomerId() + ":" + shipmentGoodRequestDTO.getTaskId() + ":" + "status")
                 || !TaskEnums.Status.Execute.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                + loginUser.getCompanyId() + loginUser.getShopId() + shipmentGoodRequestDTO.getCustomerId() + shipmentGoodRequestDTO.getTaskId() + "status"))) {
+                + loginUser.getCompanyId() + ":" + loginUser.getShopId()
+                + ":" + shipmentGoodRequestDTO.getCustomerId() + ":" + shipmentGoodRequestDTO.getTaskId() + ":" + "status"))) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.TASK_NOT_FOUND);
             return message;
         }
         try {
-
-            /**
-             * 从入参中获取二维码信息(二维码主键id)
-             */
-            String taskId = shipmentGoodRequestDTO.getTaskId();
-            String customerId = shipmentGoodRequestDTO.getCustomerId();
-            String barCodeId = shipmentGoodRequestDTO.getBarCodeString();
-            message = goodService.querySingleGoodByBarCodeInfo(barCodeId, loginUser.getId(), loginUser.getName(), taskId, customerId);
+            message = goodService.querySingleGoodByBarCodeInfo(shipmentGoodRequestDTO, loginUser);
         } catch (Exception e) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -147,21 +145,45 @@ public class ShipmentGoodsController {
              * 否则,直接从redis里面取出对应value,并转化为list集合存进Data里返回
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)
-                    || null == jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId)) {
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId)
+            ) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
-                String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + loginUser.getCompanyId() + loginUser.getShopId() + customerId + taskId);
-                List<GoodsResponse> goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
+                /**
+                 * 分页信息
+                 */
+                Long current = shipmentGoodsRequest.getCurrent();
+                Long size = shipmentGoodsRequest.getSize();
+                Long total = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId);
+                Long pages;
+                if (total % size == 0) {
+                    pages = total / size;
+                } else {
+                    pages = total / size + 1;
+                }
+                Set<String> goodsSet = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                                + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
+                        , size.intValue() * (current.intValue() - 1), size.intValue() * current.intValue() - 1);
+                List<GoodsResponse> goodsResponseList = new ArrayList<>();
+                GoodsResponse redisGood;
+                for (String jsonString : goodsSet) {
+                    redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
+                    goodsResponseList.add(redisGood);
+                }
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                PageDTO pageDTO = new PageDTO();
+                pageDTO.setCurrent(current);
+                pageDTO.setSize(size);
+                pageDTO.setTotal(total);
+                pageDTO.setPages(pages);
                 switch (shipmentGoodsRequest.getSortType()) {
                     //列表
                     case 1:
                         message.setData(goodsResponseList);
+                        message.setTotaldata(pageDTO);
                         break;
                     //整理归类
                     case 2:
@@ -192,6 +214,7 @@ public class ShipmentGoodsController {
                         break;
                     default:
                         message.setData(goodsResponseList);
+                        message.setTotaldata(pageDTO);
                 }
             }
 

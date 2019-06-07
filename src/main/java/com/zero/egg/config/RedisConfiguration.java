@@ -120,6 +120,15 @@ public class RedisConfiguration {
     }
 
     /**
+     * redis的Sets操作
+     */
+    @Bean(name = "jedisSortSets")
+    public JedisUtil.SortSets createJedisSortSets() {
+        JedisUtil.SortSets jedisSortSets = jedisUtil.new SortSets();
+        return jedisSortSets;
+    }
+
+    /**
      * redis的Hash操作
      */
     @Bean(name = "jedisHash")

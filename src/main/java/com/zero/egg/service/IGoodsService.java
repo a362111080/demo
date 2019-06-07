@@ -3,6 +3,8 @@ package com.zero.egg.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.Goods;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -27,5 +29,5 @@ public interface IGoodsService extends IService<Goods> {
      * @return
      * @throws ServiceException
      */
-    Message querySingleGoodByBarCodeInfo(String barCodeId, String employeeId, String employeeName, String taskId, String customerId) throws ServiceException;
+    Message querySingleGoodByBarCodeInfo(ShipmentGoodBarCodeRequestDTO shipmentGoodRequestDTO, LoginUser loginUser) throws ServiceException;
 }

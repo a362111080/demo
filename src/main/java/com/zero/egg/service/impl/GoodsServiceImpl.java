@@ -7,6 +7,8 @@ import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Goods;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.tool.JsonUtils;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,10 +38,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private BarCodeMapper barCodeMapper;
 
     @Autowired
-    private JedisUtil.Strings jedisStrings;
-
-    @Autowired
-    private JedisUtil.Keys jedisKeys;
+    private JedisUtil.SortSets sortSets;
 
     @Override
     public List<GoodsResponse> listByCondition(QueryWrapper<Goods> queryWrapper) {
@@ -50,11 +48,19 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     @Transactional
-    public Message querySingleGoodByBarCodeInfo(String barCodeId, String employeeId
-            , String employeeName, String taskId, String customerId) {
+    public Message querySingleGoodByBarCodeInfo(ShipmentGoodBarCodeRequestDTO shipmentGoodRequestDTO, LoginUser loginUser) {
         Message message = new Message();
         List<GoodsResponse> goodsResponseList;
         try {
+            /**
+             * 从入参中获取二维码信息(二维码主键id)
+             */
+            String taskId = shipmentGoodRequestDTO.getTaskId();
+            String customerId = shipmentGoodRequestDTO.getCustomerId();
+            String barCodeId = shipmentGoodRequestDTO.getBarCodeString();
+            String employeeId = loginUser.getId();
+            String employeeName = loginUser.getLoginname();
+
             BarCode barCode = barCodeMapper.selectById(barCodeId);
             QueryWrapper<Goods> queryWrapper = new QueryWrapper<Goods>()
                     .eq("g.company_id", barCode.getCompanyId())
@@ -71,7 +77,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
             goods.setEmployeeId(employeeId);
             goods.setEmployeeName(employeeName);
-            //存redis
             /**
              * 存redis
              * 1.从redis获取当前任务的列表json字符串
@@ -79,38 +84,19 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
              * 3.给list添加当前的扫的出货对象
              * 4.把List转换成json字符串,存redis
              */
-            //第一次扫码出货时,redis没有相关任务键
-            log.info(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId));
-            if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)
-                    || null == jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId)) {
-                goodsResponseList = new ArrayList<>();
-                goodsResponseList.add(goods);
-                String goodsJson = JsonUtils.objectToJson(goodsResponseList);
-                jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId, goodsJson);
-            } else {
-                String goodsJson = jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId);
-                goodsResponseList = JsonUtils.jsonToList(goodsJson, GoodsResponse.class);
-                /**
-                 * 要判断商品不能重复被添加
-                 */
-                if (goodsResponseList.contains(goods)) {
-                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
-                    return message;
-                }
-                goodsResponseList.add(goods);
-                String newGoodsJson = JsonUtils.objectToJson(goodsResponseList);
-                jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + barCode.getCompanyId() + barCode.getShopId() + customerId + taskId, newGoodsJson);
+            long effectiveNum = sortSets.zaddNx(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                            + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
+                    , Double.valueOf(System.currentTimeMillis()), JsonUtils.objectToJson(goods));
+            /**
+             * 要判断商品不能重复被添加
+             */
+            if (effectiveNum < 1) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                return message;
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-//            message.setData(goods);
         } catch (Exception e) {
             log.error("querySingleGoodByBarCodeInfo failed :" + e);
             throw new ServiceException("querySingleGoodByBarCodeInfo failed");

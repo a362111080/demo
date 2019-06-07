@@ -4,6 +4,7 @@ import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.SortingParams;
+import redis.clients.jedis.params.sortedset.ZAddParams;
 import redis.clients.util.SafeEncoder;
 
 import java.util.List;
@@ -41,6 +42,10 @@ public class JedisUtil {
      */
     public Hash HASH;
     /**
+     * 对存储结构为SortSet类型的操作
+     */
+    public SortSets SORTSETS;
+    /**
      * Redis的连接池对象
      */
     private JedisPool jedisPool;
@@ -75,6 +80,17 @@ public class JedisUtil {
     public Jedis getJedis() {
         return jedisPool.getResource();
     }
+
+
+    /*
+     * 在finaally中回收jedis
+     */
+    public void returnJedis(Jedis jedis) {
+        if (null != jedis && null != jedisPool) {
+            jedisPool.returnResource(jedis);
+        }
+    }
+
 
     /**
      * 设置过期时间
@@ -572,7 +588,7 @@ public class JedisUtil {
          * 以Map的形式返回hash中的存储和值
          *
          * @param key
-         * @return Map<Strinig                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               String>
+         * @return Map<Strinig, String>
          */
         public Map<String, String> hgetAll(String key) {
             // ShardedJedis sjedis = getShardedJedis();
@@ -1256,6 +1272,180 @@ public class JedisUtil {
         public String ltrim(String key, int start, int end) {
             return ltrim(SafeEncoder.encode(key), start, end);
         }
+    }
+
+    /******************************SortSet******************************/
+    public class SortSets {
+        /*
+         * zadd 向集合中增加一条记录，如果这个值已经存在，这个值对应的权重将被置为新的权重
+         *
+         * @param double score 权重 member要加入的值
+         * @return 状态码 1成功 0已经存在member值
+         */
+
+        public long zadd(String key, double score, String member) {
+            Jedis jedis = getJedis();
+            long s = jedis.zadd(key, score, member);
+            jedis.close();
+            return s;
+        }
+
+        public long zaddNx(String key, double score, String member) {
+            Jedis jedis = getJedis();
+            long s = jedis.zadd(key, score, member, ZAddParams.zAddParams().nx());
+            jedis.close();
+            return s;
+        }
+
+        /*
+         * 获取集合中元素的数量
+         * @param String key
+         * @return 当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0 。
+         */
+        public long zcard(String key) {
+            Jedis jedis = getJedis();
+            long count = jedis.zcard(key);
+            jedis.close();
+            return count;
+        }
+
+        /*
+         * zcount 获取指定权重区间内的集合数量
+         *
+         * @param double min最小排序位置   max最大排序位置
+         */
+        public long zcount(String key, double min, double max) {
+            Jedis jedis = getJedis();
+            long count = jedis.zcount(key, min, max);
+            jedis.close();
+            return count;
+        }
+
+        /*
+         * zrange 返回有序集合key中，指定区间的成员0，-1指的是整个区间的成员
+         */
+        public Set<String> zrange(String key, int start, int end) {
+
+            Jedis jedis = getJedis();
+            Set<String> set = jedis.zrange(key, 0, -1);
+            jedis.close();
+            return set;
+        }
+
+
+        /*
+         * zrevrange  返回有序集 key 中，指定区间内的成员。其中成员的位置按 score 值递减(从大到小)来排列
+         */
+        public Set<String> zrevrange(String key, int start, int end) {
+            // ShardedJedis sjedis = getShardedJedis();
+            Jedis sjedis = getJedis();
+            Set<String> set = sjedis.zrevrange(key, start, end);
+            sjedis.close();
+            return set;
+        }
+
+        /*
+         * zrangeByScore  根据上下权重查询集合
+         */
+        public Set<String> zrangeByScore(String key, double min, double max) {
+            Jedis jedis = getJedis();
+            Set<String> set = jedis.zrangeByScore(key, min, max);
+            jedis.close();
+            return set;
+        }
+
+        /*
+         * 接上面方法，获取有序集合长度
+         */
+        public long zlength(String key) {
+            long len = 0;
+            Set<String> set = zrange(key, 0, -1);
+            len = set.size();
+            return len;
+        }
+
+        /*
+         * zincrby  为有序集 key 的成员 member 的 score 值加上增量 increment
+         *
+         * @return member 成员的新 score 值，以字符串形式表示
+         */
+
+        public double zincrby(String key, double score, String member) {
+            Jedis jedis = getJedis();
+            double s = jedis.zincrby(key, score, member);
+            jedis.close();
+            return s;
+        }
+        /*
+         * zrank 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列
+         */
+
+        public long zrank(String key, String member) {
+            Jedis jedis = getJedis();
+            long index = jedis.zrank(key, member);
+            jedis.close();
+            return index;
+        }
+
+        /*
+         *zrevrank   返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递减(从大到小)排序。
+         */
+        public long zrevrank(String key, String member) {
+            Jedis jedis = getJedis();
+            long index = jedis.zrevrank(key, member);
+            jedis.close();
+            return index;
+        }
+
+        /*
+         * zrem 移除有序集 key 中的一个或多个成员，不存在的成员将被忽略。当 key 存在但不是有序集类型时，返回一个错误。在 Redis 2.4 版本以前， ZREM 每次只能删除一个元素。
+         * @return 被成功移除的成员的数量，不包括被忽略的成员
+         */
+        public long zrem(String key, String member) {
+            Jedis jedis = getJedis();
+            long count = jedis.zrem(key, member);
+            jedis.close();
+            return count;
+
+        }
+
+        /*
+         *zremrangebyrank 移除有序集 key 中，指定排名(rank)区间内的所有成员。
+         *@return 被移除成员的数量
+         */
+        public long zremrangeByRank(String key, int start, int end) {
+            Jedis jedis = getJedis();
+            long count = jedis.zremrangeByRank(key, start, end);
+            jedis.close();
+            return count;
+
+        }
+
+
+        /*
+         * zremrangeByScore  删除指定权重区间的元素
+         */
+        public long zremrangeByScore(String key, double min, double max) {
+            Jedis jedis = getJedis();
+            long count = jedis.zremrangeByScore(key, min, max);
+            jedis.close();
+            return count;
+        }
+
+
+        /*
+         * 获取给定值在集合中的权重
+         */
+        public double zscore(String key, String member) {
+            Jedis jedis = getJedis();
+            Double score = jedis.zscore(key, member);
+            jedis.close();
+            if (score != null) {
+                return score;
+            }
+            return 0;
+        }
+
     }
 
 }
