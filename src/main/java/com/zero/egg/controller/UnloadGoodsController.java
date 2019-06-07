@@ -131,7 +131,6 @@ public class UnloadGoodsController {
                                     } else {
                                         model.setMarker(res.getMarker());
                                     }
-
                                     if (res.getWarn().equals("1")) {
                                         model.setWarn(true);
                                     } else {
@@ -141,10 +140,8 @@ public class UnloadGoodsController {
                                 }
                                 int strval = unloadGoodsService.AddUnloadDetl(model);
                                 if (strval > 0) {
-
                                 	//任务自检
 									unloadGoodsService.RepaireUnloadTask(model.getTaskId());
-
                                     UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
                                     dto.setSupplierName(bar.getSupplierName());
                                     dto.setCategoryName(bar.getCategoryName());

@@ -85,6 +85,7 @@
     <select id="GoodNoIsExists"  parameterType="java.lang.String" resultType="int">
         select COUNT(1) from bd_unload_goods  k where k.goods_no=#{currentCode,jdbcType=VARCHAR}  and  k.dr=0
     </select>
+
     <delete id="RepaireUnloadTask" parameterType="java.lang.String">
         delete from  bd_unload_goods  where id IN(
             SELECT id  from (
