@@ -28,4 +28,7 @@ public class CompanyUserRequest extends PageDTO{
 		@ApiModelProperty(value = "关键字",required=false)
 		private String keyword;
 
+		@ApiModelProperty(value = "企业id",required=false)
+	     private String companyId;
+
 }
