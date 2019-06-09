@@ -72,7 +72,12 @@ public class Company implements Serializable {
     private Date endtime;
 
 
-
+    /**
+     * 前端传来的id数组(批量操作)
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "批量删除",hidden=true)
+    private String ids;
 
 
     public String getStatusName() {

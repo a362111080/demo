@@ -272,15 +272,11 @@ public class CompanyController {
 	
 	@LoginToken
 	@ApiOperation(value="根据id删除企业信息")
-	@RequestMapping(value="/del.do",method=RequestMethod.POST)
-	public Message<Object> del(HttpServletRequest request
-			,@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@RequestMapping(value="/del",method=RequestMethod.POST)
+	public Message<Object> del(@RequestBody Company company) {
 		Message<Object> message = new Message<Object>();
-		Company company = new Company();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		company.setId(id);
 		company.setDr(true);
 		company.setModifier(loginUser.getId());
 		company.setModifytime(new Date());
@@ -288,7 +284,7 @@ public class CompanyController {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}else {
-			message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+			message.setMessage(UtilConstants.ResponseMsg.FAILED);
 			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 		}
 		return message;
@@ -296,23 +292,21 @@ public class CompanyController {
 	
 	@LoginToken
 	@ApiOperation(value="批量删除企业信息")
-	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
-	public Message<Object> batchDel(HttpServletRequest request,
-			@RequestParam @ApiParam(required=true,name="ids",value="企业ids,逗号拼接") String ids) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@RequestMapping(value="/batchdel",method=RequestMethod.POST)
+	public Message<Object> batchDel(@RequestBody Company company) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		List<String> idsList = StringTool.splitToList(ids, ",");
+		List<String> idsList = StringTool.splitToList(company.getIds(), ",");
 		if (idsList !=null) {
 			List<Company> companyList = new ArrayList<>();
 			for (String id : idsList) {
-				Company company = new Company();
-				company.setId(id);
-				company.setDr(true);
-				company.setModifier(loginUser.getId());
-				company.setModifytime(new Date());
-				companyList.add(company);
+				Company Dcompany = new Company();
+				Dcompany.setId(id);
+				Dcompany.setDr(true);
+				Dcompany.setModifier(loginUser.getId());
+				Dcompany.setModifytime(new Date());
+				companyList.add(Dcompany);
 			}
 			if (iCompanyService.updateBatchById(companyList)) {//逻辑删除
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
