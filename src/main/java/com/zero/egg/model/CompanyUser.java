@@ -71,12 +71,12 @@ public class CompanyUser implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "开始时间",hidden=true)
-    private Date begintime;
+    private String begintime;
 
 
     @TableField(exist = false)
     @ApiModelProperty(value = "结束时间",hidden=true)
-    private Date endtime;
+    private String endtime;
 
 
 

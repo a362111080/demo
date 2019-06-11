@@ -1,41 +1,34 @@
 package com.zero.egg.controller;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.zero.egg.responseDTO.CompanyinfoResponseDto;
-import com.zero.egg.service.IShopService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.requestDTO.CompanyUserRequest;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.responseDTO.CompanyinfoResponseDto;
 import com.zero.egg.service.ICompanyUserService;
+import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
