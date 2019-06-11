@@ -186,6 +186,8 @@ public class CompanyController {
 			company.setCreatetime(new Date());
 			company.setCreator(loginUser.getId());
 			company.setName(companyUser.getCompanyName());
+			company.setBegintime(companyUser.getBegintime());
+			company.setEndtime(companyUser.getEndtime());
 			company.setStatus(CompanyEnums.Status.Normal.index().toString());
 			company.setDr(false);
 			if (iCompanyService.save(company)) {

@@ -22,6 +22,10 @@ public class CompanyinfoResponseDto {
     @ApiModelProperty(value = "账号")
     private String loginname;
 
+    @ApiModelProperty(value = "手机")
+    private String phone;
+
+
     @ApiModelProperty(value = "姓名")
     private String name;
 
