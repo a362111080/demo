@@ -12,7 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class CompanyUser implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "企业名称",hidden=true)
-    private String companyname;
+    private String companyName;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "企业店铺信息",hidden=true)

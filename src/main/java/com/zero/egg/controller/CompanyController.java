@@ -1,23 +1,6 @@
 package com.zero.egg.controller;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.zero.egg.tool.UuidUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -35,10 +18,20 @@ import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
-
+import com.zero.egg.tool.UuidUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -148,7 +141,7 @@ public class CompanyController {
 			company.setModifytime(new Date());
 			company.setCreatetime(new Date());
 			company.setCreator(loginUser.getId());
-			company.setName(companyUser.getCompanyname());
+			company.setName(companyUser.getCompanyName());
 			company.setBegintime(companyUser.getBegintime());
 			company.setEndtime(companyUser.getEndtime());
 			if (iCompanyService.updateById(company)) {
@@ -192,14 +185,14 @@ public class CompanyController {
 			company.setModifytime(new Date());
 			company.setCreatetime(new Date());
 			company.setCreator(loginUser.getId());
-			company.setName(companyUser.getCompanyname());
+			company.setName(companyUser.getCompanyName());
 			company.setStatus(CompanyEnums.Status.Normal.index().toString());
 			company.setDr(false);
 			if (iCompanyService.save(company)) {
 				companyUser.setId(UuidUtil.get32UUID());
 				companyUser.setModifier(loginUser.getId());
 				companyUser.setCreator(loginUser.getId());
-				companyUser.setCompanyId(companyid);
+				companyUser.setCompanyId(company.getId());
 				companyUser.setModifytime(new Date());
 				companyUser.setCreatetime(new Date());
 				companyUser.setStatus(CompanyEnums.Status.Normal.index().toString());
@@ -208,7 +201,7 @@ public class CompanyController {
 				if (companyUser.getShopList()  != null && companyUser.getShopList().size()>0) {
 					for (Shop shop : companyUser.getShopList()) {
 						shop.setId(UuidUtil.get32UUID());
-						shop.setCompanyId(companyid);
+						shop.setCompanyId(company.getId());
 						shop.setModifier(loginUser.getId());
 						shop.setModifytime(new Date());
 						shop.setCreatetime(new Date());
