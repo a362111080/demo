@@ -48,6 +48,9 @@ public class CompanyUserController {
 
 	@Autowired
 	private IShopService shopService;
+
+	@Autowired
+	private HttpServletRequest request;
 	
 	@LoginToken
 	@ApiOperation(value="分页查询企业用户")
@@ -159,17 +162,13 @@ public class CompanyUserController {
 	
 	@LoginToken
 	@ApiOperation(value="根据id删除企业用户信息")
-	@RequestMapping(value="/del.do",method=RequestMethod.POST)
-	public Message<Object> del(HttpServletRequest request
-			,@RequestParam @ApiParam(required=true,name="id",value="企业id") String id) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@RequestMapping(value="/del",method=RequestMethod.POST)
+	public Message<Object> del(@RequestBody CompanyUser companyUser) {
 		Message<Object> message = new Message<Object>();
-		CompanyUser companyUser = new CompanyUser();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
 		companyUser.setModifytime(new Date());
-		companyUser.setId(id);
 		companyUser.setDr(true);
 		if (iCompanyUserService.updateById(companyUser)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -183,12 +182,10 @@ public class CompanyUserController {
 	
 	@LoginToken
 	@ApiOperation(value="批量删除企业用户信息")
-	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
-	public Message<Object> batchDel(HttpServletRequest request
-			,@RequestParam @ApiParam(required=true,name="ids",value="企业ids,逗号拼接") String ids) {
-		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+	@RequestMapping(value="/batchdel",method=RequestMethod.POST)
+	public Message<Object> batchDel(@RequestBody CompanyUser companyuser) {
 		Message<Object> message = new Message<Object>();
-		List<String> idsList = StringTool.splitToList(ids, ",");
+		List<String> idsList = StringTool.splitToList(companyuser.getIds(), ",");
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (idsList !=null) {

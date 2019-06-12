@@ -95,4 +95,13 @@ public class CompanyUser implements Serializable {
     public String getStatusName() {
 		return CompanyUserEnums.Status.note(Integer.parseInt(this.status));
 	}
+
+
+    /**
+     * 前端传来的id数组(批量操作)
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "批量删除",hidden=true)
+    private String ids;
+
 }
