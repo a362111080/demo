@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class GoodsResponse {
+public class GoodsResponse implements Serializable {
+
+    private static final long serialVersionUID = 9140694367315870615L;
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.UUID)

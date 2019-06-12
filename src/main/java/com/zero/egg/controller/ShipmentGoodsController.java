@@ -10,6 +10,7 @@ import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
 import com.zero.egg.responseDTO.GoodsResponse;
@@ -73,6 +74,55 @@ public class ShipmentGoodsController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @LoginToken
+    @ApiOperation(value = "移除出货商品")
+    @PostMapping(value = "/remove")
+    public Message removeShipmentGood(@RequestBody RemShipmentGoodsRequestDTO remShipmentGoodsRequestDTO,
+                                      HttpServletRequest request) {
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        Message message;
+        try {
+
+
+            /**
+             * 非空判断
+             */
+            if (remShipmentGoodsRequestDTO == null || null == remShipmentGoodsRequestDTO.getTaskId()
+                    || null == remShipmentGoodsRequestDTO.getCustomerId()
+                    || null == remShipmentGoodsRequestDTO.getGoodsResponseList()
+                    || 1 > remShipmentGoodsRequestDTO.getGoodsResponseList().size()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                return message;
+            }
+            /**
+             * 任务状态确认,如果任务已取消或者已完成,不能进行出货商品的移除
+             */
+            if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + loginUser.getCompanyId() + ":" + loginUser.getShopId()
+                    + ":" + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId() + ":" + "status")
+                    || TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId()
+                    + ":" + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId() + ":" + "status"))
+                    || TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId()
+                    + ":" + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId() + ":" + "status"))) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.TASK_NOT_FOUND);
+                return message;
+            }
+            message = goodService.removeShipmentGoods(remShipmentGoodsRequestDTO, loginUser);
+        } catch (Exception e) {
+            log.error("removeShipmentGood error:" + e);
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(e.toString());
+        }
+        return message;
+    }
 
     @LoginToken
     @ApiOperation(value = "新增出货商品")

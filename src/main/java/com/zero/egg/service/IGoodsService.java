@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.tool.Message;
@@ -30,4 +31,12 @@ public interface IGoodsService extends IService<Goods> {
      * @throws ServiceException
      */
     Message querySingleGoodByBarCodeInfo(ShipmentGoodBarCodeRequestDTO shipmentGoodRequestDTO, LoginUser loginUser) throws ServiceException;
+
+    /**
+     * 移除出货任务中的商品
+     * @param remShipmentGoodsRequestDTO
+     * @param loginUser
+     * @return
+     */
+    Message removeShipmentGoods(RemShipmentGoodsRequestDTO remShipmentGoodsRequestDTO, LoginUser loginUser);
 }

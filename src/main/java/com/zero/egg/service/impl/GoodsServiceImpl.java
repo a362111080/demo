@@ -8,6 +8,7 @@ import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.service.IGoodsService;
@@ -50,7 +51,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     @Transactional
     public Message querySingleGoodByBarCodeInfo(ShipmentGoodBarCodeRequestDTO shipmentGoodRequestDTO, LoginUser loginUser) {
         Message message = new Message();
-        List<GoodsResponse> goodsResponseList;
         try {
             /**
              * 从入参中获取二维码信息(二维码主键id)
@@ -100,6 +100,29 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         } catch (Exception e) {
             log.error("querySingleGoodByBarCodeInfo failed :" + e);
             throw new ServiceException("querySingleGoodByBarCodeInfo failed");
+        }
+        return message;
+    }
+
+    @Override
+    public Message removeShipmentGoods(RemShipmentGoodsRequestDTO remShipmentGoodsRequestDTO, LoginUser loginUser) {
+        Message message = new Message();
+        try {
+            /**
+             * 1. 获取当前出货任务需要删除的出货商品集合
+             */
+            List<GoodsResponse> goodsResponseList = remShipmentGoodsRequestDTO.getGoodsResponseList();
+            for (GoodsResponse goodsResponse : goodsResponseList) {
+                sortSets.zrem(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                                + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
+                                + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
+                        , JsonUtils.objectToJson(goodsResponse));
+            }
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("removeShipmentGoods failed :" + e);
+            throw new ServiceException("removeShipmentGoods failed");
         }
         return message;
     }
