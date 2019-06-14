@@ -12,7 +12,7 @@ import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
-import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.AuthenticateException;
 import com.zero.egg.tool.TokenUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -72,7 +72,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 
             if (null == accessToken) {
-                throw new ServiceException("401", "无token，请重新登录");
+                throw new AuthenticateException(401, "无token，请重新登录");
             } else {
                 // 从Redis 中查看 token 是否过期
                 Claims claims;
@@ -80,10 +80,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     claims = TokenUtils.parseJWT(accessToken);
                 } catch (ExpiredJwtException e) {
                     response.setStatus(401);
-                    throw new ServiceException("401", "token失效，请重新登录");
+                    throw new AuthenticateException(401, "token失效，请重新登录");
                 } catch (SignatureException se) {
                     response.setStatus(401);
-                    throw new ServiceException("401", "token令牌错误");
+                    throw new AuthenticateException(401, "token令牌错误");
                 }
 
                 String userId = claims.getId();
@@ -101,7 +101,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                     if (companyUser == null) {
                         response.setStatus(401);
-                        throw new ServiceException("401", "用户不存在，请重新登录");
+                        throw new AuthenticateException(401, "用户不存在，请重新登录");
                     } else {
                         // 当前登录用户@CurrentUser
                         loginUser.setId(companyUser.getId());

@@ -90,7 +90,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
             return effectNum;
         } catch (Exception e) {
             log.error("bindWechatAuth", e);
-            throw new ServiceException("bindWechatAuth failed:", e.getMessage());
+            throw new ServiceException("bindWechatAuth failed:" + e.getMessage());
         }
     }
 

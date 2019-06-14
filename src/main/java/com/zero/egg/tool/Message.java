@@ -39,6 +39,12 @@ public class Message<T> {
 	 * 返回map
 	 */
 	private Map<String, Object> map;
-	
-	
+
+	public Message(int state, String message) {
+		this.state = state;
+		this.message = message;
+	}
+
+	public Message() {
+	}
 }
