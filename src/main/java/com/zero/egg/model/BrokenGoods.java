@@ -119,9 +119,6 @@ public class BrokenGoods implements Serializable {
     public String brokenmarker;
 
 
-    @TableField(exist = false)
-    @ApiModelProperty(value = "查询关键字",hidden=true)
-    public String keyword;
 
     public String getStatusName() {
     	String statusName = "";

@@ -193,7 +193,7 @@ public class BrokenGoodsController {
 					newBroken.setWeight(broken.getWeight());
 					newBroken.setUserId(brokenGoods.getUserId());
 					newBroken.setBillNo(broken.getBillNo());
-					newBroken.setCustomerId(broken.getSupplierId());
+					newBroken.setCustomerId(broken.getCustomerId());
 					newBroken.setType(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString());
 					newBroken.setStatus(BrokenGoodsEnums.Status.Normal.index().toString());
 					newBroken.setCreatetime(new Date());
@@ -236,6 +236,7 @@ public class BrokenGoodsController {
 					newBroken.setMode(broken.getMode());
 					newBroken.setWeight(broken.getWeight());
 					newBroken.setCustomerId(broken.getSupplierId());
+					newBroken.setBillNo(broken.getBillNo());
 					newBroken.setUserId(user.getId());
 					newBroken.setBrokenGoodsNo(broken.getGoodsNo());
 					newBroken.setGoodsNo(broken.getGoodsNo());

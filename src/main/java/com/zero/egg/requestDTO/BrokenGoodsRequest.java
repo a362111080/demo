@@ -1,13 +1,10 @@
 package com.zero.egg.requestDTO;
 
-import java.math.BigDecimal;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.zero.egg.tool.PageDTO;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class BrokenGoodsRequest extends PageDTO{
@@ -42,4 +39,8 @@ public class BrokenGoodsRequest extends PageDTO{
 
 		@ApiModelProperty(value = "换货商品状态")
 		private String goodsNo;
+
+		@ApiModelProperty(value = "查询")
+		private String keyword;
+
 }

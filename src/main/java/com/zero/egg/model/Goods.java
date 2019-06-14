@@ -81,16 +81,28 @@ public class Goods implements Serializable {
     private Boolean dr;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "合作商id")
+    private String customerId;
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "客户名称",hidden=true)
     public String customername;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "供应商名称",hidden=true)
+    public String suppliername;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "品种名称",hidden=true)
     public String categoryname;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "账单号",hidden=true)
+    @ApiModelProperty(value = "卸货账单号",hidden=true)
     public String billNo;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "出货账单号",hidden=true)
+    public String spbillno;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "任务id",hidden=true)

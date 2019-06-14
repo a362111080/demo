@@ -117,7 +117,7 @@
     <insert id="insertBill" parameterType="Bill">
         insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,type,quantity,amount,status,creator,createtime,modifier,modifytime,dr,real_amount,categoryname,task_id)
         values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
-               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskid})
+               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskId})
     </insert>
 
 </mapper>
