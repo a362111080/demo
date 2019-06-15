@@ -2,8 +2,6 @@ package com.zero.egg.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
@@ -14,8 +12,6 @@ import com.zero.egg.model.ChangeGoods;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.requestDTO.LoginUser;
-import com.zero.egg.responseDTO.BrokenGoodsReponse;
-import com.zero.egg.responseDTO.ChangeGoodsReponse;
 import com.zero.egg.service.IBrokenGoodsService;
 import com.zero.egg.service.IChangeGoodsService;
 import com.zero.egg.service.IGoodsService;
@@ -25,7 +21,6 @@ import com.zero.egg.tool.UuidUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -105,7 +98,7 @@ public class BrokenGoodsController {
 	}
 
 	@LoginToken
-	@ApiOperation(value="查询货物信息")
+	@ApiOperation(value="查询报损列表")
 	@PostMapping(value="/brokentask")
 	public Message GetBrokenTask(@RequestBody BrokenGoodsRequest Request) {
 		Message message = new Message();
@@ -200,6 +193,7 @@ public class BrokenGoodsController {
 					newBroken.setWeight(broken.getWeight());
 					newBroken.setUserId(brokenGoods.getUserId());
 					newBroken.setBillNo(broken.getBillNo());
+					newBroken.setCustomerId(broken.getCustomerId());
 					newBroken.setType(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString());
 					newBroken.setStatus(BrokenGoodsEnums.Status.Normal.index().toString());
 					newBroken.setCreatetime(new Date());
@@ -241,6 +235,8 @@ public class BrokenGoodsController {
 					newBroken.setMarker(broken.getMarker());
 					newBroken.setMode(broken.getMode());
 					newBroken.setWeight(broken.getWeight());
+					newBroken.setCustomerId(broken.getSupplierId());
+					newBroken.setBillNo(broken.getBillNo());
 					newBroken.setUserId(user.getId());
 					newBroken.setBrokenGoodsNo(broken.getGoodsNo());
 					newBroken.setGoodsNo(broken.getGoodsNo());

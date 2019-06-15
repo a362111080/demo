@@ -17,6 +17,10 @@
 	<if test="status != null and status !=''">
 		and a.status=#{status,jdbcType=VARCHAR}
 	</if>
+	<if test="keyword != null and keyword !=''">
+		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%')
+	</if>
+
 </select>
 
 	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods">
