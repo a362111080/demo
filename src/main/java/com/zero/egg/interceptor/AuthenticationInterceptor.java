@@ -14,6 +14,7 @@ import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.AuthenticateException;
 import com.zero.egg.tool.TokenUtils;
+import com.zero.egg.tool.UtilConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -68,15 +69,18 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         // 有 @LoginRequired 注解，需要认证
         if (methodAnnotation != null) {
             // 判断是否存在令牌信息，如果存在，则允许登录
-            String accessToken = request.getHeader("token");
+            String redisKey = request.getHeader("token");
 
-
-            if (null == accessToken) {
+            if (null == redisKey) {
                 throw new AuthenticateException(401, "无token，请重新登录");
             } else {
-                // 从Redis 中查看 token 是否过期
                 Claims claims;
                 try {
+                    // 从Redis 中查看 token 是否过期
+                    String accessToken = jedisStrings.get(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
+                    if (null == redisKey || "".equals(redisKey)) {
+                        throw new AuthenticateException(401, "token失效，请重新登录");
+                    }
                     claims = TokenUtils.parseJWT(accessToken);
                 } catch (ExpiredJwtException e) {
                     response.setStatus(401);
@@ -84,6 +88,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 } catch (SignatureException se) {
                     response.setStatus(401);
                     throw new AuthenticateException(401, "token令牌错误");
+                } catch (Exception e) {
+                    log.error("Authentication Failed:" + e);
+                    throw new AuthenticateException(401, "token失效，请重新登录");
                 }
 
                 String userId = claims.getId();
@@ -117,7 +124,23 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 } else {
                     // 当前登录用户@CurrentUser
                     //如果当前用户是移动端,则需验证微信登录是否过期
-
+                    if (user.getType().equals(UserEnums.Type.Boss.index())
+                            || user.getType().equals(UserEnums.Type.Staff.index())) {
+                        String wxSessionkey = claims.getSubject();
+                        log.info("==============================wxSessionkey::::"+wxSessionkey);
+                        if (null == wxSessionkey || "".equals(wxSessionkey)) {
+                            throw new AuthenticateException(401, "token令牌错误");
+                        }
+                        /**
+                         * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
+                         */
+                        if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
+                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
+                            throw new AuthenticateException(401, "token失效，请重新登录");
+                        }
+                        log.info("==============================JedisWxSessionkey::::"
+                                +jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey));
+                    }
                     loginUser.setId(user.getId());
                     loginUser.setCode(user.getCode());
                     loginUser.setName(user.getName());

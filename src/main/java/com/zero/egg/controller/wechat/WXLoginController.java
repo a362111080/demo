@@ -14,6 +14,7 @@ import com.zero.egg.service.WechatAuthService;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.HttpClientUtil;
 import com.zero.egg.tool.JsonUtils;
+import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.TokenUtils;
 import com.zero.egg.tool.UtilConstants;
@@ -65,8 +66,6 @@ public class WXLoginController {
             Map<String, String> param = new HashMap<>();
             param.put("appid", "wxb13b535d9bc9ab0c");
             param.put("secret", "1e6b53234cbe5744dd61499f5d8f3064");
-//            param.put("appid", "wx650d431b5395cdf5");
-//            param.put("secret", "5153a2c124947c3b6350164506d288b2");
             param.put("js_code", code);
             param.put("grant_type", "authorization_code");
 
@@ -104,6 +103,8 @@ public class WXLoginController {
                 int type = user.getType();
                 //生成token
                 String accessToken = TokenUtils.createJwtToken(user.getId(), wxSessionkey);
+                String redisKey = MD5Utils.encodeWithFixSalt(user.getLoginname() + user.getPassword());
+                jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                 map = new HashMap<>();
                 map.put("token", accessToken);
                 map.put("userType", type);

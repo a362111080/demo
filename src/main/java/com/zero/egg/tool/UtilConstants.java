@@ -220,6 +220,10 @@ public interface UtilConstants {
          * 出货任务前缀
          */
         public static final String SHIPMENTGOOD_TASK = "shipmentgood-task:";
+        /**
+         * 用户信息前缀
+         */
+        public static final String USER_REDIS = "user-redis:";
     }
 
 }
