@@ -106,7 +106,7 @@ public class WXLoginController {
                 String redisKey = MD5Utils.encodeWithFixSalt(user.getLoginname() + user.getPassword());
                 jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                 map = new HashMap<>();
-                map.put("token", accessToken);
+                map.put("token", redisKey);
                 map.put("userType", type);
                 map.put("userTypeName", UserEnums.Type.note(type));
                 map.put("user", user);
