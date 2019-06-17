@@ -1,9 +1,11 @@
 package com.zero.egg.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
+import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
@@ -14,11 +16,15 @@ import com.zero.egg.service.IUserService;
 import com.zero.egg.service.WechatAuthService;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.MD5Utils;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.TokenUtils;
+import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +38,7 @@ import java.util.Map;
 @Api(value = "系统基础功能")
 @RestController
 @RequestMapping("/system")
+@Slf4j
 public class LoginController {
 
     @Autowired
@@ -40,6 +47,10 @@ public class LoginController {
     private ICompanyUserService companyUserService;
     @Autowired
     private WechatAuthService wechatAuthService;
+    @Autowired
+    private JedisUtil.Keys jediskeys;
+    @Autowired
+    private JedisUtil.Strings jedisStrings;
 
     @PassToken
     @ApiOperation(value = "登录")
@@ -56,15 +67,19 @@ public class LoginController {
                     .eq("status", UserEnums.Status.Normal.index().toString());
             User user = userService.getOne(userQueryWrapper);
             Map<String, Object> map;
-            //需要绑定的本地设备id(除了企业
-            String bindId = null;
+
             if (null != user) {
+                /**
+                 * 根据账号密码生成数字签名作为rediskey
+                 */
+                String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
                 response = new BaseResponse<>();
                 int type = user.getType();
                 //生成token
                 String accessToken = TokenUtils.createJwtToken(user.getId());
+                jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                 map = new HashMap<>();
-                map.put("token", accessToken);
+                map.put("token", redisKey);
                 map.put("userType", type);
                 map.put("userTypeName", UserEnums.Type.note(type));
                 map.put("user", user);
@@ -80,10 +95,15 @@ public class LoginController {
                         .eq("status", CompanyUserEnums.Status.Normal.index().toString());
                 CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                 if (companyUser != null) {
+                    /**
+                     * 根据账号密码生成数字签名作为rediskey
+                     */
+                    String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
                     //生成token
                     String accessToken = TokenUtils.createJwtToken(companyUser.getId());
+                    jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                     map = new HashMap<>();
-                    map.put("token", accessToken);
+                    map.put("token", redisKey);
                     map.put("user", companyUser);
                     map.put("userTypeName", "企业用户");
                     response.setData(map);
@@ -99,7 +119,7 @@ public class LoginController {
                 map = (Map<String, Object>) response.getData();
                 String userTypeName = (String) map.get("userTypeName");
                 //如果为企业用户或者PC端,则返回错误提示:企业用户和PC端不能用小程序登录
-                if (userTypeName.equals("企业用户") || userTypeName.equals(UserEnums.Type.Pc.note())) {
+                if ("企业用户".equals(userTypeName) || UserEnums.Type.Pc.note().equals(userTypeName)) {
                     response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
                     response.setMsg("企业用户和PC端不能用小程序登录");
                     return response;
@@ -129,6 +149,27 @@ public class LoginController {
         }
 
 
+    }
+
+    @LoginToken
+    @PostMapping(value = "/logout")
+    public Message logout(HttpServletRequest request) {
+        Message message = new Message();
+        try {
+            /**
+             * 拦截器里已经获取过一遍,这里一定能获取到,否则不会进方法
+             */
+            String redisKey = request.getHeader("token");
+            /** 清除redis里的token信息 */
+            jediskeys.del(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("unkown exception:" + e);
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+        }
+        return message;
     }
 
 }
