@@ -187,7 +187,7 @@ public class BrokenGoodsController {
 					newBroken.setSpecificationId(broken.getSpecificationId());
 					newBroken.setTaskId(broken.getTaskId());
 					newBroken.setGoodsNo(broken.getGoodsNo());
-					newBroken.setGoodsCategroyId(brokenGoods.getGoodsCategroyId());
+					newBroken.setGoodsCategroyId(broken.getGoodsCategoryId());
 					newBroken.setMarker(broken.getMarker());
 					newBroken.setMode(broken.getMode());
 					newBroken.setWeight(broken.getWeight());
