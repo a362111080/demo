@@ -488,6 +488,10 @@ public class TaskController {
                                     if(null!= SpecificationId && ""!=SpecificationId) {
                                         IDetails.setSpecificationId(model.getUnloadDetails().get(n).getSpecificationId());
                                     }
+                                    else
+                                    {
+                                        IDetails.setSpecificationId("");
+                                    }
                                     IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
                                     IDetails.setQuantity(model.getUnloadDetails().get(n).getQuantity());
                                     IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
