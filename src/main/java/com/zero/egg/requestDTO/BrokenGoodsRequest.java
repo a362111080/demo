@@ -43,4 +43,8 @@ public class BrokenGoodsRequest extends PageDTO{
 		@ApiModelProperty(value = "查询")
 		private String keyword;
 
+
+		@ApiModelProperty(value = "报损描述")
+		private String remark;
+
 }

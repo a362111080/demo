@@ -125,6 +125,11 @@ public class BrokenGoodsController {
 			newBroken.setChangeGoodsNo(Request.getGoodsNo());
 			newBroken.setStatus(BrokenGoodsEnums.Status.Normal.index().toString());
 			newBroken.setUserId(user.getId());
+			if (null!=Request.getRemark())
+			{
+				newBroken.setRemark(Request.getRemark());
+			}
+
 			brokenGoodsService.updateById(newBroken);
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -150,6 +155,10 @@ public class BrokenGoodsController {
 			newBroken.setBrokenGoodsNo(Request.getGoodsNo());
 			newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
 			newBroken.setUserId(user.getId());
+			if (null!=Request.getRemark())
+			{
+				newBroken.setRemark(Request.getRemark());
+			}
 			brokenGoodsService.updateById(newBroken);
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
