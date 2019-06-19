@@ -200,6 +200,7 @@ public class BrokenGoodsController {
 					newBroken.setModifytime(new Date());
 					newBroken.setCreator(user.getId());
 					newBroken.setModifier(user.getId());
+					newBroken.setUserId(user.getId());
 					newBroken.setDr(false);
 				    if (brokenGoodsService.save(newBroken))
 					{
