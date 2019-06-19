@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -118,22 +117,22 @@ public class BrokenGoods implements Serializable {
     @ApiModelProperty(value = "显示标记",hidden=true)
     public String brokenmarker;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "账单id",hidden=true)
+    public String billid;
+
 
 
     public String getStatusName() {
-    	String statusName = "";
-    	if (StringUtils.isNotBlank(this.status)) {
-    		BrokenGoodsEnums.Status.note(Integer.parseInt(this.status));
-		}
-		return statusName;
+        return	BrokenGoodsEnums.Status.note(Integer.parseInt(this.status));
+
 	}
 
     public String getTypeName() {
-    	String typeName = "";
-    	if (StringUtils.isNotBlank(this.type)) {
-    		BrokenGoodsEnums.Status.note(Integer.parseInt(this.type));
-    	}
-    	return typeName;
+
+        return	BrokenGoodsEnums.Type.note(Integer.parseInt(this.type));
+
+
     }
 
 }
