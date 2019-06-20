@@ -16,7 +16,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Hhaifeng
@@ -70,6 +70,9 @@ public class BillDetails  implements Serializable {
 
     @ApiModelProperty(value = "数量",required=false)
     private BigDecimal quantity;
+
+    @ApiModelProperty(value = "去皮时重量",required=false)
+    private BigDecimal totalWeight;
 
     @ApiModelProperty(value = "金额",required=false)
     private BigDecimal amount;

@@ -123,6 +123,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 BigDecimal subTotal;
                 if (1 == blankBillDTO.getMode()) {
                     subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                    billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                 } else {
                     subTotal = price.multiply(quantity);
                 }

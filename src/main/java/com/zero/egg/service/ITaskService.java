@@ -94,7 +94,7 @@ public interface ITaskService extends IService<Task> {
      * @param requestDTO
      * @return
      */
-    Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO);
+    Message queryBlankGoods(QueryBlankBillGoodsRequestDTO requestDTO)throws ServiceException;
 
     /**
      * 结束卸货任务
