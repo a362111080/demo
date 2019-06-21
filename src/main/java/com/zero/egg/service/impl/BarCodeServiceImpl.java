@@ -26,6 +26,7 @@ import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -199,34 +200,7 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("id", barCode.getShopId()))
                     .getName();
             for (int i = 0; i < printNum; i++) {
-                newBarCode = new BarCode();
-                //查询同一企业下同一店铺下同一供应商下的数量,初始应该为1(母二维码)
-                int count = mapper.selectCount(new QueryWrapper<BarCode>()
-                        .eq("shop_id", barCode.getShopId())
-                        .eq("company_id", barCode.getCompanyId())
-                        .eq("supplier_id", barCode.getSupplierId())
-                );
-                TransferUtil.copyProperties(newBarCode, barCode);
-                currentCode = barCode.getCode() + g1.format(count);
-                newBarCode.setId(null);
-                //覆盖母二维码的创建人,创建时间
-                newBarCode.setCreatetime(new Date());
-                newBarCode.setModifytime(new Date());
-                newBarCode.setCreator(loginUserId);
-                newBarCode.setModifier(loginUserId);
-                newBarCode.setCurrentCode(currentCode);
-                mapper.insert(newBarCode);
-                String text = newBarCode.getId();
-                String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName, currentCode);
-                newBarCode.setMatrixAddr(matrixAddr);
-                mapper.updateById(newBarCode);
-                barCodeDTO = new SinglePrintBarCodeDTO();
-                barCodeDTO.setCategoryName(barCode.getCategoryName());
-                barCodeDTO.setCurrentCode(currentCode);
-                barCodeDTO.setMatrixAddr(matrixAddr);
-                barCodeDTO.setShopName(shopName);
-                singlePrintBarCodeDTOList.add(barCodeDTO);
-                newBarCode = null;
+                asyncPrint(loginUserId, barCode, singlePrintBarCodeDTOList, targetAddr, g1, categoryName, shopName);
             }
             barCodeResponseDTO.setPrintBarCodeDTOS(singlePrintBarCodeDTOList);
             message.setData(barCodeResponseDTO);
@@ -235,6 +209,41 @@ public class BarCodeServiceImpl implements BarCodeService {
             log.error("PrintBarCode error:" + e);
             throw new ServiceException("PrintBarCode error");
         }
+    }
+
+    @Async
+    public void asyncPrint(String loginUserId, BarCode barCode, List<SinglePrintBarCodeDTO> singlePrintBarCodeDTOList, String targetAddr, DecimalFormat g1, String categoryName, String shopName) throws Exception {
+        BarCode newBarCode;
+        String currentCode;
+        SinglePrintBarCodeDTO barCodeDTO;
+        newBarCode = new BarCode();
+        //查询同一企业下同一店铺下同一供应商下的数量,初始应该为1(母二维码)
+        int count = mapper.selectCount(new QueryWrapper<BarCode>()
+                .eq("shop_id", barCode.getShopId())
+                .eq("company_id", barCode.getCompanyId())
+                .eq("supplier_id", barCode.getSupplierId())
+        );
+        TransferUtil.copyProperties(newBarCode, barCode);
+        currentCode = barCode.getCode() + g1.format(count);
+        newBarCode.setId(null);
+        //覆盖母二维码的创建人,创建时间
+        newBarCode.setCreatetime(new Date());
+        newBarCode.setModifytime(new Date());
+        newBarCode.setCreator(loginUserId);
+        newBarCode.setModifier(loginUserId);
+        newBarCode.setCurrentCode(currentCode);
+        mapper.insert(newBarCode);
+        String text = newBarCode.getId();
+        String matrixAddr = MatrixToImageWriterUtil.writeToFile(targetAddr, text, currentCode, shopName, categoryName, currentCode);
+        newBarCode.setMatrixAddr(matrixAddr);
+        mapper.updateById(newBarCode);
+        barCodeDTO = new SinglePrintBarCodeDTO();
+        barCodeDTO.setCategoryName(barCode.getCategoryName());
+        barCodeDTO.setCurrentCode(currentCode);
+        barCodeDTO.setMatrixAddr(matrixAddr);
+        barCodeDTO.setShopName(shopName);
+        singlePrintBarCodeDTOList.add(barCodeDTO);
+        newBarCode = null;
     }
 
     /**
