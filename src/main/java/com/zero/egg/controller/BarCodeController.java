@@ -140,9 +140,12 @@ public class BarCodeController {
                     && printBarCodeRequestDTO.getPrintNum() > 0) {
                 LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
                 String barCodeId = MatrixToImageWriterUtil.decode(printBarCodeRequestDTO.getMatrixAddr());
+                long start = System.currentTimeMillis();
                 message = bcService.PrintBarCode(barCodeId, printBarCodeRequestDTO.getPrintNum(), user.getId());
                 message.setState(ResponseCode.SUCCESS_HEAD);
                 message.setMessage(ResponseMsg.SUCCESS);
+                long cost = System.currentTimeMillis()-start;
+                log.info("cost============================================="+cost);
             } else {
                 message.setState(ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(ResponseMsg.ATLEAST_ONE);
