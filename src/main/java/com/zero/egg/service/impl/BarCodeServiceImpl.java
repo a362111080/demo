@@ -26,7 +26,6 @@ import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -222,7 +221,6 @@ public class BarCodeServiceImpl implements BarCodeService {
         }
     }
 
-    @Async
     public void asyncPrint(String loginUserId, BarCode barCode, List<SinglePrintBarCodeDTO> singlePrintBarCodeDTOList, String targetAddr, DecimalFormat g1, String categoryName, String shopName) throws Exception {
         log.info("============="+Thread.currentThread().getName());
         BarCode newBarCode;

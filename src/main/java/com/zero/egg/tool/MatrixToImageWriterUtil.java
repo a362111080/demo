@@ -59,7 +59,7 @@ public class MatrixToImageWriterUtil {
         return image;
     }
 
-    public static String writeToFile(String targetAddr, String text, String name, String shopName, String categoryName, String currentCode) throws Exception {
+    public static synchronized String writeToFile(String targetAddr, String text, String name, String shopName, String categoryName, String currentCode) throws Exception {
         makeDirPath(targetAddr);
         /**
          * 对二维码数据进行加密
