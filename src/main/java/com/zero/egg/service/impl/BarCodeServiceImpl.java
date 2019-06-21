@@ -27,9 +27,11 @@ import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +55,9 @@ public class BarCodeServiceImpl implements BarCodeService {
 
     @Autowired
     private ShopMapper shopMapper;
+
+    @Resource(name = "taskExecutor")
+    private ThreadPoolTaskExecutor executor;
 
     @Override
     @Transactional
@@ -200,7 +205,13 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("id", barCode.getShopId()))
                     .getName();
             for (int i = 0; i < printNum; i++) {
-                asyncPrint(loginUserId, barCode, singlePrintBarCodeDTOList, targetAddr, g1, categoryName, shopName);
+                executor.submit(()->{
+                    try {
+                        asyncPrint(loginUserId, barCode, singlePrintBarCodeDTOList, targetAddr, g1, categoryName, shopName);
+                    } catch (Exception e) {
+                        throw new ServiceException("PrintBarCode error");
+                    }
+                });
             }
             barCodeResponseDTO.setPrintBarCodeDTOS(singlePrintBarCodeDTOList);
             message.setData(barCodeResponseDTO);
