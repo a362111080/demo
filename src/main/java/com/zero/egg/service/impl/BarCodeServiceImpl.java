@@ -213,6 +213,7 @@ public class BarCodeServiceImpl implements BarCodeService {
 
     @Async
     public void asyncPrint(String loginUserId, BarCode barCode, List<SinglePrintBarCodeDTO> singlePrintBarCodeDTOList, String targetAddr, DecimalFormat g1, String categoryName, String shopName) throws Exception {
+        log.info("============="+Thread.currentThread().getName());
         BarCode newBarCode;
         String currentCode;
         SinglePrintBarCodeDTO barCodeDTO;
