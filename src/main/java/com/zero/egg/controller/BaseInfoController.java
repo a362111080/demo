@@ -3,7 +3,6 @@ package com.zero.egg.controller;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
-import com.zero.egg.requestDTO.DeviceDataRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SaveSpecificationRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
@@ -595,116 +594,6 @@ public class BaseInfoController {
         }
 
     }
-
-    /**
-     * 新增保存设备信息
-     *
-     * @Param [deviceDataRequestDTO]
-     * @Return com.zero.egg.tool.Message
-     **/
-    @ApiOperation(value = "新增保存设备信息")
-    @RequestMapping(value = "/device/savedevicedata", method = RequestMethod.POST)
-    @LoginToken
-    public Message saveDeviceData(@RequestBody DeviceDataRequestDTO deviceDataRequestDTO) {
-        Message message = new Message();
-        try {
-            if (null != deviceDataRequestDTO && null != deviceDataRequestDTO.getStrDeviceName() && null != deviceDataRequestDTO.getStrSerialNumber() && null != deviceDataRequestDTO.getStrBindingSequence()) {
-                message = dataService.saveDeviceData(deviceDataRequestDTO);
-            } else {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-            }
-            return message;
-        } catch (Exception e) {
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            return message;
-        }
-    }
-
-    /**
-     * 批量删除设备信息(单个删除也走该流程)
-     *
-     * @Param [deviceDataRequestDTO]
-     * @Return com.zero.egg.tool.Message
-     **/
-    @ApiOperation(value = "批量删除设备信息(单个删除也走该流程)")
-    @RequestMapping(value = "/device/batchdeletedevicedata", method = RequestMethod.POST)
-    @LoginToken
-    public Message batchDeleteDeviceData(@RequestBody DeviceDataRequestDTO deviceDataRequestDTO) {
-        Message message = new Message();
-        try {
-            if (null != deviceDataRequestDTO && null != deviceDataRequestDTO.getIds()) {
-                message = dataService.deleteDeviceData(deviceDataRequestDTO);
-            } else {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-            }
-            return message;
-        } catch (Exception e) {
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            return message;
-        }
-    }
-
-    /**
-     * 根据id更新设备信息
-     *
-     * @Param [deviceDataRequestDTO]
-     * @Return com.zero.egg.tool.Message
-     **/
-    @ApiOperation(value = "根据id更新设备信息")
-    @RequestMapping(value = "/device/updatedevicedata", method = RequestMethod.POST)
-    @LoginToken
-    public Message updateDeviceData(@RequestBody DeviceDataRequestDTO deviceDataRequestDTO) {
-        Message message = new Message();
-        try {
-            if (null != deviceDataRequestDTO && null != deviceDataRequestDTO.getId() && null != deviceDataRequestDTO.getStrDeviceName()
-                    && null != deviceDataRequestDTO.getStrBindingSequence() && null != deviceDataRequestDTO.getStrSerialNumber()) {
-                message = dataService.updateDeviceDataById(deviceDataRequestDTO);
-            } else {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-            }
-            return message;
-        } catch (Exception e) {
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            return message;
-        }
-    }
-
-    /**
-     * 设备信息列表(包含根据设备名称模糊搜索)
-     *
-     * @Param [deviceDataRequestDTO]
-     * @Return com.zero.egg.tool.Message
-     **/
-    @ApiOperation(value = "设备信息列表(包含根据设备名称模糊搜索)")
-    @RequestMapping(value = "/device/listdevicedata", method = RequestMethod.POST)
-    @LoginToken
-    public Message listDeviceData(@RequestBody DeviceDataRequestDTO deviceDataRequestDTO) {
-        Message message = new Message();
-        try {
-            if (null != deviceDataRequestDTO) {
-                message = dataService.listDeviceData(deviceDataRequestDTO);
-            } else {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-            }
-            return message;
-        } catch (Exception e) {
-            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
-            return message;
-        }
-    }
-
 
     /**
      * 从当前登录用户信息中检查shopId和companyId是否为空

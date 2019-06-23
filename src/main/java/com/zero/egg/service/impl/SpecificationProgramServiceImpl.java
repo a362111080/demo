@@ -153,7 +153,8 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                         .eq("program_id", specificationProgram.getId())
                         .eq("dr", 0)
                         .eq("shop_id", specificationProgram.getShopId())
-                        .eq("company_id", specificationProgram.getCompanyId()));
+                        .eq("company_id", specificationProgram.getCompanyId())
+                        .orderByAsc("weight_min"));
                 TransferUtil.copyProperties(specificationProgramListResponseDTO, specificationProgram);
                 specificationProgramListResponseDTO.setSpecificationList(specificationList);
                 specificationProgramListResponseDTOList.add(specificationProgramListResponseDTO);

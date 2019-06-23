@@ -156,7 +156,8 @@ public class SpecificationServiceImpl implements SpecificationService {
                     .eq("program_id", specificationRequestDTO.getProgramId())
                     .eq("dr", 0)
                     .eq("shop_id", specificationRequestDTO.getShopId())
-                    .eq("company_id", specificationRequestDTO.getCompanyId()));
+                    .eq("company_id", specificationRequestDTO.getCompanyId())
+                    .orderByAsc("weight_min"));
             specificationResponseDTO.setSpecificationList(specificationList);
             message.setData(specificationResponseDTO);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -191,9 +192,9 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     @Override
-	public Specification getById(Specification specification) {
-		return specificationMapper.selectById(specification.getId());
-	}
+    public Specification getById(Specification specification) {
+        return specificationMapper.selectById(specification.getId());
+    }
 
     @Override
     public void batchDeleteStandardDetlByIds(List<String> ids) {
