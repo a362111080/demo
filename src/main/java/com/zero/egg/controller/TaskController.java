@@ -643,15 +643,35 @@ public class TaskController {
             //客户id
             String customerId = task.getCussupId();
             /**
-             * 如果员工没有完成(暂停)任务,则返回提示
+             * 如果任务还在进行中,表示员工没有完成(暂停)任务
              */
             if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId)
-                    || !TaskEnums.Status.Unexecuted.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    || TaskEnums.Status.Execute.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status"))) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EMPLOYEE_NOT_FINISH);
                 message.setMessage(UtilConstants.ResponseMsg.ASURE_EMPLOYEE_FINISH);
+                return message;
+            }
+            /**
+             * 如果任务已经取消,返回前端信息,方便刷新页面
+             */
+            else if (TaskEnums.Status.CANCELED.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status"))) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.TASK_CANCLED);
+                message.setMessage(UtilConstants.ResponseMsg.TASK_CANCLED_MSG);
+                return message;
+            }
+            /**
+             * 如果任务已经完成,返回前端信息,方便跳转账单页面
+             */
+            else if (TaskEnums.Status.Finish.index().toString().equals(jedisStrings.get(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId + ":" + "status"))) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.TASK_FINISHED);
+                message.setMessage(UtilConstants.ResponseMsg.TASK_FINISHED_MSG);
                 return message;
             }
             /**

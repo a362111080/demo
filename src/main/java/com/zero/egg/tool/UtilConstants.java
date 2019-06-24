@@ -41,6 +41,16 @@ public interface UtilConstants {
          * 特定出货任务,出货商品为null
          */
         public static final int SHIPMENTGOODS_NULL = -3;
+        /**
+         * 任务已经被取消
+         */
+        public static final int TASK_CANCLED = -4;
+        /**
+         * 任务已经完成
+         */
+        public static final int TASK_FINISHED = -5;
+
+
     }
 
     /**
@@ -133,6 +143,14 @@ public interface UtilConstants {
          * 该账单不为空
          */
         public static final String NOT_BLANK_BILL = "该账单不为空";
+        /**
+         * 任务已经被取消
+         */
+        public static final String TASK_CANCLED_MSG = "任务已经被取消";
+        /**
+         * 任务已经完成
+         */
+        public static final String TASK_FINISHED_MSG = "任务已经完成";
     }
 
     /**
