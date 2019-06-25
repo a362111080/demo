@@ -24,7 +24,7 @@
 
 </select>
 
-	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods">
+	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string" >
 		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,
 		 case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 		 FROM bd_shipment_goods k
@@ -32,9 +32,14 @@
 		 left join bd_category b on b.id=k.goods_category_id
 		 left join bd_bill c on c.task_id=k.task_id
 		 left join bd_specification d on d.id=k.specification_id
-		 where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+		<where>
+			<if test="_parameter != null and _parameter != ''">
+				and  k.goods_no  like '%${_parameter}%'
+			</if>
+		</where>
+
 	</select>
-	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods">
+	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string">
 		SELECT k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,
 		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 		FROM bd_goods k
