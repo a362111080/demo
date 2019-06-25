@@ -39,7 +39,7 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 	}
 
 	@Override
-	public Goods GetBrokenInfo(String goodsNo) {
+	public  List<Goods>  GetBrokenInfo(String goodsNo) {
 
 		return mapper.GetBrokenInfo(goodsNo);
 	}

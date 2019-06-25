@@ -65,7 +65,7 @@ public class BrokenGoodsController {
 		if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
 		{
 			//报损
-			Goods  broken=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
+			List<Goods>  broken=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
 			if (null!=broken) {
 				message.setData(broken);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -184,10 +184,11 @@ public class BrokenGoodsController {
 			if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
 			{
 				//报损
-				Goods  broken=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
+				List<Goods>   brokenList=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
 				//判断出货商品码是否存在
-				if (null!=broken)
+				if (brokenList.size() > 0)
 				{
+					Goods broken=brokenList.get(0);
 					//货物存在，建立报损任务
 					BrokenGoods  newBroken=new BrokenGoods();
 					newBroken.setId(UuidUtil.get32UUID());

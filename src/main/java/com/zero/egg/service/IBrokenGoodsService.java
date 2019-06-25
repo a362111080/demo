@@ -26,7 +26,7 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
 	
 	BrokenGoodsReponse findById(QueryWrapper<BrokenGoodsRequest> queryWrapper);
 
-    Goods GetBrokenInfo(String goodsNo);
+    List<Goods>  GetBrokenInfo(String goodsNo);
 
     Goods GetStoBrokenInfo(String brokenGoodsNo);
 

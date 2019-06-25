@@ -29,7 +29,7 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
 	
 	BrokenGoodsReponse findById(QueryWrapper<BrokenGoodsRequest> wrapper);
 
-    Goods GetBrokenInfo(String goodsNo);
+    List<Goods>  GetBrokenInfo(String goodsNo);
 
     Goods GetStoBrokenInfo(String brokenGoodsNo);
 
