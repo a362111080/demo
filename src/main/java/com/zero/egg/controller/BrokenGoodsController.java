@@ -285,40 +285,7 @@ public class BrokenGoodsController {
 
 		return message;
 	}
-	
-	
-	@LoginToken
-	@ApiOperation(value="新增报损换货新商品")
-	@PostMapping(value="/addchangegoods")
-	public Message<Object> addChangeGoods(
-			@RequestBody @ApiParam(required=true,name="brokenGoods",value="报损主键，客户主键,商品编码") ChangeGoods changeGoods
-			,HttpServletRequest request) {
-		Message<Object> message = new Message<>();
-		String uuid = UuidUtil.get32UUID();
-		changeGoods.setId(uuid);
-		changeGoods.setDr(false);
-		QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("goods_no", changeGoods.getGoodsNo());
-		Goods goods =goodsService.getOne(queryWrapper);
-		changeGoods.setSpecificationId(goods.getSpecificationId());
-		changeGoods.setMarker(goods.getMarker());
-		changeGoods.setMode(goods.getMode());
-		changeGoods.setWeight(goods.getWeight());
-		changeGoods.setCreatetime(new Date());
-		changeGoods.setModifytime(new Date());
-		//当前登录用户
-		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		changeGoods.setModifier(loginUser.getId());
-		changeGoods.setCreator(loginUser.getId());
-		if (changeGoodsService.save(changeGoods)) {
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		}else {
-			message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-		}
-		return message;
-	}
+
 	
 	@LoginToken
 	@ApiOperation(value="修改报损状态")
