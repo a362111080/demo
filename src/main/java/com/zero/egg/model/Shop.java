@@ -36,9 +36,6 @@ public class Shop implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
 
-    @ApiModelProperty(value = "编码",required=false)
-    private String code;
-
     @ApiModelProperty(value = "名称",required=false)
     private String name;
 
