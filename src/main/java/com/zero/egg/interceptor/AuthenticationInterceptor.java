@@ -72,20 +72,24 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             String redisKey = request.getHeader("token");
 
             if (null == redisKey) {
+                log.debug("redis中对应token的键为null");
                 throw new AuthenticateException(401, "无token，请重新登录");
             } else {
                 Claims claims;
                 try {
                     // 从Redis 中查看 token 是否过期
                     String accessToken = jedisStrings.get(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
-                    if (null == redisKey || "".equals(redisKey)) {
+                    if (null == accessToken || "".equals(accessToken)) {
+                        log.debug("redis中token对应的值为null");
                         throw new AuthenticateException(401, "token失效，请重新登录");
                     }
                     claims = TokenUtils.parseJWT(accessToken);
-                } catch (ExpiredJwtException e) {
+                } catch (ExpiredJwtException eje) {
                     response.setStatus(401);
+                    log.error("ExpiredJwtException:" + eje);
                     throw new AuthenticateException(401, "token失效，请重新登录");
                 } catch (SignatureException se) {
+                    log.error("SignatureException:" + se);
                     response.setStatus(401);
                     throw new AuthenticateException(401, "token令牌错误");
                 } catch (Exception e) {
