@@ -15,6 +15,11 @@ public class ApiConstants {
      */
     public final static String USER_TYPE = "user_type";
 
+    /**
+     * 店铺类型,默认1(常规)
+     */
+    public final static String SHOP_TYPE = "shop_type";
+
 
 	
 	 /**

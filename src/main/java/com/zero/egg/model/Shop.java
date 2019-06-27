@@ -1,19 +1,18 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.ShopEnums;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -92,6 +91,11 @@ public class Shop implements Serializable {
 
     @ApiModelProperty(value = "省份",hidden=true)
     private String cityId;
+
+    /**
+     * 店铺类型,暂时方便卸货,默认为1(常规)
+     */
+    private Integer type = 1;
 
     /**
      * 省市区一级id
