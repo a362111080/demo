@@ -70,6 +70,9 @@
             <if test="status != null  and status !=''">
                 and a.status=#{status,jdbcType=VARCHAR}
             </if>
+            <if test="type != null  and type !=''">
+                and a.type=#{type,jdbcType=VARCHAR}
+            </if>
             <if test="begintime != null  and begintime !=''">
                 and a.bill_date <![CDATA[ >= ]]> #{begintime,jdbcType=VARCHAR}
             </if>
