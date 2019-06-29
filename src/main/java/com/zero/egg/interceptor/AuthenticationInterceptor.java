@@ -5,11 +5,9 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.cache.JedisUtil;
-import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
-import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyUserService;
@@ -48,9 +46,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JedisUtil.Keys jedisKeys;
-
-    @Autowired
-    private ShopMapper shopMapper;
 
 
     @Override
@@ -133,28 +128,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 } else {
                     // 当前登录用户@CurrentUser
                     //如果当前用户是移动端,则需验证微信登录是否过期
-                    if (user.getType().equals(UserEnums.Type.Boss.index())
-                            || user.getType().equals(UserEnums.Type.Staff.index())) {
-                        String wxSessionkey = claims.getSubject();
-                        log.info("==============================wxSessionkey::::"+wxSessionkey);
-                        if (null == wxSessionkey || "".equals(wxSessionkey)) {
-                            throw new AuthenticateException(401, "token令牌错误");
-                        }
-                        /**
-                         * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
-                         */
-                        if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
-                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
-                            throw new AuthenticateException(401, "token失效，请重新登录");
-                        }
-                        log.info("==============================JedisWxSessionkey::::"
-                                +jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey));
-                    }
-                    /**
-                     * 对于店铺用户(除去企业用户),额外存储店铺类型
-                     */
-                    Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("type").eq("id", user.getShopId()));
-                    request.setAttribute(ApiConstants.SHOP_TYPE,shop.getType());
                     loginUser.setId(user.getId());
                     loginUser.setCode(user.getCode());
                     loginUser.setName(user.getName());
