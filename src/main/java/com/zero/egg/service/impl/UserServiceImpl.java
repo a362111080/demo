@@ -286,6 +286,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		return message;
 	}
 
-	
-	
+
+	@Autowired
+	private UserMapper mapper;
+
+
+	@Override
+	public User getUserinfo(User user) {
+		return mapper.getUserinfo(user);
+	}
+
+
 }

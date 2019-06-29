@@ -101,7 +101,16 @@ public class UserController {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		message = userService.save(user, loginUser);
+		User  isUser=userService.getUserinfo(user);
+		if (null==isUser) {
+			message = userService.save(user, loginUser);
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("账号重复，请重新输入！");
+			return message;
+		}
 		return message;
 	}
 

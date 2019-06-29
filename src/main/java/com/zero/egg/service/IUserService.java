@@ -42,4 +42,5 @@ public interface IUserService extends IService<User> {
 	 */
 	Message<Object> dismissById(User entity,LoginUser loginUser);
 
+	User getUserinfo(User user);
 }
