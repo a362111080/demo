@@ -69,7 +69,7 @@
     <select id="IsExtisUnloadTaskProgram" resultType="int">
         select COUNT(1) as sumVal from bd_task_program  k
         where k.program_id= #{newProgram,jdbcType=VARCHAR}
-        and k.task_id= #{taskid,jdbcType=VARCHAR}
+        and k.task_id= #{id,jdbcType=VARCHAR}
     </select>
 
     <select id="GetUnloadReport" resultType="com.zero.egg.responseDTO.UnloadReport">
