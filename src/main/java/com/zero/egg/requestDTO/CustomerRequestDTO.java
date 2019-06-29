@@ -76,4 +76,9 @@ public class CustomerRequestDTO extends PageDTO implements Serializable {
      * 店铺所属企业id
      */
     private String status;
+
+    /**
+     * 店铺所属企业id
+     */
+    private String name;
 }
