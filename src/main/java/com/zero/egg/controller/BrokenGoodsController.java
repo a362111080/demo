@@ -64,13 +64,13 @@ public class BrokenGoodsController {
 		Message message = new Message();
 		if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
 		{
-			PageHelper.startPage(brokenGoods.getCurrent().intValue(), brokenGoods.getSize().intValue());
+			//PageHelper.startPage(brokenGoods.getCurrent().intValue(), brokenGoods.getSize().intValue());
 			//报损
 			List<Goods>  broken=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
 
 			if (null!=broken) {
-				PageInfo<Goods>  pageInfo = new PageInfo<>(broken);
-				message.setData(pageInfo);
+				//PageInfo<Goods>  pageInfo = new PageInfo<>(broken);
+				message.setData(broken);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}
