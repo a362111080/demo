@@ -166,20 +166,14 @@ public class UserController {
 		if (idsList != null) {
 			List<User> userList = new ArrayList<>();
 			for (String id : idsList) {
-				User shop = new User();
-				shop.setDr(true);
-				shop.setId(id);
-				shop.setModifier(loginUser.getId());
-				shop.setModifytime(new Date());
-				userList.add(shop);
+				User use = new User();
+				use.setDr(true);
+				use.setId(id);
+				use.setModifier(loginUser.getId());
+				use.setModifytime(new Date());
+				userList.add(use);
 			}
-			if (userService.updateBatchById(userList)) {//逻辑删除
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			} else {
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
-			}
+			message=userService.deleteBatchById(userList,loginUser);
 
 
 		}

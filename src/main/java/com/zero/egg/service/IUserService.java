@@ -30,7 +30,7 @@ public interface IUserService extends IService<User> {
 	
 	Message<Object> deleteById(String ids,LoginUser loginUser);
 	
-	Message<Object> deleteBatchById(String ids,LoginUser loginUser);
+	Message<Object> deleteBatchById(List<User> userList,LoginUser loginUser);
 	
 	Message<Object> updateById(User entity,LoginUser loginUser);
 

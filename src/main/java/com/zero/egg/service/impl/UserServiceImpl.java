@@ -221,22 +221,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	
 	@Override
 	@Transactional(rollbackOn=Exception.class)
-	public Message<Object> deleteBatchById(String ids,LoginUser loginUser) {
+	public Message<Object> deleteBatchById(List<User>  DeluserList,LoginUser loginUser) {
 		Message<Object> message = new Message<>();
-		List<String> idsList = StringTool.splitToList(ids, ",");
-		if (idsList !=null) {
+		if (DeluserList !=null) {
 			List<User> userList = new ArrayList<>();
-			for (String id : idsList) {
-				User oldUser = getById(ids);
+			for (User deluser : DeluserList) {
+				User oldUser = getById(deluser.getId());
 				if (UserEnums.Status.Normal.index().equals(oldUser.getStatus())) {
 					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("有员工为离职，删除失败");
+					message.setMessage("员工未离职，删除失败");
 					return message;
 				}
 				//添加删除用户对象
 				User user = new User();
 				user.setDr(true);
-				user.setId(id);
+				user.setId(deluser.getId());
 				user.setModifier(loginUser.getId());
 				user.setModifytime(new Date());
 				userList.add(user);
