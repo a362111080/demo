@@ -37,7 +37,7 @@
 				and  k.goods_no  like '%${_parameter}%'
 			</if>
 		</where>
-
+		order by  k.createtime desc
 	</select>
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string">
 		SELECT k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,

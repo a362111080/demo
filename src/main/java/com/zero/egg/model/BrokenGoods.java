@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.BrokenGoodsEnums;
+import com.zero.egg.tool.PageDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,7 +29,7 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("bd_broken_goods")
 @ApiModel(value="BrokenGoods对象", description="")
-public class BrokenGoods implements Serializable {
+public class BrokenGoods extends PageDTO  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
