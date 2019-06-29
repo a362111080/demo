@@ -258,6 +258,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	public Message<Object> updateById(User user, LoginUser loginUser) {
 		Message<Object> message = new Message<>();
 		user.setModifier(loginUser.getId());
+		if (StringUtils.isNotBlank(user.getPassword())) {
+			try {
+				user.setPassword(MD5Utils.encode(user.getPassword()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (StringUtils.isBlank(user.getPassword())) {
+			user.setPassword("888888");
+		}
 		user.setModifytime(new Date());
 		if (updateById(user)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
