@@ -269,6 +269,8 @@ public class ShipmentGoodsController {
                             map.put("total", entry.getValue().size());
                             resultMap.put(entry.getKey(), map);
                         }
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                         message.setMap(resultMap);
                         break;
                     default:
