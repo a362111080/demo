@@ -200,38 +200,38 @@ public class ShipmentGoodsController {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             } else {
-                /**
-                 * 分页信息
-                 */
-                Long current = shipmentGoodsRequest.getCurrent();
-                Long size = shipmentGoodsRequest.getSize();
-                Long total = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId);
-                Long pages;
-                if (total % size == 0) {
-                    pages = total / size;
-                } else {
-                    pages = total / size + 1;
-                }
-                Set<String> goodsSet = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                                + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
-                        , size.intValue() * (current.intValue() - 1), size.intValue() * current.intValue() - 1);
-                List<GoodsResponse> goodsResponseList = new ArrayList<>();
-                GoodsResponse redisGood;
-                for (String jsonString : goodsSet) {
-                    redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
-                    goodsResponseList.add(redisGood);
-                }
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                PageDTO pageDTO = new PageDTO();
-                pageDTO.setCurrent(current);
-                pageDTO.setSize(size);
-                pageDTO.setTotal(total);
-                pageDTO.setPages(pages);
                 switch (shipmentGoodsRequest.getSortType()) {
                     //列表
                     case 1:
+                        /**
+                         * 分页信息
+                         */
+                        Long current = shipmentGoodsRequest.getCurrent();
+                        Long size = shipmentGoodsRequest.getSize();
+                        Long total = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                                + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId);
+                        Long pages;
+                        if (total % size == 0) {
+                            pages = total / size;
+                        } else {
+                            pages = total / size + 1;
+                        }
+                        Set<String> goodsSet = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
+                                , size.intValue() * (current.intValue() - 1), size.intValue() * current.intValue() - 1);
+                        List<GoodsResponse> goodsResponseList = new ArrayList<>();
+                        GoodsResponse redisGood;
+                        for (String jsonString : goodsSet) {
+                            redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
+                            goodsResponseList.add(redisGood);
+                        }
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                        PageDTO pageDTO = new PageDTO();
+                        pageDTO.setCurrent(current);
+                        pageDTO.setSize(size);
+                        pageDTO.setTotal(total);
+                        pageDTO.setPages(pages);
                         message.setData(goodsResponseList);
                         message.setTotaldata(pageDTO);
                         break;
@@ -239,8 +239,17 @@ public class ShipmentGoodsController {
                     case 2:
                         Map<String, Map<String, Integer>> resultMap = new HashMap<>();
                         Map<String, List<String>> categoryResultMap = new HashMap();
+                        Set<String> goodsSetFor2 = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
+                                , 0,-1);
+                        List<GoodsResponse> goodsResponseList2 = new ArrayList<>();
+                        GoodsResponse redisGoodTemp;
+                        for (String jsonString : goodsSetFor2) {
+                            redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
+                            goodsResponseList2.add(redisGood);
+                        }
                         //按照品种名分类
-                        for (GoodsResponse goodsResponse : goodsResponseList) {
+                        for (GoodsResponse goodsResponse : goodsResponseList2) {
                             String categoryName = goodsResponse.getCategoryName();
                             if (categoryResultMap.keySet().contains(categoryName)) {
                                 categoryResultMap.get(categoryName).add(goodsResponse.getMarker());
@@ -263,8 +272,8 @@ public class ShipmentGoodsController {
                         message.setMap(resultMap);
                         break;
                     default:
-                        message.setData(goodsResponseList);
-                        message.setTotaldata(pageDTO);
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
                 }
             }
 
