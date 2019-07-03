@@ -54,7 +54,7 @@
             <if test="shopId != null and shopId !=''">
                 and k.shop_id=#{shopId,jdbcType=VARCHAR}
             </if>
-            <if test="status != null and status !='1' and status !=''">
+            <if test="status != null  and status !=''">
                 and k.status=#{status,jdbcType=INTEGER}
             </if>
             and k.dr=0

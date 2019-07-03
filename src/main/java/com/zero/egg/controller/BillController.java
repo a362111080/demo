@@ -202,7 +202,7 @@ public class BillController {
             }
             if (BillList.get(i).getType().equals(TaskEnums.Type.Unload.index().toString())) {
                 //支出
-                report.setInCount(report.getInCount().add(BillList.get(i).getAmount()));
+                report.setInCount(report.getInCount().add(BillList.get(i).getRealAmount()));
                 report.setInPcs(report.getInPcs().add(BillList.get(i).getQuantity()));
                 //进货
                 List<CategorySum> CategorySum = billService.getBillCategorySum(BillList.get(i).getId());
@@ -235,7 +235,7 @@ public class BillController {
             if (BillList.get(i).getType().equals(TaskEnums.Type.Shipment.index().toString())) {
                 //收入
                 if (null != BillList.get(i).getAmount()) {
-                    report.setOutCount(report.getOutCount().add(BillList.get(i).getAmount()));
+                    report.setOutCount(report.getOutCount().add(BillList.get(i).getRealAmount()));
                 }
                 if (null != BillList.get(i).getQuantity()) {
                     report.setOutPcs(report.getOutPcs().add(BillList.get(i).getQuantity()));
