@@ -443,7 +443,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("dr", 0));
             String customerName = customer.getName();
             //用户习惯计重模式
-            Integer weightMode = customer.getWeightMode();
+            String weightMode = customer.getWeightMode();
             Bill bill = billMapper.selectOne(new QueryWrapper<Bill>().select("id,bill_no")
                     .eq("task_id", requestDTO.getTaskId())
                     .eq("shop_id", requestDTO.getShopId())

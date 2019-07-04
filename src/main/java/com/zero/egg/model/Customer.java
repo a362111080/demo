@@ -56,7 +56,9 @@ public class Customer {
     private String name;
 
     /**
-     * 供应商名称
+     * 合作商计重习惯(1:包->按箱收费 2:去皮->按斤收费)
+     * 如果按箱出货,所有货物默认按箱计算小计,如果按去皮出货,去皮卸的货按斤计算小计,包卸的货,默认还是按箱
+     * 包卸的货,出货的时候,如果要转换成按斤计算小计,如要额外输入去皮值
      */
     @ApiModelProperty(value = "称重方式",required=false)
     private String weightMode;
@@ -139,10 +141,4 @@ public class Customer {
     @ApiModelProperty(value = "省市区二级id",required=false)
     private String city2;
 
-    /**
-     * 合作商计重习惯(1:包->按箱收费 2:去皮->按斤收费)
-     * 如果按箱出货,所有货物默认按箱计算小计,如果按去皮出货,去皮卸的货按斤计算小计,包卸的货,默认还是按箱
-     * 包卸的货,出货的时候,如果要转换成按斤计算小计,如要额外输入去皮值
-     */
-    private Integer weightMode;
 }
