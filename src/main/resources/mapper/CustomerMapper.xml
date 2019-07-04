@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.CustomerMapper">
-    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr)
+    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr,weight_mode)
     values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('CT',LPAD((SELECT COUNT(1)+1 from bd_customer),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
-           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0)</insert>
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0,#{weightMode})</insert>
     <update id="UpdateCustomer" parameterType="Customer">update bd_customer
         <set>
             <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
@@ -17,6 +17,7 @@
             <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
+            <if test="weightMode!= null">weight_mode= #{weightMode,jdbcType=VARCHAR},</if>
         </set>
         where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}
     </update>
@@ -47,6 +48,9 @@
             </if>
             <if test="name != null and name !=''">
                 and k.name LIKE '%${name}%'
+            </if>
+            <if test="checkname != null and checkname !=''">
+                and k.name=#{checkname,jdbcType=VARCHAR}
             </if>
             <if test="companyId != null and companyId !=''">
                 and k.company_id=#{companyId,jdbcType=VARCHAR}

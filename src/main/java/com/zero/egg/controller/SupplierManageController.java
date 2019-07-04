@@ -52,16 +52,27 @@ public class SupplierManageController {
                 model.setCreatetime(new Date());
             }
             if (null != model.getCode() && !"".equals(model.getCode()) && model.getCode().length() == 4) {
-                int strval = supplierService.AddSupplier(model);
 
-                if (strval > 0) {
-                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                } else {
-                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                SupplierRequestDTO  dto=new  SupplierRequestDTO();
+                dto.setCheckname(model.getName());
+                List<Supplier> issup=supplierService.GetSupplierList(dto);
+                if (issup.size()==0) {
+                    int strval = supplierService.AddSupplier(model);
 
+                    if (strval > 0) {
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                    } else {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.FAILED);
+
+                    }
                 }
+                else {
+                    message.setState(ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage("供应商名称重复");
+                }
+
             } else {
                 message.setState(ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(ResponseMsg.PARAM_ERROR);
@@ -93,13 +104,35 @@ public class SupplierManageController {
                 model.setModifier(user.getName());
                 model.setModifytime(new Date());
             }
-            int strval = supplierService.UpdateSupplier(model);
-            if (strval > 0) {
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-            } else {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+
+            SupplierRequestDTO  dto=new  SupplierRequestDTO();
+            dto.setCheckname(model.getName());
+            List<Supplier> issup=supplierService.GetSupplierList(dto);
+            if (issup.size()>0 ) {
+                if (issup.get(0).getId().equals(model.getId())) {
+                    int strval = supplierService.UpdateSupplier(model);
+                    if (strval > 0) {
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                    } else {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                    }
+                } else {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage("供应商名称重复");
+                }
+            }
+            else
+            {
+                int strval = supplierService.UpdateSupplier(model);
+                if (strval > 0) {
+                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                } else {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                }
             }
             return message;
 

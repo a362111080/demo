@@ -84,5 +84,11 @@ public class SupplierRequestDTO extends PageDTO implements Serializable {
     private String name;
 
 
+    /**
+     * 验证条件
+     */
+    private String checkname;
+
+
 
 }
