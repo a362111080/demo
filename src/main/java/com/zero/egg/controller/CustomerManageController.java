@@ -52,15 +52,23 @@ public class CustomerManageController {
             model.setCompanyid(user.getCompanyId());
             model.setModifier(user.getId());
             model.setModifytime(new Date());
-            int strval=CustomerSv.AddCustomer(model);
-            if (strval>0) {
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            CustomerRequestDTO  dto=new CustomerRequestDTO();
+            dto.setCheckname(model.getName());
+            List<Customer> isCheck=CustomerSv.GetCustomerList(dto);
+            if (isCheck.size()==0) {
+                int strval = CustomerSv.AddCustomer(model);
+                if (strval > 0) {
+                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                } else {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                }
             }
             else
             {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                message.setMessage("合作商名称重复！");
             }
             return message;
 
@@ -88,15 +96,38 @@ public class CustomerManageController {
             model.setModifytime(new Date());
             model.setShopid(user.getShopId());
             model.setCompanyid(user.getCompanyId());
-            int strval=CustomerSv.UpdateCustomer(model);
-            if (strval>0) {
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            CustomerRequestDTO  dto=new CustomerRequestDTO();
+            dto.setCheckname(model.getName());
+            List<Customer> isCheck=CustomerSv.GetCustomerList(dto);
+            if (isCheck.size()==0) {
+
+                int strval = CustomerSv.UpdateCustomer(model);
+                if (strval > 0) {
+                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                } else {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                }
             }
             else
             {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                if (isCheck.get(0).getId().equals(model.getId()))
+                {
+                    int strval = CustomerSv.UpdateCustomer(model);
+                    if (strval > 0) {
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                    } else {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                    }
+                }
+                else
+                {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage("合作商名称重复！");
+                }
             }
             return message;
 

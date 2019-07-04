@@ -226,12 +226,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		if (DeluserList !=null) {
 			List<User> userList = new ArrayList<>();
 			for (User deluser : DeluserList) {
-				User oldUser = getById(deluser.getId());
-				if (UserEnums.Status.Normal.index().equals(oldUser.getStatus())) {
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("员工未离职，删除失败");
-					return message;
-				}
+				//User oldUser = getById(deluser.getId());
+				//if (UserEnums.Status.Normal.index().equals(oldUser.getStatus())) {
+				//	message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				//	message.setMessage("员工未离职，删除失败");
+				//	return message;
+				//}
 				//添加删除用户对象
 				User user = new User();
 				user.setDr(true);

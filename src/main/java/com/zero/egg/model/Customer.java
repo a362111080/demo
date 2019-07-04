@@ -56,6 +56,12 @@ public class Customer {
     private String name;
 
     /**
+     * 供应商名称
+     */
+    @ApiModelProperty(value = "称重方式",required=false)
+    private String weightMode;
+
+    /**
      * 供应商简称
      */
     @ApiModelProperty(value = " 客户简称",required=false)
