@@ -71,8 +71,14 @@ public class BillDetails  implements Serializable {
     @ApiModelProperty(value = "数量",required=false)
     private BigDecimal quantity;
 
+    @ApiModelProperty(value = "实际计重方式",required = false)
+    private Integer currentMode;
+
     @ApiModelProperty(value = "去皮时重量",required=false)
     private BigDecimal totalWeight;
+
+    @ApiModelProperty(value = "去皮值(仅用于包转去皮时使用)", required = false)
+    private BigDecimal numberical;
 
     @ApiModelProperty(value = "金额",required=false)
     private BigDecimal amount;

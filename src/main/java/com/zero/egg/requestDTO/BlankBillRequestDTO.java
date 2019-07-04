@@ -25,5 +25,8 @@ public class BlankBillRequestDTO implements Serializable {
     @ApiModelProperty(value = "实收金额", required = false)
     private BigDecimal realAmount;
 
+    @ApiModelProperty(value = "用户计重习惯(1:包->按箱收费 2:去皮->按斤收费)", required = false)
+    private Integer weightMode;
+
     private List<BlankBillDTO> blankBillDTOList;
 }

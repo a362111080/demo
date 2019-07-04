@@ -14,7 +14,9 @@ public class QueryBlankBillGoodsRequestDTO implements Serializable {
 
     private static final long serialVersionUID = -7403854797655831582L;
 
-    //出货任务id
+    /**
+     * 出货任务id
+     */
     private String taskId;
 
     private String companyId;

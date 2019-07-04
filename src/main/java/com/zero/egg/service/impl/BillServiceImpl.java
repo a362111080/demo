@@ -74,7 +74,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     public Message updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser) {
         Message message = new Message();
         try {
-            /**
+            /*
              * 1.根据传入的账单status不为0,则不能修改
              * 2.新增账单细节,统计每个方案细节的应收金额和整个账单的应收金额
              * 3.更新账单信息 BillEnums.Status.Normal.toString()
@@ -118,14 +118,38 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 //前端新输入的单价
                 BigDecimal price = blankBillDTO.getPrice();
                 BigDecimal quantity = new BigDecimal(blankBillDTO.getQuantity());
-                //细节应收金额后端重新计算
-                //如果是去皮的方式,则按重量算价格
+                /*
+                 * 账单细节应收金额后端重新计算
+                 * 如果货物原本是去皮方式,现在也是去皮方式,小计=价格*重量
+                 * 如果货物原本是包方式,现在也是包方式,小计=价格*数量
+                 * 如果货物原本是去皮方式,现在是包方式,小计=价格*数量
+                 * 如果货物原本是包方式,现在是去皮方式,小计=价格*(重量-数量*去皮值),去皮值=blankBillDTO.getNumberical()
+                 */
                 BigDecimal subTotal;
-                if (1 == blankBillDTO.getMode()) {
-                    subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                /* 1:去皮 2:包*/
+                if (1 == blankBillDTO.getCurrentMode()) {
+                    billDetails.setCurrentMode(1);
+                    if (1 == blankBillDTO.getMode()) {
+                        billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
+                        /* 去皮进,按斤出 */
+                        subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                    } else if (2 == blankBillDTO.getMode()) {
+                        billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
+                        billDetails.setNumberical(blankBillDTO.getNumberical());
+                        /* 包进,按斤出 */
+                        subTotal = price.multiply(blankBillDTO.getTotalWeight().subtract(quantity.multiply(blankBillDTO.getNumberical())));
+                    } else {
+                        log.error("param Exception,oriMode or currentMode is dissatisfied");
+                        throw new ServiceException("param Exception,oriMode or currentMode is dissatisfied");
+                    }
+                } else if (2 == blankBillDTO.getCurrentMode()) {
+                    billDetails.setCurrentMode(2);
                     billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
-                } else {
+                    /* 无论是包进,还是去皮进,如果按箱出,小计=单价*数量 */
                     subTotal = price.multiply(quantity);
+                } else {
+                    log.error("param Exception,oriMode or currentMode is dissatisfied");
+                    throw new ServiceException("param Exception,oriMode or currentMode is dissatisfied");
                 }
                 billDetails.setPrice(price);
                 billDetails.setQuantity(quantity);

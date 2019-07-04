@@ -47,8 +47,14 @@ public class BlankBillDTO implements Serializable {
     @ApiModelProperty(value = "计重方式(1:去皮 2:包)", required = false)
     private Integer mode;
 
+    @ApiModelProperty(value = "实际计重方式",required = false)
+    private Integer currentMode;
+
     @ApiModelProperty(value = "去皮时,实重总和", required = false)
     private BigDecimal totalWeight;
+
+    @ApiModelProperty(value = "去皮值(仅用于包转去皮时使用)", required = false)
+    private BigDecimal numberical;
 
     @ApiModelProperty(value = "数量", required = false)
     private Long quantity;

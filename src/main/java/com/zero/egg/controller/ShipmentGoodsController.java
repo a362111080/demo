@@ -245,8 +245,8 @@ public class ShipmentGoodsController {
                         List<GoodsResponse> goodsResponseList2 = new ArrayList<>();
                         GoodsResponse redisGoodTemp;
                         for (String jsonString : goodsSetFor2) {
-                            redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
-                            goodsResponseList2.add(redisGood);
+                            redisGoodTemp = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
+                            goodsResponseList2.add(redisGoodTemp);
                         }
                         //按照品种名分类
                         for (GoodsResponse goodsResponse : goodsResponseList2) {
@@ -304,7 +304,8 @@ public class ShipmentGoodsController {
         page.setCurrent(shipmentGoods.getCurrent());
         page.setSize(shipmentGoods.getSize());
         QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("s.dr", false);//查询未删除信息
+        //查询未删除信息
+        queryWrapper.eq("s.dr", false);
         if (shipmentGoods != null) {
             queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
@@ -336,7 +337,8 @@ public class ShipmentGoodsController {
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
         List<Map<String, Object>> resultList = new ArrayList<>();
         QueryWrapper<ShipmentGoods> programqueryWrapper = new QueryWrapper<>();
-        programqueryWrapper.eq("s.dr", false);//查询未删除信息
+        //查询未删除信息
+        programqueryWrapper.eq("s.dr", false);
         if (shipmentGoods != null) {
             programqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
                     .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
@@ -353,7 +355,8 @@ public class ShipmentGoodsController {
                 int programGoodsCount = 0;
                 //方案下的品种
                 QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
-                categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
+                //查询未删除信息
+                categoryqueryWrapper.eq("s.dr", false);
                 if (shipmentGoods != null) {
                     categoryqueryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
                             .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
@@ -368,7 +371,8 @@ public class ShipmentGoodsController {
                     map2.put("categoryId", shipmentGoodsResponse2.getCategoryId());
                     map2.put("categoryName", shipmentGoodsResponse2.getCategoryName());
                     QueryWrapper<ShipmentGoods> queryWrapper = new QueryWrapper<>();
-                    queryWrapper.eq("s.dr", false);//查询未删除信息
+                    //查询未删除信息
+                    queryWrapper.eq("s.dr", false);
                     if (shipmentGoods != null) {
                         queryWrapper.eq(StringUtils.isNotBlank(shipmentGoods.getCompanyId()), "s.company_id", loginUser.getCompanyId())
                                 .eq(StringUtils.isNotBlank(shipmentGoods.getShopId()), "s.shop_id", loginUser.getShopId())
@@ -403,7 +407,6 @@ public class ShipmentGoodsController {
     }
 
     @LoginToken
-    //@PassToken
     @ApiOperation(value = "每日出货品种数目统计")
     @PostMapping(value = "/today-statistics")
     public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request) {
