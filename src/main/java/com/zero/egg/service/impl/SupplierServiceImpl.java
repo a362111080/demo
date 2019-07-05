@@ -1,7 +1,9 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.SupplierMapper;
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.service.SupplierService;
@@ -26,6 +28,9 @@ public class SupplierServiceImpl implements SupplierService {
     @Autowired
     private SupplierMapper mapper;
 
+    @Autowired
+    private BarCodeMapper barCodeMapper;
+
     @Override
     public int AddSupplier(Supplier model) {
         return mapper.insert(model);
@@ -42,8 +47,14 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @Transactional
     public int DeleteSupplier(SupplierRequestDTO supplier) {
-        return mapper.DeleteSupplier(supplier.getIds());
+        /* 删除合作商之前要逻辑删除应对的二维码信息 */
+        List<String> ids = supplier.getIds();
+        for (String id : ids) {
+            barCodeMapper.delete(new QueryWrapper<BarCode>().eq("supplier_id", id));
+        }
+        return mapper.DeleteSupplier(ids);
     }
 
     @Override
