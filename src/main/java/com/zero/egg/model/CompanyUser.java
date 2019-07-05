@@ -40,6 +40,7 @@ public class CompanyUser implements Serializable {
     private String companyId;
 
     @ApiModelProperty(value = "编码",required=false)
+    @TableField(exist = false)
     private String code;
 
     @ApiModelProperty(value = "名称",required=false)
