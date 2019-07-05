@@ -39,25 +39,25 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public int UpdateSupplier(Supplier model) {
-        //状态 0:停用 1:启用(默认)
+        //状态 1:停用 0:启用
         //原本的合作状态
         String status = mapper.selectOne(new QueryWrapper<Supplier>()
                 .select("status")
                 .eq("id", model.getId()))
                 .getStatus();
         //如果前后状态相同,对二维码不做任何操作
-        //如果0-->1 要启用二维码
-        //如果1-->0 要停用二维码
+        //如果1-->0 要启用二维码
+        //如果0-->1 要停用二维码
         BarCode barCode;
         if ("0".equals(status) && "1".equals(model.getStatus())) {
             barCode = new BarCode();
-            barCode.setDr(false);
+            barCode.setDr(true);
             barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
                     .eq("supplier_id", model.getId()));
         }
         if ("1".equals(status) && "0".equals(model.getStatus())) {
             barCode = new BarCode();
-            barCode.setDr(true);
+            barCode.setDr(false);
             barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
                     .eq("supplier_id", model.getId()));
         }
