@@ -25,7 +25,9 @@
         from (
         select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,
         case when sp.mode='1' then  CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')  else  CONCAT(pro.name,' ','常规') end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
-        case when sp.mode='1' then  a.specification_id else '' end as specification_id,war.warNum,sp.mode
+        case when sp.mode='1' then  a.specification_id else '' end as specification_id,
+        case when sp.mode='1' then  sp.weight_min else '' end as weight_min,
+         war.warNum,sp.mode
         from  bd_unload_goods  a
         left join bd_category  b  on  a.goods_category_id=b.id
         left join bd_specification  sp on sp.id=a.specification_id
@@ -36,8 +38,8 @@
         ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id and a.specification_id=war.specification_id
         where  a.task_id=#{taskId} and  a.dr=0
         GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode)  info
-        group by info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id
-        order by info.goodsCategoryId,info.programname desc
+        group by info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id,info.weight_min
+        order by info.goodsCategoryId,info.programname,info.weight_min	 desc
     </select>
     <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
         select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
