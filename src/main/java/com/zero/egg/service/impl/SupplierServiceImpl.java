@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.SupplierMapper;
 import com.zero.egg.model.BarCode;
@@ -22,7 +23,7 @@ import java.util.List;
  * @Date 2018/11/7
  **/
 @Service
-@Transactional
+@Transactional(rollbackFor=Exception.class)
 public class SupplierServiceImpl implements SupplierService {
 
     @Autowired
@@ -38,6 +39,28 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public int UpdateSupplier(Supplier model) {
+        //状态 0:停用 1:启用(默认)
+        //原本的合作状态
+        String status = mapper.selectOne(new QueryWrapper<Supplier>()
+                .select("status")
+                .eq("id", model.getId()))
+                .getStatus();
+        //如果前后状态相同,对二维码不做任何操作
+        //如果0-->1 要启用二维码
+        //如果1-->0 要停用二维码
+        BarCode barCode;
+        if ("0".equals(status) && "1".equals(model.getStatus())) {
+            barCode = new BarCode();
+            barCode.setDr(false);
+            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .eq("supplier_id", model.getId()));
+        }
+        if ("1".equals(status) && "0".equals(model.getStatus())) {
+            barCode = new BarCode();
+            barCode.setDr(true);
+            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .eq("supplier_id", model.getId()));
+        }
         return mapper.UpdateSupplier(model);
     }
 
@@ -47,12 +70,13 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    @Transactional
     public int DeleteSupplier(SupplierRequestDTO supplier) {
         /* 删除合作商之前要逻辑删除应对的二维码信息 */
         List<String> ids = supplier.getIds();
+        BarCode barCode = new BarCode();
+        barCode.setDr(true);
         for (String id : ids) {
-            barCodeMapper.delete(new QueryWrapper<BarCode>().eq("supplier_id", id));
+            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>().eq("supplier_id", id));
         }
         return mapper.DeleteSupplier(ids);
     }
