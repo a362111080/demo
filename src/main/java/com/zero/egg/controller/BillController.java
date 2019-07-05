@@ -189,9 +189,11 @@ public class BillController {
         if (null != model.getEndtime() && model.getEndtime() != "") {
             model.setEndtime(model.getEndtime() + " 23:59:59");
         }
-        List<Bill> BillList = billService.getBilllist(model);
-        PageInfo<Bill> pageInfo = new PageInfo<>(BillList);
+        List<Bill> BillListList = billService.getBilllist(model);
+        PageInfo<Bill> pageInfo = new PageInfo<>(BillListList);
         ms.setData(pageInfo);
+
+        List<Bill> BillList = billService.getBilllist(model);
         BillReport report = new BillReport();
         for (int i = 0; i < BillList.size(); i++) {
             if (BillList.get(i).getStatus().equals("-1")) {
