@@ -24,11 +24,25 @@
         select info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as sumVal,sum(info.warNum) as  warNum,info.mode,info.specification_id
         from (
         select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,
-        case when sp.mode='1' then  CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')  else  CONCAT(pro.name,' ','常规') end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
-        case when sp.mode='1' then  a.specification_id else '' end as specification_id,
-        case when sp.mode='1' then  sp.weight_min else '' end as weight_min,
-         war.warNum,sp.mode
+        CASE when sp.mode = '1' and s.type='1' THEN CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')
+        when sp.mode='2'  and s.type='1' THEN CONCAT( pro.NAME, ' ', '常规' )
+        when s.type='0'  then  CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
+        else  CONCAT(pro.name,' ','常规')
+        end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
+        CASE
+        WHEN sp.MODE = '1' and s.type='1' THEN a.specification_id
+        when sp.mode='12'  and s.type='1' THEN  ''
+        when s.type='0'  then  a.specification_id
+        ELSE ''
+        END AS specification_id,
+        CASE
+        WHEN sp.mode = '1' and s.type='1' THEN  sp.weight_min
+        when sp.mode='2'  and s.type='1' THEN  ''
+        when s.type='0'  then  sp.weight_min
+        ELSE ''
+        END AS weight_min, war.warNum,sp.mode
         from  bd_unload_goods  a
+        INNER JOIN bd_shop s ON s.id = a.shop_id
         left join bd_category  b  on  a.goods_category_id=b.id
         left join bd_specification  sp on sp.id=a.specification_id
         left join bd_specification_program pro on pro.id=a.program_id
@@ -37,7 +51,7 @@
         GROUP BY m.task_id,m.program_id,m.goods_category_id,m.specification_id
         ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id and a.specification_id=war.specification_id
         where  a.task_id=#{taskId} and  a.dr=0
-        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode)  info
+        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode,s.type)  info
         group by info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id,info.weight_min
         order by info.goodsCategoryId,info.programname,info.weight_min	 desc
     </select>
