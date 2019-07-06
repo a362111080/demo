@@ -60,4 +60,10 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 		return mapper.GetBrokenTask(request);
 	}
 
+	@Override
+	public List<BrokenGoods> CheckBroken(String brokenGoodsNo) {
+
+		return mapper.CheckBroken(brokenGoodsNo);
+	}
+
 }

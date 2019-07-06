@@ -33,4 +33,6 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
     Boolean updateGoodsDr(String brokenGoodsNo);
 
     List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
+
+    List<BrokenGoods> CheckBroken(String brokenGoodsNo);
 }

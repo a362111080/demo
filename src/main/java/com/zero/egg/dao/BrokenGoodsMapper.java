@@ -36,4 +36,6 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
     Boolean updateGoodsDr(String brokenGoodsNo);
 
     List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
+
+    List<BrokenGoods> CheckBroken(String brokenGoodsNo);
 }

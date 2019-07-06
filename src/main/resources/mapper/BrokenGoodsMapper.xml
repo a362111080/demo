@@ -19,10 +19,26 @@
 		and a.status=#{status,jdbcType=VARCHAR}
 	</if>
 	<if test="keyword != null and keyword !=''">
-		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%')
+		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%' or a.goods_no LIKE '%${keyword}%')
 	</if>
 
 </select>
+
+	<select id="CheckBroken"  resultType="com.zero.egg.model.BrokenGoods">
+		SELECT a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,g.id as billid,
+		case when a.mode=1 then   CONCAT('实重','(',f.weight_min,'~',f.weight_max,')')  else a.marker  end as brokenmarker
+		FROM bd_broken_goods a
+		left join bd_customer b on a.customer_id=b.id
+		left join bd_supplier c on a.customer_id=c.id
+		left join bd_category e on e.id=a.goods_categroy_id
+		left join bd_specification f on f.id=a.specification_id
+		left join bd_bill  g on g.bill_no=a.bill_no
+		where a.dr=0
+		<if test="_parameter != null and _parameter !=''">
+			and a.goods_no=#{_parameter,jdbcType=VARCHAR}
+		</if>
+	</select>
+
 
 	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string" >
 		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,
@@ -37,7 +53,6 @@
 				and  k.goods_no  like '%${_parameter}%'
 			</if>
 		</where>
-		and  k.goods_no not in  (select DISTINCT m.goods_no from bd_broken_goods m  and m.dr=0)
 		order by  k.createtime desc
 	</select>
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string">
@@ -50,7 +65,6 @@
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
 		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
-		and  k.goods_no not in  (select DISTINCT m.goods_no from bd_broken_goods m  and m.dr=0)
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
 		update bd_goods set dr=1
