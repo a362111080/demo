@@ -37,6 +37,7 @@
 				and  k.goods_no  like '%${_parameter}%'
 			</if>
 		</where>
+		and  k.goods_no not in  (select DISTINCT m.goods_no from bd_broken_goods m  and m.dr=0)
 		order by  k.createtime desc
 	</select>
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string">
@@ -49,6 +50,7 @@
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
 		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+		and  k.goods_no not in  (select DISTINCT m.goods_no from bd_broken_goods m  and m.dr=0)
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
 		update bd_goods set dr=1
