@@ -84,8 +84,6 @@ public class ShipmentGoodsController {
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message message;
         try {
-
-
             /**
              * 非空判断
              */
