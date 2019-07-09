@@ -517,12 +517,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                                 .eq("dr", 0));
                         blankBillDTO.setProgramId(specification.getProgramId());
 
+                        //循环出货商品,累加重量
+                        for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
+                            totalWeight = totalWeight.add(shipmentGoods.getWeight());
+                        }
                         //如果mode为1(去皮),则需要做额外处理
                         if (blankBillDTO.getMode() == 1) {
-                            //循环出货商品,累加重量
-                            for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
-                                totalWeight = totalWeight.add(shipmentGoods.getWeight());
-                            }
                             //需要加上去皮值*数量
                             BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillDTO.getQuantity());
                             totalWeight = totalWeight.add(needToSubtract);
@@ -531,7 +531,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
                         } else {
                             blankBillDTO.setMarker(specification.getMarker());
-                            blankBillDTO.setTotalWeight(BigDecimal.ZERO);
+                            blankBillDTO.setTotalWeight(totalWeight);
                         }
                         blankBillDTOList.add(blankBillDTO);
                         blankBillDTO = null;
