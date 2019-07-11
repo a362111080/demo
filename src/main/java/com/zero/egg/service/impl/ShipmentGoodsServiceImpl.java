@@ -169,10 +169,10 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
                         //mode=1 key拼接"'实重('+specification.getWeightmin()+'~'+specification.getWeightmax()+')'"
                         //mode=2 key=temp.getMarker()
                         Specification specification;
+                        Integer count;
                         for (Map.Entry<String, List<GoodsResponse>> entry : categoryResultMap.entrySet()) {
                             Map<String, Integer> map = new HashMap();
                             for (GoodsResponse temp : entry.getValue()) {
-                                Integer count = map.get(temp.getSpecificationId());
                                 specification = specificationMapper.selectOne(new QueryWrapper<Specification>()
                                         .select("weight_min", "weight_max", "mode")
                                         .eq("id", temp.getSpecificationId())
@@ -180,9 +180,11 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
                                         .eq("company_id", temp.getCompanyId())
                                         .eq("dr", 0));
                                 if (1==specification.getMode()) {
+                                    count = map.get("实重("+specification.getWeightMin()+"~"+specification.getWeightMax()+")");
                                     map.put("实重("+specification.getWeightMin()+"~"+specification.getWeightMax()+")"
                                             , (count == null) ? 1 : count + 1);
                                 } else if (2 == specification.getMode()) {
+                                    count = map.get(temp.getMarker());
                                     map.put(temp.getMarker(), (count == null) ? 1 : count + 1);
                                 }
                             }
