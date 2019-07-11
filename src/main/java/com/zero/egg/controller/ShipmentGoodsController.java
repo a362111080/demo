@@ -13,14 +13,11 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
-import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
-import com.zero.egg.tool.JsonUtils;
 import com.zero.egg.tool.Message;
-import com.zero.egg.tool.PageDTO;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>
@@ -186,105 +182,13 @@ public class ShipmentGoodsController {
         try {
             //当前登录用户
             LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-            String customerId = shipmentGoodsRequest.getCustomerId();
-            String taskId = shipmentGoodsRequest.getTaskId();
-            /**
-             * 如果redis里存在相关出货任务key  或者  存在kry,但是value为null,就返回查询成功,但是内容为null
-             * 否则,直接从redis里面取出对应value,并转化为list集合存进Data里返回
-             */
-            if (!jedisKeys.exists(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId)
-            ) {
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-            } else {
-                switch (shipmentGoodsRequest.getSortType()) {
-                    //列表
-                    case 1:
-                        /**
-                         * 分页信息
-                         */
-                        Long current = shipmentGoodsRequest.getCurrent();
-                        Long size = shipmentGoodsRequest.getSize();
-                        Long total = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                                + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId);
-                        Long pages;
-                        if (total % size == 0) {
-                            pages = total / size;
-                        } else {
-                            pages = total / size + 1;
-                        }
-                        Set<String> goodsSet = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
-                                , size.intValue() * (current.intValue() - 1), size.intValue() * current.intValue() - 1);
-                        List<GoodsResponse> goodsResponseList = new ArrayList<>();
-                        GoodsResponse redisGood;
-                        for (String jsonString : goodsSet) {
-                            redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
-                            goodsResponseList.add(redisGood);
-                        }
-                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                        PageDTO pageDTO = new PageDTO();
-                        pageDTO.setCurrent(current);
-                        pageDTO.setSize(size);
-                        pageDTO.setTotal(total);
-                        pageDTO.setPages(pages);
-                        message.setData(goodsResponseList);
-                        message.setTotaldata(pageDTO);
-                        break;
-                    //整理归类
-                    case 2:
-                        Map<String, Map<String, Integer>> resultMap = new HashMap<>();
-                        Map<String, List<String>> categoryResultMap = new HashMap();
-                        Set<String> goodsSetFor2 = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
-                                , 0,-1);
-                        List<GoodsResponse> goodsResponseList2 = new ArrayList<>();
-                        GoodsResponse redisGoodTemp;
-                        for (String jsonString : goodsSetFor2) {
-                            redisGoodTemp = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
-                            goodsResponseList2.add(redisGoodTemp);
-                        }
-                        //按照品种名分类
-                        for (GoodsResponse goodsResponse : goodsResponseList2) {
-                            String categoryName = goodsResponse.getCategoryName();
-                            if (categoryResultMap.keySet().contains(categoryName)) {
-                                categoryResultMap.get(categoryName).add(goodsResponse.getMarker());
-                            } else {
-                                List<String> tempList = new ArrayList<>();
-                                tempList.add(goodsResponse.getMarker());
-                                categoryResultMap.put(categoryName, tempList);
-                            }
-                        }
-                        //再按照按标记分类
-                        for (Map.Entry<String, List<String>> entry : categoryResultMap.entrySet()) {
-                            Map<String, Integer> map = new HashMap();
-                            for (String temp : entry.getValue()) {
-                                Integer count = map.get(temp);
-                                map.put(temp, (count == null) ? 1 : count + 1);
-                            }
-                            map.put("total", entry.getValue().size());
-                            resultMap.put(entry.getKey(), map);
-                        }
-                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                        message.setMap(resultMap);
-                        break;
-                    default:
-                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                        message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
-                }
-            }
-
+            message = shipmentGoodsService.listBySortType(loginUser, shipmentGoodsRequest);
         } catch (Exception e) {
             log.error("shipmentTastList failed:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
-
         }
         return message;
-
     }
 
 
