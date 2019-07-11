@@ -3,6 +3,7 @@ package com.zero.egg.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
@@ -35,4 +36,6 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
     List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
 
     List<BrokenGoods> CheckBroken(String brokenGoodsNo);
+
+    BarCode GetBarCodeInfo(BrokenGoods brokenGoods);
 }

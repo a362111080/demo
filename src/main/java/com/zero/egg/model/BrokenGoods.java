@@ -122,6 +122,10 @@ public class BrokenGoods extends PageDTO  implements Serializable {
     @ApiModelProperty(value = "账单id",hidden=true)
     public String billid;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "二维码id",hidden=true)
+    public String barcodeid;
+
 
 
     public String getStatusName() {

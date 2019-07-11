@@ -1,6 +1,7 @@
 package com.zero.egg.service;
 
 
+import com.zero.egg.model.BarCode;
 import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BarCodeRequestDTO;
 import com.zero.egg.tool.Message;
@@ -13,4 +14,5 @@ public interface BarCodeService {
     Message GetBarCodeList(BarCodeListRequestDTO listRequestDTO);
 
     Message PrintBarCode(String barCodeId, int pageNum, String loginUserId);
+
 }

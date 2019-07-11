@@ -7,11 +7,11 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.BrokenGoodsEnums;
-import com.zero.egg.model.BrokenGoods;
-import com.zero.egg.model.ChangeGoods;
-import com.zero.egg.model.Goods;
+import com.zero.egg.model.*;
+import com.zero.egg.requestDTO.BarCodeListRequestDTO;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.service.BarCodeService;
 import com.zero.egg.service.IBrokenGoodsService;
 import com.zero.egg.service.IChangeGoodsService;
 import com.zero.egg.service.IGoodsService;
@@ -44,8 +44,10 @@ import java.util.List;
 	@RequestMapping("/broken")
 public class BrokenGoodsController {
 
+
 	@Autowired
 	IBrokenGoodsService brokenGoodsService;
+
 	
 	@Autowired
 	IChangeGoodsService changeGoodsService;
@@ -62,10 +64,16 @@ public class BrokenGoodsController {
 	public Message GetBrokenInfo(@RequestBody BrokenGoods brokenGoods)
 	{
 		Message message = new Message();
+		if(null !=brokenGoods.getBarcodeid())
+		{
+			BarCode  bar= brokenGoodsService.GetBarCodeInfo(brokenGoods);
+			brokenGoods.setBrokenGoodsNo(bar.getCurrentCode());
+		}
 		if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
 		{
 			//PageHelper.startPage(brokenGoods.getCurrent().intValue(), brokenGoods.getSize().intValue());
 			//报损
+
 			List<Goods>  broken=  brokenGoodsService.GetBrokenInfo(brokenGoods.getBrokenGoodsNo());
 
 			if (null!=broken) {

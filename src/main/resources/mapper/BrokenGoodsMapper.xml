@@ -71,5 +71,8 @@
 		where goods_no = #{brokenGoodsNo,jdbcType=VARCHAR}
 	</update>
 
-
+	<select id="GetBarCodeInfo" resultType="com.zero.egg.model.BarCode" parameterType="string">
+		select * from bd_barcode  k where   k.dr=0 and
+		 k.id=#{goodsNo,jdbcType=VARCHAR}
+	</select>
 </mapper>

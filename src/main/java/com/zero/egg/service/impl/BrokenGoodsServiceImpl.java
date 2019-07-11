@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.BrokenGoodsMapper;
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
@@ -64,6 +65,11 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 	public List<BrokenGoods> CheckBroken(String brokenGoodsNo) {
 
 		return mapper.CheckBroken(brokenGoodsNo);
+	}
+
+	@Override
+	public BarCode GetBarCodeInfo(BrokenGoods brokenGoods) {
+		return mapper.GetBarCodeInfo(brokenGoods.getBarcodeid());
 	}
 
 }

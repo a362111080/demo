@@ -1,5 +1,6 @@
 package com.zero.egg.dao;
 
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Goods;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,4 +39,6 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
     List<BrokenGoods> GetBrokenTask(BrokenGoodsRequest request);
 
     List<BrokenGoods> CheckBroken(String brokenGoodsNo);
+
+    BarCode GetBarCodeInfo(String barcodeid);
 }
