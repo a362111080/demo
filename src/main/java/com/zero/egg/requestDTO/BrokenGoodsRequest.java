@@ -1,5 +1,6 @@
 package com.zero.egg.requestDTO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.zero.egg.tool.PageDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -46,5 +47,8 @@ public class BrokenGoodsRequest extends PageDTO{
 
 		@ApiModelProperty(value = "报损描述")
 		private String remark;
+
+		@ApiModelProperty(value = "二维码id",hidden=true)
+		public String barcodeid;
 
 }

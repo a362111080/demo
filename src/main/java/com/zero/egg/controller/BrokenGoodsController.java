@@ -129,6 +129,13 @@ public class BrokenGoodsController {
 	public Message brokenstep1(@RequestBody BrokenGoodsRequest Request) {
 		Message message = new Message();
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if(null !=Request.getBarcodeid())
+		{
+			BrokenGoods req=new BrokenGoods();
+			req.setBarcodeid(Request.getBarcodeid());
+			BarCode  bar= brokenGoodsService.GetBarCodeInfo(req);
+			Request.setGoodsNo(bar.getCurrentCode());
+		}
 		if (null != Request.getGoodsNo())
 		{
 			BrokenGoods  newBroken=new BrokenGoods();
@@ -159,6 +166,14 @@ public class BrokenGoodsController {
 	public Message brokenstep2(@RequestBody BrokenGoodsRequest Request) {
 		Message message = new Message();
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+
+		if(null !=Request.getBarcodeid())
+		{
+			BrokenGoods req=new BrokenGoods();
+			req.setBarcodeid(Request.getBarcodeid());
+			BarCode  bar= brokenGoodsService.GetBarCodeInfo(req);
+			Request.setGoodsNo(bar.getCurrentCode());
+		}
 		if (null != Request.getGoodsNo())
 		{
 			BrokenGoods  newBroken=new BrokenGoods();
