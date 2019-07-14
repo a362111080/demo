@@ -141,7 +141,7 @@ public class BrokenGoodsController {
 			BrokenGoods  newBroken=new BrokenGoods();
 			newBroken.setId(Request.getId());
 			newBroken.setChangeGoodsNo(Request.getGoodsNo());
-			newBroken.setStatus(BrokenGoodsEnums.Status.Normal.index().toString());
+			newBroken.setStatus(BrokenGoodsEnums.Status.Working.index().toString());
 			newBroken.setUserId(user.getId());
 			if (null!=Request.getRemark())
 			{
