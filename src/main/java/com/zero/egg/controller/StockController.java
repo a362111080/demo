@@ -99,7 +99,6 @@ public class StockController {
                         .eq(StringUtils.isNotBlank(stockRequest.getCompanyId()), "s.company_id", stockRequest.getCompanyId())
                         .eq(StringUtils.isNotBlank(stockRequest.getSpecificationId()), "s.specification_id", stockRequest.getSpecificationId())
                         .eq(StringUtils.isNotBlank(stockRequest.getProgramId()), "sp.program_id", stockRequest.getProgramId())
-                        .eq(StringUtils.isNotBlank(stockRequest.getCategoryId()), "c.id", stockRequest.getCategoryId())
                         .eq(StringUtils.isNotBlank(stockRequest.getMarker()), "sp.id", stockRequest.getMarker())
                         .eq("c.id", stockRequest.getCategoryId())
                         .eq(StringUtils.isNotBlank(stockRequest.getNumerical()), "sp.numerical", stockRequest.getNumerical())

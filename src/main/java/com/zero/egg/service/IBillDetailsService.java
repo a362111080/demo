@@ -1,10 +1,9 @@
 package com.zero.egg.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
-import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.util.List;
+import com.zero.egg.tool.Message;
 
 /**
  * <p>
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public interface IBillDetailsService extends IService<BillDetails> {
 
-    List<BillDetails> getbilldetsils(Bill bill);
+    Message getbilldetsils(Bill bill);
 
     Boolean updateDetails(BillDetails iDetails);
 }

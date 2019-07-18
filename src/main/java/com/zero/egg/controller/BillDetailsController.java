@@ -9,9 +9,11 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IBillDetailsService;
 import com.zero.egg.service.IBillService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
@@ -34,6 +35,7 @@ import java.util.List;
 @RestController
 @Api(value="财务账单详情")
 @RequestMapping("/billdetails")
+@Slf4j
 public class BillDetailsController {
 
 	@Autowired
@@ -48,11 +50,20 @@ public class BillDetailsController {
 	@RequestMapping(value="/getbilldetsils",method=RequestMethod.POST)
 	public Message getByBillId(@RequestBody  Bill bill) {
 		Message ms = new Message();
-		List<BillDetails> companyUserList = billDetailsService.getbilldetsils(bill);
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		try {
+			bill.setCompanyId(loginUser.getCompanyId());
+			bill.setShopId(loginUser.getShopId());
+			ms = billDetailsService.getbilldetsils(bill);
+		} catch (Exception e) {
+			ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			ms.setMessage(UtilConstants.ResponseMsg.FAILED);
+			if (!(e instanceof ServiceException)) {
+				log.error("getbilldetsils controller error" + e);
+			}
+		}
 
-		ms.setData(companyUserList);
-		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return ms;
 	}
 	

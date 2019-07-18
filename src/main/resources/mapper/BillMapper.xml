@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.BillMapper">
+    <sql id="Base_Column_List">
+	id,
+	shop_id,
+	company_id,
+	bill_no,
+	cussup_id,
+	bill_date,
+	`type`,
+	quantity,
+	amount,
+	real_amount,
+	`status`,
+	remark,
+	creator,
+	createtime,
+	modifier,
+	modifytime,
+	categoryname,
+	dr,
+	task_id
+</sql>
+    <resultMap id="BaseResultMap" type="com.zero.egg.model.Bill">
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="bill_no" property="billNo"/>
+        <result column="cussup_id" property="cussupId"/>
+        <result column="bill_date" property="billDate"/>
+        <result column="type" property="type"/>
+        <result column="quantity" property="quantity"/>
+        <result column="amount" property="amount"/>
+        <result column="real_amount" property="realAmount"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="creator" property="creator"/>
+        <result column="createtime" property="createtime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifytime" property="modifytime"/>
+        <result column="categoryname" property="categoryname"/>
+        <result column="dr" property="dr"/>
+        <result column="task_id" property="taskId"/>
+    </resultMap>
     <select id="GetSupplierList" parameterType="SupplierRequestDTO" resultType="com.zero.egg.model.Supplier">
         select  k.*,lv1.id as city1,lv2.id as city2 from bd_supplier k
         left join bd_city   lv3  on lv3.id=k.city_id
@@ -90,4 +132,12 @@
         where bill_id=#{id,jdbcType=INTEGER}
         group by b.name,b.id
     </select>
+
+    <select id="getOneByIdAndCompanyIdAndShopIdAndDr" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bd_bill
+        where id=#{id} and company_id=#{companyId} and shop_id=#{shopId} and dr=0
+    </select>
+
 </mapper>
