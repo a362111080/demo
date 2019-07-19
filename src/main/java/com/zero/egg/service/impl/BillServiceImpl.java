@@ -215,7 +215,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
                     return message;
                 }
-                amount.add(subTotal);
+                amount = amount.add(subTotal);
                 IDetails.setAmount(subTotal);
                 billDetailsMapper.updateDetails(IDetails);
             }
