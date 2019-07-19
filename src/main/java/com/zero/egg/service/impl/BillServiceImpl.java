@@ -194,6 +194,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             BigDecimal subTotal;
             BigDecimal numberical;
             for (BillDetails billDetails : details) {
+                IDetails.setId(billDetails.getId());
                 IDetails.setPrice(billDetails.getPrice());
                 //如果当前计重方式为去皮,小计=单价*(重量-去皮值*数量)
                 if (1 == billDetails.getCurrentMode()) {
