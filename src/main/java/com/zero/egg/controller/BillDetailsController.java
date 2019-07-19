@@ -4,7 +4,6 @@ package com.zero.egg.controller;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.Bill;
-import com.zero.egg.model.BillDetails;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IBillDetailsService;
 import com.zero.egg.service.IBillService;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * <p>
@@ -74,28 +71,12 @@ public class BillDetailsController {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		BigDecimal Amount = BigDecimal.ZERO;
-		for (int n = 0; n < model.getUnloadDetails().size(); n++) {
-			BillDetails IDetails = new BillDetails();
-			IDetails.setPrice(model.getUnloadDetails().get(n).getPrice());
-			IDetails.setAmount(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-			IDetails.setModifier(user.getId());
-			IDetails.setModifytime(new Date());
-			IDetails.setId(model.getUnloadDetails().get(n).getId());
-			Amount = Amount.add(model.getUnloadDetails().get(n).getPrice().multiply(model.getUnloadDetails().get(n).getQuantity()));
-			billDetailsService.updateDetails(IDetails);
-		}
-		//更新总价
-		Bill bill = new Bill();
-		bill.setId(model.getId());
-		bill.setAmount(Amount);
-		bill.setModifier(user.getId());
-		bill.setModifytime(new Date());
-		bill.setRealAmount(model.getRealAmount());
-		if (billService.updateById(bill)) {
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		} else {
+		try {
+			message = billService.updateBillAndDetails(model, user);
+		} catch (Exception e) {
+			if (!(e instanceof ServiceException)) {
+				log.error("editAmount Controller error" + e);
+			}
 			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.FAILED);
 		}

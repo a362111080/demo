@@ -11,6 +11,7 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.responseDTO.CategorySum;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 
 import java.util.List;
 
@@ -38,5 +39,13 @@ public interface IBillService extends IService<Bill> {
      * @param blankBillRequestDTO
      * @return
      */
-    Message updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser);
+    Message updateBillAndDetails(BlankBillRequestDTO blankBillRequestDTO, LoginUser loginUser) throws ServiceException;
+
+    /**
+     * 更新未结清的账单信息
+     * @param bill
+     * @param loginUser
+     * @return
+     */
+    Message updateBillAndDetails(Bill bill, LoginUser loginUser) throws ServiceException;
 }

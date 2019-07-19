@@ -180,4 +180,56 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             throw new ServiceException("updateBillAndDetails failed");
         }
     }
+
+    @Override
+    @Transactional
+    public Message updateBillAndDetails(Bill bill, LoginUser loginUser) throws ServiceException {
+        Message message = new Message();
+        try {
+            BigDecimal amount = BigDecimal.ZERO;
+            //账单细节列表
+            List<BillDetails> details = bill.getUnloadDetails();
+            //需要更新库的账单细节对象
+            BillDetails IDetails = new BillDetails();
+            BigDecimal subTotal;
+            BigDecimal numberical;
+            for (BillDetails billDetails : details) {
+                IDetails.setPrice(billDetails.getPrice());
+                //如果当前计重方式为去皮,小计=单价*(重量-去皮值*数量)
+                if (1 == billDetails.getCurrentMode()) {
+                    //去皮值可能为null
+                    if (null == billDetails.getNumberical() || billDetails.getNumberical().compareTo(BigDecimal.ZERO) == 0) {
+                        numberical = BigDecimal.ZERO;
+                    } else {
+                        numberical = billDetails.getNumberical();
+                    }
+                    subTotal = billDetails.getPrice()
+                            .multiply(billDetails.getTotalWeight()
+                                    .subtract(billDetails.getQuantity()
+                                            .multiply(numberical)));
+                } else if (2 == billDetails.getCurrentMode()) {
+                    subTotal = billDetails.getPrice().multiply(billDetails.getQuantity());
+                } else {
+                    //如果缺少参数就返回前端并提示
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                    return message;
+                }
+                amount.add(subTotal);
+                IDetails.setAmount(subTotal);
+                billDetailsMapper.updateDetails(IDetails);
+            }
+            //更新总价
+            bill.setAmount(amount);
+            bill.setModifier(loginUser.getId());
+            bill.setModifytime(new Date());
+            mapper.updateById(bill);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("updateBillAndDetails error" + e);
+            throw new ServiceException("updateBillAndDetails error");
+        }
+        return message;
+    }
 }
