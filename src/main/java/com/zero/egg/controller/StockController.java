@@ -165,6 +165,8 @@ public class StockController {
             queryWrapper.eq("g.shop_id", stockRequest.getShopId())
                     .eq("g.company_id", stockRequest.getCompanyId())
                     .eq("g.specification_id", stockRequest.getSpecificationId())
+                    .eq("g.dr", false)
+                    .orderByAsc("g.goods_no")
             ;
         } else {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
