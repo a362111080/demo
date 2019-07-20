@@ -21,7 +21,7 @@
 	<if test="keyword != null and keyword !=''">
 		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%' or a.goods_no LIKE '%${keyword}%')
 	</if>
-
+    order by  a.createtime desc
 </select>
 
 	<select id="CheckBroken"  resultType="com.zero.egg.model.BrokenGoods">
