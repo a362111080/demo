@@ -4,8 +4,10 @@ import com.Apptest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.SassUserMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.model.Category;
+import com.zero.egg.model.SassUser;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
@@ -53,6 +55,17 @@ public class BaseInfoServiceTest extends Apptest {
     @Autowired
     private ShipmentGoodsMapper shipmentGoodsMapper;
 
+    @Autowired
+    private SassUserMapper sassUserMapper;
+
+    @Test
+    public void testAddSassAdmin() {
+        SassUser sassUser = new SassUser();
+        sassUser.setLoginname("SassAdmin");
+        sassUser.setPassword("7e25eea648285430a7dfcc9ade7ed8dc");
+//        sassUserMapper.insert(sassUser);
+//        System.out.println(sassUser.getId());
+    }
 
     @Test
     public void testZadd(){
