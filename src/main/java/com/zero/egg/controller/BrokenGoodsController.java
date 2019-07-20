@@ -188,7 +188,7 @@ public class BrokenGoodsController {
 			newBroken.setId(Request.getId());
 			newBroken.setBrokenGoodsNo(Request.getGoodsNo());
 			BrokenGoods data=brokenGoodsService.getById(Request.getId());
-			if (data.getGoodsNo()==Request.getGoodsNo()) {
+			if (data.getGoodsNo().equals(Request.getGoodsNo())) {
 
 				if (null != data.getChangeGoodsNo()) {
 					newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
