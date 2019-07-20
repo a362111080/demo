@@ -9,10 +9,12 @@ import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
+import com.zero.egg.model.SassUser;
 import com.zero.egg.model.User;
 import com.zero.egg.model.WechatAuth;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
+import com.zero.egg.service.SassUserService;
 import com.zero.egg.service.WechatAuthService;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.MD5Utils;
@@ -51,9 +53,11 @@ public class LoginController {
     private JedisUtil.Keys jediskeys;
     @Autowired
     private JedisUtil.Strings jedisStrings;
+    @Autowired
+    private SassUserService sassUserService;
 
     @PassToken
-    @ApiOperation(value = "登录")
+    @ApiOperation(value = "鸡蛋系统登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public BaseResponse<Object> checklogin(@RequestParam @ApiParam(required = true, name = "loginname", value = "登录名") String loginname
             , @RequestParam @ApiParam(required = true, name = "loginPwd", value = "登录密码") String loginPwd, HttpServletRequest request) {
@@ -165,11 +169,43 @@ public class LoginController {
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
-            log.error("unkown exception:" + e);
+            log.error("logout exception:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
         }
         return message;
     }
+
+    @PassToken
+    @ApiOperation(value = "Sass系统登录")
+    @RequestMapping(value = "/sasslogin", method = RequestMethod.POST)
+    public BaseResponse<Object> saasLogin(@RequestParam @ApiParam(required = true, name = "loginname", value = "登录名") String loginname
+            , @RequestParam @ApiParam(required = true, name = "loginPwd", value = "登录密码") String loginPwd, HttpServletRequest request) {
+        BaseResponse<Object> response;
+        Map<String, Object> map;
+        try {
+            String pwd = MD5Utils.encode(loginPwd);
+            SassUser sassUser = sassUserService.sassLogin(loginname, pwd);
+            if (null != sassUser) {
+                response = new BaseResponse<>();
+                String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
+                map = new HashMap<>();
+                map.put("token", redisKey);
+                map.put("user", sassUser);
+                response.setData(map);
+                response.setCode(ApiConstants.ResponseCode.SUCCESS);
+                response.setMsg("登录成功");
+            } else {
+                response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+                response.setMsg("登录失败!，请联系管理员");
+            }
+        } catch (Exception e) {
+            log.error("saasLogin error:" + e);
+            response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+            response.setMsg("登录失败!，请联系管理员");
+        }
+        return response;
+    }
+
 
 }
