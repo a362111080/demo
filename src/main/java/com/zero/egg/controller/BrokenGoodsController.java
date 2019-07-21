@@ -155,7 +155,6 @@ public class BrokenGoodsController {
 			{
 				newBroken.setRemark(Request.getRemark());
 			}
-
 			brokenGoodsService.updateById(newBroken);
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -188,26 +187,18 @@ public class BrokenGoodsController {
 			newBroken.setId(Request.getId());
 			newBroken.setBrokenGoodsNo(Request.getGoodsNo());
 			BrokenGoods data=brokenGoodsService.getById(Request.getId());
-			if (data.getGoodsNo().equals(Request.getGoodsNo())) {
-
-				if (null != data.getChangeGoodsNo()) {
-					newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
-				} else {
-					newBroken.setStatus(BrokenGoodsEnums.Status.Working.index().toString());
-				}
-				newBroken.setUserId(user.getId());
-				if (null != Request.getRemark()) {
-					newBroken.setRemark(Request.getRemark());
-				}
-				brokenGoodsService.updateById(newBroken);
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			if (null != data.getChangeGoodsNo()) {
+				newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
+			} else {
+				newBroken.setStatus(BrokenGoodsEnums.Status.Working.index().toString());
 			}
-			else
-			{
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage("货物不符,回收失败!");
+			newBroken.setUserId(user.getId());
+			if (null != Request.getRemark()) {
+				newBroken.setRemark(Request.getRemark());
 			}
+			brokenGoodsService.updateById(newBroken);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
 		else
 		{
