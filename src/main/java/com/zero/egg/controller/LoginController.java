@@ -189,6 +189,9 @@ public class LoginController {
             if (null != sassUser) {
                 response = new BaseResponse<>();
                 String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
+                //生成token
+                String accessToken = TokenUtils.createJwtToken(sassUser.getId());
+                jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                 map = new HashMap<>();
                 map.put("token", redisKey);
                 map.put("user", sassUser);
