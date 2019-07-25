@@ -15,10 +15,7 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IShopService;
-import com.zero.egg.tool.Message;
-import com.zero.egg.tool.StringTool;
-import com.zero.egg.tool.UtilConstants;
-import com.zero.egg.tool.UuidUtil;
+import com.zero.egg.tool.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -129,12 +126,13 @@ public class CompanyController {
 	@ApiOperation(value="新增编辑企业、企业账号和店铺")
 	@Transactional(rollbackFor=Exception.class)
 	@RequestMapping(value="/addcompanyshop",method=RequestMethod.POST)
-	public Message<Object> addCompanyAndShop(@RequestBody  CompanyUser companyUser) {
+	public Message<Object> addCompanyAndShop(@RequestBody  CompanyUser companyUser) throws Exception {
 
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		Company  company=new Company();
+		String pwd = MD5Utils.encode(companyUser.getPassword());
 		if (null !=companyUser.getCompanyId()) {
 			company.setId(companyUser.getCompanyId());
 			company.setModifier(loginUser.getId());
@@ -149,6 +147,7 @@ public class CompanyController {
 				companyUser.setCreator(loginUser.getId());
 				companyUser.setModifytime(new Date());
 				companyUser.setCreatetime(new Date());
+				companyUser.setPassword(pwd);
 				companyUser.setDr(false);
 				iCompanyUserService.updateById(companyUser);
 				if (companyUser.getShopList()  != null && companyUser.getShopList().size()>0) {
@@ -196,6 +195,7 @@ public class CompanyController {
 				companyUser.setCreator(loginUser.getId());
 				companyUser.setCompanyId(company.getId());
 				companyUser.setModifytime(new Date());
+				companyUser.setPassword(pwd);
 				companyUser.setCreatetime(new Date());
 				companyUser.setStatus(CompanyEnums.Status.Normal.index().toString());
 				companyUser.setDr(false);
