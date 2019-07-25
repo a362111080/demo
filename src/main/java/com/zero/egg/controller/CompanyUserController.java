@@ -14,6 +14,7 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.responseDTO.CompanyinfoResponseDto;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IShopService;
+import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
@@ -120,11 +121,12 @@ public class CompanyUserController {
 	@ApiOperation(value="新增企业用户")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
 	public Message<Object> add(HttpServletRequest request
-			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业信息:编号，名称，电话，企业主键") CompanyUser companyUser) {
+			,@RequestBody @ApiParam(required=true,name="companyUser",value="企业信息:编号，名称，电话，企业主键") CompanyUser companyUser) throws Exception {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		companyUser.setPassword("888888");
+		String pwd = MD5Utils.encode(companyUser.getPassword());
+		companyUser.setPassword(pwd);
 		companyUser.setModifier(loginUser.getId());
 		companyUser.setCreator(loginUser.getId());
 		if (iCompanyUserService.save(companyUser)) {
@@ -141,14 +143,15 @@ public class CompanyUserController {
 	@ApiOperation(value="根据id修改企业用户信息")
 	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
 	public Message<Object> edit(HttpServletRequest request
-			,@RequestBody  @ApiParam(required=true,name="companyUser",value="企业信息：编号，名称，电话，企业主键") CompanyUser companyUser,HttpSession session) {
+			,@RequestBody  @ApiParam(required=true,name="companyUser",value="企业信息：编号，名称，电话，企业主键") CompanyUser companyUser,HttpSession session) throws Exception {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
 		companyUser.setModifytime(new Date());
-		companyUser.setPassword(companyUser.getPassword());
+		String pwd = MD5Utils.encode(companyUser.getPassword());
+		companyUser.setPassword(pwd);
 		if (iCompanyUserService.updateById(companyUser)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
