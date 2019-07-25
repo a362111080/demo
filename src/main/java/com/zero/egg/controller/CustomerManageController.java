@@ -15,6 +15,7 @@ import com.zero.egg.tool.UtilConstants.ResponseCode;
 import com.zero.egg.tool.UtilConstants.ResponseMsg;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ import java.util.List;
 @Api(value="客户管理")
 @RestController
 @RequestMapping("/customer")
+@Slf4j
 public class CustomerManageController {
     @Autowired
     private CustomerService CustomerSv;
@@ -73,6 +75,7 @@ public class CustomerManageController {
             return message;
 
         } catch (Exception e) {
+            log.error("AddCustomer error:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             //message.setMessage(e.getMessage());
