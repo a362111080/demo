@@ -148,6 +148,7 @@ public class CompanyUserController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		companyUser.setModifier(loginUser.getId());
 		companyUser.setModifytime(new Date());
+		companyUser.setPassword(companyUser.getPassword());
 		if (iCompanyUserService.updateById(companyUser)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
