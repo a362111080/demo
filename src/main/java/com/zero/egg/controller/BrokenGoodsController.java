@@ -1,17 +1,16 @@
 package com.zero.egg.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.BrokenGoodsEnums;
-import com.zero.egg.model.*;
-import com.zero.egg.requestDTO.BarCodeListRequestDTO;
+import com.zero.egg.model.BarCode;
+import com.zero.egg.model.BrokenGoods;
+import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.requestDTO.LoginUser;
-import com.zero.egg.service.BarCodeService;
 import com.zero.egg.service.IBrokenGoodsService;
 import com.zero.egg.service.IChangeGoodsService;
 import com.zero.egg.service.IGoodsService;
@@ -113,7 +112,9 @@ public class BrokenGoodsController {
 	@PostMapping(value="/brokentask")
 	public Message GetBrokenTask(@RequestBody BrokenGoodsRequest Request) {
 		Message message = new Message();
+		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		PageHelper.startPage(Request.getCurrent().intValue(), Request.getSize().intValue());
+		Request.setShopId(user.getShopId());
 		//获取报损任务
 		List<BrokenGoods> newBroken=brokenGoodsService.GetBrokenTask(Request);
 		PageInfo<BrokenGoods>  pageInfo = new PageInfo<>(newBroken);
