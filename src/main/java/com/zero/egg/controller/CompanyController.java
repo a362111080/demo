@@ -207,6 +207,7 @@ public class CompanyController {
 						shop.setModifier(loginUser.getId());
 						shop.setModifytime(new Date());
 						shop.setCreatetime(new Date());
+
 						shop.setCreator(loginUser.getId());
 						shop.setDr(false);
 						shopService.save(shop);

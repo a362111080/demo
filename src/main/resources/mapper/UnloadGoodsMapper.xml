@@ -26,19 +26,19 @@
         select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,
         CASE when sp.mode = '1' and s.type='1' THEN CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')
         when sp.mode='2'  and s.type='1' THEN CONCAT( pro.NAME, ' ', '常规' )
-        when s.type='0'  then  CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
+        when s.type='2'  then  CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
         else  CONCAT(pro.name,' ','常规')
         end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
         CASE
         WHEN sp.MODE = '1' and s.type='1' THEN a.specification_id
         when sp.mode='12'  and s.type='1' THEN  ''
-        when s.type='0'  then  a.specification_id
+        when s.type='2'  then  a.specification_id
         ELSE ''
         END AS specification_id,
         CASE
         WHEN sp.mode = '1' and s.type='1' THEN  sp.weight_min
         when sp.mode='2'  and s.type='1' THEN  ''
-        when s.type='0'  then  sp.weight_min
+        when s.type='2'  then  sp.weight_min
         ELSE ''
         END AS weight_min, war.warNum,sp.mode
         from  bd_unload_goods  a
