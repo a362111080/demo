@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zero.egg.model.Student;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class StudentController {
@@ -13,9 +14,11 @@ public class StudentController {
     private StudentService studentService;
  
     @RequestMapping("/demo")
-    public Student get(){
-        Student student=studentService.getStudentByID(12);
-        return  student;
+    public String get(){
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+        System.out.println(sdf.format(date));
+        return "success";
     }
  
     @RequestMapping(value = "res")
