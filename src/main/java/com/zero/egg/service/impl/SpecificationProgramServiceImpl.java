@@ -31,7 +31,6 @@ import java.util.List;
  **/
 @Service
 @Slf4j
-@Transactional
 public class SpecificationProgramServiceImpl implements SpecificationProgramService {
 
     @Autowired
@@ -41,6 +40,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
     private SpecificationMapper specificationMapper;
 
     @Override
+    @Transactional
     public Message addStandardData(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         SpecificationProgram specificationProgram = new SpecificationProgram();
@@ -171,6 +171,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
     }
 
     @Override
+    @Transactional
     public Message updateSpecificationProgram(SpecificationProgramRequestDTO specificationProgramRequestDTO) throws ServiceException {
         Message message = new Message();
         SpecificationProgram specificationProgram = new SpecificationProgram();
