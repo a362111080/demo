@@ -145,11 +145,14 @@ public class SupplierManageController {
 
     }
 
+    @LoginToken
     @ApiOperation(value = "查询供应商列表", notes = "分页查询，各种条件查询")
     @RequestMapping(value = "/getsupplierlist", method = RequestMethod.POST)
     public Message GetSupplierList(@RequestBody SupplierRequestDTO model) {
         Message ms = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+        model.setShopId(user.getShopId());
         List<Supplier> Supplier = supplierService.GetSupplierList(model);
         PageInfo<Supplier> pageInfo = new PageInfo<>(Supplier);
         ms.setData(pageInfo);
