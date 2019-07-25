@@ -3,9 +3,11 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.SpecificationProgramMapper;
+import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Category;
 import com.zero.egg.model.SpecificationProgram;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
@@ -47,6 +49,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private SpecificationProgramService programService;
 
+    @Autowired
+    private BarCodeMapper barCodeMapper;
+
     @Override
     @Transactional
     public Message saveEggType(CategoryRequestDTO saveCategoryRequestDTO) {
@@ -77,8 +82,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteEggTypeById(CategoryRequestDTO deleteCategoryRequestDTO) {
-        Message message = null;
-        Category category = new Category();
+        Category category;
+        BarCode barCode;
         SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
         specificationProgramRequestDTO.setShopId(deleteCategoryRequestDTO.getShopId());
         specificationProgramRequestDTO.setCompanyId(deleteCategoryRequestDTO.getCompanyId());
@@ -95,9 +100,17 @@ public class CategoryServiceImpl implements CategoryService {
                 specificationProgramRequestDTO.setId(specificationProgram.getId());
                 programService.deleteStandardDataById(specificationProgramRequestDTO);
             }
+            //对应品种的二维码也作逻辑删除,只对母二维码作操作,以免影响到出货操作
+            barCode = new BarCode();
+            barCode.setDr(true);
+            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", deleteCategoryRequestDTO.getCompanyId())
+                    .eq("category_id", deleteCategoryRequestDTO.getId()));
             /**
              * 只做逻辑删除
              */
+            category = new Category();
             category.setDr(1);
             categoryMapper.update(category, new UpdateWrapper<Category>()
                     .eq("id", deleteCategoryRequestDTO.getId())
@@ -111,9 +124,29 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void batchDeleteEggType(CategoryRequestDTO batchDeleteCategoryRequestDTO) {
         Category category = new Category();
+        BarCode barCode;
+        SpecificationProgramRequestDTO specificationProgramRequestDTO = new SpecificationProgramRequestDTO();
+        specificationProgramRequestDTO.setShopId(batchDeleteCategoryRequestDTO.getShopId());
+        specificationProgramRequestDTO.setCompanyId(batchDeleteCategoryRequestDTO.getCompanyId());
         try {
+            List<SpecificationProgram> specificationProgramList = specificationProgramMapper.selectList(new QueryWrapper<SpecificationProgram>()
+                    .in("category_id", batchDeleteCategoryRequestDTO.getId())
+                    .eq("dr", 0)
+                    .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId()));
+            for (SpecificationProgram specificationProgram : specificationProgramList) {
+                specificationProgramRequestDTO.setId(specificationProgram.getId());
+                programService.deleteStandardDataById(specificationProgramRequestDTO);
+            }
+            barCode = new BarCode();
+            barCode.setDr(true);
+            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>()
+                    .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId())
+                    .in("category_id", batchDeleteCategoryRequestDTO.getIds()));
             category.setDr(1);
             categoryMapper.update(category, new UpdateWrapper<Category>()
                     .in("id", batchDeleteCategoryRequestDTO.getIds())
