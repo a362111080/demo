@@ -61,7 +61,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             }
             return message;
         } catch (Exception e) {
-            log.info("addStandardData error", e.toString());
+            log.error("addStandardData error", e);
             throw new ServiceException("addStandardData error");
         }
     }
@@ -105,7 +105,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
         } catch (Exception e) {
-            log.info("deleteStandardDataById error", e.toString());
+            log.error("deleteStandardDataById error", e);
             throw new ServiceException("deleteStandardDataById error");
         }
     }
@@ -165,7 +165,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
         } catch (Exception e) {
-            log.info("listDataAndDetl error", e.toString());
+            log.error("listDataAndDetl error", e);
             throw new ServiceException("listDataAndDetl error");
         }
     }
@@ -201,7 +201,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
             }
         } catch (Exception e) {
-            log.info("updateSpecificationProgram error", e.toString());
+            log.error("updateSpecificationProgram error", e);
             throw new ServiceException("updateSpecificationProgram error");
         }
         return message;
@@ -222,7 +222,7 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
         } catch (Exception e) {
-            log.info("listDataAndDetl error", e.toString());
+            log.error("listDataAndDetl error", e);
             throw new ServiceException("listDataAndDetl error");
         }
     }
