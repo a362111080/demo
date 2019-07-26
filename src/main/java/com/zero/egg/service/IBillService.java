@@ -6,6 +6,7 @@ import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.BlankBillRequestDTO;
+import com.zero.egg.requestDTO.CancelShipmentBillRequestDTO;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
@@ -48,4 +49,6 @@ public interface IBillService extends IService<Bill> {
      * @return
      */
     Message updateBillAndDetails(Bill bill, LoginUser loginUser) throws ServiceException;
+
+    Message cancelShipmentBill(CancelShipmentBillRequestDTO requestDTO) throws ServiceException;
 }

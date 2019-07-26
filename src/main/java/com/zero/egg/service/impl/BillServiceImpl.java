@@ -1,16 +1,26 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
+import com.zero.egg.dao.GoodsMapper;
+import com.zero.egg.dao.ShipmentGoodsMapper;
+import com.zero.egg.dao.StockMapper;
+import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.BillEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
 import com.zero.egg.model.Customer;
+import com.zero.egg.model.Goods;
+import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.model.Stock;
 import com.zero.egg.model.Supplier;
+import com.zero.egg.model.Task;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.BlankBillRequestDTO;
+import com.zero.egg.requestDTO.CancelShipmentBillRequestDTO;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
@@ -27,7 +37,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -47,6 +61,20 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
 
     @Autowired
     private BillDetailsMapper billDetailsMapper;
+
+    @Autowired
+    private StockMapper stockMapper;
+
+    @Autowired
+    private ShipmentGoodsMapper shipmentGoodsMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
+
+    @Autowired
+    private TaskMapper taskMapper;
+
+
 
     @Override
     public List<Supplier> GetSupplierList(SupplierRequestDTO model) {
@@ -230,6 +258,97 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
         } catch (Exception e) {
             log.error("updateBillAndDetails error" + e);
             throw new ServiceException("updateBillAndDetails error");
+        }
+        return message;
+    }
+
+    @Override
+    @Transactional
+    public Message cancelShipmentBill(CancelShipmentBillRequestDTO requestDTO) throws ServiceException {
+        Message message = new Message();
+        /**
+         * 1.根据账单id查出该账单信息,主要是相关联的出货任务id,逻辑删除该账单信息(包括账单细节表里的关联信息)
+         * 2.根据任务id查询出货商品表相关已出货物信息,主要是商品编号,方案细节(规格)id,并将dr置位1
+         * 3.将商品表里的商品编号所对应的的商品的dr属性重置为0
+         * 4.将库存表里面的对应规格的库存数量加上去
+         */
+        try {
+            Bill bill = mapper.selectOne(new QueryWrapper<Bill>()
+                    .select("id,cussup_id,task_id")
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("id", requestDTO.getBillId())
+                    .eq("dr", 0));
+            //合作商id
+            String customerId = bill.getCussupId();
+            //出货任务id
+            String taskId = bill.getTaskId();
+            Task task = taskMapper.selectById(taskId);
+            //如果查询不到该任务或者该任务不是出货任务,
+            if (null == task || "2".equals(task.getType())) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
+                return message;
+            }
+            bill.setDr(true);
+            //对应账单逻辑删除
+            mapper.updateById(bill);
+            BillDetails billDetails = new BillDetails();
+            //对应账单细节逻辑删除
+            billDetailsMapper.update(new BillDetails().setDr(true), new UpdateWrapper<BillDetails>()
+                    .eq("bill_id", requestDTO.getBillId()));
+            //查出对应出货商品集合
+            List<ShipmentGoods> shipmentGoodsList = shipmentGoodsMapper.selectList(new QueryWrapper<ShipmentGoods>()
+                    .select("id,specification_id,goods_no")
+                    .eq("task_id",taskId)
+                    .eq("customer_id",customerId)
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("dr", 0));
+            //出货商品id集合
+            Set<String> shipmentGoodsIdSet = new HashSet<>();
+            //规格集合
+            Map<String, Long> specificationMap = shipmentGoodsList.stream()
+                    .collect(Collectors.groupingBy(ShipmentGoods::getSpecificationId, Collectors.counting()));
+            //商品编号集合
+            Set<String> goodsNoSet = new HashSet<>();
+            for (ShipmentGoods shipmentGoods : shipmentGoodsList) {
+                shipmentGoodsIdSet.add(shipmentGoods.getId());
+                goodsNoSet.add(shipmentGoods.getGoodsNo());
+            }
+            //逻辑删除已出货物信息
+            shipmentGoodsMapper.update(new ShipmentGoods().setDr(true), new UpdateWrapper<ShipmentGoods>()
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .in("id", shipmentGoodsIdSet));
+            //已出货物重新入库
+            goodsMapper.update(new Goods().setDr(false), new UpdateWrapper<Goods>()
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .in("goods_no", goodsNoSet));
+            //库存数量恢复
+            Stock stock;
+            BigDecimal currentQuantity;
+            for (Map.Entry<String, Long> entry : specificationMap.entrySet()) {
+                stock = stockMapper.selectOne(new QueryWrapper<Stock>()
+                        .select("id,quantity")
+                        .eq("company_id", requestDTO.getCompanyId())
+                        .eq("shop_id", requestDTO.getShopId())
+                        .eq("specification_id", entry.getKey())
+                        .eq("dr", false));
+                currentQuantity = stock.getQuantity();
+                stock.setQuantity(currentQuantity.add(BigDecimal.valueOf(entry.getValue())));
+                stockMapper.update(stock, new UpdateWrapper<Stock>()
+                        .eq("id",stock.getId())
+                        .eq("company_id", requestDTO.getCompanyId())
+                        .eq("shop_id", requestDTO.getShopId())
+                        .eq("dr", false));
+            }
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("cancelShipmentBill service error:" + e);
+            throw new ServiceException("cancelShipmentBill service error");
         }
         return message;
     }

@@ -15,6 +15,7 @@ import com.zero.egg.model.Customer;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.BillRequest;
 import com.zero.egg.requestDTO.BlankBillRequestDTO;
+import com.zero.egg.requestDTO.CancelShipmentBillRequestDTO;
 import com.zero.egg.requestDTO.CustomerRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
@@ -67,7 +68,37 @@ public class BillController {
     private HttpServletRequest request;
 
     @LoginToken
-    //@PassToken
+    @ApiOperation("取消出货订单")
+    @PostMapping(value ="/cancelshipmentbill" )
+    public Message cancelShipmentBill(@RequestBody CancelShipmentBillRequestDTO requestDTO){
+        Message message  = new Message();
+        try {
+            //空值判断
+            if (null == requestDTO.getBillId() || "".equals(requestDTO.getBillId())) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return message;
+            }
+            //当前登录用户
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            requestDTO.setCompanyId(user.getCompanyId());
+            requestDTO.setShopId(user.getShopId());
+            message = billService.cancelShipmentBill(requestDTO);
+        } catch (Exception e) {
+            log.error("cancelShipmentBill controller failed:" + e);
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
+        }
+        return message;
+    }
+
+    @LoginToken
     @ApiOperation(value = "分页查询财务账单（不可用）")
     @RequestMapping(value = "/list.data", method = RequestMethod.POST)
     public Message<IPage<Bill>> list(
