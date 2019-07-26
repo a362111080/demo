@@ -78,4 +78,10 @@
 		select * from bd_barcode  k where   k.dr=0 and
 		 k.id=#{goodsNo,jdbcType=VARCHAR}
 	</select>
+
+	<select id="GetstockGood" resultType="com.zero.egg.model.Goods" parameterType="string">
+		select * from bd_goods  k where   k.id=#{changeGoodsNo,jdbcType=VARCHAR}
+	</select>
+
+
 </mapper>

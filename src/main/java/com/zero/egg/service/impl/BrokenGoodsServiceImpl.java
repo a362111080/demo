@@ -72,4 +72,9 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 		return mapper.GetBarCodeInfo(brokenGoods.getBarcodeid());
 	}
 
+	@Override
+	public Goods GetstockGood(String changeGoodsNo) {
+		return mapper.GetstockGood(changeGoodsNo);
+	}
+
 }

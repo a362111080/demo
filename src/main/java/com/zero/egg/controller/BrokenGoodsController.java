@@ -1,6 +1,7 @@
 package com.zero.egg.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
@@ -9,11 +10,13 @@ import com.zero.egg.enums.BrokenGoodsEnums;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Goods;
+import com.zero.egg.model.Stock;
 import com.zero.egg.requestDTO.BrokenGoodsRequest;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IBrokenGoodsService;
 import com.zero.egg.service.IChangeGoodsService;
 import com.zero.egg.service.IGoodsService;
+import com.zero.egg.service.IStockService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +59,8 @@ public class BrokenGoodsController {
 
 	@Autowired
 	private HttpServletRequest request;
-
+	@Autowired
+	private IStockService stockService;
 
 	@LoginToken
 	@ApiOperation(value="查询货物信息")
@@ -143,6 +148,7 @@ public class BrokenGoodsController {
 			newBroken.setId(Request.getId());
 			newBroken.setChangeGoodsNo(Request.getGoodsNo());
 			BrokenGoods data=brokenGoodsService.getById(Request.getId());
+
 			if (null !=data.getBrokenGoodsNo())
 			{
 				newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
@@ -157,6 +163,16 @@ public class BrokenGoodsController {
 				newBroken.setRemark(Request.getRemark());
 			}
 			brokenGoodsService.updateById(newBroken);
+			brokenGoodsService.updateGoodsDr(newBroken.getChangeGoodsNo());
+
+			Goods  stockGood=brokenGoodsService.GetstockGood(newBroken.getChangeGoodsNo());
+			//减去相应的库存
+			QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
+			stockWrapper.eq("specification_id", stockGood.getSpecificationId());
+			Stock stock = stockService.getOne(stockWrapper);
+			stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
+			stockService.updateById(stock);
+
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
@@ -302,6 +318,12 @@ public class BrokenGoodsController {
 						if (brokenGoodsService.save(newBroken)) {
 							//修改商品表状态
 							brokenGoodsService.updateGoodsDr(newBroken.getBrokenGoodsNo());
+							//减去相应的库存
+							QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
+							stockWrapper.eq("specification_id", newBroken.getSpecificationId());
+							Stock stock = stockService.getOne(stockWrapper);
+							stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
+							stockService.updateById(stock);
 							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 						} else {
