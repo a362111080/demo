@@ -21,9 +21,9 @@
 
 
     <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as sumVal,sum(info.warNum) as  warNum,info.mode,info.specification_id
+        select info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as sumVal,sum(info.warNum) as  warNum,info.mode,info.specification_id,sum(info.sumweight) as sumweight
         from (
-        select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,
+        select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,		round(sum(a.marker),2) as sumweight,
         CASE when sp.mode = '1' and s.type='1' THEN CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')
         when sp.mode='2'  and s.type='1' THEN CONCAT( pro.NAME, ' ', '常规' )
         when s.type='2'  then  CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
