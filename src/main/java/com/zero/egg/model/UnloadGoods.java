@@ -95,6 +95,8 @@ public class UnloadGoods implements Serializable {
     private String UnloadTime;
 
 
+
+
     @TableField(exist = false)
     @ApiModelProperty(value = "查询使用  鸡蛋品种",hidden=true)
     private String categoryName;

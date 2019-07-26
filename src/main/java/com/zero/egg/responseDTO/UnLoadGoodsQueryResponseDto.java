@@ -85,6 +85,13 @@ public class UnLoadGoodsQueryResponseDto implements Serializable {
     @ApiModelProperty(value = "当前方案合计卸货数量")
     private BigDecimal warNum;
 
+
+    /**
+     * 当前方案预警卸货数量
+     */
+    @ApiModelProperty(value = "当前方案合计卸货斤两")
+    private BigDecimal sumweight;
+
     /**
      * 当前方案预警卸货数量
      */
