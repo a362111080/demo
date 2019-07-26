@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.SupplierMapper">
-    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr,weight_mode)
+    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr)
     values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from bd_supplier),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
-           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0,#{weightMode})</insert>
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0)</insert>
     <update id="UpdateSupplier" parameterType="Supplier">update bd_supplier
     <set>
         <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
@@ -14,7 +14,6 @@
         <if test="remark!= null and remark!=''">remark= #{remark,jdbcType=VARCHAR},</if>
         <if test="phone!= null and phone!=''">phone= #{phone,jdbcType=VARCHAR},</if>
         <if test="status!= null and status !=''">status= #{status,jdbcType=VARCHAR},</if>
-        <if test="weightMode!= null and weightMode !=''">weight_mode= #{weightMode,jdbcType=VARCHAR},</if>
         <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
         <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
         <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
