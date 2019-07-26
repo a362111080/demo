@@ -31,4 +31,7 @@ public class CompanyUserRequest extends PageDTO{
 		@ApiModelProperty(value = "企业id",required=false)
 	     private String companyId;
 
+		@ApiModelProperty(value = "企业名称",required=false)
+		private String companyName;
+
 }

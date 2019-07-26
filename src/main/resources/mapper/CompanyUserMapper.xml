@@ -14,6 +14,12 @@
             <if test="companyId != null and companyId !=''">
                 a.company_id=#{companyId,jdbcType=VARCHAR}
             </if>
+            <if test="companyName != null and companyName !=''">
+                b.name=#{companyName,jdbcType=VARCHAR}
+            </if>
+            <if test="loginname != null and loginname !=''">
+                a.loginname=#{loginname,jdbcType=VARCHAR}
+            </if>
              and  a.dr=0
         </where>
         GROUP BY  a.id,a.company_id,a.name,b.name,a.loginname,b.begintime,b.endtime,a.createtime
