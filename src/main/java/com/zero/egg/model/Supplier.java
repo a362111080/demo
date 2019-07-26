@@ -146,10 +146,5 @@ public class Supplier implements Serializable {
     @TableField(exist = false)
     private String city2;
 
-
-    @ApiModelProperty(value = "称重方式",required=false)
-    private String weightMode;
-
-
 }
 
