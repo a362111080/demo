@@ -147,10 +147,13 @@ public class BarCodeServiceImpl implements BarCodeService {
             page = (Page<BarCode>) mapper.selectPage(page, new QueryWrapper<BarCode>()
                     .eq("shop_id", listRequestDTO.getShopId())
                     .eq("company_id", listRequestDTO.getCompanyId())
-                    .like(null != listRequestDTO.getSupplierName() && !"".equals(listRequestDTO.getSupplierName())
-                            , "supplier_name", listRequestDTO.getSupplierName())
                     .eq("dr", 0)
-                    .eq("current_code", ""));
+                    .eq("current_code", "")
+                    .nested(null != listRequestDTO.getSupplierName() && !"".equals(listRequestDTO.getSupplierName())
+                            ,i -> i.like("supplier_name", listRequestDTO.getSupplierName())
+                            .or()
+                            .like("code", listRequestDTO.getSupplierName()))
+            );
             barCodeListResponseDTO.setBarCodeList(page.getRecords());
             barCodeListResponseDTO.setCurrent(page.getCurrent());
             barCodeListResponseDTO.setPages(page.getPages());
