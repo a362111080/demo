@@ -163,7 +163,7 @@ public class CompanyController {
 			else
 			{
 				isExist="N";
-				message.setMessage("企业账号已存在，请重新输入");
+				message.setMessage("企业名称已存在，请重新输入");
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 			}
 		}
