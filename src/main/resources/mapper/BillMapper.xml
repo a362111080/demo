@@ -93,7 +93,7 @@
         left join bd_supplier  b on a.cussup_id=b.id
         left join bd_customer  c on a.cussup_id=c.id
         <where>
-
+            a.dr = 0
             <if test="billNo != null and billNo !=''">
                 and a.bill_no  LIKE '%${billNo}%'
             </if>
