@@ -238,6 +238,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                                             .multiply(numberical)));
                 } else if (2 == billDetails.getCurrentMode()) {
                     subTotal = billDetails.getPrice().multiply(billDetails.getQuantity());
+                    numberical = BigDecimal.ZERO;
                 } else {
                     //如果缺少参数就返回前端并提示
                     message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -245,6 +246,8 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     return message;
                 }
                 amount = amount.add(subTotal);
+                IDetails.setCurrentMode(billDetails.getCurrentMode());
+                IDetails.setNumberical(numberical);
                 IDetails.setAmount(subTotal);
                 billDetailsMapper.updateDetails(IDetails);
             }
