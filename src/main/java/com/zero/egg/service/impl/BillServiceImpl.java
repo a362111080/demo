@@ -285,7 +285,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             String taskId = bill.getTaskId();
             Task task = taskMapper.selectById(taskId);
             //如果查询不到该任务或者该任务不是出货任务,
-            if (null == task || "2".equals(task.getType())) {
+            if (null == task || !"2".equals(task.getType())) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
                 return message;
