@@ -394,7 +394,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             DecimalFormat g1 = new DecimalFormat("00000000");
             Bill bill = new Bill();
             bill.setQuantity(new BigDecimal(goodsResponseList.size()));
-            bill.setBillNo("BLS" + (g1.format(shipmentBillCount)+1));
+            bill.setBillNo("BLS" + (g1.format(shipmentBillCount+1)));
             bill.setCategoryname(categoryName);
             bill.setTaskId(taskId);
             bill.setCussupId(customerId);
