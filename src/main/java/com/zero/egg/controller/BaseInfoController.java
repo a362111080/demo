@@ -69,7 +69,7 @@ public class BaseInfoController {
              * 后期如果加验证方法,这里可以省略
              */
             if (null != saveCategoryRequestDTO && null != saveCategoryRequestDTO.getName()
-                    && checkShopAndCompanyExist(user, saveCategoryRequestDTO)) {
+                    && !"".equals(saveCategoryRequestDTO.getName()) && checkShopAndCompanyExist(user, saveCategoryRequestDTO)) {
                 saveCategoryRequestDTO.setCreator(user.getName());
                 saveCategoryRequestDTO.setCreatetime(new Date());
                 message = categoryService.saveEggType(saveCategoryRequestDTO);
@@ -252,6 +252,7 @@ public class BaseInfoController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getName()
+                    && !"".equals(specificationProgramRequestDTO.getName())
                     && null != specificationProgramRequestDTO.getCategoryId()
                     && checkShopAndCompanyExist(user, specificationProgramRequestDTO)) {
                 specificationProgramRequestDTO.setCreator(user.getName());
