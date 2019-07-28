@@ -47,7 +47,7 @@ public class TaskEnums {
 	}
 	public enum Type {
 		
-		Unload(1,"卸货"),Shipment(2,"出货");
+		Unload(1,"卸货"),Shipment(2,"出货"),Retail(3,"零售出货");
 		
 		private Integer index;
 		private String note;

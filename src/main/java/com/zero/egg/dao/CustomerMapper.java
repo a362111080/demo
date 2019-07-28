@@ -15,6 +15,8 @@ public interface CustomerMapper extends BaseMapper<Customer> {
 
 	List<Customer> GetCustomerList(CustomerRequestDTO model);
 
+	List<Customer> getShipmentSupplierList(CustomerRequestDTO model);
+
     int DeleteCustomer(List<String> ids);
 
 	List<city> GetCitys(city model);

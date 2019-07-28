@@ -16,4 +16,11 @@ public interface CustomerService {
     int DeleteCustomer(CustomerRequestDTO customer);
 
     List<city> GetCitys(city model);
+
+    /**
+     * 查询出货合作商列表(包含零售合作商)
+     * @param model
+     * @return
+     */
+    List<Customer> getShipmentSupplierList(CustomerRequestDTO model);
 }

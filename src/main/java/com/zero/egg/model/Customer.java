@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -134,11 +135,16 @@ public class Customer {
      * 省市区一级id
      */
     @ApiModelProperty(value = "省市区一级id",required=false)
+    @TableField(exist = false)
     private String city1;
     /**
      * 省市区二级id
      */
     @ApiModelProperty(value = "省市区二级id",required=false)
+    @TableField(exist = false)
     private String city2;
+
+    @ApiModelProperty(value ="是否零售商(0:否,1:是)")
+    private Integer isRetail = 0;
 
 }

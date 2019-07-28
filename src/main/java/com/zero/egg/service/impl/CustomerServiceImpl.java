@@ -50,4 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<city> GetCitys(city model) {
 		return  mapper.GetCitys(model);
 	}
+
+	@Override
+	public List<Customer> getShipmentSupplierList(CustomerRequestDTO model) {
+		return  mapper.getShipmentSupplierList(model);
+	}
 }

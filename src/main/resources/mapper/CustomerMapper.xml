@@ -62,8 +62,42 @@
                 and k.status=#{status,jdbcType=INTEGER}
             </if>
             and k.dr = 0
+            and k.is_retail = 0
         </where>
     </select>
+
+    <select id="getShipmentSupplierList" parameterType="CustomerRequestDTO" resultType="com.zero.egg.model.Customer">
+        select k.*from bd_customer k
+        <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type !=''">
+                and k.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name !=''">
+                and k.name LIKE '%${name}%'
+            </if>
+            <if test="checkname != null and checkname !=''">
+                and k.name=#{checkname,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='-1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr = 0
+            order by k.is_retail DESC
+        </where>
+    </select>
+
 
     <select id="GetCitys" parameterType="city" resultType="city">
         select * from bd_city k
