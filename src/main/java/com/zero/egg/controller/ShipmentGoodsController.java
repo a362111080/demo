@@ -167,7 +167,7 @@ public class ShipmentGoodsController {
     @LoginToken
     @ApiOperation(value = "查询当前出货任务的商品(出货列表用)")
     @PostMapping(value = "/shipmentgoodslist")
-    public Message shipmentTastList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键 3.sortType")
+    public Message shipmentTaskList(@RequestBody @ApiParam(required = true, value = "1.客户主键 2.任务主键 3.sortType")
                                             ShipmentGoodsRequest shipmentGoodsRequest, HttpServletRequest request) {
         Message message = new Message();
         /**

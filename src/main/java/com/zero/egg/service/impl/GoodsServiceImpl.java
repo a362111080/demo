@@ -59,7 +59,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             String customerId = shipmentGoodRequestDTO.getCustomerId();
             String barCodeId = shipmentGoodRequestDTO.getBarCodeString();
             String employeeId = loginUser.getId();
-            String employeeName = loginUser.getLoginname();
+            String employeeName = loginUser.getName();
 
             BarCode barCode = barCodeMapper.selectById(barCodeId);
             QueryWrapper<Goods> queryWrapper = new QueryWrapper<Goods>()
