@@ -165,7 +165,7 @@ public class BrokenGoodsController {
 			brokenGoodsService.updateById(newBroken);
 			brokenGoodsService.updateGoodsDr(newBroken.getChangeGoodsNo());
 
-			Goods  stockGood=brokenGoodsService.GetstockGood(newBroken.getChangeGoodsNo());
+			Goods  stockGood=brokenGoodsService.GetStoBrokenInfo(newBroken.getChangeGoodsNo());
 			//减去相应的库存
 			QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
 			stockWrapper.eq("specification_id", stockGood.getSpecificationId());

@@ -53,7 +53,7 @@
 		 left join bd_specification d on d.id=k.specification_id
 		<where>
 			<if test="_parameter != null and _parameter != ''">
-				and  k.goods_no  like '%${_parameter}%'
+				and  k.goods_no  like '%${_parameter}%'  and  k.dr=0
 			</if>
 		</where>
 		order by  k.createtime desc
@@ -67,7 +67,7 @@
 		left join bd_specification d on d.id=k.specification_id
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
-		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}  and  k.dr=0
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
 		update bd_goods set dr=1
@@ -78,10 +78,5 @@
 		select * from bd_barcode  k where   k.dr=0 and
 		 k.id=#{goodsNo,jdbcType=VARCHAR}
 	</select>
-
-	<select id="GetstockGood" resultType="com.zero.egg.model.Goods" parameterType="string">
-		select * from bd_goods  k where   k.id=#{changeGoodsNo,jdbcType=VARCHAR}
-	</select>
-
 
 </mapper>
