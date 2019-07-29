@@ -38,6 +38,4 @@ public interface IBrokenGoodsService extends IService<BrokenGoods> {
     List<BrokenGoods> CheckBroken(String brokenGoodsNo);
 
     BarCode GetBarCodeInfo(BrokenGoods brokenGoods);
-
-    Goods GetstockGood(String changeGoodsNo);
 }
