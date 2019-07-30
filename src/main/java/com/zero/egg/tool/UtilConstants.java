@@ -151,6 +151,10 @@ public interface UtilConstants {
          * 任务已经完成
          */
         public static final String TASK_FINISHED_MSG = "任务已经完成";
+        /**
+         * 任务已经完成
+         */
+        public static final String RETAIL_ONE_ONLY = "零售只能一次出一件货";
     }
 
     /**

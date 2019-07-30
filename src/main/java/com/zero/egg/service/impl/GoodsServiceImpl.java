@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.BarCodeMapper;
+import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
@@ -37,6 +39,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Autowired
     private BarCodeMapper barCodeMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Autowired
     private JedisUtil.SortSets sortSets;
@@ -77,16 +82,24 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
             goods.setEmployeeId(employeeId);
             goods.setEmployeeName(employeeName);
+            //如果合作商是零售,查询当前sortedSet里面的数量,限制出货数量为1
+            Customer customer = customerMapper.selectById(customerId);
+            if (1 == customer.getIsRetail()) {
+                long shipedNum = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId);
+                if (shipedNum >= 1) {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.RETAIL_ONE_ONLY);
+                    return message;
+                }
+            }
             /**
              * 存redis
-             * 1.从redis获取当前任务的列表json字符串
-             * 2.把当前列表转化成List
-             * 3.给list添加当前的扫的出货对象
-             * 4.把List转换成json字符串,存redis
              */
             long effectiveNum = sortSets.zaddNx(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                             + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
-                    , Double.valueOf(System.currentTimeMillis()), JsonUtils.objectToJson(goods));
+                    , (double) System.currentTimeMillis(), JsonUtils.objectToJson(goods));
+
             /**
              * 要判断商品不能重复被添加
              */
