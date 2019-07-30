@@ -43,4 +43,6 @@ public interface BrokenGoodsMapper extends BaseMapper<BrokenGoods> {
     BarCode GetBarCodeInfo(String barcodeid);
 
     Goods GetstockGood(String changeGoodsNo);
+
+    Goods isNewGood(String goodsNo);
 }

@@ -144,37 +144,42 @@ public class BrokenGoodsController {
 		}
 		if (null != Request.getGoodsNo())
 		{
-			BrokenGoods  newBroken=new BrokenGoods();
-			newBroken.setId(Request.getId());
-			newBroken.setChangeGoodsNo(Request.getGoodsNo());
-			BrokenGoods data=brokenGoodsService.getById(Request.getId());
+            //判断货物是否能出
+            Goods  newGood=brokenGoodsService.isNewGood(Request.getGoodsNo());
+            if (null!=newGood) {
+                BrokenGoods newBroken = new BrokenGoods();
+                newBroken.setId(Request.getId());
+                newBroken.setChangeGoodsNo(Request.getGoodsNo());
+                BrokenGoods data = brokenGoodsService.getById(Request.getId());
 
-			if (null !=data.getBrokenGoodsNo())
-			{
-				newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
-			}
-			else
-			{
-				newBroken.setStatus(BrokenGoodsEnums.Status.Working.index().toString());
-			}
-			newBroken.setUserId(user.getId());
-			if (null!=Request.getRemark())
-			{
-				newBroken.setRemark(Request.getRemark());
-			}
-			brokenGoodsService.updateById(newBroken);
-			brokenGoodsService.updateGoodsDr(newBroken.getChangeGoodsNo());
+                if (null != data.getBrokenGoodsNo()) {
+                    newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
+                } else {
+                    newBroken.setStatus(BrokenGoodsEnums.Status.Working.index().toString());
+                }
+                newBroken.setUserId(user.getId());
+                if (null != Request.getRemark()) {
+                    newBroken.setRemark(Request.getRemark());
+                }
+                brokenGoodsService.updateById(newBroken);
+                brokenGoodsService.updateGoodsDr(newBroken.getChangeGoodsNo());
 
-			Goods  stockGood=brokenGoodsService.GetStoBrokenInfo(newBroken.getChangeGoodsNo());
-			//减去相应的库存
-			QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
-			stockWrapper.eq("specification_id", stockGood.getSpecificationId());
-			Stock stock = stockService.getOne(stockWrapper);
-			stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
-			stockService.updateById(stock);
+                Goods stockGood = brokenGoodsService.GetStoBrokenInfo(newBroken.getChangeGoodsNo());
+                //减去相应的库存
+                QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
+                stockWrapper.eq("specification_id", stockGood.getSpecificationId());
+                Stock stock = stockService.getOne(stockWrapper);
+                stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
+                stockService.updateById(stock);
 
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
+            else
+            {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage("该商品已出货，不可售后出货");
+            }
 		}
 		else
 		{
@@ -200,6 +205,8 @@ public class BrokenGoodsController {
 		}
 		if (null != Request.getGoodsNo())
 		{
+
+
 			BrokenGoods  newBroken=new BrokenGoods();
 			newBroken.setId(Request.getId());
 			newBroken.setBrokenGoodsNo(Request.getGoodsNo());
@@ -281,7 +288,7 @@ public class BrokenGoodsController {
 					}
 				} else {
 					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("输入的商品编码不存在");
+					message.setMessage("商品编码不存在");
 				}
 			}
 			else
@@ -289,56 +296,64 @@ public class BrokenGoodsController {
 				//自损
 				Goods  broken=  brokenGoodsService.GetStoBrokenInfo(brokenGoods.getBrokenGoodsNo());
 				if (null!=broken) {
-					List<BrokenGoods> HadBrokenList = brokenGoodsService.CheckBroken(brokenGoods.getBrokenGoodsNo());
-					if (HadBrokenList.size() == 0) {
-						//自损扫码后直接完成，改变商品状态。
-						BrokenGoods newBroken = new BrokenGoods();
-						newBroken.setId(UuidUtil.get32UUID());
-						newBroken.setShopId(user.getShopId());
-						newBroken.setCompanyId(user.getCompanyId());
-						newBroken.setCustomerId(broken.getSupplierId());
-						newBroken.setSpecificationId(broken.getSpecificationId());
-						newBroken.setGoodsCategroyId(broken.getGoodsCategoryId());
-						newBroken.setMarker(broken.getMarker());
-						newBroken.setMode(broken.getMode());
-						newBroken.setWeight(broken.getWeight());
-						newBroken.setCustomerId(broken.getSupplierId());
-						newBroken.setBillNo(broken.getBillNo());
-						newBroken.setUserId(user.getId());
-						newBroken.setBrokenGoodsNo(broken.getGoodsNo());
-						newBroken.setGoodsNo(broken.getGoodsNo());
-						newBroken.setType(BrokenGoodsEnums.Type.BrokenBySelf.index().toString());
-						newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
-						newBroken.setCreatetime(new Date());
-						newBroken.setModifytime(new Date());
-						newBroken.setCreator(user.getId());
-						newBroken.setModifier(user.getId());
-						newBroken.setDr(false);
-						newBroken.setRemark(brokenGoods.getRemark());
-						if (brokenGoodsService.save(newBroken)) {
-							//修改商品表状态
-							brokenGoodsService.updateGoodsDr(newBroken.getBrokenGoodsNo());
-							//减去相应的库存
-							QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
-							stockWrapper.eq("specification_id", newBroken.getSpecificationId());
-							Stock stock = stockService.getOne(stockWrapper);
-							stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
-							stockService.updateById(stock);
-							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-						} else {
-							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-							message.setMessage(UtilConstants.ResponseMsg.FAILED);
-						}
-					} else {
-						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-						message.setMessage("商品编码不存在");
-					}
+				    if (broken.getDr().equals(0)) {
+                        List<BrokenGoods> HadBrokenList = brokenGoodsService.CheckBroken(brokenGoods.getBrokenGoodsNo());
+                        if (HadBrokenList.size() == 0) {
+                            //自损扫码后直接完成，改变商品状态。
+                            BrokenGoods newBroken = new BrokenGoods();
+                            newBroken.setId(UuidUtil.get32UUID());
+                            newBroken.setShopId(user.getShopId());
+                            newBroken.setCompanyId(user.getCompanyId());
+                            newBroken.setCustomerId(broken.getSupplierId());
+                            newBroken.setSpecificationId(broken.getSpecificationId());
+                            newBroken.setGoodsCategroyId(broken.getGoodsCategoryId());
+                            newBroken.setMarker(broken.getMarker());
+                            newBroken.setMode(broken.getMode());
+                            newBroken.setWeight(broken.getWeight());
+                            newBroken.setCustomerId(broken.getSupplierId());
+                            newBroken.setBillNo(broken.getBillNo());
+                            newBroken.setUserId(user.getId());
+                            newBroken.setBrokenGoodsNo(broken.getGoodsNo());
+                            newBroken.setGoodsNo(broken.getGoodsNo());
+                            newBroken.setType(BrokenGoodsEnums.Type.BrokenBySelf.index().toString());
+                            newBroken.setStatus(BrokenGoodsEnums.Status.Disable.index().toString());
+                            newBroken.setCreatetime(new Date());
+                            newBroken.setModifytime(new Date());
+                            newBroken.setCreator(user.getId());
+                            newBroken.setModifier(user.getId());
+                            newBroken.setDr(false);
+                            newBroken.setRemark(brokenGoods.getRemark());
+                            if (brokenGoodsService.save(newBroken)) {
+                                //修改商品表状态
+                                brokenGoodsService.updateGoodsDr(newBroken.getBrokenGoodsNo());
+                                //减去相应的库存
+                                QueryWrapper<Stock> stockWrapper = new QueryWrapper<>();
+                                stockWrapper.eq("specification_id", newBroken.getSpecificationId());
+                                Stock stock = stockService.getOne(stockWrapper);
+                                stock.setQuantity(stock.getQuantity().subtract(new BigDecimal(1)));
+                                stockService.updateById(stock);
+                                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                            } else {
+                                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                            }
+                        } else {
+                            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                            message.setMessage("该商品已经报损，不可重复报损");
+                        }
+                    }
+				    else
+                    {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage("该商品已经出货，不可进行自损处理");
+                    }
 				}
 				else
 				{
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("该商品已经报损，不可重复报损");
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage("商品编码不存在");
+
 				}
 			}
 

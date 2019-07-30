@@ -42,6 +42,14 @@
 		</if>
 	</select>
 
+	<select id="isNewGood" resultType="com.zero.egg.model.Goods" parameterType="string" >
+		select * from bd_goods k
+		<where>
+			<if test="_parameter != null and _parameter != ''">
+				and  k.goods_no  like '%${_parameter}%'  and  k.dr=0
+			</if>
+		</where>
+	</select>
 
 	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string" >
 		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,
