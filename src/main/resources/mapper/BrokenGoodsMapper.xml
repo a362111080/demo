@@ -67,7 +67,7 @@
 		left join bd_specification d on d.id=k.specification_id
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
-		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}  and  k.dr=0
+		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
 		update bd_goods set dr=1
