@@ -32,6 +32,9 @@ public class BillReport {
 
     @ApiModelProperty(value = "未结清数量")
     private BigDecimal UnCompleteCount=BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "未生成数量")
+    private BigDecimal UnCreateCount=BigDecimal.ZERO;
 }
 
 

@@ -230,7 +230,11 @@ public class BillController {
             if (BillList.get(i).getStatus().equals("-1")) {
                 //1未结清  -1 已结清 0 未生成
                 report.setCompleteCount(report.getCompleteCount().add(BigDecimal.ONE));
-            } else {
+            }else if(BillList.get(i).getStatus().equals("0"))
+            {
+                report.setUnCreateCount(report.getUnCreateCount().add(BigDecimal.ONE));
+            }
+            else {
                 report.setUnCompleteCount(report.getUnCompleteCount().add(BigDecimal.ONE));
             }
             if (BillList.get(i).getType().equals(TaskEnums.Type.Unload.index().toString())) {
