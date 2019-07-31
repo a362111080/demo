@@ -155,6 +155,10 @@ public interface UtilConstants {
          * 任务已经完成
          */
         public static final String RETAIL_ONE_ONLY = "零售只能一次出一件货";
+        /**
+         * 非零售合作商或者查不到相关零售合作商
+         */
+        public static final String NOT_RETAIL_CUSTOMER = "非零售合作商或者查不到相关零售合作商";
     }
 
     /**

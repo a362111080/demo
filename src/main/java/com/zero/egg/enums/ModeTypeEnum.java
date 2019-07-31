@@ -13,9 +13,9 @@ public enum ModeTypeEnum {
     public int key;
     public String type;
 
-    ModeTypeEnum(int key, String sex) {
+    ModeTypeEnum(int key, String type) {
         this.key = key;
-        this.type = sex;
+        this.type = type;
     }
 
     public static String getValueByKey(int key) {
