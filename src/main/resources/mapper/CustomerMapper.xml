@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.CustomerMapper">
-    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr,weight_mode)
+    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr,weight_mode,is_retail)
     values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('CT',LPAD((SELECT COUNT(1)+1 from bd_customer),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
-           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0,#{weightMode})</insert>
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0,#{weightMode},#{isRetail})</insert>
     <update id="UpdateCustomer" parameterType="Customer">update bd_customer
         <set>
             <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>

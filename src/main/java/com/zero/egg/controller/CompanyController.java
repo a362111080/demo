@@ -9,11 +9,13 @@ import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.CompanyEnums;
 import com.zero.egg.model.Company;
 import com.zero.egg.model.CompanyUser;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.CompanyRequest;
 import com.zero.egg.requestDTO.CompanyUserRequest;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.responseDTO.CompanyinfoResponseDto;
+import com.zero.egg.service.CustomerService;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IShopService;
@@ -51,6 +53,8 @@ public class CompanyController {
 	private ICompanyUserService iCompanyUserService;
 	@Autowired
 	private IShopService shopService;
+	@Autowired
+	private CustomerService CustomerSv;
 
 	@Autowired
 	private HttpServletRequest request;
@@ -195,14 +199,33 @@ public class CompanyController {
 								shop.setCreator(loginUser.getId());
 								shopService.updateById(shop);
 							} else {
+								String  newShopid=UuidUtil.get32UUID();
 								shop.setCompanyId(companyUser.getCompanyId());
-								shop.setId(UuidUtil.get32UUID());
+								shop.setId(newShopid);
 								shop.setModifier(loginUser.getId());
 								shop.setModifytime(new Date());
 								shop.setCreatetime(new Date());
 								shop.setCreator(loginUser.getId());
 								shop.setDr(false);
 								shopService.save(shop);
+								//增加对应零售合作商
+								Customer  model=new  Customer();
+								model.setCreator(loginUser.getId());
+								model.setCreatetime(new Date());
+								model.setShopid(newShopid);
+								model.setCompanyid(companyUser.getCompanyId());
+								model.setModifier(loginUser.getId());
+								model.setModifytime(new Date());
+								model.setPhone("123456");
+								model.setLinkman("系统");
+								model.setStatus("");
+								model.setCityid("");
+								model.setIsRetail(1);
+								model.setName("零售");
+								model.setShortname("");
+								model.setWeightMode("1");
+								model.setType("0");
+								CustomerSv.AddCustomer(model);
 							}
 						}
 					}
@@ -234,15 +257,33 @@ public class CompanyController {
 					iCompanyUserService.save(companyUser);
 					if (companyUser.getShopList() != null && companyUser.getShopList().size() > 0) {
 						for (Shop shop : companyUser.getShopList()) {
-							shop.setId(UuidUtil.get32UUID());
+							String  newShopid=UuidUtil.get32UUID();
+							shop.setId(newShopid);
 							shop.setCompanyId(company.getId());
 							shop.setModifier(loginUser.getId());
 							shop.setModifytime(new Date());
 							shop.setCreatetime(new Date());
-
 							shop.setCreator(loginUser.getId());
 							shop.setDr(false);
 							shopService.save(shop);
+							//增加对应零售合作商
+							Customer  model=new  Customer();
+							model.setCreator(loginUser.getId());
+							model.setCreatetime(new Date());
+							model.setShopid(newShopid);
+							model.setCompanyid(companyUser.getCompanyId());
+							model.setModifier(loginUser.getId());
+							model.setModifytime(new Date());
+							model.setPhone("123456");
+							model.setLinkman("系统");
+							model.setStatus("");
+							model.setCityid("");
+;							model.setIsRetail(1);
+							model.setName("零售");
+							model.setShortname("");
+							model.setWeightMode("1");
+							model.setType("0");
+							CustomerSv.AddCustomer(model);
 						}
 					}
 				}
