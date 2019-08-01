@@ -6,13 +6,16 @@ import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.model.BdRetail;
 import com.zero.egg.model.Customer;
 import com.zero.egg.requestDTO.QueryRetailDeatilsRequestDTO;
+import com.zero.egg.requestDTO.SaveRetailDeatilsRequestDTO;
 import com.zero.egg.service.BdRetailService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.TransferUtil;
 import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -57,6 +60,19 @@ public class BdRetailServiceImpl implements BdRetailService {
         } catch (Exception e) {
             log.error("listRetailDetails service error:" + e);
             throw new ServiceException("listRetailDetails service error");
+        }
+    }
+
+    @Override
+    @Transactional
+    public long insertRetailDetails(SaveRetailDeatilsRequestDTO saveRetailDeatilsRequestDTO) throws ServiceException {
+        try {
+            BdRetail bdRetail = new BdRetail();
+            TransferUtil.copyProperties(bdRetail, saveRetailDeatilsRequestDTO);
+            return bdRetailMapper.insert(bdRetail);
+        } catch (Exception e) {
+            log.error("insertRetailDetails service error:" + e);
+            throw new ServiceException("insertRetailDetails service error");
         }
     }
 }

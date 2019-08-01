@@ -101,5 +101,9 @@ public class BillDetails  implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "计重方式(1:去皮 2:包)",hidden=true)
+    private Integer mode;
+
 
 }
