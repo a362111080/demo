@@ -1,6 +1,5 @@
 package com.zero.egg.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
@@ -20,7 +19,7 @@ import java.util.List;
 public interface IUserService extends IService<User> {
 	
 	
-	Message<IPage<User>> listPage(UserRequest user,LoginUser loginUser);
+	Message listPage(UserRequest user,LoginUser loginUser);
 	
 	
 	Message<List<User>> listAll(UserRequest user,LoginUser loginUser);

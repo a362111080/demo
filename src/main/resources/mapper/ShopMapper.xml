@@ -8,6 +8,7 @@
         left join bd_city   lv2  on lv2.id=lv3.parent_id
         left join bd_city   lv1  on lv1.id=lv2.parent_id
         where a.company_id= #{companyId,jdbcType=VARCHAR}
+        and a.dr = false
     </select>
 
     <select id="getClietnUseCountByShopid"  resultType="int">

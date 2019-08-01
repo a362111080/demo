@@ -6,10 +6,12 @@ import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.cache.JedisUtil;
+import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.SassUser;
+import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.model.WechatAuth;
 import com.zero.egg.service.ICompanyUserService;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -55,6 +58,8 @@ public class LoginController {
     private JedisUtil.Strings jedisStrings;
     @Autowired
     private SassUserService sassUserService;
+    @Autowired
+    private ShopMapper shopMapper;
 
     @PassToken
     @ApiOperation(value = "鸡蛋系统登录")
@@ -110,6 +115,8 @@ public class LoginController {
                     map.put("token", redisKey);
                     map.put("user", companyUser);
                     map.put("userTypeName", "企业用户");
+                    List<Shop> shopList = shopMapper.getShopListByCompanid(companyUser.getCompanyId());
+                    map.put("shopList", shopList);
                     response.setData(map);
                     response.setCode(ApiConstants.ResponseCode.SUCCESS);
                     response.setMsg("登录成功");

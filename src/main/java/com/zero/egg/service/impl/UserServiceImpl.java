@@ -1,9 +1,9 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.dao.UserMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
@@ -11,11 +11,11 @@ import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UserRequest;
+import com.zero.egg.responseDTO.UserListResponseDTO;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.Message;
-import com.zero.egg.tool.StringTool;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -40,12 +40,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 	@Autowired
 	private IShopService shopService;
-	
+	@Autowired
+	private UserMapper userMapper;
 	
 	
 	@Override
-	public Message<IPage<User>> listPage(UserRequest user, LoginUser loginUser) {
-		Message<IPage<User>> message = new Message<IPage<User>>();
+	public Message listPage(UserRequest user, LoginUser loginUser) {
+		Message message = new Message<>();
 		if (loginUser != null) {
 			if (StringUtils.isNotBlank(loginUser.getCompanyId())) {
 			user.setCompanyId(loginUser.getCompanyId());
@@ -54,22 +55,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 				user.setShopId(loginUser.getShopId());
 			}
 		}
-		Page<User> page = new Page<>();
-		page.setCurrent(user.getCurrent());
-		page.setSize(user.getSize());
-		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("dr", false);//查询未删除信息
-		if (user != null) {
-			queryWrapper.like(StringUtils.isNotBlank(user.getName()),"name", user.getName())
-			.like(StringUtils.isNotBlank(user.getCode()),"code", user.getCode())
-			.eq(StringUtils.isNotBlank(user.getStatus()), "status", user.getStatus())
-			.eq(StringUtils.isNotBlank(user.getCompanyId()),"company_id",user.getCompanyId())
-			.eq(StringUtils.isNotBlank(user.getShopId()), "shop_id", user.getShopId());
-		}
-		IPage<User> list = page(page, queryWrapper);
+		PageHelper.startPage(user.getCurrent().intValue(),user.getSize().intValue());
+		List<UserListResponseDTO> userList = userMapper.getUserList(user);
+		PageInfo<UserListResponseDTO> pageInfo = new PageInfo<UserListResponseDTO>(userList);
 		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		message.setData(list);
+		message.setData(pageInfo);
 		return message;
 	}
 

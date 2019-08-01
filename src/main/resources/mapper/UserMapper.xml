@@ -7,4 +7,49 @@
         where k.dr=0  and  k.loginname=#{loginname,jdbcType=VARCHAR}
 
     </select>
+
+    <select id="getUserList" parameterType="com.zero.egg.requestDTO.UserRequest"
+            resultType="com.zero.egg.responseDTO.UserListResponseDTO">
+        SELECT
+        u.id,
+        u.shop_id,
+        u.company_id,
+        u.code,
+        u.loginname,
+        u.type,
+        u.name,
+        u.sex,
+        u.phone,
+        u.password,
+        u.status,
+        u.creator,
+        u.createtime,
+        u.modifier,
+        u.modifytime,
+        u.dr,
+        s.name AS shopName
+        FROM
+        bd_user u
+        LEFT JOIN supper_egg_dev.bd_shop s
+        ON u.shop_id = s.id
+        <where>
+            u.dr = 0
+            AND u.company_id = #{companyId,jdbcType=VARCHAR}
+            <if test="null!=name and ''!=name">
+                AND u.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="null!=code and ''!=code">
+                AND u.code LIKE CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="null!=status and ''!=status">
+                AND u.status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="null!=companyId and ''!=companyId">
+                AND u.company_id = #{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="null!=shopId and ''!=shopId">
+                AND u.shop_id = #{name,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
 </mapper>
