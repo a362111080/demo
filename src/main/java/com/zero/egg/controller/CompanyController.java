@@ -173,7 +173,12 @@ public class CompanyController {
 		}
 		if (isExist=="Y"){
 			Company company = new Company();
-			String pwd = MD5Utils.encode(companyUser.getPassword());
+			String pwd ="";
+			if(null!=companyUser.getPassword())
+			{
+				pwd = MD5Utils.encode(companyUser.getPassword());
+			}
+
 			if (null != companyUser.getCompanyId()) {
 				company.setId(companyUser.getCompanyId());
 				company.setModifier(loginUser.getId());
@@ -188,7 +193,9 @@ public class CompanyController {
 					companyUser.setCreator(loginUser.getId());
 					companyUser.setModifytime(new Date());
 					companyUser.setCreatetime(new Date());
-					companyUser.setPassword(pwd);
+					if (pwd!="") {
+						companyUser.setPassword(pwd);
+					}
 					companyUser.setDr(false);
 					iCompanyUserService.updateById(companyUser);
 					if (companyUser.getShopList() != null && companyUser.getShopList().size() > 0) {
@@ -250,7 +257,9 @@ public class CompanyController {
 					companyUser.setCreator(loginUser.getId());
 					companyUser.setCompanyId(company.getId());
 					companyUser.setModifytime(new Date());
-					companyUser.setPassword(pwd);
+					if (pwd!="") {
+						companyUser.setPassword(pwd);
+					}
 					companyUser.setCreatetime(new Date());
 					companyUser.setStatus(CompanyEnums.Status.Normal.index().toString());
 					companyUser.setDr(false);
