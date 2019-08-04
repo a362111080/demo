@@ -20,7 +20,7 @@
             <if test="loginname != null and loginname !=''">
                 a.loginname=#{loginname,jdbcType=VARCHAR}
             </if>
-             and  a.dr=0
+             and  a.dr=0  AND c.dr=0
         </where>
         GROUP BY  a.id,a.company_id,a.name,b.name,a.loginname,b.begintime,b.endtime,a.createtime
     </select>
