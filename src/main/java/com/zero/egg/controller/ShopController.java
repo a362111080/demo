@@ -163,6 +163,7 @@ public class ShopController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		shop.setModifier(loginUser.getId());
 		shop.setModifytime(new Date());
+		shop.setDr(true);
 		if (shopService.updateById(shop)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
