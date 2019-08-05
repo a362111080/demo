@@ -18,7 +18,7 @@
         <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
         <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
     </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
-    <update id="DeleteSupplier" parameterType="java.util.List">
+    <update id="DeleteSupplier" parameterType="java.util.List">GetSupplierList
         <if test="list!=null">
             update bd_supplier set dr=1
             where id in

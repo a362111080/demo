@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 			//检查人员类型数量是否有空余
 			if (UserEnums.Type.Pc.index().equals(user.getType())) {
 				if (shopService.getClietnUseCountByShopid(shopId,user.getType()).equals(shop.getPcClient()) ) {
-					message.setMessage("Pc客户端名额已用完");
+					message.setMessage("PC客户端名额已用完");
 					checkResult = false;
 				}
 			}else if (UserEnums.Type.Boss.index().equals(user.getType())) {
