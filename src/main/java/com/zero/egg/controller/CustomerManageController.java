@@ -65,6 +65,7 @@ public class CustomerManageController {
             model.setModifytime(new Date());
             CustomerRequestDTO dto = new CustomerRequestDTO();
             dto.setCheckname(model.getName());
+            dto.setShopId(user.getShopId());
             List<Customer> isCheck = CustomerSv.GetCustomerList(dto);
             if (isCheck.size() == 0) {
                 int strval = CustomerSv.AddCustomer(model);
@@ -117,6 +118,7 @@ public class CustomerManageController {
             model.setCompanyid(user.getCompanyId());
             CustomerRequestDTO dto = new CustomerRequestDTO();
             dto.setCheckname(model.getName());
+            dto.setShopId(user.getShopId());
             List<Customer> isCheck = CustomerSv.GetCustomerList(dto);
             if (isCheck.size() == 0) {
 
