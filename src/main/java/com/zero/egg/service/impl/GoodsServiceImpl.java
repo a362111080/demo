@@ -68,8 +68,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
             BarCode barCode = barCodeMapper.selectById(barCodeId);
             QueryWrapper<Goods> queryWrapper = new QueryWrapper<Goods>()
-                    .eq("g.company_id", barCode.getCompanyId())
-                    .eq("g.shop_id", barCode.getShopId())
+                    .eq("g.company_id", loginUser.getCompanyId())
+                    .eq("g.shop_id", loginUser.getShopId())
                     .eq("g.goods_no", barCode.getCurrentCode())
                     .eq("g.supplier_id", barCode.getSupplierId())
                     .eq("g.goods_category_id", barCode.getCategoryId())
