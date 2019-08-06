@@ -138,7 +138,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                         + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
                         + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
                 );
-                log.info("redis number:"+JsonUtils.objectToJson(goodsResponse));
+                log.info("redis number:"+"'"+JsonUtils.objectToJson(goodsResponse)+"'");
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
