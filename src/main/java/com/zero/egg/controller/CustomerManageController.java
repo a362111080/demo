@@ -156,6 +156,7 @@ public class CustomerManageController {
 
     @ApiOperation(value = "查询客户列表", notes = "分页查询，各种条件查询")
     @RequestMapping(value = "/getcustomerlist", method = RequestMethod.POST)
+    @LoginToken
     public Message GetSupplierList(@RequestBody CustomerRequestDTO model) {
         Message ms = new Message();
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -172,6 +173,7 @@ public class CustomerManageController {
 
     @ApiOperation(value = "出货客户列表(可以查出零售合作商)", notes = "条件查询,不分页")
     @RequestMapping(value = "/getshipmentsupplierlist", method = RequestMethod.POST)
+    @LoginToken
     public Message getShipmentSupplierList(@RequestBody CustomerRequestDTO model) {
         Message ms = new Message();
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
