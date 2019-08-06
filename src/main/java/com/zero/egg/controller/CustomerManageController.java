@@ -171,6 +171,9 @@ public class CustomerManageController {
     @RequestMapping(value = "/getshipmentsupplierlist", method = RequestMethod.POST)
     public Message getShipmentSupplierList(@RequestBody CustomerRequestDTO model) {
         Message ms = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setCompanyId(user.getCompanyId());
+        model.setShopId(user.getShopId());
         List<Customer> Customer = CustomerSv.getShipmentSupplierList(model);
         ms.setData(Customer);
         ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
