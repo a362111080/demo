@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,13 +122,14 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
                         } else {
                             pages = total / size + 1;
                         }
-                        Set<String> goodsSet = sortSets.zrevrange(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                        Set<Tuple> tuples = sortSets.zrevrangeWithScores(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                                         + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
                                 , size.intValue() * (current.intValue() - 1), size.intValue() * current.intValue() - 1);
                         List<GoodsResponse> goodsResponseList = new ArrayList<>();
                         GoodsResponse redisGood;
-                        for (String jsonString : goodsSet) {
-                            redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
+                        for (Tuple tuple : tuples) {
+                            redisGood = JsonUtils.jsonToPojo(tuple.getElement(), GoodsResponse.class);
+                            redisGood.setScores(tuple.getScore());
                             goodsResponseList.add(redisGood);
                         }
                         message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

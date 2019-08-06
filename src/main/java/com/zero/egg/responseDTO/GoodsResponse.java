@@ -74,4 +74,7 @@ public class GoodsResponse implements Serializable {
 
     @ApiModelProperty(value = "员工姓名")
     private String employeeName;
+
+    @ApiModelProperty(value = "分数,用于移除redis数据用")
+    private Double scores;
 }

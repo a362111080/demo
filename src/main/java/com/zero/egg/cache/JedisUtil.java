@@ -4,6 +4,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ListPosition;
 import redis.clients.jedis.SortingParams;
+import redis.clients.jedis.Tuple;
 import redis.clients.jedis.params.ZAddParams;
 import redis.clients.jedis.util.SafeEncoder;
 
@@ -1334,6 +1335,12 @@ public class JedisUtil {
             return set;
         }
 
+        public Set<Tuple> zrevrangeWithScores(String key, int start, int end) {
+            Jedis sjedis = getJedis();
+            Set<Tuple> tuples = sjedis.zrevrangeWithScores(key, start, end);
+            sjedis.close();
+            return tuples;
+        }
         /*
          * zrangeByScore  根据上下权重查询集合
          */

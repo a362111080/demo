@@ -108,10 +108,10 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
                 return message;
             }
-            log.info("redis key:"+UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+            log.info("redis key:" + UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                     + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
             );
-            log.info("redis number:"+JsonUtils.objectToJson(JsonUtils.objectToJson(goods)));
+            log.info("redis number:" + JsonUtils.objectToJson(JsonUtils.objectToJson(goods)));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
@@ -130,15 +130,10 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
              */
             List<GoodsResponse> goodsResponseList = remShipmentGoodsRequestDTO.getGoodsResponseList();
             for (GoodsResponse goodsResponse : goodsResponseList) {
-                sortSets.zrem(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                sortSets.zremrangeByScore(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                                 + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
                                 + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
-                        , JsonUtils.objectToJson(goodsResponse));
-                log.info("redis key:"+UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
-                        + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
-                        + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
-                );
-                log.info("redis number:"+JsonUtils.objectToJson(goodsResponse));
+                        , goodsResponse.getScores(), goodsResponse.getScores());
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
