@@ -92,17 +92,13 @@
             <if test="checkname != null and checkname !=''">
                 and k.name=#{checkname,jdbcType=VARCHAR}
             </if>
-            <if test="companyId != null and companyId !=''">
-                and k.company_id=#{companyId,jdbcType=VARCHAR}
-            </if>
-            <if test="shopId != null and shopId !=''">
-                and k.shop_id=#{shopId,jdbcType=VARCHAR}
-            </if>
             <if test="status != null and status !='-1' and status !=''">
                 and k.status=#{status,jdbcType=INTEGER}
             </if>
             and k.dr = 0
             and k.is_retail = 0
+            and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            and k.company_id=#{companyId,jdbcType=VARCHAR}
         </where>
     </select>
 

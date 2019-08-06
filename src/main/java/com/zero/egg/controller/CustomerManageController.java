@@ -158,6 +158,9 @@ public class CustomerManageController {
     @RequestMapping(value = "/getcustomerlist", method = RequestMethod.POST)
     public Message GetSupplierList(@RequestBody CustomerRequestDTO model) {
         Message ms = new Message();
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setCompanyId(user.getCompanyId());
+        model.setShopId(user.getShopId());
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         List<Customer> Customer = CustomerSv.GetCustomerList(model);
         PageInfo<Customer> pageInfo = new PageInfo<>(Customer);
