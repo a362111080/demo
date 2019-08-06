@@ -8,6 +8,8 @@ import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Supplier;
 import com.zero.egg.requestDTO.SupplierRequestDTO;
 import com.zero.egg.service.SupplierService;
+import com.zero.egg.tool.ServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.util.List;
  **/
 @Service
 @Transactional(rollbackFor=Exception.class)
+@Slf4j
 public class SupplierServiceImpl implements SupplierService {
 
     @Autowired
@@ -71,14 +74,19 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public int DeleteSupplier(SupplierRequestDTO supplier) {
-        /* 删除合作商之前要逻辑删除应对的二维码信息 */
-        List<String> ids = supplier.getIds();
-        BarCode barCode = new BarCode();
-        barCode.setDr(true);
-        for (String id : ids) {
-            barCodeMapper.update(barCode, new UpdateWrapper<BarCode>().eq("supplier_id", id));
+        try {
+            /* 删除合作商之前要逻辑删除应对的二维码信息 */
+            List<String> ids = supplier.getIds();
+            BarCode barCode = new BarCode();
+            barCode.setDr(true);
+            for (String id : ids) {
+                barCodeMapper.update(barCode, new UpdateWrapper<BarCode>().eq("supplier_id", id));
+            }
+            return mapper.DeleteSupplier(ids);
+        } catch (Exception e) {
+            log.error("DeleteSupplier error:" + e);
+            throw new ServiceException("DeleteSupplier Service error");
         }
-        return mapper.DeleteSupplier(ids);
     }
 
     @Override
