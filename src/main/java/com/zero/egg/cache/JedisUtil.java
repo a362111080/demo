@@ -1,11 +1,11 @@
 package com.zero.egg.cache;
 
-import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ListPosition;
 import redis.clients.jedis.SortingParams;
-import redis.clients.jedis.params.sortedset.ZAddParams;
-import redis.clients.util.SafeEncoder;
+import redis.clients.jedis.params.ZAddParams;
+import redis.clients.jedis.util.SafeEncoder;
 
 import java.util.List;
 import java.util.Map;
@@ -79,16 +79,6 @@ public class JedisUtil {
      */
     public Jedis getJedis() {
         return jedisPool.getResource();
-    }
-
-
-    /*
-     * 在finaally中回收jedis
-     */
-    public void returnJedis(Jedis jedis) {
-        if (null != jedis && null != jedisPool) {
-            jedisPool.returnResource(jedis);
-        }
     }
 
 
@@ -1049,7 +1039,7 @@ public class JedisUtil {
          * @param value 插入的内容
          * @return 记录总数
          */
-        public long linsert(String key, LIST_POSITION where, String pivot,
+        public long linsert(String key, ListPosition where, String pivot,
                             String value) {
             return linsert(SafeEncoder.encode(key), where,
                     SafeEncoder.encode(pivot), SafeEncoder.encode(value));
@@ -1064,7 +1054,7 @@ public class JedisUtil {
          * @param value 插入的内容
          * @return 记录总数
          */
-        public long linsert(byte[] key, LIST_POSITION where, byte[] pivot,
+        public long linsert(byte[] key, ListPosition where, byte[] pivot,
                             byte[] value) {
             Jedis jedis = getJedis();
             long count = jedis.linsert(key, where, pivot, value);
