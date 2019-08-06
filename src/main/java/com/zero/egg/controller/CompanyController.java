@@ -336,6 +336,7 @@ public class CompanyController {
 		company.setModifier(loginUser.getId());
 		company.setModifytime(new Date());
 		company.setStatus(CompanyEnums.Status.Disable.index().toString());
+		company.setDr(true);
 		company.setId(id);
 		if (iCompanyService.updateById(company)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

@@ -105,9 +105,9 @@ public class SupplierManageController {
                 model.setModifier(user.getName());
                 model.setModifytime(new Date());
             }
-
             SupplierRequestDTO  dto=new  SupplierRequestDTO();
             dto.setCheckname(model.getName());
+            dto.setShopId(user.getShopId());
             List<Supplier> issup=supplierService.GetSupplierList(dto);
             if (issup.size()>0 ) {
                 if (issup.get(0).getId().equals(model.getId())) {
