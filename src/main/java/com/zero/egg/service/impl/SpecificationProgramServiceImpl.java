@@ -40,7 +40,6 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
     private SpecificationMapper specificationMapper;
 
     @Override
-    @Transactional
     public Message addStandardData(SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = new Message();
         SpecificationProgram specificationProgram = new SpecificationProgram();

@@ -108,6 +108,10 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
                 return message;
             }
+            log.info("redis key:"+UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                    + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
+            );
+            log.info("redis number:"+JsonUtils.objectToJson(JsonUtils.objectToJson(goods)));
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
