@@ -133,7 +133,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 sortSets.zrem(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                                 + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
                                 + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
-                        , JsonUtils.objectToJson(goodsResponse));
+                        , "'"+JsonUtils.objectToJson(goodsResponse)+"'");
                 log.info("redis key:"+UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                         + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
                         + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
