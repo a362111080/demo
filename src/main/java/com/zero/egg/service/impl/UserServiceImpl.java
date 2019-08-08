@@ -256,9 +256,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 				e.printStackTrace();
 			}
 		}
-		if (StringUtils.isBlank(user.getPassword())) {
-			user.setPassword("888888");
-		}
 		user.setModifytime(new Date());
 		if (updateById(user)) {
 			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
