@@ -9,15 +9,8 @@ import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
-import com.zero.egg.model.CompanyUser;
-import com.zero.egg.model.SassUser;
-import com.zero.egg.model.Shop;
-import com.zero.egg.model.User;
-import com.zero.egg.model.WechatAuth;
-import com.zero.egg.service.ICompanyUserService;
-import com.zero.egg.service.IUserService;
-import com.zero.egg.service.SassUserService;
-import com.zero.egg.service.WechatAuthService;
+import com.zero.egg.model.*;
+import com.zero.egg.service.*;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.Message;
@@ -61,6 +54,9 @@ public class LoginController {
     @Autowired
     private ShopMapper shopMapper;
 
+    @Autowired
+    private ICompanyService iCompanyService;
+
     @PassToken
     @ApiOperation(value = "鸡蛋系统登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -103,7 +99,12 @@ public class LoginController {
                         .eq("dr", false)
                         .eq("status", CompanyUserEnums.Status.Normal.index().toString());
                 CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
-                if (companyUser != null) {
+
+                QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
+                CompanyQueryWrapper.eq("id",companyUser.getCompanyId()).eq("dr",false);
+                //验证企业是否过期
+                Company  company =iCompanyService.getOne(CompanyQueryWrapper);
+                if (companyUser != null &&  company!=null) {
                     /**
                      * 根据账号密码生成数字签名作为rediskey
                      */

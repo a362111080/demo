@@ -251,7 +251,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		user.setModifier(loginUser.getId());
 		if (StringUtils.isNotBlank(user.getPassword())) {
 			try {
-				user.setPassword(MD5Utils.encode(user.getPassword()));
+					user.setPassword(MD5Utils.encode(user.getPassword()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
