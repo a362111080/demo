@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.OrderAddressMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderAddress">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="city_id" jdbcType="VARCHAR" property="cityId" />
+    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+    <result column="area_code" jdbcType="CHAR" property="areaCode" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="is_default" jdbcType="BOOLEAN" property="isDefault" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="dr" jdbcType="BOOLEAN" property="dr" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, user_id, city_id, address_detail, area_code, tel, is_default, creator,
+    createtime, modifier, modifytime, dr
+  </sql>
+</mapper>
