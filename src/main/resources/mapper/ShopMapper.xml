@@ -16,5 +16,8 @@
        a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.type= #{type,jdbcType=INTEGER} and a.dr=0
     </select>
 
-
+    <insert id="addsecret" parameterType="OrderSecret">
+     insert into order_secret(id,company_id,shop_id,secret_key,creator,createtime,modifier,modifytime,dr)
+     values(REPLACE(UUID(),'-',''),#{companyid},#{shopid},#{secretKey},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
+     </insert>
 </mapper>

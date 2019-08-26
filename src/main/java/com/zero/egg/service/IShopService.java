@@ -22,4 +22,6 @@ public interface IShopService extends IService<Shop> {
     List<Shop> getShopListByCompanid(String companyId);
 
     Integer getClietnUseCountByShopid(String shopId, Integer type);
+
+    int addsecret(Shop shop, LoginUser loginUser, String usecret);
 }

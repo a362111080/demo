@@ -136,7 +136,6 @@ public class UnloadGoodsController {
                                     } else {
                                         model.setWarn(false);
                                     }
-
                                 }
                                 int strval = unloadGoodsService.AddUnloadDetl(model);
                                 if (strval > 0) {

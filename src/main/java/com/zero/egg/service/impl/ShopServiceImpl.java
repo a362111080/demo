@@ -1,20 +1,20 @@
 package com.zero.egg.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
+import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
 import com.zero.egg.tool.UuidUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -70,6 +70,21 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public Integer getClietnUseCountByShopid(String shopId, Integer type) {
 		return mapper.getClietnUseCountByShopid(shopId,type);
+	}
+
+	@Override
+	public int addsecret(Shop shop, LoginUser loginUser, String usecret) {
+
+		OrderSecret   se=new OrderSecret();
+		se.setCompanyid(loginUser.getCompanyId());
+		se.setShopid(loginUser.getShopId());
+		se.setSecretKey(usecret);
+		se.setCreator(loginUser.getId());
+		se.setModifier(loginUser.getId());
+		se.setCreatetime(new Date());
+		se.setModifytime(new Date());
+		se.setDr(false);
+		return mapper.addsecret(se);
 	}
 
 }
