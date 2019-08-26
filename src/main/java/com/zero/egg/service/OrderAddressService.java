@@ -17,4 +17,12 @@ public interface OrderAddressService {
      * @throws ServiceException
      */
     Message createAddress(OrderAddressDTO orderAddressDTO) throws ServiceException;
+
+    /**
+     * 修改收货地址
+     * @param orderAddressDTO
+     * @return
+     * @throws ServiceException
+     */
+    Message updateAddress(OrderAddressDTO orderAddressDTO) throws ServiceException;
 }

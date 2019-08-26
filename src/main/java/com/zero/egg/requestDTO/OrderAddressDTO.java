@@ -19,10 +19,14 @@ public class OrderAddressDTO implements Serializable {
 
     private static final long serialVersionUID = 4335370608043917698L;
 
+
+    @ApiModelProperty(value="主键")
+    private String id;
     /**
      * 收货人名称
      */
     @ApiModelProperty(value="收货人名称")
+    @NotNull(message ="收货人名称不能为空")
     private String name;
 
     /**

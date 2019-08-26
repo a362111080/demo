@@ -1,5 +1,6 @@
 package com.zero.egg.controller;
 
+import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderAddressDTO;
@@ -40,6 +41,7 @@ public class AddressController {
 
     @ApiOperation("创建地址")
     @PostMapping(value = "/create")
+    @LoginToken
     public Message create(@RequestBody  OrderAddressDTO orderAddressDTO) {
         Message msg = new Message();
         BeanValidator.check(orderAddressDTO);
@@ -51,6 +53,30 @@ public class AddressController {
             msg = orderAddressService.createAddress(orderAddressDTO);
         } catch (Exception e) {
             log.error("create address controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @ApiOperation("更新地址")
+    @PostMapping(value = "/update")
+    @LoginToken
+    public Message update(@RequestBody OrderAddressDTO orderAddressDTO) {
+        //参数校验
+        BeanValidator.check(orderAddressDTO);
+        Message msg = new Message();
+        try {
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            orderAddressDTO.setUserId(user.getId());
+            orderAddressDTO.setModifytime(new Date());
+            orderAddressDTO.setModifier(user.getId());
+            msg = orderAddressService.updateAddress(orderAddressDTO);
+        } catch (Exception e) {
+            log.error("update address controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());

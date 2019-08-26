@@ -23,7 +23,7 @@ public class OrderAddress implements Serializable {
 
     @TableId(value = "id", type = IdType.UUID)
     @ApiModelProperty(value="主键")
-    private Integer id;
+    private String id;
 
     /**
      * 收货人名称
