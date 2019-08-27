@@ -1,9 +1,12 @@
 package com.zero.egg.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.OrderAddressMapper;
 import com.zero.egg.model.OrderAddress;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderAddressDTO;
+import com.zero.egg.requestDTO.RemAddressRequestDTO;
 import com.zero.egg.service.OrderAddressService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -12,6 +15,9 @@ import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName OrderAddressServiceImpl
@@ -47,6 +53,18 @@ public class OrderAddressServiceImpl implements OrderAddressService {
         try {
             OrderAddress orderAddress = new OrderAddress();
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
+            //如果要改成默认地址,则要查重
+            if (orderAddressDTO.getIsDefault()) {
+                Integer count = orderAddressMapper.selectCount(new QueryWrapper<OrderAddress>()
+                        .eq("user_id", orderAddressDTO.getUserId())
+                        .eq("is_default", true)
+                        .eq("dr", false));
+                if (count != 1) {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                    return message;
+                }
+            }
             orderAddressMapper.update(orderAddress, new UpdateWrapper<OrderAddress>()
                     .eq("id", orderAddressDTO.getId())
                     .eq("user_id", orderAddressDTO.getUserId()));
@@ -56,6 +74,44 @@ public class OrderAddressServiceImpl implements OrderAddressService {
         } catch (Exception e) {
             log.error("updateAddress service error:" + e);
             throw new ServiceException("updateAddress service error");
+        }
+    }
+
+    @Override
+    public Message removeAddress(RemAddressRequestDTO remAddressRequestDTO, LoginUser user) throws ServiceException {
+        Message message = new Message();
+        try {
+            OrderAddress orderAddress = new OrderAddress();
+            orderAddress.setDr(true);
+            orderAddress.setModifier(user.getId());
+            orderAddress.setModifytime(new Date());
+            orderAddressMapper.update(orderAddress, new UpdateWrapper<OrderAddress>()
+                    .eq("user_id", user.getId())
+                    .in("id", remAddressRequestDTO.getIds()));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.error("removeAddress service error:" + e);
+            throw new ServiceException("removeAddress service error");
+        }
+    }
+
+    @Override
+    public Message listAddress(LoginUser user) throws ServiceException {
+        Message message = new Message();
+        try {
+
+            List<OrderAddress> addressList =  orderAddressMapper.selectList(new UpdateWrapper<OrderAddress>()
+                    .eq("user_id", user.getId())
+                    .eq("dr",false));
+            message.setData(addressList);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.error("listAddress service error:" + e);
+            throw new ServiceException("listAddress service error");
         }
     }
 }

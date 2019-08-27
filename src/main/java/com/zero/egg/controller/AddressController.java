@@ -4,6 +4,7 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderAddressDTO;
+import com.zero.egg.requestDTO.RemAddressRequestDTO;
 import com.zero.egg.service.OrderAddressService;
 import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
@@ -23,7 +24,7 @@ import java.util.Date;
 
 /**
  * @ClassName AddressController
- * @Description TODO
+ * @Description 订货平台地址Controller
  * @Author lyming
  * @Date 2019-08-21 09:55
  **/
@@ -77,6 +78,46 @@ public class AddressController {
             msg = orderAddressService.updateAddress(orderAddressDTO);
         } catch (Exception e) {
             log.error("update address controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @ApiOperation("删除用户收货地址(可批量)")
+    @PostMapping(value = "/delete")
+    @LoginToken
+    public Message delete(@RequestBody RemAddressRequestDTO remAddressRequestDTO) {
+        //参数校验
+        BeanValidator.check(remAddressRequestDTO);
+        Message msg = new Message();
+        try {
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            msg = orderAddressService.removeAddress(remAddressRequestDTO,user);
+        }catch (Exception e) {
+            log.error("delete address controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @ApiOperation("查看所有收货地址")
+    @PostMapping(value = "/list")
+    @LoginToken
+    public Message list() {
+        Message msg = new Message();
+        try {
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            msg = orderAddressService.listAddress(user);
+        }catch (Exception e) {
+            log.error("list address controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());

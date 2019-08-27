@@ -1,6 +1,8 @@
 package com.zero.egg.service;
 
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderAddressDTO;
+import com.zero.egg.requestDTO.RemAddressRequestDTO;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 
@@ -25,4 +27,21 @@ public interface OrderAddressService {
      * @throws ServiceException
      */
     Message updateAddress(OrderAddressDTO orderAddressDTO) throws ServiceException;
+
+    /**
+     * 删除用户收货地址
+     * @param remAddressRequestDTO
+     * @param user
+     * @return
+     * @throws ServiceException
+     */
+    Message removeAddress(RemAddressRequestDTO remAddressRequestDTO, LoginUser user) throws ServiceException;
+
+    /**
+     * 查询用户收货地址列表(不分页)
+     * @param user
+     * @return
+     * @throws ServiceException
+     */
+    Message listAddress(LoginUser user) throws ServiceException;
 }
