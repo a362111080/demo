@@ -9,6 +9,7 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.ShopEnums;
+import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -231,7 +232,7 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="生成店铺秘钥")
 	@RequestMapping(value="/addsecret",method=RequestMethod.POST)
-	public Message<Object> add(@RequestBody  Shop shop) {
+	public Message<Object> addsecret(@RequestBody  Shop shop) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -315,4 +316,79 @@ public class ShopController {
 
 
 
+	//店铺秘钥
+	@LoginToken
+	@ApiOperation(value="新增店铺分类")
+	@RequestMapping(value="/addordercategory",method=RequestMethod.POST)
+	public Message<Object> addordercategory(@RequestBody OrderCategory model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (loginUser.getCompanyId()!=null) {
+			try {
+				int strval = shopService.addordercategory(model, loginUser);
+				if (strval > 0) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("操作失败");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+
+
+	//店铺秘钥
+	@LoginToken
+	@ApiOperation(value="新增店铺分类")
+	@RequestMapping(value="/editrdercategory",method=RequestMethod.POST)
+	public Message<Object> editrdercategory(@RequestBody OrderCategory model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (loginUser.getCompanyId()!=null) {
+			try {
+				int strval = shopService.editrdercategory(model);
+				if (strval > 0) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("操作失败");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
 }

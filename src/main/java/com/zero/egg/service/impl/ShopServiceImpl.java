@@ -3,6 +3,7 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
+import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -91,6 +92,41 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public List<OrderSecret> GetShopSecret(ShopRequest shop) {
 		return mapper.GetShopSecret(shop);
+	}
+
+	@Override
+	public int addordercategory(OrderCategory model, LoginUser loginUser) {
+		if (model.getPid()!=null)
+		{
+			//二级分类
+			model.setId(UuidUtil.get32UUID());
+			model.setModifytime(new Date());
+			model.setCreatetime(new Date());
+			model.setShopid(loginUser.getShopId());
+			model.setCompanyid(loginUser.getCompanyId());
+			model.setLevel("2");
+			model.setDr(false);
+
+
+		}
+		else
+		{
+			//一级分类
+			model.setId(UuidUtil.get32UUID());
+			model.setModifytime(new Date());
+			model.setCreatetime(new Date());
+			model.setShopid(loginUser.getShopId());
+			model.setCompanyid(loginUser.getCompanyId());
+			model.setLevel("1");
+			model.setDr(false);
+		}
+
+		return mapper.addordercategory(model);
+	}
+
+	@Override
+	public int editrdercategory(OrderCategory model) {
+		return mapper.editrdercategory(model);
 	}
 
 }

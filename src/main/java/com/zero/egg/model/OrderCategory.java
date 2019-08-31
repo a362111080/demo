@@ -2,6 +2,7 @@ package com.zero.egg.model;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -64,5 +65,13 @@ public class OrderCategory implements Serializable {
 
     @ApiModelProperty(value = " 创建时间",required=false)
     private Date createtime;
+
+
+    /**
+     * 逻辑删除
+     */
+    @TableField(value = "dr")
+    @ApiModelProperty(value="逻辑删除")
+    private Boolean dr;
 
 }

@@ -1,6 +1,7 @@
 package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -28,4 +29,8 @@ public interface IShopService extends IService<Shop> {
     int addsecret(Shop shop, LoginUser loginUser, String usecret);
 
     List<OrderSecret> GetShopSecret(ShopRequest shop);
+
+    int addordercategory(OrderCategory model, LoginUser loginUser);
+
+    int editrdercategory(OrderCategory model);
 }
