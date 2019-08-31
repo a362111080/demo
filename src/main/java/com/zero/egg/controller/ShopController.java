@@ -4,9 +4,12 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.ShopEnums;
+import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShopRequest;
@@ -275,4 +278,28 @@ public class ShopController {
 		return shortBuffer.toString();
 	}
 
+
+    //店铺秘钥
+    @LoginToken
+    @ApiOperation(value="查询店铺秘钥")
+    @RequestMapping(value="/getshopsecret",method=RequestMethod.POST)
+    public Message<Object> getshopsecret(@RequestBody  ShopRequest shop) {
+        Message ms = new Message();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        PageHelper.startPage(shop.getCurrent().intValue(), shop.getSize().intValue());
+        if (loginUser.getCompanyId()!=null) {
+            List<OrderSecret> ListSecret=shopService.GetShopSecret(shop);
+            PageInfo<OrderSecret> pageInfo = new PageInfo<>(ListSecret);
+            ms.setData(pageInfo);
+            ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        }
+        else
+        {
+            ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            ms.setMessage("操作失败，无企业信息");
+        }
+        return ms;
+    }
 }

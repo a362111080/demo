@@ -6,6 +6,7 @@ import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -85,6 +86,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		se.setModifytime(new Date());
 		se.setDr(false);
 		return mapper.addsecret(se);
+	}
+
+	@Override
+	public List<OrderSecret> GetShopSecret(ShopRequest shop) {
+		return mapper.GetShopSecret(shop);
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -68,4 +69,27 @@ public class OrderSecret implements Serializable {
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "绑定时间",required=false)
+    public String bindtime;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "绑定人",required=false)
+    public String name;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "联系方式",required=false)
+    public String phone;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "绑定人类型",required=false)
+    public String type;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "绑定人状态",required=false)
+    public String status;
 }

@@ -3,6 +3,7 @@ package com.zero.egg.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
+import com.zero.egg.requestDTO.ShopRequest;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface ShopMapper extends BaseMapper<Shop> {
     Integer getClietnUseCountByShopid(String shopId, Integer type);
 
     int addsecret(OrderSecret se);
+
+    List<OrderSecret> GetShopSecret(ShopRequest shop);
 }

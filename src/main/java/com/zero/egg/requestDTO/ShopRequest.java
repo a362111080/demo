@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class ShopRequest extends PageDTO{
 
-	 @ApiModelProperty(value = "编码",required=false)
+	    @ApiModelProperty(value = "编码",required=false)
 	    private String code;
 
 	    @ApiModelProperty(value = "名称",required=false)
@@ -25,5 +25,9 @@ public class ShopRequest extends PageDTO{
 	    
 	    @ApiModelProperty(value = "状态",required=false)
 	    private String status;
+
+
+		@ApiModelProperty(value = "使用状态",required=false)
+		private Boolean dr;
 	
 }

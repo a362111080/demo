@@ -20,4 +20,20 @@
      insert into order_secret(id,company_id,shop_id,secret_key,creator,createtime,modifier,modifytime,dr)
      values(REPLACE(UUID(),'-',''),#{companyid},#{shopid},#{secretKey},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
      </insert>
+
+
+    <select id="GetShopSecret"  resultType="com.zero.egg.model.OrderSecret">
+        select k.*,b.createtime as bindtime,c.name,c.phone,c.type,c.status from  order_secret k
+        left join order_user_secret  b  on k.id=b.secret_id
+        left join order_user c  on  c.id=b.user_id
+        where  1=1
+        <if test="code != null and code !=''">
+            k.shop_id=#{code,jdbcType=VARCHAR}
+        </if>
+        <if test="dr != null and dr !=''">
+            k.dr=#{dr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
 </mapper>
