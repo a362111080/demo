@@ -14,10 +14,7 @@ import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.service.IShopService;
-import com.zero.egg.tool.Message;
-import com.zero.egg.tool.StringTool;
-import com.zero.egg.tool.UtilConstants;
-import com.zero.egg.tool.UuidUtil;
+import com.zero.egg.tool.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -240,11 +237,24 @@ public class ShopController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
 			String usecret = generateShortUuid();
-			int strval = shopService.addsecret(shop, loginUser, usecret);
-			if (strval>0)
-			{
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			try {
+				int strval = shopService.addsecret(shop, loginUser, usecret);
+				if (strval > 0) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("操作失败");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
 			}
 		}
 		else
