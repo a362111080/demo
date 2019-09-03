@@ -220,6 +220,49 @@ public class UnloadGoodsController {
         return  ms;
     }
 
+	@ApiOperation(value="根据卸货明细id移除卸货记录")
+	@RequestMapping(value = "/removeunloadgood",method = RequestMethod.POST)
+	public Message RemoveUnloadGood(@RequestBody  UnloadGoods model)
+	{
+		Message ms = new Message();
+
+		if (null==model.getId()) {
+			ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			ms.setMessage("非法操作，无卸货ID参数");
+		}
+		else
+		{
+			try{
+
+				int strVal=unloadGoodsService.RemoveUnloadGood(model);
+				if (strVal==-99	)
+				{
+					ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					ms.setMessage("卸货任务不存在或状态错误，请刷新后操作");
+				}
+				else if (strVal>0)
+				{
+					ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+				else
+				{
+					ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					ms.setMessage("操作失败!");
+				}
+			}
+			catch (Exception e)
+			{
+				ms.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				ms.setMessage("操作失败!"+e);
+			}
+
+		}
+
+		return  ms;
+	}
+
+
 
 	/**
 	 * 从当前登录用户信息中检查shopId和companyId是否为空

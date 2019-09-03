@@ -46,6 +46,9 @@
             where task_id = #{id,jdbcType=VARCHAR}
     </update>
 
+
+
+
     <select id="GetUnloadDetl" resultType="com.zero.egg.model.UnloadGoods">
         select * from bd_unload_goods  k
         where k.task_id= #{id,jdbcType=VARCHAR}
@@ -71,6 +74,7 @@
         where k.program_id= #{newProgram,jdbcType=VARCHAR}
         and k.task_id= #{id,jdbcType=VARCHAR}
     </select>
+
 
     <select id="GetUnloadReport" resultType="com.zero.egg.responseDTO.UnloadReport">
         select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval,ca.name as categoryname

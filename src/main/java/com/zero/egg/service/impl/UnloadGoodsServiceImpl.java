@@ -3,6 +3,7 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.UnloadGoodsMapper;
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
 import com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto;
@@ -88,5 +89,19 @@ public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, Unloa
     @Override
     public void RepaireUnloadTask(String taskId) {
           mapper.RepaireUnloadTask(taskId);
+    }
+
+    @Override
+    public int RemoveUnloadGood(UnloadGoods model) {
+
+        Task  unload =mapper.GetTaskinfo(model.getTaskId());
+        if (null!=unload) {
+            return mapper.RemoveUnloadGood(model);
+        }
+        else
+        {
+            return -99;
+        }
+
     }
 }

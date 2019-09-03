@@ -44,4 +44,6 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
     int GoodNoIsExists(String currentCode);
 
     void RepaireUnloadTask(String taskId);
+
+    int RemoveUnloadGood(UnloadGoods model);
 }

@@ -114,5 +114,14 @@
         )
     </delete>
 
+    <delete  id="RemoveUnloadGood" parameterType="UnloadGoods">
+        delete from bd_unload_goods
+        where  id = #{id,jdbcType=VARCHAR}
+    </delete >
+
+    <select id="GetTaskinfo" resultType="Task">
+        select * from bd_task k
+        where k.id=#{taskId,jdbcType=VARCHAR}  and k.dr=0  and  k.status in ('3','0')
+    </select>
 
 </mapper>
