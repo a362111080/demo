@@ -250,7 +250,6 @@ public class BrokenGoodsController {
 				List<Goods> brokenList = brokenGoodsService.GetBrokenInfo(brokenGoods);
 				//判断出货商品码是否存在
 				if (brokenList.size() > 0) {
-
 					List<BrokenGoods> HadBrokenList = brokenGoodsService.CheckBroken(brokenGoods.getBrokenGoodsNo());
 					if (HadBrokenList.size() == 0) {
 						Goods broken = brokenList.get(0);
