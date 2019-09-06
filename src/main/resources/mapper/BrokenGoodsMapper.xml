@@ -51,8 +51,8 @@
 		</where>
 	</select>
 
-	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string" >
-		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,
+	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods" >
+		 SELECT k.*,a.name as customername ,b.name as categoryname,c.bill_no,c.status as  billstatus,
 		 case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 		 FROM bd_shipment_goods k
 		 left join bd_customer a on a.id=k.customer_id
@@ -60,14 +60,18 @@
 		 left join bd_bill c on c.task_id=k.task_id
 		 left join bd_specification d on d.id=k.specification_id
 		<where>
-			<if test="_parameter != null and _parameter != ''">
-				and  k.goods_no  like '%${_parameter}%'  and  k.dr=0
+			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
+				and  k.goods_no  like '%${brokenGoodsNo}%'
 			</if>
+			<if test="shopId != null and shopId != ''">
+				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
+			</if>
+			and  k.dr=0
 		</where>
 		order by  k.createtime desc
 	</select>
-	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="string">
-		SELECT k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,
+	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods">
+		SELECT k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,f.status as billstatus,
 		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 		FROM bd_goods k
 	    left join bd_supplier a on a.id=k.supplier_id
@@ -75,7 +79,18 @@
 		left join bd_specification d on d.id=k.specification_id
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
-		where k.goods_no=#{goodsNo,jdbcType=VARCHAR}
+		<where>
+			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
+				and  k.goods_no =#{brokenGoodsNo,jdbcType=VARCHAR}
+			</if>
+			<if test="shopId != null and shopId != ''">
+				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
+			</if>
+			<if test="changeGoodsNo != null and changeGoodsNo != ''">
+				and  k.goods_no =#{changeGoodsNo,jdbcType=VARCHAR}
+			</if>
+			and  k.dr=0
+		</where>
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
 		update bd_goods set dr=1

@@ -357,7 +357,7 @@ public class ShopController {
 
 	//店铺秘钥
 	@LoginToken
-	@ApiOperation(value="新增店铺分类")
+	@ApiOperation(value="修改店铺分类")
 	@RequestMapping(value="/editrdercategory",method=RequestMethod.POST)
 	public Message<Object> editrdercategory(@RequestBody OrderCategory model) {
 		Message<Object> message = new Message<Object>();

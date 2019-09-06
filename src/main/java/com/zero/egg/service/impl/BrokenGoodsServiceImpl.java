@@ -40,15 +40,15 @@ public class BrokenGoodsServiceImpl extends ServiceImpl<BrokenGoodsMapper, Broke
 	}
 
 	@Override
-	public  List<Goods>  GetBrokenInfo(String goodsNo) {
-
-		return mapper.GetBrokenInfo(goodsNo);
+	public List<Goods> GetBrokenInfo(BrokenGoods brokenGoods) {
+		return mapper.GetBrokenInfo(brokenGoods);
 	}
 
-	@Override
-	public Goods GetStoBrokenInfo(String brokenGoodsNo) {
 
-		return mapper.GetStoBrokenInfo(brokenGoodsNo);
+	@Override
+	public Goods GetStoBrokenInfo(BrokenGoods brokenGoods) {
+
+		return mapper.GetStoBrokenInfo(brokenGoods);
 	}
 
 	@Override

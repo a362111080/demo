@@ -109,6 +109,11 @@ public class Goods implements Serializable {
     public String taskId;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "账单状态",hidden=true)
+    public String billstatus;
+
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "扫码显示标识",hidden=true)
     public String brokenmarker;
 
