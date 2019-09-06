@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
+import com.zero.egg.dao.BrokenGoodsMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.dao.StockMapper;
@@ -12,6 +13,7 @@ import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.BillEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
@@ -74,6 +76,8 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private BrokenGoodsMapper brokenGoodsMapper;
 
 
     @Override
@@ -270,6 +274,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     public Message cancelShipmentBill(CancelShipmentBillRequestDTO requestDTO) throws ServiceException {
         Message message = new Message();
         /**
+         * 如果账单已经存在报损任务,则不能取消账单
          * 1.根据账单id查出该账单信息,主要是相关联的出货任务id,逻辑删除该账单信息(包括账单细节表里的关联信息)
          * 2.根据任务id查询出货商品表相关已出货物信息,主要是商品编号,方案细节(规格)id,并将dr置位1
          * 3.将商品表里的商品编号所对应的的商品的dr属性重置为0
@@ -303,8 +308,8 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             //查出对应出货商品集合
             List<ShipmentGoods> shipmentGoodsList = shipmentGoodsMapper.selectList(new QueryWrapper<ShipmentGoods>()
                     .select("id,specification_id,goods_no")
-                    .eq("task_id",taskId)
-                    .eq("customer_id",customerId)
+                    .eq("task_id", taskId)
+                    .eq("customer_id", customerId)
                     .eq("company_id", requestDTO.getCompanyId())
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("dr", 0));
@@ -318,6 +323,14 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             for (ShipmentGoods shipmentGoods : shipmentGoodsList) {
                 shipmentGoodsIdSet.add(shipmentGoods.getId());
                 goodsNoSet.add(shipmentGoods.getGoodsNo());
+            }
+            Integer brokenCount = brokenGoodsMapper.selectCount(new QueryWrapper<BrokenGoods>()
+                    .eq("company_id", requestDTO.getCompanyId())
+                    .eq("shop_id", requestDTO.getShopId())
+                    .eq("dr", false)
+                    .in("goods_no", goodsNoSet));
+            if (brokenCount > 0) {
+                throw new ServiceException("存在已经报损的货物,不能取消账单");
             }
             //逻辑删除已出货物信息
             shipmentGoodsMapper.update(new ShipmentGoods().setDr(true), new UpdateWrapper<ShipmentGoods>()
@@ -342,7 +355,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 currentQuantity = stock.getQuantity();
                 stock.setQuantity(currentQuantity.add(BigDecimal.valueOf(entry.getValue())));
                 stockMapper.update(stock, new UpdateWrapper<Stock>()
-                        .eq("id",stock.getId())
+                        .eq("id", stock.getId())
                         .eq("company_id", requestDTO.getCompanyId())
                         .eq("shop_id", requestDTO.getShopId())
                         .eq("dr", false));
