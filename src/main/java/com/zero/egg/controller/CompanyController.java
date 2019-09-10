@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -178,7 +180,6 @@ public class CompanyController {
 			{
 				pwd = MD5Utils.encode(companyUser.getPassword());
 			}
-
 			if (null != companyUser.getCompanyId()) {
 				company.setId(companyUser.getCompanyId());
 				company.setModifier(loginUser.getId());
@@ -188,6 +189,7 @@ public class CompanyController {
 				company.setName(companyUser.getCompanyName());
 				company.setBegintime(companyUser.getBegintime());
 				company.setEndtime(companyUser.getEndtime());
+				company.setDr(false);
 				if (iCompanyService.updateById(company)) {
 					companyUser.setModifier(loginUser.getId());
 					companyUser.setCreator(loginUser.getId());

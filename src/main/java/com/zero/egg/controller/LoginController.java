@@ -77,20 +77,31 @@ public class LoginController {
                 /**
                  * 根据账号密码生成数字签名作为rediskey
                  */
-                String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
-                response = new BaseResponse<>();
-                int type = user.getType();
-                //生成token
-                String accessToken = TokenUtils.createJwtToken(user.getId());
-                jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
-                map = new HashMap<>();
-                map.put("token", redisKey);
-                map.put("userType", type);
-                map.put("userTypeName", UserEnums.Type.note(type));
-                map.put("user", user);
-                response.setData(map);
-                response.setCode(ApiConstants.ResponseCode.SUCCESS);
-                response.setMsg("登录成功");
+                QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
+                CompanyQueryWrapper.eq("id",user.getCompanyId()).eq("dr",false);
+                //验证企业是否过期
+                Company  company =iCompanyService.getOne(CompanyQueryWrapper);
+                if (company!=null) {
+                    String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
+                    response = new BaseResponse<>();
+                    int type = user.getType();
+                    //生成token
+                    String accessToken = TokenUtils.createJwtToken(user.getId());
+                    jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
+                    map = new HashMap<>();
+                    map.put("token", redisKey);
+                    map.put("userType", type);
+                    map.put("userTypeName", UserEnums.Type.note(type));
+                    map.put("user", user);
+                    response.setData(map);
+                    response.setCode(ApiConstants.ResponseCode.SUCCESS);
+                    response.setMsg("登录成功");
+                }
+                else
+                {
+                    response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+                    response.setMsg("登录失败!，请联系管理员");
+                }
             } else {
                 response = new BaseResponse<>();
                 QueryWrapper<CompanyUser> cUserQueryWrapper = new QueryWrapper<>();
