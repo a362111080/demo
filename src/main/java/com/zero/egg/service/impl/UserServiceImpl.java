@@ -256,14 +256,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 				e.printStackTrace();
 			}
 		}
-		user.setModifytime(new Date());
-		if (updateById(user)) {
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-		}else {
-			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.FAILED);
+		//判断端数是否符合条件
+		Integer isOk=userMapper.GetUserUpdateClientCount(user);
+		if (isOk<1) {
+
+			if (UserEnums.Type.Pc.index().equals(user.getType())) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("PC客户端名额已用完");
+			}
+			if (UserEnums.Type.Boss.index().equals(user.getType())) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("老板客户端名额已用完");
+			}
+			if (UserEnums.Type.Staff.index().equals(user.getType())) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("员工客户端名额已用完");
+			}
+			if (UserEnums.Type.Device.index().equals(user.getType())) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("设备客户端名额已用完");
+			}
 		}
+		else
+		{
+			user.setModifytime(new Date());
+			if (updateById(user)) {
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}else {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			}
+		}
+
+
 		return message;
 	}
 

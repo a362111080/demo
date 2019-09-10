@@ -26,4 +26,5 @@ public interface UserMapper extends BaseMapper<User> {
      */
     List<UserListResponseDTO> getUserList(UserRequest userRequest);
 
+    Integer GetUserUpdateClientCount(User user);
 }

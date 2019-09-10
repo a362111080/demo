@@ -8,6 +8,21 @@
 
     </select>
 
+    <select id="GetUserUpdateClientCount" parameterType="com.zero.egg.model.User" resultType="int">
+        select info.portcount-info.counts+1 from (
+        select count(*) as counts,a.type,
+        case when a.type='1' then  b.pc_client
+        when  a.type='2' then b.boss_client
+        when a.type='3' THEN b.staff_client
+        else b.device_client  end as portcount
+        from bd_user  a
+        left join bd_shop b on a.shop_id=b.id
+        where a.shop_id= #{shopId,jdbcType=VARCHAR}
+        and a.dr=0 and a.id not in ( #{id,jdbcType=VARCHAR} )  and  a.type=#{type,jdbcType=VARCHAR}
+        group by a.type,b.pc_client,b.boss_client,b.staff_client,b.device_client)  info
+    </select>
+
+
     <select id="getUserList" parameterType="com.zero.egg.requestDTO.UserRequest"
             resultType="com.zero.egg.responseDTO.UserListResponseDTO">
         SELECT
