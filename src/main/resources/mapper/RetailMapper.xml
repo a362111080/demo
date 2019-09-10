@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zero.egg.dao.BdRetailMapper">
-  <resultMap id="BaseResultMap" type="com.zero.egg.model.BdRetail">
-    <!--@mbg.generated-->
+<mapper namespace="com.zero.egg.dao.RetailMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.Retail">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="shop_id" jdbcType="VARCHAR" property="shopId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
     <result column="bill_id" jdbcType="VARCHAR" property="billId" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="quantity" jdbcType="DECIMAL" property="quantity" />
-    <result column="quantity_mode" jdbcType="INTEGER" property="quantityMode" />
+    <result column="quantity_mode" jdbcType="BOOLEAN" property="quantityMode" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="real_amount" jdbcType="DECIMAL" property="realAmount" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
     <result column="modifier" jdbcType="VARCHAR" property="modifier" />
@@ -18,8 +18,7 @@
     <result column="dr" jdbcType="BIT" property="dr" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, shop_id, company_id, bill_id, price, quantity, quantity_mode, amount, creator, 
-    createtime, modifier, modifytime, dr
+    id, shop_id, company_id, bill_id, price, quantity, quantity_mode, amount, real_amount,
+    creator, createtime, modifier, modifytime, dr
   </sql>
 </mapper>

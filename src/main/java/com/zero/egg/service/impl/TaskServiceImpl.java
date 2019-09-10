@@ -387,6 +387,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
             //5.生成一条ststus为0(未生成的)账单
+            Integer isRetail = customerMapper.selectOne(new QueryWrapper<Customer>()
+                    .select("is_retail")
+                    .eq("id", customerId))
+                    .getIsRetail();
             int shipmentBillCount = billMapper.selectCount(new QueryWrapper<Bill>()
                     .eq("type", TaskEnums.Type.Shipment.index().toString()));
             /**8位编码前面补0格式*/
@@ -399,7 +403,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             bill.setTaskId(taskId);
             bill.setCussupId(customerId);
             bill.setStatus(BillEnums.Status.Not_Generated.index().toString());
-            bill.setType(TaskEnums.Type.Shipment.index().toString());
+            if (isRetail == 0) {
+                bill.setType(TaskEnums.Type.Shipment.index().toString());
+            } else {
+                bill.setType(TaskEnums.Type.Retail.index().toString());
+            }
             bill.setCompanyId(task.getCompanyId());
             bill.setShopId(task.getShopId());
             bill.setBillDate(new Date());

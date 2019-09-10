@@ -4,6 +4,7 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.QueryRetailDeatilsRequestDTO;
+import com.zero.egg.requestDTO.SaveRetailDeatilsRequestDTO;
 import com.zero.egg.service.BdRetailService;
 import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * @ClassName RetailController
@@ -41,6 +43,25 @@ public class RetailController {
             queryRetailDeatilsRequestDTO.setCompanyId(user.getCompanyId());
             queryRetailDeatilsRequestDTO.setShopId(user.getShopId());
             message = bdRetailService.listRetailDetails(queryRetailDeatilsRequestDTO);
+        } catch (Exception e) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+        }
+        return message;
+    }
+
+    @LoginToken
+    @PostMapping(value = "retailgoods")
+    public Message retailGoods(HttpServletRequest request,@RequestBody SaveRetailDeatilsRequestDTO saveRetailDeatilsRequestDTO) {
+        Message message = new Message();
+        BeanValidator.check(saveRetailDeatilsRequestDTO);
+        try {
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            saveRetailDeatilsRequestDTO.setCompanyId(user.getCompanyId());
+            saveRetailDeatilsRequestDTO.setShopId(user.getShopId());
+            saveRetailDeatilsRequestDTO.setCreator(user.getId());
+            saveRetailDeatilsRequestDTO.setCreatetime(new Date());
+            message = bdRetailService.insertRetailDetails(saveRetailDeatilsRequestDTO);
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);

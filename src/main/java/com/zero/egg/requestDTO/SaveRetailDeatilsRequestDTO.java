@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -38,32 +39,42 @@ public class SaveRetailDeatilsRequestDTO implements Serializable {
      * 账单主键
      */
     @ApiModelProperty(value="账单主键")
+    @NotNull(message = "账单id不能为空")
     private String billId;
 
     /**
      * 单价
      */
     @ApiModelProperty(value="单价")
+    @NotNull(message = "单价不能为空")
     private BigDecimal price;
 
     /**
      * 数量
      */
     @ApiModelProperty(value="数量")
+    @NotNull(message = "数量不能为空")
     private Integer quantity;
 
     /**
      * 数量方式(1:斤 2:个 3:盘)
      */
     @ApiModelProperty(value="数量方式(1:斤 2:个 3:盘)")
+    @NotNull(message = "数量方式不能为空")
     private Integer quantityMode;
 
     /**
-     * 金额
+     * 应收金额
      */
-    @ApiModelProperty(value="金额")
+    @ApiModelProperty(value="应收金额")
     private BigDecimal amount;
 
+    /**
+     * 实收金额
+     */
+    @ApiModelProperty(value="实收金额")
+    @NotNull(message = "实收金额不能为空")
+    private BigDecimal realAmount;
     /**
      * 创建人
      */

@@ -20,5 +20,5 @@ public interface BdRetailService{
      * @return
      * @throws ServiceException
      */
-    public long insertRetailDetails(SaveRetailDeatilsRequestDTO saveRetailDeatilsRequestDTO) throws ServiceException;
+    public Message insertRetailDetails(SaveRetailDeatilsRequestDTO saveRetailDeatilsRequestDTO) throws ServiceException;
 }

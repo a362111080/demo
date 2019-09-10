@@ -13,16 +13,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 零售账单细节
+ * @author lyming
  */
-@ApiModel(value="com.zero.egg.model.BdRetail")
+@ApiModel(value="com.zero.egg.model.Retail")
 @Data
 @TableName(value = "bd_retail")
-public class BdRetail implements Serializable {
+public class Retail implements Serializable {
     /**
      * 主键
      */
-     @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.UUID)
     @ApiModelProperty(value="主键")
     private String id;
 
@@ -69,11 +69,18 @@ public class BdRetail implements Serializable {
     private Integer quantityMode;
 
     /**
-     * 金额
+     * 应收金额
      */
     @TableField(value = "amount")
-    @ApiModelProperty(value="金额")
+    @ApiModelProperty(value="应收金额")
     private BigDecimal amount;
+
+    /**
+     * 实收金额
+     */
+    @TableField(value = "real_amount")
+    @ApiModelProperty(value="实收金额")
+    private BigDecimal realAmount;
 
     /**
      * 创建人
@@ -111,28 +118,4 @@ public class BdRetail implements Serializable {
     private Boolean dr = false;
 
     private static final long serialVersionUID = 1L;
-
-    public static final String COL_SHOP_ID = "shop_id";
-
-    public static final String COL_COMPANY_ID = "company_id";
-
-    public static final String COL_BILL_ID = "bill_id";
-
-    public static final String COL_PRICE = "price";
-
-    public static final String COL_QUANTITY = "quantity";
-
-    public static final String COL_QUANTITY_MODE = "quantity_mode";
-
-    public static final String COL_AMOUNT = "amount";
-
-    public static final String COL_CREATOR = "creator";
-
-    public static final String COL_CREATETIME = "createtime";
-
-    public static final String COL_MODIFIER = "modifier";
-
-    public static final String COL_MODIFYTIME = "modifytime";
-
-    public static final String COL_DR = "dr";
 }

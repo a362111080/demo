@@ -269,7 +269,7 @@ public class BillController {
                     }
                 }
             }
-            if (BillList.get(i).getType().equals(TaskEnums.Type.Shipment.index().toString())) {
+            if (!BillList.get(i).getType().equals(TaskEnums.Type.Unload.index().toString())) {
                 //收入
                 if (null != BillList.get(i).getRealAmount()) {
                     report.setOutCount(report.getOutCount().add(BillList.get(i).getRealAmount()));
