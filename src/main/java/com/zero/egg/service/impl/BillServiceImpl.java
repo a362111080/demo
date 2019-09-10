@@ -11,6 +11,7 @@ import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.dao.StockMapper;
 import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.enums.BillEnums;
+import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
 import com.zero.egg.model.BrokenGoods;
@@ -221,6 +222,14 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             BigDecimal amount = BigDecimal.ZERO;
             //账单细节列表
             List<BillDetails> details = bill.getUnloadDetails();
+            //如果账单是零售账单,则不能更新实收金额
+            String type = mapper.selectOne(new QueryWrapper<Bill>()
+                    .select("type")
+                    .eq("id", bill.getId()))
+                    .getType();
+            if (TaskEnums.Type.Retail.equals(type) && null != bill.getRealAmount()) {
+                bill.setRealAmount(null);
+            }
             //需要更新库的账单细节对象
             BillDetails IDetails = new BillDetails();
             BigDecimal subTotal;
