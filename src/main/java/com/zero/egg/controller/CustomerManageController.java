@@ -173,7 +173,7 @@ public class CustomerManageController {
         return ms;
     }
 
-    @ApiOperation(value = "出货客户列表(可以查出零售合作商)", notes = "条件查询,不分页")
+    @ApiOperation(value = "出货客户列表(可以查出零售合作商)", notes = "条件查询")
     @RequestMapping(value = "/getshipmentsupplierlist", method = RequestMethod.POST)
     @LoginToken
     public Message getShipmentSupplierList(@RequestBody CustomerRequestDTO model) {
@@ -181,8 +181,10 @@ public class CustomerManageController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         model.setCompanyId(user.getCompanyId());
         model.setShopId(user.getShopId());
+        PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         List<Customer> Customer = CustomerSv.getShipmentSupplierList(model);
-        ms.setData(Customer);
+        PageInfo<Customer> pageInfo = new PageInfo<>(Customer);
+        ms.setData(pageInfo);
         ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
         ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         return ms;
