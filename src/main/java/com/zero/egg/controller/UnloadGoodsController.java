@@ -107,64 +107,71 @@ public class UnloadGoodsController {
                     //判断当前卸货任务状态是否在执行中，通过供应商查找任务
                     String info = unloadGoodsService.GetTaskStatusBySupplier(bar.getSupplierId());
                     if (null != info) {
-
                         String taskId = StringTool.splitToList(info, ",").get(1);
                         model.setTaskId(taskId);
                         String status = StringTool.splitToList(info, ",").get(0);
                         String Programid = StringTool.splitToList(info, ",").get(2);
+                        String category_id=StringTool.splitToList(info, ",").get(3);
                         model.setProgramId(Programid);
-                        if (status == TaskEnums.Status.Unexecuted.toString()) {
-                            //任务已暂停
-                            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                            message.setMessage("当前任务已暂停，请稍后再操作");
-                        } else {
-                            //根据重量对应规程方案判断是否预警
-                            if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().floatValue() > 1) {
-                                //小于方案最小称重则预警，返回标识以及是否预警结果
-                                UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
-                                if (null != res) {
-                                    model.setMode(res.getMode());
-                                    model.setSpecificationId(res.getSpecificationId());
-                                    if (res.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
-                                        //存在去皮数值   显示标识为实际称重减去去皮值
-                                        model.setMarker(model.getWeight().add(res.getNumerical()).toString());
-                                    } else {
-                                        model.setMarker(res.getMarker());
-                                    }
-                                    if (res.getWarn().equals("1")) {
-                                        model.setWarn(true);
-                                    } else {
-                                        model.setWarn(false);
-                                    }
-                                }
-                                int strval = unloadGoodsService.AddUnloadDetl(model);
-                                if (strval > 0) {
-                                	//任务自检
-									unloadGoodsService.RepaireUnloadTask(model.getTaskId());
-                                    UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
-                                    dto.setSupplierName(bar.getSupplierName());
-                                    dto.setCategoryName(bar.getCategoryName());
-                                    dto.setMarker(model.getMarker());
-                                    dto.setWarn(model.getWarn());
-                                    if (null != model.getTaskId()) {
-                                        //获取当前卸货任务已卸货数量，含本次
-                                        int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
-                                        dto.setCount(count);
-                                        message.setData(dto);
-                                    }
-                                    message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                                    message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-                                } else {
-                                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                                    message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                        if (bar.getCategoryId().equals(category_id)) {
+							if (status == TaskEnums.Status.Unexecuted.toString()) {
+								//任务已暂停
+								message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+								message.setMessage("当前任务已暂停，请稍后再操作");
+							} else {
+								//根据重量对应规程方案判断是否预警
+								if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().floatValue() > 1) {
+									//小于方案最小称重则预警，返回标识以及是否预警结果
+									UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
+									if (null != res) {
+										model.setMode(res.getMode());
+										model.setSpecificationId(res.getSpecificationId());
+										if (res.getNumerical().compareTo(BigDecimal.ZERO) != 0) {
+											//存在去皮数值   显示标识为实际称重减去去皮值
+											model.setMarker(model.getWeight().add(res.getNumerical()).toString());
+										} else {
+											model.setMarker(res.getMarker());
+										}
+										if (res.getWarn().equals("1")) {
+											model.setWarn(true);
+										} else {
+											model.setWarn(false);
+										}
+									}
+									int strval = unloadGoodsService.AddUnloadDetl(model);
+									if (strval > 0) {
+										//任务自检
+										unloadGoodsService.RepaireUnloadTask(model.getTaskId());
+										UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
+										dto.setSupplierName(bar.getSupplierName());
+										dto.setCategoryName(bar.getCategoryName());
+										dto.setMarker(model.getMarker());
+										dto.setWarn(model.getWarn());
+										if (null != model.getTaskId()) {
+											//获取当前卸货任务已卸货数量，含本次
+											int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+											dto.setCount(count);
+											message.setData(dto);
+										}
+										message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+										message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+									} else {
+										message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+										message.setMessage(UtilConstants.ResponseMsg.FAILED);
 
-                                }
-                            } else {
-                                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                                message.setMessage("货位重量无效，请重新扫描！");
-                            }
+									}
+								} else {
+									message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+									message.setMessage("货位重量无效，请重新扫描！");
+								}
 
-                        }
+							}
+						}
+                        else
+						{
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage("货物品种不符,无法卸货");
+						}
                     } else {
                         message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                         message.setMessage("无卸货任务");
