@@ -116,6 +116,14 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             String billId = blankBillRequestDTO.getBlankBillDTOList().get(0).getBillId();
             //实收金额
             BigDecimal realAmount = blankBillRequestDTO.getRealAmount();
+            //如果账单是零售账单,则不能更新实收金额
+            String type = mapper.selectOne(new QueryWrapper<Bill>()
+                    .select("type")
+                    .eq("id", billId))
+                    .getType();
+            if (TaskEnums.Type.Retail.equals(type)) {
+                realAmount = BigDecimal.ZERO;
+            }
             String currentsStutus = mapper.selectOne(new QueryWrapper<Bill>()
                     .select("status")
                     .eq("id", billId)
