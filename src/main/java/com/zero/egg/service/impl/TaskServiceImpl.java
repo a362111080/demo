@@ -392,7 +392,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("id", customerId))
                     .getIsRetail();
             int shipmentBillCount = billMapper.selectCount(new QueryWrapper<Bill>()
-                    .eq("type", TaskEnums.Type.Shipment.index().toString()));
+                    .in("type", TaskEnums.Type.Shipment.index().toString(),TaskEnums.Type.Retail.index().toString()));
             /**8位编码前面补0格式*/
             String categoryName = String.join("/", categoryNameSet);
             DecimalFormat g1 = new DecimalFormat("00000000");
