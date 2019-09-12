@@ -109,9 +109,9 @@ public class LoginController {
                             .select("parent_id")
                             .eq("id", parent2))
                             .getParentId();
-                    sb.append(","+parent1);
+                    sb.append(parent1);
                     sb.append(","+parent2);
-                    sb.append(shop.getCityId());
+                    sb.append(","+shop.getCityId());
                     //生成token
                     String accessToken = TokenUtils.createJwtToken(user.getId());
                     jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
