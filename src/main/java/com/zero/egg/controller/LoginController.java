@@ -99,23 +99,24 @@ public class LoginController {
                     int type = user.getType();
                     //登录信息额外加入当前店铺地区信息
                     Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("city_id").eq("id", user.getShopId()));
-                    StringBuffer sb = new StringBuffer(shop.getCityId());
+                    StringBuffer sb = new StringBuffer();
                     //查出cityId上两级
                     String parent2 = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
                             .select("parent_id")
                             .eq("id", shop.getCityId()))
                             .getParentId();
-                    sb.append(","+parent2);
                     String parent1 = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
                             .select("parent_id")
                             .eq("id", parent2))
                             .getParentId();
                     sb.append(","+parent1);
+                    sb.append(","+parent2);
+                    sb.append(shop.getCityId());
                     //生成token
                     String accessToken = TokenUtils.createJwtToken(user.getId());
                     jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                     map = new HashMap<>();
-                    map.put("shopAddress", sb.reverse());
+                    map.put("shopAddress", sb);
                     map.put("token", redisKey);
                     map.put("userType", type);
                     map.put("userTypeName", UserEnums.Type.note(type));
