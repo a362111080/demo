@@ -328,38 +328,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
                 goodsResponseList.add(redisGood);
             }
-            ShipmentGoods shipmentGoods = null;
             Goods goods = null;
             Stock stock = null;
             BigDecimal quantity;
             BigDecimal subOne = new BigDecimal(BigDecimal.ROUND_DOWN);
             Set<String> categoryNameSet = new HashSet<>();
             for (GoodsResponse goodsResponse : goodsResponseList) {
-                shipmentGoods = new ShipmentGoods();
-                shipmentGoods.setCompanyId(task.getCompanyId());
-                shipmentGoods.setShopId(task.getShopId());
-                shipmentGoods.setCustomerId(customerId);
-                shipmentGoods.setTaskId(taskId);
-                shipmentGoods.setSpecificationId(goodsResponse.getSpecificationId());
-                shipmentGoods.setGoodsCategoryId(goodsResponse.getGoodsCategoryId());
-                shipmentGoods.setGoodsNo(goodsResponse.getGoodsNo());
-                shipmentGoods.setMode(goodsResponse.getMode());
-                shipmentGoods.setMarker(goodsResponse.getMarker());
-                shipmentGoods.setWeight(goodsResponse.getWeight());
-                shipmentGoods.setRemark(goodsResponse.getRemark());
-                shipmentGoods.setCreatetime(new Date());
-                shipmentGoods.setModifytime(new Date());
-                shipmentGoods.setModifier(task.getCreator());
-                shipmentGoods.setCreator(task.getCreator());
-                shipmentGoods.setDr(false);
                 categoryNameSet.add(goodsResponse.getCategoryName());
                 /**
-                 * 1.新增到出货商品表里
+                 * 1.新增到出货商品表里(放到出货过程中了)
                  * 2.从商品表里删除
                  * 3.从库存里对应规格数量-1
                  * 4.//TODO 统计员工工作量
                  */
-                shipmentGoodsMapper.insert(shipmentGoods);
                 goods = new Goods();
                 goods.setDr(true);
                 goodsMapper.update(goods, new UpdateWrapper<Goods>()

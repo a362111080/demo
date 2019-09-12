@@ -159,6 +159,10 @@ public interface UtilConstants {
          * 非零售合作商或者查不到相关零售合作商
          */
         public static final String NOT_RETAIL_CUSTOMER = "非零售合作商或者查不到相关零售合作商";
+        /**
+         * 该货物在其他未结束出货任务里
+         */
+        public static final String IN_OTHER_TASK = "该货物在其他未结束出货任务里";
     }
 
     /**

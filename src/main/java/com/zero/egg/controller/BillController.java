@@ -334,10 +334,7 @@ public class BillController {
              */
             if (request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Pc.index()
                     && request.getAttribute(ApiConstants.USER_TYPE) != UserEnums.Type.Boss.index()) {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.NO_PERMISSION);
-                return message;
+                throw new ServiceException(UtilConstants.ResponseMsg.NO_PERMISSION);
             }
             /**
              * 非空判断
@@ -345,10 +342,7 @@ public class BillController {
             if (blankBillRequestDTO == null || null == blankBillRequestDTO.getBlankBillDTOList()
                     || 0 > blankBillRequestDTO.getBlankBillDTOList().size()
                     || null == blankBillRequestDTO.getBlankBillDTOList().get(0).getBillId()) {
-                message = new Message();
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
-                return message;
+                throw new ServiceException(UtilConstants.ResponseMsg.PARAM_ERROR);
             }
             message = billService.updateBillAndDetails(blankBillRequestDTO, loginUser);
         } catch (Exception e) {
