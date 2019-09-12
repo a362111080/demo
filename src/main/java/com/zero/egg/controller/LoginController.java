@@ -6,11 +6,22 @@ import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
 import com.zero.egg.cache.JedisUtil;
+import com.zero.egg.dao.BdCityMapper;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
-import com.zero.egg.model.*;
-import com.zero.egg.service.*;
+import com.zero.egg.model.BdCity;
+import com.zero.egg.model.Company;
+import com.zero.egg.model.CompanyUser;
+import com.zero.egg.model.SassUser;
+import com.zero.egg.model.Shop;
+import com.zero.egg.model.User;
+import com.zero.egg.model.WechatAuth;
+import com.zero.egg.service.ICompanyService;
+import com.zero.egg.service.ICompanyUserService;
+import com.zero.egg.service.IUserService;
+import com.zero.egg.service.SassUserService;
+import com.zero.egg.service.WechatAuthService;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.MD5Utils;
 import com.zero.egg.tool.Message;
@@ -53,7 +64,8 @@ public class LoginController {
     private SassUserService sassUserService;
     @Autowired
     private ShopMapper shopMapper;
-
+    @Autowired
+    private BdCityMapper bdCityMapper;
     @Autowired
     private ICompanyService iCompanyService;
 
@@ -78,17 +90,32 @@ public class LoginController {
                  * 根据账号密码生成数字签名作为rediskey
                  */
                 QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
-                CompanyQueryWrapper.eq("id",user.getCompanyId()).eq("dr",false);
+                CompanyQueryWrapper.eq("id", user.getCompanyId()).eq("dr", false);
                 //验证企业是否过期
-                Company  company =iCompanyService.getOne(CompanyQueryWrapper);
-                if (company!=null) {
+                Company company = iCompanyService.getOne(CompanyQueryWrapper);
+                if (company != null) {
                     String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
                     response = new BaseResponse<>();
                     int type = user.getType();
+                    //登录信息额外加入当前店铺地区信息
+                    Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("city_id").eq("id", user.getShopId()));
+                    StringBuffer sb = new StringBuffer(shop.getCityId());
+                    //查出cityId上两级
+                    String parent2 = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
+                            .select("parent_id")
+                            .eq("id", shop.getCityId()))
+                            .getParentId();
+                    sb.append(","+parent2);
+                    String parent1 = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
+                            .select("parent_id")
+                            .eq("id", parent2))
+                            .getParentId();
+                    sb.append(","+parent1);
                     //生成token
                     String accessToken = TokenUtils.createJwtToken(user.getId());
                     jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                     map = new HashMap<>();
+                    map.put("shopAddress", sb.reverse());
                     map.put("token", redisKey);
                     map.put("userType", type);
                     map.put("userTypeName", UserEnums.Type.note(type));
@@ -96,9 +123,7 @@ public class LoginController {
                     response.setData(map);
                     response.setCode(ApiConstants.ResponseCode.SUCCESS);
                     response.setMsg("登录成功");
-                }
-                else
-                {
+                } else {
                     response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
                     response.setMsg("登录失败!，请联系管理员");
                 }
@@ -112,10 +137,10 @@ public class LoginController {
                 CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
 
                 QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
-                CompanyQueryWrapper.eq("id",companyUser.getCompanyId()).eq("dr",false);
+                CompanyQueryWrapper.eq("id", companyUser.getCompanyId()).eq("dr", false);
                 //验证企业是否过期
-                Company  company =iCompanyService.getOne(CompanyQueryWrapper);
-                if (companyUser != null &&  company!=null) {
+                Company company = iCompanyService.getOne(CompanyQueryWrapper);
+                if (companyUser != null && company != null) {
                     /**
                      * 根据账号密码生成数字签名作为rediskey
                      */

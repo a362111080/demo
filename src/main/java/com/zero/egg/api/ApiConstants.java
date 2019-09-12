@@ -20,9 +20,14 @@ public class ApiConstants {
      */
     public final static String SHOP_TYPE = "shop_type";
 
+	/**
+	 * 店铺地址
+	 */
+	public final static String SHOP_ADDRESS = "shop_address";
 
-	
-	 /**
+
+
+	/**
      * 返回状态常量
      */
     public static class ResponseCode {
