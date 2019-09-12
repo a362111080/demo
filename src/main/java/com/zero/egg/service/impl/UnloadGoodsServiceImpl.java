@@ -104,4 +104,9 @@ public class UnloadGoodsServiceImpl extends ServiceImpl<UnloadGoodsMapper, Unloa
         }
 
     }
+
+    @Override
+    public List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForTimeSpan(UnloadGoods model) {
+        return  mapper.QueryUnloadGoodForTimeSpan(model);
+    }
 }
