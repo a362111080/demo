@@ -49,4 +49,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     Task GetTaskinfo(String taskId);
 
     int RemoveUnloadGood(UnloadGoods model);
+
+    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForTimeSpan(UnloadGoods model);
 }

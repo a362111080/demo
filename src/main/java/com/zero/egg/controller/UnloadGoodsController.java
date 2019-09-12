@@ -216,14 +216,24 @@ public class UnloadGoodsController {
     {
         Message ms = new Message();
         PageHelper.startPage(1, 999);
-        if (null==model.getUnloadTime()) {
-			model.setUnloadTime("2019-04-04");
+        if (null!=model.getUnloadBeginTime() && null !=model.getUnloadEndTime()) {
+			List<UnLoadGoodsQueryResponseDto>  ResponseDto=unloadGoodsService.QueryUnloadGoodForTimeSpan(model);
+			PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
+			ms.setData(pageInfo);
+			ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
-        List<UnLoadGoodsQueryResponseDto>  ResponseDto=unloadGoodsService.QueryUnloadGoodForDay(model.getShopId(),model.getUnloadTime());
-        PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
-        ms.setData(pageInfo);
-        ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-        ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		else {
+			if (null == model.getUnloadTime()) {
+				model.setUnloadTime("2019-04-04");
+			}
+			List<UnLoadGoodsQueryResponseDto>  ResponseDto=unloadGoodsService.QueryUnloadGoodForDay(model.getShopId(),model.getUnloadTime());
+			PageInfo<UnLoadGoodsQueryResponseDto> pageInfo = new PageInfo<>(ResponseDto);
+			ms.setData(pageInfo);
+			ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+
         return  ms;
     }
 

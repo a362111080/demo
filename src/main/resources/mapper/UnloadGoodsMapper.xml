@@ -62,6 +62,20 @@
         GROUP BY  a.shop_id,b.id
     </select>
 
+    <select id="QueryUnloadGoodForTimeSpan" parameterType="UnloadGoods"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
+        left join  bd_category  b  on  a.goods_category_id=b.id
+        <where>
+            <if test="UnloadBeginTime != null and UnloadBeginTime != ''">AND a.createtime <![CDATA[>=]]> #{UnloadBeginTime}</if>
+            <if test="UnloadEndTime != null and UnloadEndTime != ''">AND  a.createtime <![CDATA[<=]]>#{UnloadEndTime}</if>
+        </where>
+        and  a.shop_id=#{shopId}
+        and  a.dr=0
+        GROUP BY  a.shop_id,b.id
+    </select>
+
+
+
     <select id="GetTaskUnloadCount"  resultType="int">
         select COUNT(1) as sumVal from  bd_unload_goods  a
         where  a.task_id=#{taskId} and  a.dr=0

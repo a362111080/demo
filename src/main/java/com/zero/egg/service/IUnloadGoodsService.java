@@ -46,4 +46,6 @@ public interface IUnloadGoodsService extends IService<UnloadGoods> {
     void RepaireUnloadTask(String taskId);
 
     int RemoveUnloadGood(UnloadGoods model);
+
+    List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForTimeSpan(UnloadGoods model);
 }
