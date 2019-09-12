@@ -135,6 +135,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             shipmentGoodsMapper.insert(shipmentGoods);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (ServiceException e) {
+            throw e;
         } catch (Exception e) {
             log.error("querySingleGoodByBarCodeInfo failed :" + e);
             throw new ServiceException("querySingleGoodByBarCodeInfo failed");

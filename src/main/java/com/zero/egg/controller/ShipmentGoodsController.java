@@ -18,6 +18,7 @@ import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
 import com.zero.egg.service.IShipmentGoodsService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -158,7 +159,12 @@ public class ShipmentGoodsController {
         } catch (Exception e) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(e.toString());
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
         }
         return message;
 
@@ -186,7 +192,12 @@ public class ShipmentGoodsController {
         } catch (Exception e) {
             log.error("shipmentTastList failed:" + e);
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            //如果是service层抛出的ServiceExeption,则将错误信息装进返回消息中
+            if (e instanceof ServiceException) {
+                message.setMessage(e.getMessage());
+            } else {
+                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            }
         }
         return message;
     }

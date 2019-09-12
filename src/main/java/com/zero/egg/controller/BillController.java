@@ -91,7 +91,6 @@ public class BillController {
             if (e instanceof ServiceException) {
                 message.setMessage(e.getMessage());
             } else {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.FAILED);
             }
         }

@@ -279,6 +279,8 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             mapper.updateById(bill);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (ServiceException e) {
+            throw e;
         } catch (Exception e) {
             log.error("updateBillAndDetails error" + e);
             throw new ServiceException("updateBillAndDetails error");
@@ -379,6 +381,8 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (ServiceException e) {
+            throw e;
         } catch (Exception e) {
             log.error("cancelShipmentBill service error:" + e);
             throw new ServiceException("cancelShipmentBill service error");
