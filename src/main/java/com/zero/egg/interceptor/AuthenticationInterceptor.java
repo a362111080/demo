@@ -9,11 +9,13 @@ import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.dao.WechatAuthMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
+import com.zero.egg.model.Company;
 import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.SassUser;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.service.SassUserService;
@@ -60,6 +62,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Autowired
     private WechatAuthMapper wechatAuthMapper;
+
+    @Autowired
+    private ICompanyService iCompanyService;
 
 
     @Override
@@ -141,6 +146,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                             request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                         }
                     } else {
+                        QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
+                        CompanyQueryWrapper.eq("id", user.getCompanyId()).eq("dr", false);
+                        //验证企业是否过期
+                        Company company = iCompanyService.getOne(CompanyQueryWrapper);
+                        if (null == company) {
+                            //删除redis中token信息
+                            jedisKeys.del(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
+                            throw new AuthenticateException(401, "账号需要续费");
+                        }
                         // 当前登录用户@CurrentUser
                         loginUser.setId(companyUser.getId());
                         loginUser.setCode(companyUser.getCode());
@@ -154,6 +168,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     }
                 } else {
                     // 当前登录用户@CurrentUser
+                    QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
+                    CompanyQueryWrapper.eq("id", user.getCompanyId()).eq("dr", false);
+                    //验证企业是否过期
+                    Company company = iCompanyService.getOne(CompanyQueryWrapper);
+                    if (null == company) {
+                        //删除redis中token信息
+                        jedisKeys.del(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
+                        throw new AuthenticateException(401, "账号需要续费");
+                    }
                     //如果当前用户是移动端,则需验证微信登录是否过期
                     if (user.getType().equals(UserEnums.Type.Boss.index())
                             || user.getType().equals(UserEnums.Type.Staff.index())) {
