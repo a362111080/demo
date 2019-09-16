@@ -1,6 +1,5 @@
 package com.zero.egg.requestDTO;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,13 +16,11 @@ public class ShipmentStaticRequestDTO implements Serializable {
 
     private static final long serialVersionUID = 6258000803192036253L;
 
-    @TableField(exist = false)
     @ApiModelProperty(value = "统计气势日期(汇总卸货数量使用yyyy-mm-dd 字符)",hidden=true)
-    private String UnloadBeginTime;
+    private String unloadBeginTime;
 
-    @TableField(exist = false)
     @ApiModelProperty(value = "统计结束日期(汇总卸货数量使用yyyy-mm-dd 字符)",hidden=true)
-    private String UnloadEndTime;
+    private String unloadEndTime;
 
     private String companyId;
 

@@ -10,6 +10,7 @@ import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Specification;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
+import com.zero.egg.requestDTO.ShipmentStaticRequestDTO;
 import com.zero.egg.responseDTO.GoodsResponse;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.IShipmentGoodsService;
@@ -80,13 +81,13 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
     }
 
     @Override
-    public List<ShipmentGoodsResponse> todaycountcategory(QueryWrapper<ShipmentGoods> queryWrapper) {
-        return super.baseMapper.todaycountcategory(queryWrapper);
+    public List<ShipmentGoodsResponse> todaycountcategory(ShipmentStaticRequestDTO shipmentStaticRequestDTO, QueryWrapper<ShipmentGoods> queryWrapper) {
+        return super.baseMapper.todaycountcategory(shipmentStaticRequestDTO,queryWrapper);
     }
 
     @Override
-    public List<ShipmentGoodsResponse> todaycountspecification(QueryWrapper<ShipmentGoods> queryWrapper) {
-        return super.baseMapper.todaycountspecification(queryWrapper);
+    public List<ShipmentGoodsResponse> todaycountspecification(ShipmentStaticRequestDTO shipmentStaticRequestDTO,QueryWrapper<ShipmentGoods> queryWrapper) {
+        return super.baseMapper.todaycountspecification(shipmentStaticRequestDTO,queryWrapper);
     }
 
     @Override

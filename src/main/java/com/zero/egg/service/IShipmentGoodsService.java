@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
+import com.zero.egg.requestDTO.ShipmentStaticRequestDTO;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.tool.Message;
 
@@ -32,9 +33,9 @@ public interface IShipmentGoodsService extends IService<ShipmentGoods> {
 	
 	public List<ShipmentGoodsResponse> countSpecification(QueryWrapper<ShipmentGoods> queryWrapper);
 	
-	public List<ShipmentGoodsResponse> todaycountcategory(QueryWrapper<ShipmentGoods> queryWrapper);
+	public List<ShipmentGoodsResponse> todaycountcategory(ShipmentStaticRequestDTO shipmentStaticRequestDTO, QueryWrapper<ShipmentGoods> queryWrapper);
 	
-	public List<ShipmentGoodsResponse> todaycountspecification(QueryWrapper<ShipmentGoods> queryWrapper);
+	public List<ShipmentGoodsResponse> todaycountspecification(ShipmentStaticRequestDTO shipmentStaticRequestDTO,QueryWrapper<ShipmentGoods> queryWrapper);
 
 	/**
 	 * 出货列表和整理归类

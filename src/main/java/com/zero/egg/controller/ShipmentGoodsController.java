@@ -323,20 +323,17 @@ public class ShipmentGoodsController {
     @LoginToken
     @ApiOperation(value = "出货品种数目统计")
     @PostMapping(value = "/today-statistics")
-    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request,@RequestBody ShipmentStaticRequestDTO shipmentStaticRequestDTO) {
+    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request, @RequestBody ShipmentStaticRequestDTO shipmentStaticRequestDTO) {
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
-        if (null != shipmentStaticRequestDTO.getUnloadBeginTime() && null != shipmentStaticRequestDTO.getUnloadEndTime()) {
-
-        }
         //店铺今天出货品种
         QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
         categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
         categoryqueryWrapper.eq("s.company_id", loginUser.getCompanyId())
                 .eq("s.shop_id", loginUser.getShopId())
                 .groupBy(true, "p.category_id");
-        List<ShipmentGoodsResponse> listCategory = shipmentGoodsService.todaycountcategory(categoryqueryWrapper);
+        List<ShipmentGoodsResponse> listCategory = shipmentGoodsService.todaycountcategory(shipmentStaticRequestDTO,categoryqueryWrapper);
         List<Map<String, Object>> categoryList = new ArrayList<>();
         for (ShipmentGoodsResponse shipmentGoodsResponse2 : listCategory) {
             Map<String, Object> map = new HashMap<>();
@@ -350,7 +347,7 @@ public class ShipmentGoodsController {
                     .eq(StringUtils.isNotBlank(loginUser.getShopId()), "s.shop_id", loginUser.getShopId())
                     .eq(StringUtils.isNotBlank(shipmentGoodsResponse2.getCategoryId()), "p.category_id", shipmentGoodsResponse2.getCategoryId())
                     .groupBy("s.specification_id", "s.marker");
-            List<ShipmentGoodsResponse> shipList = shipmentGoodsService.todaycountspecification(queryWrapper);
+            List<ShipmentGoodsResponse> shipList = shipmentGoodsService.todaycountspecification(shipmentStaticRequestDTO,queryWrapper);
             for (ShipmentGoodsResponse shipmentGoodsResponse3 : shipList) {
                 count += shipmentGoodsResponse3.getCount();
             }
