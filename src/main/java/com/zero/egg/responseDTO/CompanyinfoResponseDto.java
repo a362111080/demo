@@ -57,4 +57,7 @@ public class CompanyinfoResponseDto {
     @ApiModelProperty(value = "企业店铺信息",hidden=true)
     private List<Shop> shopList;
 
+    @ApiModelProperty(value = "删除标识",hidden = true)
+    private Boolean dr;
+
 }
