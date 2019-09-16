@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -152,17 +153,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
              * 获取当前出货任务需要删除的出货商品集合
              */
             List<GoodsResponse> goodsResponseList = remShipmentGoodsRequestDTO.getGoodsResponseList();
-            List<String> shipmentGoodsList;
+            Set<String> shipmentGoodsSet;
             ShipmentGoods shipmentGoods = new ShipmentGoods();
             //移除出货任务中的货物代表出货商品表对应货物作废
             shipmentGoods.setDr(true);
             for (GoodsResponse goodsResponse : goodsResponseList) {
-                //实际只有一个元素,转成list取出
-                shipmentGoodsList = (List<String>) sortSets.zrangeByScore(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
+                //实际只有一个元素,取出
+                shipmentGoodsSet = sortSets.zrangeByScore(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                                 + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":"
                                 + remShipmentGoodsRequestDTO.getCustomerId() + ":" + remShipmentGoodsRequestDTO.getTaskId()
                         , goodsResponse.getScores(), goodsResponse.getScores());
-                String jsonString = shipmentGoodsList.get(0);
+                String jsonString = shipmentGoodsSet.iterator().next();
                 GoodsResponse redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
                 int updateNum = shipmentGoodsMapper.update(shipmentGoods, new UpdateWrapper<ShipmentGoods>()
                         .eq("goods_no", redisGood.getGoodsNo())

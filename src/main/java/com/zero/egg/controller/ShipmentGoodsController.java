@@ -13,6 +13,7 @@ import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodsRequest;
+import com.zero.egg.requestDTO.ShipmentStaticRequestDTO;
 import com.zero.egg.responseDTO.ShipmentGoodsResponse;
 import com.zero.egg.service.CategoryService;
 import com.zero.egg.service.IGoodsService;
@@ -320,13 +321,15 @@ public class ShipmentGoodsController {
     }
 
     @LoginToken
-    @ApiOperation(value = "每日出货品种数目统计")
+    @ApiOperation(value = "出货品种数目统计")
     @PostMapping(value = "/today-statistics")
-    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request) {
-        //BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+    public Message<List<Map<String, Object>>> todayStatistics(HttpServletRequest request,@RequestBody ShipmentStaticRequestDTO shipmentStaticRequestDTO) {
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message<List<Map<String, Object>>> message = new Message<List<Map<String, Object>>>();
+        if (null != shipmentStaticRequestDTO.getUnloadBeginTime() && null != shipmentStaticRequestDTO.getUnloadEndTime()) {
+
+        }
         //店铺今天出货品种
         QueryWrapper<ShipmentGoods> categoryqueryWrapper = new QueryWrapper<>();
         categoryqueryWrapper.eq("s.dr", false);//查询未删除信息
