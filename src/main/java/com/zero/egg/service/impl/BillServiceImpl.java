@@ -235,7 +235,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     .select("type")
                     .eq("id", bill.getId()))
                     .getType();
-            if (TaskEnums.Type.Retail.equals(type) && null != bill.getRealAmount()) {
+            if (TaskEnums.Type.Retail.index()==Integer.parseInt(type) && null != bill.getRealAmount()) {
                 bill.setRealAmount(null);
             }
             //需要更新库的账单细节对象
