@@ -121,7 +121,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     .select("type")
                     .eq("id", billId))
                     .getType();
-            if (TaskEnums.Type.Retail.equals(type)) {
+            if (TaskEnums.Type.Retail.index() == Integer.parseInt(type)) {
                 realAmount = BigDecimal.ZERO;
             }
             String currentsStutus = mapper.selectOne(new QueryWrapper<Bill>()
@@ -131,7 +131,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     .eq("company_id", loginUser.getCompanyId())
                     .eq("dr", 0))
                     .getStatus();
-            if (BillEnums.Status.Not_Generated.index().equals(currentsStutus)) {
+            if (BillEnums.Status.Not_Generated.index() != Integer.parseInt(currentsStutus)) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NOT_BLANK_BILL);
                 return message;
@@ -388,5 +388,9 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             throw new ServiceException("cancelShipmentBill service error");
         }
         return message;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Integer.parseInt("2") == 2);
     }
 }
