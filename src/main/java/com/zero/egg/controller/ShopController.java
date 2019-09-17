@@ -355,7 +355,6 @@ public class ShopController {
 
 
 
-	//店铺秘钥
 	@LoginToken
 	@ApiOperation(value="修改店铺分类")
 	@RequestMapping(value="/editrdercategory",method=RequestMethod.POST)
