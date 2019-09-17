@@ -1,8 +1,15 @@
 package com.zero.egg.controller;
 
 
+import com.zero.egg.annotation.LoginToken;
+import com.zero.egg.api.ApiConstants;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.tool.ImageHolder;
+import com.zero.egg.tool.ImageUtil;
+import com.zero.egg.tool.Message;
+import com.zero.egg.tool.PathUtil;
 import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,8 +20,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -31,8 +36,10 @@ public class GoodsController {
 
     @RequestMapping(value = "/uploadpic", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> uploadpic(HttpServletRequest request) {
-        Map<String, Object> modelMap = new HashMap<>();
+    @LoginToken
+    public Message uploadpic(HttpServletRequest request) {
+        LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        Message message = new Message();
         ImageHolder thumbnail = null;
         //从session中获取servletContext,相当于tomcat容器了,然后转换成spring的CommonsMultipartResolver
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
@@ -43,13 +50,33 @@ public class GoodsController {
                 MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
                 //取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
                 CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
-
+                if (thumbnailFile != null) {
+                    thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+                }
+                //如果商品缩略图不为null,则添加
+                if (thumbnail != null && null != thumbnail.getImage()) {
+                    addThumbnail(user, thumbnail);
+                }
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             }
         } catch (Exception e) {
             log.error("uploadpic" + e);
             throw new ServiceException("uploadpic exception");
         }
-        return null;
+        return message;
+    }
+
+    /**
+     * 生成缩略图
+     *
+     * @param loginUser     当前登录用户
+     * @param imageHolder 图片处理的封装类
+     */
+    private void addThumbnail(LoginUser loginUser, ImageHolder imageHolder) {
+        String dest = PathUtil.getShopImagePath(loginUser.getShopId());
+        String thumbnailAddr = ImageUtil.generateThumbnal(imageHolder, dest);
+        //TODO 可以传商品信息,将thumbnailAddr赋值给商品信息
     }
 
 
