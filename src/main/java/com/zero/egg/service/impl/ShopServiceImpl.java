@@ -8,6 +8,7 @@ import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShopRequest;
+import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
@@ -102,8 +103,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 			model.setId(UuidUtil.get32UUID());
 			model.setModifytime(new Date());
 			model.setCreatetime(new Date());
-			model.setShopid(loginUser.getShopId());
-			model.setCompanyid(loginUser.getCompanyId());
+			model.setShopId(loginUser.getShopId());
+			model.setCompanyId(loginUser.getCompanyId());
 			model.setLevel("2");
 			model.setDr(false);
 
@@ -115,8 +116,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 			model.setId(UuidUtil.get32UUID());
 			model.setModifytime(new Date());
 			model.setCreatetime(new Date());
-			model.setShopid(loginUser.getShopId());
-			model.setCompanyid(loginUser.getCompanyId());
+			model.setShopId(loginUser.getShopId());
+			model.setCompanyId(loginUser.getCompanyId());
 			model.setLevel("1");
 			model.setDr(false);
 		}
@@ -127,6 +128,16 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public int editrdercategory(OrderCategory model) {
 		return mapper.editrdercategory(model);
+	}
+
+	@Override
+	public List<OrderCategoryResponseDTO> GetOrderCateGory(OrderCategory model) {
+			return mapper.GetOrderCateGory(model);
+	}
+
+	@Override
+	public List<OrderCategory> GetOrderCateGoryChild(OrderCategory model) {
+		return mapper.GetOrderCateGoryChild(model);
 	}
 
 }

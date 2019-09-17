@@ -31,12 +31,12 @@ public class OrderCategory implements Serializable {
      * 供关联店铺
      */
     @ApiModelProperty(value = "店铺主键",required=false)
-    private  String shopid;
+    private  String shopId;
     /**
      * 供应商关联企业
      */
     @ApiModelProperty(value = "企业主键",required=false)
-    private  String companyid;
+    private  String companyId;
 
     @ApiModelProperty(value = "分类名称",required=false)
     private  String name;
@@ -73,5 +73,9 @@ public class OrderCategory implements Serializable {
     @TableField(value = "dr")
     @ApiModelProperty(value="逻辑删除")
     private Boolean dr;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value="子集状态",hidden = true)
+    private Boolean childdr;
 
 }

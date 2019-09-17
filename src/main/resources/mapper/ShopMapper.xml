@@ -28,16 +28,16 @@
         left join order_user c  on  c.id=b.user_id
         where  1=1
         <if test="code != null and code !=''">
-            k.shop_id=#{code,jdbcType=VARCHAR}
+          and  k.shop_id=#{code,jdbcType=VARCHAR}
         </if>
         <if test="dr != null and dr !=''">
-            k.dr=#{dr,jdbcType=VARCHAR}
+          and  k.dr=#{dr,jdbcType=VARCHAR}
         </if>
     </select>
 
     <insert id="addordercategory" parameterType="OrderCategory">
         insert into order_category(id,company_id,shop_id,name,pid,createtime,level,sort_order,icon_url,pic_url,modifytime,dr)
-        values(#{id},#{companyid},#{shopid},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})
+        values(#{id},#{companyid},#{shopId},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})
     </insert>
 
     <update id="editrdercategory" parameterType="OrderCategory">update order_category
@@ -47,6 +47,29 @@
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
-        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}</update>
+
+    <select id="GetOrderCateGory"  resultType="com.zero.egg.responseDTO.OrderCategoryResponseDTO">
+        SELECT * FROM order_category a
+        where  a.pid=''
+        <if test="shopId != null and shopId !=''">
+           and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="dr != null and dr !='' or 0 == dr">
+          and  a.dr=#{dr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="GetOrderCateGoryChild"  resultType="com.zero.egg.model.OrderCategory" parameterType="OrderCategory">
+        SELECT * FROM order_category a
+        where  a.pid=#{pid,jdbcType=VARCHAR}
+        <if test="shopId != null and shopId !=''">
+          and   a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="childdr != null and childdr !='' or 0 == childdr">
+            and  a.dr=#{childdr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
 
 </mapper>

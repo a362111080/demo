@@ -5,6 +5,7 @@ import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.ShopRequest;
+import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 
 import java.util.List;
 
@@ -31,4 +32,8 @@ public interface ShopMapper extends BaseMapper<Shop> {
     int addordercategory(OrderCategory model);
 
     int editrdercategory(OrderCategory model);
+
+    List<OrderCategoryResponseDTO> GetOrderCateGory(OrderCategory model);
+
+    List<OrderCategory> GetOrderCateGoryChild(OrderCategory model);
 }

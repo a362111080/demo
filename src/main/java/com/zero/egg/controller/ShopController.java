@@ -14,6 +14,7 @@ import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShopRequest;
+import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.tool.*;
 import io.swagger.annotations.Api;
@@ -357,8 +358,8 @@ public class ShopController {
 
 	@LoginToken
 	@ApiOperation(value="修改店铺分类")
-	@RequestMapping(value="/editrdercategory",method=RequestMethod.POST)
-	public Message<Object> editrdercategory(@RequestBody OrderCategory model) {
+	@RequestMapping(value="/editordercategory",method=RequestMethod.POST)
+	public Message<Object> editordercategory(@RequestBody OrderCategory model) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -381,6 +382,43 @@ public class ShopController {
 					message.setMessage(e.getMessage());
 				}
 				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+	@LoginToken
+	@ApiOperation(value="查询店铺分类")
+	@RequestMapping(value="/queryordercategory",method=RequestMethod.POST)
+	public Message<Object> Queryordercategory(@RequestBody OrderCategory model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(loginUser.getShopId());
+		model.setCompanyId(loginUser.getCompanyId());
+		if (loginUser.getCompanyId()!=null) {
+			List<OrderCategoryResponseDTO>  ResponseDTO=shopService.GetOrderCateGory(model);
+			if (ResponseDTO.size()>0) {
+				for (int m = 0; m < ResponseDTO.size(); m++) {
+
+					model.setPid(ResponseDTO.get(m).getId());
+
+					List<OrderCategory>  child=shopService.GetOrderCateGoryChild(model);
+					ResponseDTO.get(m).setOrderCategoryList(child);
+				}
+				message.setData(ResponseDTO);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("店铺无商品分类信息");
 			}
 		}
 		else

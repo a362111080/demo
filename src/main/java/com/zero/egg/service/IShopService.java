@@ -6,6 +6,7 @@ import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.ShopRequest;
+import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.tool.Message;
 
 import java.util.List;
@@ -33,4 +34,8 @@ public interface IShopService extends IService<Shop> {
     int addordercategory(OrderCategory model, LoginUser loginUser);
 
     int editrdercategory(OrderCategory model);
+
+    List<OrderCategoryResponseDTO> GetOrderCateGory(OrderCategory model);
+
+    List<OrderCategory> GetOrderCateGoryChild(OrderCategory model);
 }
