@@ -10,6 +10,7 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.ShopEnums;
 import com.zero.egg.model.OrderCategory;
+import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -23,6 +24,9 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -428,4 +432,77 @@ public class ShopController {
 		}
 		return message;
 	}
+
+
+	@LoginToken
+	@ApiOperation(value="新增店铺商品")
+	@RequestMapping(value="/addordergood",method=RequestMethod.POST)
+	public Message<Object> addordergood(@RequestBody OrderGoods model,HttpServletRequest request) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		ImageHolder thumbnail = null;
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (loginUser.getCompanyId()!=null) {
+			try {
+				//处理图片信息
+				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+				if (commonsMultipartResolver.isMultipart(request)) {
+					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
+					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
+					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
+					if (thumbnailFile != null) {
+						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+					}
+					//如果商品缩略图不为null,则添加
+					if (thumbnail != null && null != thumbnail.getImage()) {
+					     String imgpath=addThumbnail(loginUser, thumbnail);
+					     model.setPicUrl(imgpath);
+					}
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+
+
+				if (null!=model.getCategoryId() && null !=model.getShopId()) {
+					int sort = shopService.GetOrderGoodsSort(model);
+					model.setSortOrder(sort);
+					int strval = shopService.addordergood(model, loginUser);
+					if (strval > 0) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("操作失败");
+					}
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("未选择商品类目信息！");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+	private String addThumbnail(LoginUser loginUser, ImageHolder imageHolder) {
+		String dest = PathUtil.getShopImagePath(loginUser.getShopId());
+		String thumbnailAddr = ImageUtil.generateThumbnal(imageHolder, dest);
+		return  thumbnailAddr;
+		//TODO 可以传商品信息,将thumbnailAddr赋值给商品信息
+	}
+
 }

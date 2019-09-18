@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zero.egg.model.OrderCategory;
+import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -38,4 +39,8 @@ public interface IShopService extends IService<Shop> {
     List<OrderCategoryResponseDTO> GetOrderCateGory(OrderCategory model);
 
     List<OrderCategory> GetOrderCateGoryChild(OrderCategory model);
+
+    int addordergood(OrderGoods model, LoginUser loginUser);
+
+    int GetOrderGoodsSort(OrderGoods model);
 }

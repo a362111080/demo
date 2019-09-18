@@ -2,6 +2,7 @@ package com.zero.egg.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.OrderCategory;
+import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.ShopRequest;
@@ -36,4 +37,8 @@ public interface ShopMapper extends BaseMapper<Shop> {
     List<OrderCategoryResponseDTO> GetOrderCateGory(OrderCategory model);
 
     List<OrderCategory> GetOrderCateGoryChild(OrderCategory model);
+
+    int addordergood(OrderGoods model);
+
+    int GetOrderGoodsSort(OrderGoods model);
 }

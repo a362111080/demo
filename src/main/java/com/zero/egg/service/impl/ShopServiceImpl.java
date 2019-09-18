@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.model.OrderCategory;
+import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
@@ -138,6 +139,21 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public List<OrderCategory> GetOrderCateGoryChild(OrderCategory model) {
 		return mapper.GetOrderCateGoryChild(model);
+	}
+
+	@Override
+	public int addordergood(OrderGoods model, LoginUser loginUser) {
+		model.setShopId(loginUser.getShopId());
+		model.setCompanyId(loginUser.getCompanyId());
+		model.setModifytime(new Date());
+		model.setCreatetime(new Date());
+		model.setDr(false);
+		return mapper.addordergood(model);
+	}
+
+	@Override
+	public int GetOrderGoodsSort(OrderGoods model) {
+		return mapper.GetOrderGoodsSort(model);
 	}
 
 }

@@ -37,8 +37,22 @@
 
     <insert id="addordercategory" parameterType="OrderCategory">
         insert into order_category(id,company_id,shop_id,name,pid,createtime,level,sort_order,icon_url,pic_url,modifytime,dr)
-        values(#{id},#{companyid},#{shopId},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})
+        values(#{id},#{companyId},#{shopId},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})
     </insert>
+
+
+    <insert id="addordergood" parameterType="OrderGoods">
+        insert into order_goods(id,company_id,shop_id,goods_sn,name,category_id,gallery,keywords,brief,is_on_sale,sort_order,
+                                pic_url,unit,price,detail,createtime,modifytime,dr)
+        values(#{id},#{companyId},#{shopId},#{goodsSn},#{name},#{categoryId},#{gallery},#{keywords},#{brief},#{isOnSale},
+               #{sortOrder},#{picUrl},#{unit},#{price},#{detail},#{createtime},#{modifytime},#{dr})
+    </insert>
+
+
+    <select id="GetOrderGoodsSort"  resultType="int">
+        select count(*)+1 from order_goods a  where
+            a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.category_id= #{categoryId,jdbcType=VARCHAR} and a.dr=0
+    </select>
 
     <update id="editrdercategory" parameterType="OrderCategory">update order_category
         <set>
