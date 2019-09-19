@@ -61,7 +61,26 @@
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
-        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}</update>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="editordergood" parameterType="OrderGoods">update order_goods
+        <set>
+            <if test="goodsSn!= null and goodsSn!=''">goods_sn= #{goodsSn,jdbcType=VARCHAR},</if>
+            <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+            <if test="categoryId!= null">category_id= #{categoryId,jdbcType=VARCHAR},</if>
+            <if test="keywords!= null">keywords= #{keywords,jdbcType=VARCHAR},</if>
+            <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
+            <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
+            <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
+            <if test="unit!= null">unit= #{unit,jdbcType=VARCHAR},</if>
+            <if test="price!= null">price= #{price,jdbcType=VARCHAR},</if>
+            <if test="detail!= null">detail= #{detail,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+    </update>
+
 
     <select id="GetOrderCateGory"  resultType="com.zero.egg.responseDTO.OrderCategoryResponseDTO">
         SELECT * FROM order_category a
@@ -83,6 +102,24 @@
         <if test="childdr != null and childdr !='' or 0 == childdr">
             and  a.dr=#{childdr,jdbcType=VARCHAR}
         </if>
+    </select>
+
+    <select id="GetOrderGoods"  resultType="com.zero.egg.model.OrderGoods" parameterType="OrderGoodsRequestDTO">
+        SELECT * FROM order_goods a
+        where  1=1
+        <if test="name != null and name !=''">
+            and   a.name LIKE '%${name}%'
+        </if>
+        <if test="categoryId != null and categoryId !=''">
+            and   a.category_id=#{categoryId,jdbcType=VARCHAR}
+        </if>
+        <if test="shopId != null and shopId !=''">
+            and   a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="dr != null and dr !='' or 0 == dr">
+            and  a.dr=#{dr,jdbcType=VARCHAR}
+        </if>
+
     </select>
 
 

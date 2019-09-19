@@ -6,6 +6,7 @@ import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.tool.Message;
@@ -43,4 +44,8 @@ public interface IShopService extends IService<Shop> {
     int addordergood(OrderGoods model, LoginUser loginUser);
 
     int GetOrderGoodsSort(OrderGoods model);
+
+    int editordergood(OrderGoods model, LoginUser loginUser);
+
+    List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model);
 }
