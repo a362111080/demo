@@ -258,7 +258,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		}
 		//判断端数是否符合条件
 		Integer isOk=userMapper.GetUserUpdateClientCount(user);
-		if (isOk<1) {
+		if (isOk!=null && isOk<1) {
 
 			if (UserEnums.Type.Pc.index().equals(user.getType())) {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
