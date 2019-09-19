@@ -276,35 +276,33 @@ public class CompanyController {
 								shop.setCreator(loginUser.getId());
 								shop.setDr(false);
 								shopService.save(shop);
+								//增加对应零售合作商
+								Customer  model=new  Customer();
+								model.setCreator(loginUser.getId());
+								model.setCreatetime(new Date());
+								model.setShopid(shop.getId());
+								model.setCompanyid(companyUser.getCompanyId());
+								model.setModifier(loginUser.getId());
+								model.setModifytime(new Date());
+								model.setPhone("123456");
+								model.setLinkman("系统");
+								model.setStatus("");
+								model.setCityid("");
+								model.setIsRetail(1);
+								model.setName("零售");
+								model.setShortname("");
+								model.setWeightMode("1");
+								model.setType("0");
+								CustomerSv.AddCustomer(model);
 							}
 							else
 							{
 								shop.setCompanyId(company.getId());
 								shop.setModifier(loginUser.getId());
 								shop.setModifytime(new Date());
-								shop.setCreatetime(new Date());
-								shop.setCreator(loginUser.getId());
-								shop.setDr(false);
 								shopService.updateById(shop);
 							}
-							//增加对应零售合作商
-							Customer  model=new  Customer();
-							model.setCreator(loginUser.getId());
-							model.setCreatetime(new Date());
-							model.setShopid(shop.getId());
-							model.setCompanyid(companyUser.getCompanyId());
-							model.setModifier(loginUser.getId());
-							model.setModifytime(new Date());
-							model.setPhone("123456");
-							model.setLinkman("系统");
-							model.setStatus("");
-							model.setCityid("");
-;							model.setIsRetail(1);
-							model.setName("零售");
-							model.setShortname("");
-							model.setWeightMode("1");
-							model.setType("0");
-							CustomerSv.AddCustomer(model);
+
 						}
 					}
 				}
