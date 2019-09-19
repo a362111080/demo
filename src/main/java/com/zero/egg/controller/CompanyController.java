@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -221,7 +219,7 @@ public class CompanyController {
 								Customer  model=new  Customer();
 								model.setCreator(loginUser.getId());
 								model.setCreatetime(new Date());
-								model.setShopid(newShopid);
+								model.setShopid(shop.getId());
 								model.setCompanyid(companyUser.getCompanyId());
 								model.setModifier(loginUser.getId());
 								model.setModifytime(new Date());
@@ -281,7 +279,7 @@ public class CompanyController {
 							Customer  model=new  Customer();
 							model.setCreator(loginUser.getId());
 							model.setCreatetime(new Date());
-							model.setShopid(newShopid);
+							model.setShopid(shop.getId());
 							model.setCompanyid(companyUser.getCompanyId());
 							model.setModifier(loginUser.getId());
 							model.setModifytime(new Date());
