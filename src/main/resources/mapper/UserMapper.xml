@@ -9,7 +9,7 @@
     </select>
 
     <select id="GetUserUpdateClientCount" parameterType="com.zero.egg.model.User" resultType="int">
-        select info.portcount-info.counts+1 from (
+        select info.portcount-(info.counts+1) from (
         select count(*) as counts,a.type,
         case when a.type='1' then  b.pc_client
         when  a.type='2' then b.boss_client

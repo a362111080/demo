@@ -416,6 +416,8 @@ public class ShopController {
 					List<OrderCategory>  child=shopService.GetOrderCateGoryChild(model);
 					ResponseDTO.get(m).setOrderCategoryList(child);
 				}
+
+
 				message.setData(ResponseDTO);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
