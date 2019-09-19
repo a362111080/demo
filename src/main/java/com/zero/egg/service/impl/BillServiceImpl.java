@@ -390,7 +390,4 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
         return message;
     }
 
-    public static void main(String[] args) {
-        System.out.println(Integer.parseInt("2") == 2);
-    }
 }

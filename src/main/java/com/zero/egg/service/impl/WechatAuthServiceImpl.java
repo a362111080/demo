@@ -100,4 +100,23 @@ public class WechatAuthServiceImpl implements WechatAuthService {
                 .eq("user_id", userId));
     }
 
+    @Override
+    public int cancelBind(String openId) throws ServiceException {
+        try {
+            WechatAuth wechatAuth = new WechatAuth();
+            wechatAuth.setOpenid(openId);
+            wechatAuth.setUserId(null);
+            wechatAuth.setType(null);
+            wechatAuth.setModifytime(new Date());
+            int effectNum = wechatAuthMapper.cancelBind(openId);
+            if (effectNum < 1) {
+                throw new ServiceException("cancelBind sql failed");
+            }
+            return effectNum;
+        } catch (Exception e) {
+            log.error("cancelBind failed " + e);
+            throw e;
+        }
+    }
+
 }

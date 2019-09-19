@@ -110,8 +110,8 @@ public class LoginController {
                             .eq("id", parent2))
                             .getParentId();
                     sb.append(parent1);
-                    sb.append(","+parent2);
-                    sb.append(","+shop.getCityId());
+                    sb.append("," + parent2);
+                    sb.append("," + shop.getCityId());
                     //生成token
                     String accessToken = TokenUtils.createJwtToken(user.getId());
                     jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
@@ -211,6 +211,11 @@ public class LoginController {
             String redisKey = request.getHeader("token");
             /** 清除redis里的token信息 */
             jediskeys.del(UtilConstants.RedisPrefix.USER_REDIS + redisKey);
+            //如果header里面有request.getHeader("wxSessionkey"),则解除绑定
+            if (null != request.getHeader("wxSessionkey") || !"".equals(request.getHeader("wxSessionkey"))) {
+                String openid = AESUtil.decrypt(request.getHeader("wxSessionkey"), AESUtil.KEY);
+                wechatAuthService.cancelBind(openid);
+            }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {

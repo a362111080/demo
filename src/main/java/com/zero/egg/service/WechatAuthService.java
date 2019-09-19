@@ -46,4 +46,12 @@ public interface WechatAuthService {
      * @return
      */
     int getCountByUserId(String userId);
+
+    /**
+     * 取消绑定
+     * @param openId
+     * @return
+     * @throws ServiceException
+     */
+    int cancelBind(String openId) throws ServiceException;
 }
