@@ -8,6 +8,7 @@ import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.service.IShopService;
@@ -154,6 +155,21 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public int GetOrderGoodsSort(OrderGoods model) {
 		return mapper.GetOrderGoodsSort(model);
+	}
+
+    @Override
+    public int editordergood(OrderGoods model, LoginUser loginUser) {
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
+        model.setModifytime(new Date());
+        model.setCreatetime(new Date());
+        model.setDr(false);
+        return mapper.editordergood(model);
+    }
+
+	@Override
+	public List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model) {
+		return mapper.GetOrderGoods(model);
 	}
 
 }

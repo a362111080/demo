@@ -5,6 +5,7 @@ import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
+import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 
@@ -41,4 +42,8 @@ public interface ShopMapper extends BaseMapper<Shop> {
     int addordergood(OrderGoods model);
 
     int GetOrderGoodsSort(OrderGoods model);
+
+    int editordergood(OrderGoods model);
+
+    List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model);
 }

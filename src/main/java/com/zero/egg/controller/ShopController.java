@@ -14,6 +14,7 @@ import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
 import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.service.IShopService;
@@ -504,5 +505,83 @@ public class ShopController {
 		return  thumbnailAddr;
 		//TODO 可以传商品信息,将thumbnailAddr赋值给商品信息
 	}
+
+
+	@LoginToken
+	@ApiOperation(value="修改店铺商品")
+	@RequestMapping(value="/editordergood",method=RequestMethod.POST)
+	public Message<Object> editordergood(@RequestBody OrderGoods model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		ImageHolder thumbnail = null;
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (loginUser.getCompanyId()!=null) {
+			try {
+				if (null!=model.getCategoryId() && null !=model.getShopId()) {
+					int strval = shopService.editordergood(model, loginUser);
+					if (strval > 0) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("操作失败");
+					}
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("未选择商品类目信息！");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+
+	@LoginToken
+	@ApiOperation(value="查询店铺商品")
+	@RequestMapping(value="/queryordergoods",method=RequestMethod.POST)
+	public Message<Object> queryordergoods(@RequestBody OrderGoodsRequestDTO model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+		model.setShopId(loginUser.getShopId());
+		model.setCompanyId(loginUser.getCompanyId());
+
+		if (loginUser.getCompanyId()!=null) {
+			List<OrderGoods>  ResponseDTO=shopService.GetOrderGoods(model);
+			if (ResponseDTO.size()>0) {
+				PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
+				message.setData(pageInfo);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("店铺无商品信息");
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
 
 }
