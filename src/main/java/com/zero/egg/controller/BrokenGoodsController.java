@@ -75,6 +75,10 @@ public class BrokenGoodsController {
 			BarCode  bar= brokenGoodsService.GetBarCodeInfo(brokenGoods);
 			brokenGoods.setBrokenGoodsNo(bar.getCurrentCode());
 		}
+		if (null==brokenGoods.getDr())
+		{
+			brokenGoods.setDr(false);
+		}
 		if (brokenGoods.getType().equals(BrokenGoodsEnums.Type.BrokenByCustomer.index().toString()))
 		{
 			//PageHelper.startPage(brokenGoods.getCurrent().intValue(), brokenGoods.getSize().intValue());

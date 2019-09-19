@@ -89,7 +89,10 @@
 			<if test="changeGoodsNo != null and changeGoodsNo != ''">
 				and  k.goods_no =#{changeGoodsNo,jdbcType=VARCHAR}
 			</if>
-			and  k.dr=0
+			<if test="dr != null and dr !='' or 0 == dr">
+				and  a.dr=#{dr,jdbcType=VARCHAR}
+			</if>
+
 		</where>
 	</select>
 	<update id="updateGoodsDr" parameterType="java.lang.String">
