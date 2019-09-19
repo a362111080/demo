@@ -266,15 +266,27 @@ public class CompanyController {
 					iCompanyUserService.save(companyUser);
 					if (companyUser.getShopList() != null && companyUser.getShopList().size() > 0) {
 						for (Shop shop : companyUser.getShopList()) {
-							String  newShopid=UuidUtil.get32UUID();
-							shop.setId(newShopid);
-							shop.setCompanyId(company.getId());
-							shop.setModifier(loginUser.getId());
-							shop.setModifytime(new Date());
-							shop.setCreatetime(new Date());
-							shop.setCreator(loginUser.getId());
-							shop.setDr(false);
-							shopService.save(shop);
+							if (null == shop.getId()) {
+								String newShopid = UuidUtil.get32UUID();
+								shop.setId(newShopid);
+								shop.setCompanyId(company.getId());
+								shop.setModifier(loginUser.getId());
+								shop.setModifytime(new Date());
+								shop.setCreatetime(new Date());
+								shop.setCreator(loginUser.getId());
+								shop.setDr(false);
+								shopService.save(shop);
+							}
+							else
+							{
+								shop.setCompanyId(company.getId());
+								shop.setModifier(loginUser.getId());
+								shop.setModifytime(new Date());
+								shop.setCreatetime(new Date());
+								shop.setCreator(loginUser.getId());
+								shop.setDr(false);
+								shopService.updateById(shop);
+							}
 							//增加对应零售合作商
 							Customer  model=new  Customer();
 							model.setCreator(loginUser.getId());
