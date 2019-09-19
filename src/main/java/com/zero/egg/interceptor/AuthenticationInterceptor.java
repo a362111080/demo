@@ -147,7 +147,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         }
                     } else {
                         QueryWrapper<Company> CompanyQueryWrapper = new QueryWrapper<>();
-                        CompanyQueryWrapper.eq("id", user.getCompanyId()).eq("dr", false);
+                        CompanyQueryWrapper.eq("id", companyUser.getCompanyId()).eq("dr", false);
                         //验证企业是否过期
                         Company company = iCompanyService.getOne(CompanyQueryWrapper);
                         if (null == company) {
