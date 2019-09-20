@@ -98,7 +98,7 @@ public class WXLoginController {
                     && !"".equals(wechatAuth.getUserId()) && !"".equals(wechatAuth.getType())) {
                 String userId = wechatAuth.getUserId();
                 QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-                userQueryWrapper.eq("id", userId);
+                userQueryWrapper.eq("id", userId).eq("dr", false);
                 User user = userService.getOne(userQueryWrapper);
                 int type = user.getType();
                 //生成token
