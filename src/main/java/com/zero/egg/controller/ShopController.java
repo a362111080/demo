@@ -440,11 +440,12 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺商品")
 	@RequestMapping(value="/addordergood",method=RequestMethod.POST)
-	public Message<Object> addordergood(@RequestBody OrderGoods model,HttpServletRequest request) {
+	public Message<Object> addordergood(OrderGoods model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
 				//处理图片信息
@@ -462,8 +463,6 @@ public class ShopController {
 					     String imgpath=addThumbnail(loginUser, thumbnail);
 					     model.setPicUrl(imgpath);
 					}
-					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 				}
 
 

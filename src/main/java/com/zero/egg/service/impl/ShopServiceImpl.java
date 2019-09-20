@@ -144,6 +144,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
 	@Override
 	public int addordergood(OrderGoods model, LoginUser loginUser) {
+		model.setId(UuidUtil.get32UUID());
 		model.setShopId(loginUser.getShopId());
 		model.setCompanyId(loginUser.getCompanyId());
 		model.setModifytime(new Date());
