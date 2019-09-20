@@ -35,6 +35,9 @@ public class BillReport {
 
     @ApiModelProperty(value = "未生成数量")
     private BigDecimal UnCreateCount=BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "零售账单数量")
+    private BigDecimal RetailBillCount=BigDecimal.ZERO;
 }
 
 

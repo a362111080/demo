@@ -306,6 +306,10 @@ public class BillController {
 
                     }
                 }
+                //零售
+                if (BillList.get(i).getType().equals(TaskEnums.Type.Retail.index().toString())) {
+                    report.setRetailBillCount(report.getRetailBillCount().add(BigDecimal.ONE));
+                }
             }
         }
         ms.setTotaldata(report);
