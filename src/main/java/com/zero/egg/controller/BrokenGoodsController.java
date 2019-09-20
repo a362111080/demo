@@ -126,6 +126,7 @@ public class BrokenGoodsController {
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		PageHelper.startPage(Request.getCurrent().intValue(), Request.getSize().intValue());
 		Request.setShopId(user.getShopId());
+		Request.setCompanyId(user.getCompanyId());
 		//获取报损任务
 		List<BrokenGoods> newBroken=brokenGoodsService.GetBrokenTask(Request);
 		PageInfo<BrokenGoods>  pageInfo = new PageInfo<>(newBroken);

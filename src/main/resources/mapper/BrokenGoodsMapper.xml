@@ -21,6 +21,9 @@
 	<if test="shopId != null and shopId !=''">
 		and a.shop_id=#{shopId,jdbcType=VARCHAR}
 	</if>
+	<if test="companyId != null and companyId !=''">
+		and a.company_id=#{companyId,jdbcType=VARCHAR}
+	</if>
 	<if test="keyword != null and keyword !=''">
 		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%' or a.goods_no LIKE '%${keyword}%')
 	</if>
