@@ -98,8 +98,16 @@ public class WXLoginController {
                     && !"".equals(wechatAuth.getUserId()) && !"".equals(wechatAuth.getType())) {
                 String userId = wechatAuth.getUserId();
                 QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-                userQueryWrapper.eq("id", userId);
+                userQueryWrapper.eq("id", userId).eq("dr", false);
                 User user = userService.getOne(userQueryWrapper);
+                //如果用户被删除,则解除绑定,并提示用户重新登录
+                if (null == user) {
+                    wechatAuthService.cancelBind(openId);
+                    message = new Message();
+                    message.setState(UtilConstants.WXState.FAIL);
+                    message.setMessage(UtilConstants.ResponseMsg.HTTPAPI_ERROR);
+                    return message;
+                }
                 int type = user.getType();
                 //生成token
                 String accessToken = TokenUtils.createJwtToken(user.getId(), wxSessionkey);
