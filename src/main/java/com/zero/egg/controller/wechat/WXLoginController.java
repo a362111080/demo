@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 微信登录(未优化)
  *
  * @ClassName WXLoginController
  * @Author lyming
