@@ -1,7 +1,6 @@
 package com.zero.egg.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.annotation.PassToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.api.dto.BaseResponse;
@@ -200,7 +199,6 @@ public class LoginController {
 
     }
 
-    @LoginToken
     @PostMapping(value = "/logout")
     public Message logout(HttpServletRequest request) {
         Message message = new Message();
