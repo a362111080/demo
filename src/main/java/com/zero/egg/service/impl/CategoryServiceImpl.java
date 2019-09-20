@@ -147,10 +147,12 @@ public class CategoryServiceImpl implements CategoryService {
                 for (Goods goods : needToDelete) {
                     specificationSet.add(goods.getSpecificationId());
                 }
-                stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
-                        .eq("shop_id", deleteCategoryRequestDTO.getShopId())
-                        .eq("company_id", deleteCategoryRequestDTO.getCompanyId())
-                        .in("specification_id", specificationSet));
+                if (specificationSet.size() > 0) {
+                    stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
+                            .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                            .eq("company_id", deleteCategoryRequestDTO.getCompanyId())
+                            .in("specification_id", specificationSet));
+                }
             }
         } catch (ServiceException se) {
             log.error(se.getMessage());
@@ -209,10 +211,12 @@ public class CategoryServiceImpl implements CategoryService {
                 for (Goods goods : needToDelete) {
                     specificationSet.add(goods.getSpecificationId());
                 }
-                stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
-                        .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
-                        .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId())
-                        .in("specification_id", specificationSet));
+                if (specificationSet.size() > 0) {
+                    stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
+                            .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                            .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId())
+                            .in("specification_id", specificationSet));
+                }
             }
         } catch (ServiceException se) {
             log.error(se.getMessage());
