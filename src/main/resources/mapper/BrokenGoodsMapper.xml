@@ -69,6 +69,9 @@
 			<if test="shopId != null and shopId != ''">
 				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
 			</if>
+			<if test="companyId != null and companyId !=''">
+				and k.company_id=#{companyId,jdbcType=VARCHAR}
+			</if>
 			and  k.dr=0
 		</where>
 		order by  k.createtime desc
@@ -88,6 +91,9 @@
 			</if>
 			<if test="shopId != null and shopId != ''">
 				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
+			</if>
+			<if test="companyId != null and companyId !=''">
+				and k.company_id=#{companyId,jdbcType=VARCHAR}
 			</if>
 			<if test="changeGoodsNo != null and changeGoodsNo != ''">
 				and  k.goods_no =#{changeGoodsNo,jdbcType=VARCHAR}

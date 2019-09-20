@@ -70,6 +70,7 @@ public class BrokenGoodsController {
 		Message message = new Message();
 		LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		brokenGoods.setShopId(user.getShopId());
+		brokenGoods.setCompanyId(user.getCompanyId());
 		if(null !=brokenGoods.getBarcodeid())
 		{
 			BarCode  bar= brokenGoodsService.GetBarCodeInfo(brokenGoods);
