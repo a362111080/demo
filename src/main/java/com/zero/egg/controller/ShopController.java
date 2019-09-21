@@ -568,7 +568,6 @@ public class ShopController {
 						model.setPicUrl(imgpath);
 					}
 				}
-
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int strval = shopService.editordergood(model, loginUser);
 					if (strval > 0) {
