@@ -52,6 +52,9 @@ public class OrderCategory implements Serializable {
     @ApiModelProperty(value = "父级ID",required=false)
     private  String pid;
 
+    @ApiModelProperty(value = "父级名称",required=false)
+    private  String pname;
+
     @ApiModelProperty(value = "类目图标",required=false)
     private  String iconUrl;
 
