@@ -29,6 +29,9 @@ public class OrderCategoryResponseDTO {
     @ApiModelProperty(value = "层级",required=false)
     private String level;
 
+    @ApiModelProperty(value = "类目图片",required=false)
+    private  String picUrl;
+
     @ApiModelProperty(value = "子种类集合",required=false)
     private List<OrderCategory> OrderCategoryList;
 
