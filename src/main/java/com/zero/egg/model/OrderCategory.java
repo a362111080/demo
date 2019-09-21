@@ -78,4 +78,9 @@ public class OrderCategory implements Serializable {
     @ApiModelProperty(value="子集状态",hidden = true)
     private Boolean childdr;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value="子集状态",hidden = true)
+    private Boolean isQueryChild;
+
 }

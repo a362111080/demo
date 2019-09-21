@@ -56,6 +56,7 @@
 
     <update id="editrdercategory" parameterType="OrderCategory">update order_category
         <set>
+            <if test="pid!= null and pid!=''">name= #{pid,jdbcType=VARCHAR},</if>
             <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
             <if test="iconUrl!= null">icon_url= #{iconUrl,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>

@@ -447,12 +447,13 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			List<OrderCategoryResponseDTO>  ResponseDTO=shopService.GetOrderCateGory(model);
 			if (ResponseDTO.size()>0) {
-				for (int m = 0; m < ResponseDTO.size(); m++) {
-					model.setPid(ResponseDTO.get(m).getId());
-					List<OrderCategory>  child=shopService.GetOrderCateGoryChild(model);
-					ResponseDTO.get(m).setOrderCategoryList(child);
+				if ( model.getIsQueryChild()==true) {
+					for (int m = 0; m < ResponseDTO.size(); m++) {
+						model.setPid(ResponseDTO.get(m).getId());
+						List<OrderCategory> child = shopService.GetOrderCateGoryChild(model);
+						ResponseDTO.get(m).setOrderCategoryList(child);
+					}
 				}
-
 				message.setData(ResponseDTO);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
