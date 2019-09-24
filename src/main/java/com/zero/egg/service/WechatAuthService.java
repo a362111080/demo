@@ -1,8 +1,11 @@
 package com.zero.egg.service;
 
+import com.zero.egg.model.Shop;
 import com.zero.egg.model.WechatAuth;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+
+import java.util.List;
 
 public interface WechatAuthService {
 
@@ -22,6 +25,14 @@ public interface WechatAuthService {
      * @throws RuntimeException
      */
     Message register(WechatAuth wechatAuth) throws ServiceException;
+
+    /**
+     * 注册本平台订货平台用户
+     * @param wechatAuth
+     * @return
+     * @throws ServiceException
+     */
+    Message<WechatAuth> registerOrderUser(WechatAuth wechatAuth) throws ServiceException;
 
     /**
      * 查看是否注册了本地账号
@@ -54,4 +65,6 @@ public interface WechatAuthService {
      * @throws ServiceException
      */
     int cancelBind(String openId) throws ServiceException;
+
+    List<Shop> getSecretBindInfo(WechatAuth wechatAuth) throws ServiceException;
 }

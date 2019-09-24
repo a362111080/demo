@@ -47,9 +47,11 @@ public class UserEnums {
 	}
 	public enum Type {
 
-		Company(0, "企业端"), Pc(1, "PC客户端")
-		, Boss(2, "Boss移动端"), Staff(3, "员工端"), Device(4, "设备端");
-		
+		Company(0, "企业端"), Pc(1, "PC客户端"),
+		Boss(2, "Boss移动端"), Staff(3, "员工端"),
+		Device(4, "设备端"),SAAS(5, "SAAS平台端"),
+		Order(6,"订货平台端");
+
 		private Integer index;
 		private String note;
 		

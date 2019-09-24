@@ -6,6 +6,7 @@ import com.zero.egg.annotation.PassToken;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.enums.WechatAuthStateEnum;
+import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.model.WechatAuth;
 import com.zero.egg.requestDTO.WXSessionModel;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +54,7 @@ public class WXLoginController {
 
     @Autowired
     private JedisUtil.Keys jedisKeys;
+
 
 
     @PostMapping(("/wxLogin"))
@@ -186,5 +189,96 @@ public class WXLoginController {
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
             return message;
         }
+    }
+
+    @PostMapping(("/wxOrderLogin"))
+    @PassToken
+    @ApiOperation(value = "订货平台微信登录授权")
+    public Message wxOrderLogin(String code) {
+        Message<WechatAuth> message;
+        WechatAuth wechatAuth;
+        try {
+            String url = "https://api.weixin.qq.com/sns/jscode2session";
+            Map<String, String> param = new HashMap<>();
+            param.put("appid", "wx5a6262472a05c6cb");
+            param.put("secret", "faca696f27f8bd34c912195238e5925");
+            param.put("js_code", code);
+            param.put("grant_type", "authorization_code");
+
+            String wxResult = HttpClientUtil.doGet(url, param);
+            String openId = null;
+            String wxSessionkey = null;
+            if (!"".equals(wxResult) && null != wxResult) {
+                WXSessionModel model = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
+                openId = new String(model.getOpenid());
+                /**
+                 * 对称加密openid和session_key信息
+                 */
+                wxSessionkey = AESUtil.encrypt(openId, AESUtil.KEY);
+                String wxToken = AESUtil.encrypt(wxResult, AESUtil.KEY);
+                // 存入session到redis
+                jedisStrings.setEx(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey,
+                        60 * 60 * 2,
+                        wxToken);
+            } else {
+                message = new Message();
+                message.setState(UtilConstants.WXState.FAIL);
+                message.setMessage(UtilConstants.ResponseMsg.HTTPAPI_ERROR);
+                return message;
+            }
+            //根据openid查询是否注册
+            wechatAuth = wechatAuthService.getWechatAuthByOpenId(openId);
+            Map<String, Object> map;
+            //如果能查到微信信息
+            if (null != wechatAuth ) {
+                //如果根据wechat_auth_id查询秘钥绑定信息
+                List<Shop> shopList = wechatAuthService.getSecretBindInfo(wechatAuth);
+                int type = wechatAuth.getType();
+                //生成token
+                String accessToken = TokenUtils.createJwtToken(wechatAuth.getWechatAuthId(), wxSessionkey);
+                String redisKey = MD5Utils.encodeWithFixSalt(wechatAuth.getWechatAuthId() + wechatAuth.getType());
+                jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
+                map = new HashMap<>();
+                map.put("token", redisKey);
+                map.put("userType", type);
+                map.put("userTypeName", UserEnums.Type.note(type));
+                map.put("shopList", shopList);
+                map.put("wxSessionkey", wxSessionkey);
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                message.setMap(map);
+                return message;
+            }else {
+                //完全查不到本系统的微信账号才去注册,避免重复注册
+                wechatAuth = new WechatAuth();
+                wechatAuth.setOpenid(openId);
+                wechatAuth.setType(UserEnums.Type.Order.index());
+                message = wechatAuthService.registerOrderUser(wechatAuth);
+                if (message.getState() == WechatAuthStateEnum.SUCCESS.getState()) {
+                    //生成token
+                    String redisKey = MD5Utils.encodeWithFixSalt(wechatAuth.getWechatAuthId() + wechatAuth.getType());
+                    String accessToken = TokenUtils.createJwtToken(message.getData().getWechatAuthId(), wxSessionkey);
+                    map = new HashMap<String, Object>();
+                    map.put("token", redisKey);
+                    map.put("userType", UserEnums.Type.Order.index());
+                    map.put("userTypeName", UserEnums.Type.Order.note());
+                    map.put("shopList", null);
+                    map.put("wxSessionkey", wxSessionkey);
+                    message.setMap(map);
+                    return message;
+                } else {
+                    //返回错误信息
+                    return message;
+                }
+            }
+        } catch (Exception e) {
+            log.error("wechat login failed:", e);
+            message = new Message();
+            message.setState(UtilConstants.WXState.FAIL);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
+
     }
 }
