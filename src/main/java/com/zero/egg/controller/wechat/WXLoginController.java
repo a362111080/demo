@@ -194,7 +194,7 @@ public class WXLoginController {
     @PostMapping(("/wxOrderLogin"))
     @PassToken
     @ApiOperation(value = "订货平台微信登录授权")
-    public Message wxLogin(String code) {
+    public Message wxOrderLogin(String code) {
         Message<WechatAuth> message;
         WechatAuth wechatAuth;
         try {
