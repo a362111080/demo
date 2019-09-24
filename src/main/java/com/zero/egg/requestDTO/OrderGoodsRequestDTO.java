@@ -21,6 +21,8 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
     @ApiModelProperty(value="店铺")
     public String shopId;
 
+    @ApiModelProperty(value="店铺")
+    public String goodsSn;
 
     @ApiModelProperty(value="种类")
     private String categoryId;
@@ -29,5 +31,6 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
     @ApiModelProperty(value="是否上架")
     private Boolean isOnSale;
 
-
+    @ApiModelProperty(value="删除标识")
+    private Boolean dr;
 }

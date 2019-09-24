@@ -561,7 +561,6 @@ public class ShopController {
 		PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
 		model.setShopId(loginUser.getShopId());
 		model.setCompanyId(loginUser.getCompanyId());
-
 		if (loginUser.getCompanyId()!=null) {
 			List<OrderGoods>  ResponseDTO=shopService.GetOrderGoods(model);
 			if (ResponseDTO.size()>0) {

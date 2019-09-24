@@ -110,6 +110,9 @@
         <if test="name != null and name !=''">
             and   a.name LIKE '%${name}%'
         </if>
+        <if test="goodsSn != null and goodsSn !=''">
+            and   a.goods_sn LIKE '%${goodsSn}%'
+        </if>
         <if test="categoryId != null and categoryId !=''">
             and   a.category_id=#{categoryId,jdbcType=VARCHAR}
         </if>
