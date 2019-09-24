@@ -71,6 +71,7 @@
             <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
             <if test="categoryId!= null">category_id= #{categoryId,jdbcType=VARCHAR},</if>
             <if test="keywords!= null">keywords= #{keywords,jdbcType=VARCHAR},</if>
+            <if test="gallery!= null">gallery= #{gallery,jdbcType=VARCHAR},</if>
             <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
             <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>

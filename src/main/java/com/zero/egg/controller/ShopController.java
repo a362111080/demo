@@ -4,6 +4,7 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
@@ -25,6 +26,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -34,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -478,6 +481,7 @@ public class ShopController {
 	@RequestMapping(value="/addordergood",method=RequestMethod.POST)
 	public Message<Object> addordergood(OrderGoods model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
+		ObjectMapper mapper = new ObjectMapper();
 		//当前登录用户
 		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -499,6 +503,26 @@ public class ShopController {
 					     String imgpath=addThumbnail(loginUser, thumbnail);
 					     model.setPicUrl(imgpath);
 					}
+
+					//商品多张展示图
+					List<String>  FileList= new ArrayList();
+					Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
+					for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+						CommonsMultipartFile rimgFile =(CommonsMultipartFile)entity.getValue();
+						if (!entity.getKey().equals("thumbnail")) {
+
+							ImageHolder rimg = new ImageHolder(rimgFile.getOriginalFilename(), rimgFile.getInputStream());
+							String rimgPaht = addThumbnail(loginUser, rimg);
+							FileList.add(rimgPaht);
+						}
+
+					}
+					if (FileList!=null && FileList.size()>0)
+					{
+						model.setGallery(mapper.writeValueAsString(FileList));
+					}
+
+
 				}
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int sort = shopService.GetOrderGoodsSort(model);
@@ -547,6 +571,7 @@ public class ShopController {
 	@RequestMapping(value="/editordergood",method=RequestMethod.POST)
 	public Message<Object> editordergood(OrderGoods model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
+		ObjectMapper mapper = new ObjectMapper();
 		//当前登录用户
 		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -568,6 +593,27 @@ public class ShopController {
 						String imgpath=addThumbnail(loginUser, thumbnail);
 						model.setPicUrl(imgpath);
 					}
+
+
+					//商品多张展示图
+					List<String>  FileList= new ArrayList();
+					Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
+
+					for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+						CommonsMultipartFile rimgFile =(CommonsMultipartFile)entity.getValue();
+						if (!entity.getKey().equals("thumbnail"))
+						{
+							ImageHolder rimg=new ImageHolder(rimgFile.getOriginalFilename(), rimgFile.getInputStream());
+							String rimgPaht=addThumbnail(loginUser,rimg);
+							FileList.add(rimgPaht);
+						}
+
+					}
+					if (FileList!=null && FileList.size()>0)
+					{
+						model.setGallery(mapper.writeValueAsString(FileList));
+					}
+
 				}
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int strval = shopService.editordergood(model, loginUser);
