@@ -129,6 +129,15 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
 	@Override
 	public int editrdercategory(OrderCategory model) {
+
+		if (model.getPid()==null || model.getPid()=="" )
+		{
+			model.setLevel("1");
+		}
+		else
+		{
+			model.setLevel("2");
+		}
 		return mapper.editrdercategory(model);
 	}
 

@@ -326,12 +326,30 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺分类")
 	@RequestMapping(value="/addordercategory",method=RequestMethod.POST)
-	public Message<Object> addordercategory(@RequestBody OrderCategory model) {
+	public Message<Object> addordercategory(OrderCategory model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
+		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
 			try {
+				//处理图片信息
+				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+				if (commonsMultipartResolver.isMultipart(request)) {
+					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
+					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
+					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
+					if (thumbnailFile != null) {
+						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+					}
+					//如果商品缩略图不为null,则添加
+					if (thumbnail != null && null != thumbnail.getImage()) {
+						String imgpath=addThumbnail(loginUser, thumbnail);
+						model.setPicUrl(imgpath);
+					}
+				}
+
 				int strval = shopService.addordercategory(model, loginUser);
 				if (strval > 0) {
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -364,12 +382,32 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="修改店铺分类")
 	@RequestMapping(value="/editordercategory",method=RequestMethod.POST)
-	public Message<Object> editordercategory(@RequestBody OrderCategory model) {
+	public Message<Object> editordercategory( OrderCategory model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
+		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
+				//处理图片信息
+				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+				if (commonsMultipartResolver.isMultipart(request)) {
+					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
+					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
+					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
+					if (thumbnailFile != null) {
+						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+					}
+					//如果商品缩略图不为null,则添加
+					if (thumbnail != null && null != thumbnail.getImage()) {
+						String imgpath=addThumbnail(loginUser, thumbnail);
+						model.setPicUrl(imgpath);
+					}
+				}
+
+
 				int strval = shopService.editrdercategory(model);
 				if (strval > 0) {
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -409,15 +447,13 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			List<OrderCategoryResponseDTO>  ResponseDTO=shopService.GetOrderCateGory(model);
 			if (ResponseDTO.size()>0) {
-				for (int m = 0; m < ResponseDTO.size(); m++) {
-
-					model.setPid(ResponseDTO.get(m).getId());
-
-					List<OrderCategory>  child=shopService.GetOrderCateGoryChild(model);
-					ResponseDTO.get(m).setOrderCategoryList(child);
+				if ( model.getIsQueryChild()==true) {
+					for (int m = 0; m < ResponseDTO.size(); m++) {
+						model.setPid(ResponseDTO.get(m).getId());
+						List<OrderCategory> child = shopService.GetOrderCateGoryChild(model);
+						ResponseDTO.get(m).setOrderCategoryList(child);
+					}
 				}
-
-
 				message.setData(ResponseDTO);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -464,8 +500,6 @@ public class ShopController {
 					     model.setPicUrl(imgpath);
 					}
 				}
-
-
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int sort = shopService.GetOrderGoodsSort(model);
 					model.setSortOrder(sort);
@@ -511,13 +545,30 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="修改店铺商品")
 	@RequestMapping(value="/editordergood",method=RequestMethod.POST)
-	public Message<Object> editordergood(@RequestBody OrderGoods model) {
+	public Message<Object> editordergood(OrderGoods model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
+				//处理图片信息
+				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+				if (commonsMultipartResolver.isMultipart(request)) {
+					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
+					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
+					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
+					if (thumbnailFile != null) {
+						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+					}
+					//如果商品缩略图不为null,则添加
+					if (thumbnail != null && null != thumbnail.getImage()) {
+						String imgpath=addThumbnail(loginUser, thumbnail);
+						model.setPicUrl(imgpath);
+					}
+				}
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int strval = shopService.editordergood(model, loginUser);
 					if (strval > 0) {

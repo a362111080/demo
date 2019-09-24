@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.SpecificationProgramMapper;
+import com.zero.egg.dao.StockMapper;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Category;
+import com.zero.egg.model.Goods;
 import com.zero.egg.model.SpecificationProgram;
+import com.zero.egg.model.Stock;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.responseDTO.CategoryListResponseDTO;
@@ -24,7 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName BaseInfoServiceImpl
@@ -51,6 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private BarCodeMapper barCodeMapper;
+
+    @Autowired
+    private StockMapper stockMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     @Override
     @Transactional
@@ -116,7 +128,35 @@ public class CategoryServiceImpl implements CategoryService {
                     .eq("id", deleteCategoryRequestDTO.getId())
                     .eq("shop_id", deleteCategoryRequestDTO.getShopId())
                     .eq("company_id", deleteCategoryRequestDTO.getCompanyId()));
-
+            //要对仓库里面做对应品种的验证,如果仓库中还有对应品种的货物,则不许删除
+            Integer effectNum = goodsMapper.selectCount(new QueryWrapper<Goods>()
+                    .eq("goods_category_id", deleteCategoryRequestDTO.getId())
+                    .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", deleteCategoryRequestDTO.getCompanyId())
+                    .eq("dr", false));
+            //如果库存中有货,则不允许删品种
+            if (effectNum > 0) {
+                throw new ServiceException("库存中还有对应品种的货物,请勿删除");
+            } else {
+                List<Goods> needToDelete = goodsMapper.selectList(new QueryWrapper<Goods>()
+                        .select("specification_id")
+                        .eq("goods_category_id", deleteCategoryRequestDTO.getId())
+                        .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                        .eq("company_id", deleteCategoryRequestDTO.getCompanyId()));
+                Set<String> specificationSet = new HashSet<>();
+                for (Goods goods : needToDelete) {
+                    specificationSet.add(goods.getSpecificationId());
+                }
+                if (specificationSet.size() > 0) {
+                    stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
+                            .eq("shop_id", deleteCategoryRequestDTO.getShopId())
+                            .eq("company_id", deleteCategoryRequestDTO.getCompanyId())
+                            .in("specification_id", specificationSet));
+                }
+            }
+        } catch (ServiceException se) {
+            log.error(se.getMessage());
+            throw se;
         } catch (Exception e) {
             log.error("deleteEggTypeById Error!", e);
             throw new ServiceException("deleteEggTypeById Error!");
@@ -152,6 +192,35 @@ public class CategoryServiceImpl implements CategoryService {
                     .in("id", batchDeleteCategoryRequestDTO.getIds())
                     .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
                     .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId()));
+            //要对仓库里面做对应品种的验证,如果仓库中还有对应品种的货物,则不许删除
+            Integer effectNum = goodsMapper.selectCount(new QueryWrapper<Goods>()
+                    .in("goods_category_id", batchDeleteCategoryRequestDTO.getIds())
+                    .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                    .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId())
+                    .eq("dr", false));
+            //如果库存中有货,则不允许删品种
+            if (effectNum > 0) {
+                throw new ServiceException("库存中还有对应品种的货物,请勿删除");
+            } else {
+                List<Goods> needToDelete = goodsMapper.selectList(new QueryWrapper<Goods>()
+                        .select("specification_id")
+                        .in("goods_category_id", batchDeleteCategoryRequestDTO.getIds())
+                        .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                        .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId()));
+                Set<String> specificationSet = new HashSet<>();
+                for (Goods goods : needToDelete) {
+                    specificationSet.add(goods.getSpecificationId());
+                }
+                if (specificationSet.size() > 0) {
+                    stockMapper.update(new Stock().setDr(true), new UpdateWrapper<Stock>()
+                            .eq("shop_id", batchDeleteCategoryRequestDTO.getShopId())
+                            .eq("company_id", batchDeleteCategoryRequestDTO.getCompanyId())
+                            .in("specification_id", specificationSet));
+                }
+            }
+        } catch (ServiceException se) {
+            log.error(se.getMessage());
+            throw se;
         } catch (Exception e) {
             log.error("batchDeleteEggType Error!", e);
             throw new ServiceException("batchDeleteEggType Error!");

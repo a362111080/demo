@@ -12,6 +12,7 @@ import com.zero.egg.service.DeviceDataService;
 import com.zero.egg.service.SpecificationProgramService;
 import com.zero.egg.service.SpecificationService;
 import com.zero.egg.tool.Message;
+import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -140,6 +141,10 @@ public class BaseInfoController {
                 message.setMessage(UtilConstants.ResponseMsg.FAILED);
             }
             return message;
+        } catch (ServiceException se) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(se.getMessage());
+            return message;
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.FAILED);
@@ -169,6 +174,10 @@ public class BaseInfoController {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.ATLEAST_ONE);
             }
+            return message;
+        } catch (ServiceException se) {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(se.getMessage());
             return message;
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

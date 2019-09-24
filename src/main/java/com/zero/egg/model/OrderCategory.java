@@ -52,6 +52,9 @@ public class OrderCategory implements Serializable {
     @ApiModelProperty(value = "父级ID",required=false)
     private  String pid;
 
+    @ApiModelProperty(value = "父级名称",required=false)
+    private  String pname;
+
     @ApiModelProperty(value = "类目图标",required=false)
     private  String iconUrl;
 
@@ -77,5 +80,10 @@ public class OrderCategory implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value="子集状态",hidden = true)
     private Boolean childdr;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value="子集状态",hidden = true)
+    private Boolean isQueryChild;
 
 }
