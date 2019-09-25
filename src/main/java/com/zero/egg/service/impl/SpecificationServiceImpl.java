@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,7 +52,7 @@ public class SpecificationServiceImpl implements SpecificationService {
              * 如果计重方式是包,则不计重
              */
             if (2 == specification.getMode()) {
-                specification.setNumerical(null);
+                specification.setNumerical(BigDecimal.ZERO);
             }
             /**
              * 如果传入的最小重量大于最大重量,则返回错误信息
@@ -78,6 +79,7 @@ public class SpecificationServiceImpl implements SpecificationService {
      * @param specificationRequestDTO
      * @return
      */
+    @Override
     public Message updateStandardDetl(SpecificationRequestDTO specificationRequestDTO) {
         Message message = new Message();
         Specification specification = new Specification();
@@ -87,7 +89,7 @@ public class SpecificationServiceImpl implements SpecificationService {
              * 如果计重方式是包,则不计重
              */
             if (2 == specification.getMode()) {
-                specification.setNumerical(null);
+                specification.setNumerical(BigDecimal.ZERO);
             }
             /**
              * 如果传入的最小重量大于最大重量,则返回错误信息
