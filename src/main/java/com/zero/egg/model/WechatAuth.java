@@ -48,4 +48,8 @@ public class WechatAuth {
      * 用户类型(1.企业员工 2.店铺用户)
      */
     private Integer type;
+    /**
+     * 昵称
+     */
+    private String nickname;
 }

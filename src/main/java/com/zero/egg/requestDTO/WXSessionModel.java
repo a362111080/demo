@@ -14,5 +14,7 @@ public class WXSessionModel {
 
     private String openid;
 
+    private String nickname;
+
 
 }
