@@ -240,6 +240,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("company_id", task.getCompanyId())
                     .eq("cussup_id", customerId)
                     .eq("dr", 0));
+            shipmentGoodsMapper.update(new ShipmentGoods().setDr(true), new UpdateWrapper<ShipmentGoods>()
+                    .eq("shop_id", task.getShopId())
+                    .eq("company_id", task.getCompanyId())
+                    .eq("cussup_id", customerId)
+                    .eq("task_id", taskId));
             jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + ":" + task.getShopId()
                     + ":" + task.getCussupId() + ":" + taskId + ":" + "status", TaskEnums.Status.CANCELED.index().toString());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
