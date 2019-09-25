@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.zero.egg.model.UserRole">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="role_id" jdbcType="VARCHAR" property="roleId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime"/>
+        <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+        <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime"/>
+        <result column="dr" jdbcType="BIT" property="dr"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, role_id, user_id, creator, createtime, modifier, modifytime, dr
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from base_user_role
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        <!--@mbg.generated-->
+        delete from base_user_role
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insertSelective" parameterType="com.zero.egg.model.UserRole">
+        <!--@mbg.generated-->
+        insert into base_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="createtime != null">
+                createtime,
+            </if>
+            <if test="modifier != null">
+                modifier,
+            </if>
+            <if test="modifytime != null">
+                modifytime,
+            </if>
+            <if test="dr != null">
+                dr,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null">
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifytime != null">
+                #{modifytime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dr != null">
+                #{dr,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.zero.egg.model.UserRole">
+        <!--@mbg.generated-->
+        update base_user_role
+        <set>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null">
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifytime != null">
+                modifytime = #{modifytime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dr != null">
+                dr = #{dr,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="selectRolesByUserId" resultType="com.zero.egg.model.Role">
+        SELECT
+        r.id,
+        r.NAME,
+        r.`code`,
+        r.description
+        FROM
+        bd_user u
+        INNER JOIN base_user_role ur ON u.id = ur.user_id
+        INNER JOIN base_role r ON ur.role_id = r.id
+        WHERE
+        u.id = #{id,jdbcType=VARCHAR}
+        AND u.dr = 0
+        AND ur.dr = 0
+        AND r.dr = 0
+    </select>
+    <select id="selectRolesByCompanyUserId" resultType="com.zero.egg.model.Role">
+        SELECT
+        r.id,
+        r.NAME,
+        r.`code`,
+        r.description
+        FROM
+        bd_company_user u
+        INNER JOIN base_user_role ur ON u.id = ur.user_id
+        INNER JOIN base_role r ON ur.role_id = r.id
+        WHERE
+        u.id = #{id,jdbcType=VARCHAR}
+        AND u.dr = 0
+        AND ur.dr = 0
+        AND r.dr = 0
+    </select>
+</mapper>

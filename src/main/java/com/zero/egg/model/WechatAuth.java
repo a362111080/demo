@@ -1,12 +1,14 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName WechatAuth
@@ -52,4 +54,12 @@ public class WechatAuth {
      * 昵称
      */
     private String nickname;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "权限列表",hidden=true)
+    private List<Resource> resources;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "角色列表",hidden=true)
+    private List<Role> roles;
 }

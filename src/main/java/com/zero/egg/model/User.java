@@ -1,18 +1,19 @@
 package com.zero.egg.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zero.egg.enums.UserEnums;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -80,7 +81,14 @@ public class User implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
-    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "权限列表",hidden=true)
+    private List<Resource> resources;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "角色列表",hidden=true)
+    private List<Role> roles;
+
     public String getStatusName() {
 		return UserEnums.Status.note(Integer.parseInt(this.status));
 	}
