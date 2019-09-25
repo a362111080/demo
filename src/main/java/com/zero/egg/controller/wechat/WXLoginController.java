@@ -259,6 +259,7 @@ public class WXLoginController {
                     //生成token
                     String redisKey = MD5Utils.encodeWithFixSalt(wechatAuth.getWechatAuthId() + wechatAuth.getType());
                     String accessToken = TokenUtils.createJwtToken(message.getData().getWechatAuthId(), wxSessionkey);
+                    jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                     map = new HashMap<String, Object>();
                     map.put("token", redisKey);
                     map.put("userType", UserEnums.Type.Order.index());

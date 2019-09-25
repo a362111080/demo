@@ -583,7 +583,7 @@ public class BaseInfoController {
                     requestDTO.setShopId(user.getShopId());
                     requestDTO.setModifier(name);
                     if (requestDTO.getMode() == 2) {
-                        requestDTO.setNumerical(null);
+                        requestDTO.setNumerical(0.0);
                     }
                     if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
                         //编辑
