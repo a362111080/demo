@@ -582,6 +582,9 @@ public class BaseInfoController {
                     requestDTO.setCompanyId(user.getCompanyId());
                     requestDTO.setShopId(user.getShopId());
                     requestDTO.setModifier(name);
+                    if (requestDTO.getMode() == 2) {
+                        requestDTO.setNumerical(null);
+                    }
                     if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
                         //编辑
                         specificationService.updateStandardDetl(requestDTO);

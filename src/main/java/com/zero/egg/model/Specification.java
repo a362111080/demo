@@ -63,7 +63,7 @@ public class Specification {
      * 数值（去皮对应的数值）
      */
     @ApiModelProperty(value = "数值（去皮对应的数值）",required=false)
-    private Integer numerical;
+    private Double numerical;
 
     /**
      * 去皮时,拼接"实重("+重量区间+")"
