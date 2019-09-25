@@ -74,9 +74,11 @@ public class WXLoginController {
             String wxResult = HttpClientUtil.doGet(url, param);
             String openId = null;
             String wxSessionkey = null;
+            String nickname = null;
             if (!"".equals(wxResult) && null != wxResult) {
                 WXSessionModel model = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
-                openId = new String(model.getOpenid());
+                openId = model.getOpenid();
+                nickname = model.getNickname();
                 /**
                  * 对称加密openid和session_key信息
                  */
@@ -131,6 +133,7 @@ public class WXLoginController {
                 //完全查不到本系统的微信账号才去注册,避免重复注册
                 wechatAuth = new WechatAuth();
                 wechatAuth.setOpenid(openId);
+                wechatAuth.setNickname(nickname);
                 message = wechatAuthService.register(wechatAuth);
                 if (message.getState() == WechatAuthStateEnum.SUCCESS.getState()) {
                     map = new HashMap<String, Object>();
@@ -208,9 +211,11 @@ public class WXLoginController {
             String wxResult = HttpClientUtil.doGet(url, param);
             String openId = null;
             String wxSessionkey = null;
+            String nickname = null;
             if (!"".equals(wxResult) && null != wxResult) {
                 WXSessionModel model = JsonUtils.jsonToPojo(wxResult, WXSessionModel.class);
-                openId = new String(model.getOpenid());
+                openId = model.getOpenid();
+                nickname = model.getNickname();
                 /**
                  * 对称加密openid和session_key信息
                  */
@@ -253,12 +258,14 @@ public class WXLoginController {
                 //完全查不到本系统的微信账号才去注册,避免重复注册
                 wechatAuth = new WechatAuth();
                 wechatAuth.setOpenid(openId);
+                wechatAuth.setNickname(nickname);
                 wechatAuth.setType(UserEnums.Type.Order.index());
                 message = wechatAuthService.registerOrderUser(wechatAuth);
                 if (message.getState() == WechatAuthStateEnum.SUCCESS.getState()) {
                     //生成token
                     String redisKey = MD5Utils.encodeWithFixSalt(wechatAuth.getWechatAuthId() + wechatAuth.getType());
                     String accessToken = TokenUtils.createJwtToken(message.getData().getWechatAuthId(), wxSessionkey);
+                    jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                     map = new HashMap<String, Object>();
                     map.put("token", redisKey);
                     map.put("userType", UserEnums.Type.Order.index());

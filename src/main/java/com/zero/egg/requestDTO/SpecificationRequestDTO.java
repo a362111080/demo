@@ -67,7 +67,7 @@ public class SpecificationRequestDTO implements Serializable {
      * 数值（去皮对应的数值）
      */
     @ApiModelProperty(value = "数值（去皮对应的数值）",required=false)
-    private Double numerical;
+    private BigDecimal numerical;
 
     /**
      * 是否预警(0:否,1:是)
