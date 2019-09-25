@@ -27,19 +27,21 @@ public class OrderSecret implements Serializable {
     private String id;
 
     /**
-     * 供关联店铺
+     * 关联店铺
      */
     @ApiModelProperty(value = "店铺主键",required=false)
     private  String shopid;
-    /**
-     * 供应商关联企业
-     */
+
     @ApiModelProperty(value = "企业主键",required=false)
     private  String companyid;
 
-    /**
-     * 供应商关联企业
-     */
+
+
+    @ApiModelProperty(value = "客户主键",required=false)
+    private  String customerId;
+
+
+
     @ApiModelProperty(value = "企业主键",required=false)
     private  String secretKey;
 

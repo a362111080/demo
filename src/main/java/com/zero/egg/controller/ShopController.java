@@ -409,8 +409,6 @@ public class ShopController {
 						model.setPicUrl(imgpath);
 					}
 				}
-
-
 				int strval = shopService.editrdercategory(model);
 				if (strval > 0) {
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -503,7 +501,6 @@ public class ShopController {
 					     String imgpath=addThumbnail(loginUser, thumbnail);
 					     model.setPicUrl(imgpath);
 					}
-
 					//商品多张展示图
 					List<String>  FileList= new ArrayList();
 					Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
@@ -521,8 +518,6 @@ public class ShopController {
 					{
 						model.setGallery(mapper.writeValueAsString(FileList));
 					}
-
-
 				}
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int sort = shopService.GetOrderGoodsSort(model);
