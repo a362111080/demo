@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -583,7 +584,7 @@ public class BaseInfoController {
                     requestDTO.setShopId(user.getShopId());
                     requestDTO.setModifier(name);
                     if (requestDTO.getMode() == 2) {
-                        requestDTO.setNumerical(0.0);
+                        requestDTO.setNumerical(BigDecimal.ZERO);
                     }
                     if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
                         //编辑
