@@ -519,7 +519,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         //如果mode为1(去皮),则需要做额外处理
                         if (blankBillDTO.getMode() == 1) {
                             //需要加上去皮值*数量
-                            BigDecimal needToSubtract = new BigDecimal(specification.getNumerical() * blankBillDTO.getQuantity());
+                            BigDecimal needToSubtract = specification.getNumerical() .multiply(new BigDecimal(blankBillDTO.getQuantity())) ;
                             totalWeight = totalWeight.add(needToSubtract);
                             blankBillDTO.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                             blankBillDTO.setTotalWeight(totalWeight);
