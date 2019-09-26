@@ -114,7 +114,7 @@ public class UnloadGoodsController {
                         String category_id=StringTool.splitToList(info, ",").get(3);
                         model.setProgramId(Programid);
                         if (bar.getCategoryId().equals(category_id)) {
-							if (status == TaskEnums.Status.Unexecuted.toString()) {
+							if (status.equals(TaskEnums.Status.Unexecuted.index().toString())) {
 								//任务已暂停
 								message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 								message.setMessage("当前任务已暂停，请稍后再操作");
