@@ -92,6 +92,10 @@ public class Shop implements Serializable {
     @ApiModelProperty(value = "省份",hidden=true)
     private String cityId;
 
+
+
+
+
     /**
      * 店铺类型,暂时方便卸货,默认为1(常规)
      */
@@ -109,6 +113,17 @@ public class Shop implements Serializable {
     @ApiModelProperty(value = "省市区二级id", required = false)
     @TableField(exist = false)
     private String city2;
+
+
+
+    @ApiModelProperty(value = "合作商id",hidden=true)
+    @TableField(exist = false)
+    private String customerId;
+
+
+    @ApiModelProperty(value = "本次绑定密钥",hidden=true)
+    @TableField(exist = false)
+    private String secret;
 
 
     public String getStatusName() {

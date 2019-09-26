@@ -239,14 +239,14 @@ public class ShopController {
 
 	//店铺秘钥
 	@LoginToken
-	@ApiOperation(value="生成店铺秘钥")
+	@ApiOperation(value="新增店铺秘钥")
 	@RequestMapping(value="/addsecret",method=RequestMethod.POST)
 	public Message<Object> addsecret(@RequestBody  Shop shop) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
-			String usecret = generateShortUuid();
+			String usecret = shop.getSecret();
 			try {
 				int strval = shopService.addsecret(shop, loginUser, usecret);
 				if (strval > 0) {
@@ -274,6 +274,21 @@ public class ShopController {
 		}
 		return message;
 	}
+
+
+	//随机密钥
+	@ApiOperation(value="查询店铺秘钥")
+	@RequestMapping(value="/createsecret",method=RequestMethod.POST)
+	public Message<Object> Createshopsecret(@RequestBody  ShopRequest shop) {
+		Message ms = new Message();
+		String usecret = generateShortUuid();
+		ms.setData(usecret);
+		ms.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+		ms.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		return ms;
+	}
+
+
 
 
 	public static String[] chars = new String[] { "a", "b", "c", "d", "e", "f",

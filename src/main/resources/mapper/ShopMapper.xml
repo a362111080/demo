@@ -17,8 +17,8 @@
     </select>
 
     <insert id="addsecret" parameterType="OrderSecret">
-     insert into order_secret(id,company_id,shop_id,secret_key,creator,createtime,modifier,modifytime,dr)
-     values(REPLACE(UUID(),'-',''),#{companyid},#{shopid},#{secretKey},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
+     insert into order_secret(id,company_id,shop_id,secret_key,creator,createtime,modifier,modifytime,dr,customer_id,status)
+     values(REPLACE(UUID(),'-',''),#{companyid},#{shopid},#{secretKey},#{creator},#{createtime},#{modifier},#{modifytime},#{dr},#{customerId},#{status})
      </insert>
 
 

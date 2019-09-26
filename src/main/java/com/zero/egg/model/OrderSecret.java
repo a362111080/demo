@@ -93,5 +93,5 @@ public class OrderSecret implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "绑定人状态",required=false)
-    public String status;
+    public Boolean status;
 }

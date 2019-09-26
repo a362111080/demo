@@ -86,4 +86,10 @@ public class CustomerRequestDTO extends PageDTO implements Serializable {
      * 验证
      */
     private String checkname;
+
+
+    /**
+     * 验证密钥是否绑定
+     */
+    private String bindSecret;
 }

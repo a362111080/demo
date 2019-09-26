@@ -79,13 +79,14 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
 	@Override
 	public int addsecret(Shop shop, LoginUser loginUser, String usecret) {
-
 		OrderSecret   se=new OrderSecret();
 		se.setCompanyid(loginUser.getCompanyId());
 		se.setShopid(loginUser.getShopId());
 		se.setSecretKey(usecret);
+		se.setCustomerId(shop.getCustomerId());
 		se.setCreator(loginUser.getId());
 		se.setModifier(loginUser.getId());
+		se.setStatus(false);//默认未绑定
 		se.setCreatetime(new Date());
 		se.setModifytime(new Date());
 		se.setDr(false);

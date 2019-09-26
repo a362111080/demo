@@ -92,6 +92,9 @@
             <if test="checkname != null and checkname !=''">
                 and k.name=#{checkname,jdbcType=VARCHAR}
             </if>
+            <if test="bindSecret != null and bindSecret !=''">
+                and k.id  not in (select distinct n.customer_id from order_secret n where n.dr=0)
+            </if>
             <if test="status != null and status !='-1' and status !=''">
                 and k.status=#{status,jdbcType=INTEGER}
             </if>
