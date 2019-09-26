@@ -434,8 +434,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             Customer customer = customerMapper.selectOne(new QueryWrapper<Customer>().select("name","weight_mode")
                     .eq("id", customerId)
                     .eq("shop_id", requestDTO.getShopId())
-                    .eq("company_id", requestDTO.getCompanyId())
-                    .eq("dr", 0));
+                    .eq("company_id", requestDTO.getCompanyId()));
             String customerName = customer.getName();
             //用户习惯计重模式
             String weightMode = customer.getWeightMode();
@@ -484,8 +483,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 String categoryName = categoryMapper.selectOne(new QueryWrapper<Category>().select("name")
                         .eq("id", entryOut.getKey())
                         .eq("shop_id", requestDTO.getShopId())
-                        .eq("company_id", requestDTO.getCompanyId())
-                        .eq("dr", 0))
+                        .eq("company_id", requestDTO.getCompanyId()))
                         .getName();
                 for (Map.Entry<String, List<ShipmentGoods>> entryIn : specificationListMap.entrySet()) {
                     //如果内循环的品种id和外循环的品种id一致,才进行归类操作
@@ -508,8 +506,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         specification = specificationMapper.selectOne(new QueryWrapper<Specification>()
                                 .eq("id", specificationId)
                                 .eq("shop_id", requestDTO.getShopId())
-                                .eq("company_id", requestDTO.getCompanyId())
-                                .eq("dr", 0));
+                                .eq("company_id", requestDTO.getCompanyId()));
                         blankBillDTO.setProgramId(specification.getProgramId());
 
                         //循环出货商品,累加重量
