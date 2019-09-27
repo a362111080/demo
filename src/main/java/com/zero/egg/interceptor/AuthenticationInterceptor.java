@@ -11,14 +11,14 @@ import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.Company;
 import com.zero.egg.model.CompanyUser;
-import com.zero.egg.model.SassUser;
+import com.zero.egg.model.SaasUser;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
-import com.zero.egg.service.SassUserService;
+import com.zero.egg.service.SaasUserService;
 import com.zero.egg.tool.AuthenticateException;
 import com.zero.egg.tool.TokenUtils;
 import com.zero.egg.tool.UtilConstants;
@@ -55,7 +55,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     private JedisUtil.Keys jedisKeys;
 
     @Autowired
-    private SassUserService sassUserService;
+    private SaasUserService saasUserService;
 
     @Autowired
     private ShopMapper shopMapper;
@@ -126,7 +126,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 /**
                  * 1.店铺账号是否能查到,查得到就返回相应信息
                  * 2.如果不是店铺账号,查是否是企业账号
-                 * 3.如果不是企业账号就查是否是Sass平台账号(后期服务拆分时拆分)
+                 * 3.如果不是企业账号就查是否是Saas平台账号(后期服务拆分时拆分)
                  */
                 if (user == null) {
                     QueryWrapper<CompanyUser> cUserQueryWrapper = new QueryWrapper<>();
@@ -135,14 +135,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                             .eq("status", CompanyUserEnums.Status.Normal.index().toString());
                     CompanyUser companyUser = companyUserService.getOne(cUserQueryWrapper);
                     if (companyUser == null) {
-                        SassUser sassUser = sassUserService.selectByPrimaryKey(userId);
-                        if (null == sassUser) {
+                        SaasUser saasUser = saasUserService.selectByPrimaryKey(userId);
+                        if (null == saasUser) {
                             response.setStatus(401);
                             throw new AuthenticateException(401, "用户不存在，请重新登录");
                         } else {
                             // 当前登录用户@CurrentUser
-                            loginUser.setId(sassUser.getId());
-                            loginUser.setLoginname(sassUser.getLoginname());
+                            loginUser.setId(saasUser.getId());
+                            loginUser.setLoginname(saasUser.getLoginname());
                             request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
                         }
                     } else {

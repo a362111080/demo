@@ -1,8 +1,12 @@
 package com.zero.egg.tool;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
 import java.security.MessageDigest;
 
-public class MD5Utils {
+@Component
+public class MD5Utils implements PasswordEncoder {
 
     /**
      * 固定盐
@@ -33,4 +37,24 @@ public class MD5Utils {
     }
 
 
+    /**
+     * 作为Spring Security 的 PasswordEncoder
+     * @param charSequence
+     * @return
+     */
+    @Override
+    public String encode(CharSequence charSequence) {
+        String enPwd = " ";
+        try {
+            enPwd =  encode(charSequence.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return enPwd;
+    }
+
+    @Override
+    public boolean matches(CharSequence charSequence, String s) {
+        return encode(charSequence).equals(s);
+    }
 }

@@ -8,9 +8,9 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
-@ApiModel(value="com.zero.egg.model.SassUser")
+@ApiModel(value="com.zero.egg.model.SaasUser")
 @Data
-public class SassUser implements Serializable {
+public class SaasUser implements Serializable {
     /**
     * 主键id
     */

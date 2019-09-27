@@ -256,4 +256,38 @@ public interface UtilConstants {
         public static final String USER_REDIS = "user-redis:";
     }
 
+    /**
+     * 用户类型
+     */
+    public static class UserType {
+        /**
+         * 企业端
+         */
+        public static final Integer Company = 0;
+        /**
+         * PC客户端
+         */
+        public static final Integer Pc = 1;
+        /**
+         * Boss移动端
+         */
+        public static final Integer Boss = 2;
+        /**
+         * 员工端
+         */
+        public static final Integer Staff = 3;
+        /**
+         * 设备端
+         */
+        public static final Integer Device  = 4;
+        /**
+         * SAAS平台端
+         */
+        public static final Integer SAAS = 5;
+        /**
+         * 订货平台端
+         */
+        public static final Integer Order = 6;
+    }
+
 }
