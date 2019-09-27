@@ -26,6 +26,8 @@ public class ShopRequest extends PageDTO{
 	    @ApiModelProperty(value = "状态",required=false)
 	    private String status;
 
+		@ApiModelProperty(value = "状态",required=false)
+		private String keyword;
 
 		@ApiModelProperty(value = "使用状态",required=false)
 		private Boolean dr;
