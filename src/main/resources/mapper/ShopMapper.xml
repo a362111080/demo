@@ -51,7 +51,7 @@
             <if test="modifier!= null">modifier= #{modifier,jdbcType=DATE},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
-        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}
     </update>
 
 
