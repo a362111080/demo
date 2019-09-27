@@ -31,7 +31,7 @@
         end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
         CASE
         WHEN sp.MODE = '1' and s.type='1' THEN a.specification_id
-        when sp.mode='12'  and s.type='1' THEN  ''
+        when sp.mode='2'  and s.type='1' THEN  ''
         when s.type='2'  then  a.specification_id
         ELSE ''
         END AS specification_id,

@@ -23,7 +23,9 @@
 
 
     <select id="GetShopSecret"  resultType="com.zero.egg.model.OrderSecret">
-        select k.*,b.createtime as bindtime,c.name,c.phone,c.type,c.status from  order_secret k
+        select k.*,b.createtime as bindtime,c.name,c.phone,c.type,c.status,ct.name as customername
+        from  order_secret k
+        left join bd_customer ct on ct.id=k.customer_id
         left join order_user_secret  b  on k.id=b.secret_id
         left join order_user c  on  c.id=b.user_id
         where  1=1
