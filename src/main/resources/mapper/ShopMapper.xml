@@ -49,7 +49,7 @@
 
     <update id="editsecret" parameterType="OrderSecret">update order_secret
         <set>
-            <if test="status!= null and status!=''">status= #{status,jdbcType=VARCHAR},</if>
+            <if test="status!= null">status= #{status,jdbcType=VARCHAR},</if>
             <if test="modifier!= null">modifier= #{modifier,jdbcType=DATE},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
