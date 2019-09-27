@@ -276,6 +276,47 @@ public class ShopController {
 	}
 
 
+	//店铺秘钥
+	@LoginToken
+	@ApiOperation(value="编辑店铺秘钥")
+	@RequestMapping(value="/editsecret",method=RequestMethod.POST)
+	public Message<Object> editsecret(@RequestBody  OrderSecret model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		if (loginUser.getCompanyId()!=null) {
+			try {
+				model.setShopid(loginUser.getShopId());
+				model.setModifier(loginUser.getId());
+				model.setModifytime(new Date());
+				int strval = shopService.editsecret(model);
+				if (strval > 0) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("操作失败");
+				}
+			}
+			catch (Exception e) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				if (e instanceof ServiceException) {
+					message.setMessage(e.getMessage());
+				}
+				message.setMessage((UtilConstants.ResponseMsg.FAILED));
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+
 	//随机密钥
 	@ApiOperation(value="查询店铺秘钥")
 	@RequestMapping(value="/createsecret",method=RequestMethod.POST)

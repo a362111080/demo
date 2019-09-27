@@ -48,4 +48,6 @@ public interface IShopService extends IService<Shop> {
     int editordergood(OrderGoods model, LoginUser loginUser);
 
     List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model);
+
+    int editsecret(OrderSecret model);
 }

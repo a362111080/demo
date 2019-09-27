@@ -46,4 +46,6 @@ public interface ShopMapper extends BaseMapper<Shop> {
     int editordergood(OrderGoods model);
 
     List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model);
+
+    int editsecret(OrderSecret model);
 }

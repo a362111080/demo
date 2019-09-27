@@ -43,6 +43,19 @@
         </if>
     </select>
 
+
+
+    <update id="editsecret" parameterType="OrderSecret">update order_secret
+        <set>
+            <if test="status!= null and status!=''">status= #{status,jdbcType=VARCHAR},</if>
+            <if test="modifier!= null">modifier= #{modifier,jdbcType=DATE},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+    </update>
+
+
+
     <insert id="addordercategory" parameterType="OrderCategory">
         insert into order_category(id,company_id,shop_id,name,pid,createtime,level,sort_order,icon_url,pic_url,modifytime,dr)
         values(#{id},#{companyId},#{shopId},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})

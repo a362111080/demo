@@ -183,4 +183,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		return mapper.GetOrderGoods(model);
 	}
 
+	@Override
+	public int editsecret(OrderSecret model) {
+		return mapper.editsecret(model);
+	}
+
 }
