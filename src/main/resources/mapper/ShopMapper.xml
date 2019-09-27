@@ -38,6 +38,9 @@
         <if test="code != null and code !=''">
             and  k.shop_id=#{code,jdbcType=VARCHAR}
         </if>
+        <if test="companyId != null and companyId !=''">
+            and  k.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
         <if test="dr != null and dr !=''">
            and  k.dr=#{dr,jdbcType=VARCHAR}
         </if>

@@ -364,6 +364,8 @@ public class ShopController {
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         PageHelper.startPage(shop.getCurrent().intValue(), shop.getSize().intValue());
+        shop.setCode(loginUser.getShopId());
+        shop.setCompanyId(loginUser.getCompanyId());
         if (loginUser.getCompanyId()!=null) {
             List<OrderSecret> ListSecret=shopService.GetShopSecret(shop);
             PageInfo<OrderSecret> pageInfo = new PageInfo<>(ListSecret);
