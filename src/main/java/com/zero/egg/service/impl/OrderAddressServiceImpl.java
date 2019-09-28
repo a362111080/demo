@@ -100,10 +100,7 @@ public class OrderAddressServiceImpl implements OrderAddressService {
         Message message = new Message();
         try {
 
-            List<OrderAddress> addressList = orderAddressMapper.selectList(new UpdateWrapper<OrderAddress>()
-                    .eq("user_id", user.getId())
-                    .eq("dr", false)
-                    .orderByDesc("is_default"));
+            List<OrderAddress> addressList = orderAddressMapper.getAddressListByUserId(user.getId());
             message.setData(addressList);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
