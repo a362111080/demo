@@ -42,7 +42,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
             OrderSecret orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
                     .eq("secret_key", secret)
                     .eq("dr", false));
-            if (null == orderSecret || null != orderSecret.getId()) {
+            if (null == orderSecret || null == orderSecret.getId()) {
                 log.error("=======no such secret=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
