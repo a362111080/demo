@@ -97,6 +97,7 @@ public class OrderSecret implements Serializable {
     @ApiModelProperty(value = "绑定人状态",required=false)
     public Boolean status;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "客户主键",required=false)
     private  String customername;
 
