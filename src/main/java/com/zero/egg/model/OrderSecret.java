@@ -30,10 +30,10 @@ public class OrderSecret implements Serializable {
      * 关联店铺
      */
     @ApiModelProperty(value = "店铺主键",required=false)
-    private  String shopid;
+    private  String shopId;
 
     @ApiModelProperty(value = "企业主键",required=false)
-    private  String companyid;
+    private  String companyId;
 
 
 
