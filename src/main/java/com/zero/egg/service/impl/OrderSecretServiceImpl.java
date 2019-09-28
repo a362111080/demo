@@ -55,7 +55,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                     .selectOne(new QueryWrapper<OrderUserSecret>()
                             .eq("secret_id", secretId)
                             .eq("dr", false));
-            if (null != orderUserSecret || null != orderUserSecret.getUserId()) {
+            if (null != orderUserSecret && null != orderUserSecret.getUserId()) {
                 log.error("=======secret has been used=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SECRET_HAS_BEEN_USED);
