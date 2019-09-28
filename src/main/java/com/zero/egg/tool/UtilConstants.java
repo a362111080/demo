@@ -163,6 +163,14 @@ public interface UtilConstants {
          * 该货物在其他未结束出货任务里
          */
         public static final String IN_OTHER_TASK = "该货物在其他未结束出货任务里";
+        /**
+         * 没有此秘钥信息
+         */
+        public static final String NO_SUCH_SECRET = "没有此秘钥信息";
+        /**
+         * 秘钥已经被使用
+         */
+        public static final String SECRET_HAS_BEEN_USED = "秘钥已经被使用";
     }
 
     /**

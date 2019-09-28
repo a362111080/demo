@@ -45,7 +45,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
             if (null == orderSecret || null != orderSecret.getId()) {
                 log.error("=======no such secret=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
                 return message;
             }
             String secretId = orderSecret.getId();
@@ -56,7 +56,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
             if (null == orderUserSecret || null != orderUserSecret.getUserId()) {
                 log.error("=======secret has been used=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.FAILED);
+                message.setMessage(UtilConstants.ResponseMsg.SECRET_HAS_BEEN_USED);
                 return message;
             }
             //绑定
