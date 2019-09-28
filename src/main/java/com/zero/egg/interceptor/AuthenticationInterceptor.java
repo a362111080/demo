@@ -139,8 +139,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         SaasUser saasUser = saasUserService.selectByPrimaryKey(userId);
                         if (null == saasUser) {
                             WechatAuth wechatAuth = wechatAuthMapper.selectOne(new QueryWrapper<WechatAuth>()
-                                    .eq("wechat_auth_id", userId)
-                                    .eq("dr", false));
+                                    .eq("wechat_auth_id", userId));
                             if (null == wechatAuth) {
                                 response.setStatus(401);
                                 throw new AuthenticateException(401, "用户不存在，请重新登录");
