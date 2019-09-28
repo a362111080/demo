@@ -12,14 +12,14 @@ import com.zero.egg.enums.UserEnums;
 import com.zero.egg.model.BdCity;
 import com.zero.egg.model.Company;
 import com.zero.egg.model.CompanyUser;
-import com.zero.egg.model.SassUser;
+import com.zero.egg.model.SaasUser;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.model.WechatAuth;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
-import com.zero.egg.service.SassUserService;
+import com.zero.egg.service.SaasUserService;
 import com.zero.egg.service.WechatAuthService;
 import com.zero.egg.tool.AESUtil;
 import com.zero.egg.tool.MD5Utils;
@@ -60,7 +60,7 @@ public class LoginController {
     @Autowired
     private JedisUtil.Strings jedisStrings;
     @Autowired
-    private SassUserService sassUserService;
+    private SaasUserService saasUserService;
     @Autowired
     private ShopMapper shopMapper;
     @Autowired
@@ -225,24 +225,24 @@ public class LoginController {
     }
 
     @PassToken
-    @ApiOperation(value = "Sass系统登录")
-    @RequestMapping(value = "/sasslogin", method = RequestMethod.POST)
+    @ApiOperation(value = "Saas系统登录")
+    @RequestMapping(value = "/saaslogin", method = RequestMethod.POST)
     public BaseResponse<Object> saasLogin(@RequestParam @ApiParam(required = true, name = "loginname", value = "登录名") String loginname
             , @RequestParam @ApiParam(required = true, name = "loginPwd", value = "登录密码") String loginPwd, HttpServletRequest request) {
         BaseResponse<Object> response;
         Map<String, Object> map;
         try {
             String pwd = MD5Utils.encode(loginPwd);
-            SassUser sassUser = sassUserService.sassLogin(loginname, pwd);
-            if (null != sassUser) {
+            SaasUser saasUser = saasUserService.saasLogin(loginname, pwd);
+            if (null != saasUser) {
                 response = new BaseResponse<>();
                 String redisKey = MD5Utils.encodeWithFixSalt(loginname + pwd);
                 //生成token
-                String accessToken = TokenUtils.createJwtToken(sassUser.getId());
+                String accessToken = TokenUtils.createJwtToken(saasUser.getId());
                 jedisStrings.set(UtilConstants.RedisPrefix.USER_REDIS + redisKey, accessToken);
                 map = new HashMap<>();
                 map.put("token", redisKey);
-                map.put("user", sassUser);
+                map.put("user", saasUser);
                 response.setData(map);
                 response.setCode(ApiConstants.ResponseCode.SUCCESS);
                 response.setMsg("登录成功");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zero.egg.dao.SassUserMapper">
-  <resultMap id="BaseResultMap" type="com.zero.egg.model.SassUser">
+<mapper namespace="com.zero.egg.dao.SaasUserMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.SaasUser">
     <!--@mbg.generated-->
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="loginname" jdbcType="VARCHAR" property="loginname" />
@@ -15,24 +15,24 @@
     <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
-    from sass_user
+    from saas_user
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     <!--@mbg.generated-->
-    delete from sass_user
+    delete from saas_user
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SassUser">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SaasUser">
     <selectKey order="BEFORE" keyProperty="id" resultType="java.lang.String">
       SELECT REPLACE(UUID(),"-","")
     </selectKey>
-    insert into sass_user (id,loginname, `password`)
+    insert into saas_user (id,loginname, `password`)
     values (#{id,jdbcType=VARCHAR}  ,#{loginname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SassUser">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SaasUser">
     <!--@mbg.generated-->
-    insert into sass_user
+    insert into saas_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="loginname != null">
         loginname,
@@ -50,9 +50,9 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.zero.egg.model.SassUser">
+  <update id="updateByPrimaryKeySelective" parameterType="com.zero.egg.model.SaasUser">
     <!--@mbg.generated-->
-    update sass_user
+    update saas_user
     <set>
       <if test="loginname != null">
         loginname = #{loginname,jdbcType=VARCHAR},
@@ -63,9 +63,9 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.zero.egg.model.SassUser">
+  <update id="updateByPrimaryKey" parameterType="com.zero.egg.model.SaasUser">
     <!--@mbg.generated-->
-    update sass_user
+    update saas_user
     set loginname = #{loginname,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
@@ -75,7 +75,7 @@
   <select id="findOneByLoginnameAndPassword" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
-    from sass_user
+    from saas_user
     where loginname=#{loginname,jdbcType=VARCHAR} and `password`=#{password,jdbcType=VARCHAR}
   </select>
 
