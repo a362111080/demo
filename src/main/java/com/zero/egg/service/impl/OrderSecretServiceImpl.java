@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * @ClassName OrderSecretServiceImpl
  * @Author lyming
@@ -53,16 +55,25 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                     .selectOne(new QueryWrapper<OrderUserSecret>()
                             .eq("secret_id", secretId)
                             .eq("dr", false));
-            if (null == orderUserSecret || null != orderUserSecret.getUserId()) {
+            if (null != orderUserSecret || null != orderUserSecret.getUserId()) {
                 log.error("=======secret has been used=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SECRET_HAS_BEEN_USED);
                 return message;
             }
             //绑定
-            orderUserSecret.setUserId(user.getId());
-            orderUserSecretMapper.update(orderUserSecret, new UpdateWrapper<OrderUserSecret>()
-                    .eq("id", orderUserSecret.getId()));
+            if (null != orderUserSecret) {
+                orderUserSecret.setUserId(user.getId());
+                orderUserSecretMapper.update(orderUserSecret, new UpdateWrapper<OrderUserSecret>()
+                        .eq("id", orderUserSecret.getId()));
+            } else {
+                orderUserSecret = new OrderUserSecret();
+                orderUserSecret.setUserId(user.getId());
+                orderUserSecret.setSecretId(secretId);
+                orderUserSecret.setCreator(user.getId());
+                orderUserSecret.setCreatetime(new Date());
+                orderUserSecretMapper.insert(orderUserSecret);
+            }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             return message;
