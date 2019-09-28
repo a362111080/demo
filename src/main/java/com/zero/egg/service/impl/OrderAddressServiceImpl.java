@@ -40,7 +40,8 @@ public class OrderAddressServiceImpl implements OrderAddressService {
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
             if (orderAddress.getIsDefault()) {
                 orderAddressMapper.update(new OrderAddress(), new UpdateWrapper<OrderAddress>()
-                        .eq("user_id", orderAddress.getUserId()));
+                        .eq("user_id", orderAddress.getUserId())
+                        .eq("dr", 0));
             }
             orderAddressMapper.insert(orderAddress);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -61,7 +62,8 @@ public class OrderAddressServiceImpl implements OrderAddressService {
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
             if (orderAddress.getIsDefault()) {
                 orderAddressMapper.update(new OrderAddress(), new UpdateWrapper<OrderAddress>()
-                        .eq("user_id", orderAddress.getUserId()));
+                        .eq("user_id", orderAddress.getUserId())
+                        .eq("dr", 0));
             }
             orderAddressMapper.update(orderAddress, new UpdateWrapper<OrderAddress>()
                     .eq("id", orderAddressDTO.getId())
