@@ -1,6 +1,5 @@
 package com.zero.egg.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.OrderAddressMapper;
 import com.zero.egg.model.OrderAddress;
@@ -54,22 +53,15 @@ public class OrderAddressServiceImpl implements OrderAddressService {
     }
 
     @Override
+    @Transactional
     public Message updateAddress(OrderAddressDTO orderAddressDTO) throws ServiceException {
         Message message = new Message();
         try {
             OrderAddress orderAddress = new OrderAddress();
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
-            //如果要改成默认地址,则要查重
-            if (orderAddressDTO.getIsDefault()) {
-                Integer count = orderAddressMapper.selectCount(new QueryWrapper<OrderAddress>()
-                        .eq("user_id", orderAddressDTO.getUserId())
-                        .eq("is_default", true)
-                        .eq("dr", false));
-                if (count != 1) {
-                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                    message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
-                    return message;
-                }
+            if (orderAddress.getIsDefault()) {
+                orderAddressMapper.update(new OrderAddress(), new UpdateWrapper<OrderAddress>()
+                        .eq("use_id", orderAddress.getUserId()));
             }
             orderAddressMapper.update(orderAddress, new UpdateWrapper<OrderAddress>()
                     .eq("id", orderAddressDTO.getId())
