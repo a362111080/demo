@@ -61,7 +61,7 @@ public class OrderAddressServiceImpl implements OrderAddressService {
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
             if (orderAddress.getIsDefault()) {
                 orderAddressMapper.update(new OrderAddress(), new UpdateWrapper<OrderAddress>()
-                        .eq("use_id", orderAddress.getUserId()));
+                        .eq("user_id", orderAddress.getUserId()));
             }
             orderAddressMapper.update(orderAddress, new UpdateWrapper<OrderAddress>()
                     .eq("id", orderAddressDTO.getId())
