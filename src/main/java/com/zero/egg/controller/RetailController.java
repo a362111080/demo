@@ -9,6 +9,8 @@ import com.zero.egg.service.BdRetailService;
 import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.UtilConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import java.util.Date;
 @RestController
 @RequestMapping(value = "/retail")
 @Slf4j
+@Api("零售管理")
 public class RetailController {
 
     @Resource
@@ -35,6 +38,7 @@ public class RetailController {
 
     @LoginToken
     @PostMapping(value = "/getretaildetails")
+    @ApiOperation("获取零售记录")
     public Message getRetailDetails(HttpServletRequest request,@RequestBody QueryRetailDeatilsRequestDTO queryRetailDeatilsRequestDTO) {
         Message message = new Message();
         BeanValidator.check(queryRetailDeatilsRequestDTO);
@@ -52,6 +56,7 @@ public class RetailController {
 
     @LoginToken
     @PostMapping(value = "retailgoods")
+    @ApiOperation("新增零售记录")
     public Message retailGoods(HttpServletRequest request,@RequestBody SaveRetailDeatilsRequestDTO saveRetailDeatilsRequestDTO) {
         Message message = new Message();
         BeanValidator.check(saveRetailDeatilsRequestDTO);

@@ -18,6 +18,12 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, `name`, user_id, city_id, address_detail, area_code, tel, is_default, creator,
-    createtime, modifier, modifytime, dr
+    createtime, modifier, modifytime, dr, dr
   </sql>
+  <select id="getAddressListByUserId" resultType="com.zero.egg.model.OrderAddress">
+        SELECT oa.id, oa.`name`, oa.user_id, oa.city_id, oa.address_detail, oa.area_code, oa.tel, oa.is_default,oa.creator,
+    oa.createtime, oa.modifier, oa.modifytime,c.merger_name AS area FROM order_address oa
+        LEFT JOIN bd_city c ON oa.city_id = c.id WHERE oa.user_id = #{userId,jdbcType=VARCHAR}
+     AND oa.dr=0 ORDER BY oa.is_default DESC
+  </select>
 </mapper>

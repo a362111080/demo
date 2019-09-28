@@ -15,6 +15,7 @@ import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,16 @@ public class OrderAddressServiceImpl implements OrderAddressService {
     private OrderAddressMapper orderAddressMapper;
 
     @Override
+    @Transactional
     public Message createAddress(OrderAddressDTO orderAddressDTO) throws ServiceException {
         Message message = new Message();
         try {
             OrderAddress orderAddress = new OrderAddress();
             TransferUtil.copyProperties(orderAddress, orderAddressDTO);
+            if (orderAddress.getIsDefault()) {
+                orderAddressMapper.update(new OrderAddress(), new UpdateWrapper<OrderAddress>()
+                        .eq("use_id", orderAddress.getUserId()));
+            }
             orderAddressMapper.insert(orderAddress);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -102,9 +108,10 @@ public class OrderAddressServiceImpl implements OrderAddressService {
         Message message = new Message();
         try {
 
-            List<OrderAddress> addressList =  orderAddressMapper.selectList(new UpdateWrapper<OrderAddress>()
+            List<OrderAddress> addressList = orderAddressMapper.selectList(new UpdateWrapper<OrderAddress>()
                     .eq("user_id", user.getId())
-                    .eq("dr",false));
+                    .eq("dr", false)
+                    .orderByDesc("is_default"));
             message.setData(addressList);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);

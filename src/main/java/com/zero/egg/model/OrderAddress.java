@@ -109,4 +109,11 @@ public class OrderAddress implements Serializable {
     @ApiModelProperty(value="逻辑删除")
     private Boolean dr = false;
 
+    /**
+     * 逻辑删除
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value="省市区")
+    private String area ;
+
  }
