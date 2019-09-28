@@ -14,6 +14,7 @@ import com.zero.egg.model.CompanyUser;
 import com.zero.egg.model.SassUser;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
+import com.zero.egg.model.WechatAuth;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
@@ -137,8 +138,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if (companyUser == null) {
                         SassUser sassUser = sassUserService.selectByPrimaryKey(userId);
                         if (null == sassUser) {
-                            response.setStatus(401);
-                            throw new AuthenticateException(401, "用户不存在，请重新登录");
+                            WechatAuth wechatAuth = wechatAuthMapper.selectOne(new QueryWrapper<WechatAuth>()
+                                    .eq("wechat_auth_id", userId)
+                                    .eq("dr", false));
+                            if (null == wechatAuth) {
+                                response.setStatus(401);
+                                throw new AuthenticateException(401, "用户不存在，请重新登录");
+                            } else {
+                                loginUser.setId(wechatAuth.getWechatAuthId());
+                                if (wechatAuth.getNickname()!=null&&!"".equals(wechatAuth.getNickname())) {
+                                    loginUser.setLoginname(wechatAuth.getNickname());
+                                }
+                                request.setAttribute(ApiConstants.LOGIN_USER, loginUser);
+                                request.setAttribute(ApiConstants.USER_TYPE, UserEnums.Type.Order.index());
+                            }
                         } else {
                             // 当前登录用户@CurrentUser
                             loginUser.setId(sassUser.getId());
@@ -196,7 +209,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                      * 对于店铺用户(除去企业用户),额外存储店铺类型
                      */
                     Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>().select("type").eq("id", user.getShopId()));
-                    request.setAttribute(ApiConstants.SHOP_TYPE,shop.getType());
+                    request.setAttribute(ApiConstants.SHOP_TYPE, shop.getType());
                     loginUser.setId(user.getId());
                     loginUser.setCode(user.getCode());
                     loginUser.setName(user.getName());
