@@ -1,5 +1,6 @@
 package com.zero.egg.config;
 
+import com.zero.egg.interceptor.AuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,17 +24,17 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private FileUploadProperteis fileUploadProperteis;
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
-//        registry.addInterceptor(authenticationInterceptor())
-//                .addPathPatterns("/**");
-//    }
-//
-//    @Bean
-//    public AuthenticationInterceptor authenticationInterceptor() {
-//        return new AuthenticationInterceptor();
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
+        registry.addInterceptor(authenticationInterceptor())
+                .addPathPatterns("/**");
+    }
+
+    @Bean
+    public AuthenticationInterceptor authenticationInterceptor() {
+        return new AuthenticationInterceptor();
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
