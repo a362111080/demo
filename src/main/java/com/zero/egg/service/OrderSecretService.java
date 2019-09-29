@@ -14,4 +14,12 @@ public interface OrderSecretService {
      * @return
      */
     Message bindSecret(String secret,LoginUser user) throws ServiceException;
+
+    /**
+     * 获取订货平台用户绑定的店铺列表
+     * @param user
+     * @return
+     * @throws ServiceException
+     */
+    Message getShopList(LoginUser user)throws ServiceException;
 }

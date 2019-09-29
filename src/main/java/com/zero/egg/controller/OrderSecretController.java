@@ -58,6 +58,25 @@ public class OrderSecretController {
         }
         return msg;
     }
+
+    @ApiOperation("获取绑定过的店铺列表")
+    @PostMapping("/getshoplist")
+    @LoginToken
+    public Message getShoplist(){
+        Message msg = new Message();
+        try {
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            msg = orderSecretService.getShopList(user);
+        } catch (Exception e) {
+            log.error("create address controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
 }
 
 

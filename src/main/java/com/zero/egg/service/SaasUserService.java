@@ -8,15 +8,26 @@ import com.zero.egg.model.SaasUser;
  */
 public interface SaasUserService{
 
+
+//    int deleteByPrimaryKey(String id);
+
+//    int insert(SaasUser record);
+
+//    int insertSelective(SaasUser record);
+
     /**
-     * 根据主键id查询SaasUser用户信息
+     * 根据主键id查询Saas用户信息
      * @param id
      * @return
      */
     SaasUser selectByPrimaryKey(String id);
 
+//    int updateByPrimaryKeySelective(SaasUser record);
+
+//    int updateByPrimaryKey(SaasUser record);
+
     /**
-     * SaasUser登录校验
+     * Saas登录校验
      * @param loginname
      * @param password
      * @return
