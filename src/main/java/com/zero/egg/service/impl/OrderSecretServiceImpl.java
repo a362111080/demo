@@ -4,8 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.OrderSecretMapper;
 import com.zero.egg.dao.OrderUserSecretMapper;
+import com.zero.egg.dao.ShopMapper;
+import com.zero.egg.dao.WechatAuthMapper;
 import com.zero.egg.model.OrderSecret;
 import com.zero.egg.model.OrderUserSecret;
+import com.zero.egg.model.Shop;
+import com.zero.egg.model.WechatAuth;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.OrderSecretService;
 import com.zero.egg.tool.Message;
@@ -15,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName OrderSecretServiceImpl
@@ -31,6 +37,12 @@ public class OrderSecretServiceImpl implements OrderSecretService {
 
     @Autowired
     private OrderSecretMapper orderSecretMapper;
+
+    @Autowired
+    private WechatAuthMapper wechatAuthMapper;
+
+    @Autowired
+    private ShopMapper shopMapper;
 
     @Override
     public Message bindSecret(String secret, LoginUser user) throws ServiceException {
@@ -81,6 +93,42 @@ public class OrderSecretServiceImpl implements OrderSecretService {
         } catch (Exception e) {
             log.error("bindSecret service error:" + e);
             throw new ServiceException("bindSecret service error:" + e);
+        }
+    }
+
+    @Override
+    public Message getShopList(LoginUser user) throws ServiceException {
+        Message message = new Message();
+        try {
+            WechatAuth wechatAuth = wechatAuthMapper.selectById(user.getId());
+            List<OrderUserSecret> orderUserSecrets = orderUserSecretMapper.selectList(new QueryWrapper<OrderUserSecret>()
+                    .eq("user_id", wechatAuth.getWechatAuthId())
+                    .eq("dr", 0));
+            //如果没有有效的绑定秘钥信息,则返回空
+            if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
+                return null;
+            }
+            List<Shop> shops = new ArrayList<>();
+            Shop shop;
+            OrderSecret orderSecret;
+            for (OrderUserSecret orderUserSecret : orderUserSecrets) {
+                orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
+                        .select("shop_id", "company_id")
+                        .eq("id", orderUserSecret.getSecretId())
+                        .eq("dr", 0));
+                shop = shopMapper.selectOne(new QueryWrapper<Shop>()
+                        .eq("id", orderSecret.getShopid())
+                        .eq("company_id", orderSecret.getCompanyid())
+                        .eq("dr", 0));
+                shops.add(shop);
+            }
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(shops);
+            return message;
+        } catch (Exception e) {
+            log.error("getShopList service error:" + e);
+            throw new ServiceException("getShopList service error:" + e);
         }
     }
 }
