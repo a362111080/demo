@@ -26,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
  **/
 @Api("订货平台商品管理")
 @Slf4j
-@RestController("/ordergoods")
+@RestController
+@RequestMapping(("/ordergoods"))
 public class OrderGoodsController {
 
     @Autowired
