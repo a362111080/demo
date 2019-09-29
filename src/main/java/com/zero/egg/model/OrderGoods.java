@@ -61,9 +61,6 @@ public class OrderGoods implements Serializable {
     @ApiModelProperty(value = "类目图片",required=false)
     private  String picUrl;
 
-    @ApiModelProperty(value = "计价单位",required=false)
-    private  String unit;
-
     @ApiModelProperty(value = "价格",required=false)
     private BigDecimal price;
 
