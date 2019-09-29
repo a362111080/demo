@@ -13,4 +13,13 @@ public interface OrderGoodsService {
      * @return
      */
     Message getGoodsList(OrderGoodsRequestDTO model, LoginUser loginUser) throws ServiceException;
+
+    /**
+     * 根据门店和类目获取商品列表
+     * @param model
+     * @param loginUser
+     * @return
+     * @throws ServiceException
+     */
+    Message getGoodsListByCategoryId(OrderGoodsRequestDTO model, LoginUser loginUser) throws ServiceException;
 }

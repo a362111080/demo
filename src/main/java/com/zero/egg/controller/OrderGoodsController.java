@@ -98,4 +98,27 @@ public class OrderGoodsController {
         }
         return message;
     }
+    @ApiOperation("列别瞎商品列表")
+    @RequestMapping(value = "/getcategorygoodslist", method = RequestMethod.POST)
+    public Message getCategoryGoodsList(@RequestBody OrderGoodsRequestDTO model) {
+        Message msg = new Message();
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        try {
+            //店铺id必传
+            if (null == model || null == model.getShopId()||null == model.getCategoryId()) {
+                msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                msg.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return msg;
+            }
+            msg = orderGoodsService.getGoodsListByCategoryId(model, loginUser);
+        } catch (Exception e) {
+            log.error("getAdList controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
 }

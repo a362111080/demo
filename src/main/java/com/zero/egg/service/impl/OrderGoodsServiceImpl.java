@@ -59,4 +59,35 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             throw new ServiceException("getGoodsList service error");
         }
     }
+
+    @Override
+    public Message getGoodsListByCategoryId(OrderGoodsRequestDTO model, LoginUser loginUser) throws ServiceException {
+        Message message = new Message();
+        try {
+            /**
+             * TODO 1.判断传入的店铺id在不在用户绑定的店铺id之中
+             * 2.查询上架且未删除的商品信息,可以根据商品名模糊查询
+             */
+            PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+            List<OrderGoods> orderGoods = orderGoodsMapper.selectList(new QueryWrapper<OrderGoods>()
+                    .eq("shop_id", model.getShopId())
+                    .eq("dr", false)
+                    .eq("is_on_sale", true)
+                    .eq("category_id",model.getCategoryId())
+                    .like(StringUtils.isNotBlank(model.getName()), "name", model.getName()));
+            if (orderGoods.size() < 1) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage("店铺无商品信息");
+                return message;
+            }
+            PageInfo<OrderGoods> pageInfo = new PageInfo<>(orderGoods);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(pageInfo);
+            return message;
+        } catch (Exception e) {
+            log.error("getGoodsList service error" + e);
+            throw new ServiceException("getGoodsList service error");
+        }
+    }
 }
