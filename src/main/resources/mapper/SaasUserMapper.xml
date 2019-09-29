@@ -23,13 +23,6 @@
     delete from saas_user
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SaasUser">
-    <selectKey order="BEFORE" keyProperty="id" resultType="java.lang.String">
-      SELECT REPLACE(UUID(),"-","")
-    </selectKey>
-    insert into saas_user (id,loginname, `password`)
-    values (#{id,jdbcType=VARCHAR}  ,#{loginname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
-  </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zero.egg.model.SaasUser">
     <!--@mbg.generated-->
     insert into saas_user
