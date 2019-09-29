@@ -1,10 +1,7 @@
 package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zero.egg.model.OrderCategory;
-import com.zero.egg.model.OrderGoods;
-import com.zero.egg.model.OrderSecret;
-import com.zero.egg.model.Shop;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
@@ -50,4 +47,8 @@ public interface IShopService extends IService<Shop> {
     List<OrderGoods> GetOrderGoods(OrderGoodsRequestDTO model);
 
     int editsecret(OrderSecret model);
+
+    int addordergoodspec(OrderGoodSpecification ogs);
+
+    int editordergoodspec(OrderGoodSpecification ogs);
 }

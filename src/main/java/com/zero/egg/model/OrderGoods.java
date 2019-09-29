@@ -1,6 +1,7 @@
 package com.zero.egg.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,6 +10,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel(value="订货商品对象", description="CQ")
@@ -76,5 +78,10 @@ public class OrderGoods implements Serializable {
 
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr = false;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "企业店铺信息",hidden=true)
+    private List<OrderGoodSpecification> sepcificationList;
 
 }

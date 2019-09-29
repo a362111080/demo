@@ -3,10 +3,7 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
-import com.zero.egg.model.OrderCategory;
-import com.zero.egg.model.OrderGoods;
-import com.zero.egg.model.OrderSecret;
-import com.zero.egg.model.Shop;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
@@ -186,6 +183,16 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 	@Override
 	public int editsecret(OrderSecret model) {
 		return mapper.editsecret(model);
+	}
+
+	@Override
+	public int addordergoodspec(OrderGoodSpecification ogs) {
+		return mapper.addordergoodspec(ogs);
+	}
+
+	@Override
+	public int editordergoodspec(OrderGoodSpecification ogs) {
+		return mapper.editordergoodspec(ogs);
 	}
 
 }

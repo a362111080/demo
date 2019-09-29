@@ -10,10 +10,7 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.ShopEnums;
-import com.zero.egg.model.OrderCategory;
-import com.zero.egg.model.OrderGoods;
-import com.zero.egg.model.OrderSecret;
-import com.zero.egg.model.Shop;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShopRequest;
@@ -565,23 +562,54 @@ public class ShopController {
 					for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
 						CommonsMultipartFile rimgFile =(CommonsMultipartFile)entity.getValue();
 						if (!entity.getKey().equals("thumbnail")) {
-
 							ImageHolder rimg = new ImageHolder(rimgFile.getOriginalFilename(), rimgFile.getInputStream());
 							String rimgPaht = addThumbnail(loginUser, rimg);
 							FileList.add(rimgPaht);
 						}
-
 					}
 					if (FileList!=null && FileList.size()>0)
 					{
 						model.setGallery(mapper.writeValueAsString(FileList));
 					}
 				}
+
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int sort = shopService.GetOrderGoodsSort(model);
 					model.setSortOrder(sort);
 					int strval = shopService.addordergood(model, loginUser);
 					if (strval > 0) {
+						//增加商品明细
+						if (model.getSepcificationList().size()>0)
+						{
+							for (int m = 0; m < model.getSepcificationList().size(); m++) {
+								//商品详情
+								OrderGoodSpecification   ogs=new OrderGoodSpecification();
+								ImageHolder goodpic = null;
+								String goodpathname="goodimg"+(m+1);
+								MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+								CommonsMultipartFile goodpicFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(goodpathname);
+								if (goodpicFile != null) {
+									goodpic = new ImageHolder(goodpicFile.getOriginalFilename(), goodpicFile.getInputStream());
+								}
+								//如果商品缩略图不为null,则添加
+								if (goodpic != null && null != goodpic.getImage()) {
+									String imgpath=addThumbnail(loginUser, goodpic);
+									ogs.setPicUrl(imgpath);
+								}
+								ogs.setId(UuidUtil.get32UUID());
+								ogs.setGoodsId(model.getId());
+								ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+								ogs.setValue(model.getSepcificationList().get(m).getValue());
+								ogs.setModifier(loginUser.getId());
+								ogs.setCreator(loginUser.getId());
+								ogs.setCreatetime(new Date());
+								ogs.setModifytime(new Date());
+								ogs.setDr(false);
+								shopService.addordergoodspec(ogs);
+							}
+
+						}
+
 						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 					} else {
@@ -671,6 +699,52 @@ public class ShopController {
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int strval = shopService.editordergood(model, loginUser);
 					if (strval > 0) {
+
+						//增加商品明细
+						if (model.getSepcificationList().size()>0)
+						{
+							for (int m = 0; m < model.getSepcificationList().size(); m++) {
+								//商品详情
+								OrderGoodSpecification   ogs=new OrderGoodSpecification();
+								ImageHolder goodpic = null;
+								String goodpathname="goodimg"+(m+1);
+								MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+								CommonsMultipartFile goodpicFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(goodpathname);
+								if (goodpicFile != null) {
+									goodpic = new ImageHolder(goodpicFile.getOriginalFilename(), goodpicFile.getInputStream());
+								}
+								//如果商品缩略图不为null,则添加
+								if (goodpic != null && null != goodpic.getImage()) {
+									String imgpath=addThumbnail(loginUser, goodpic);
+									ogs.setPicUrl(imgpath);
+								}
+								if (null !=model.getSepcificationList().get(m).getId()) {
+									//修改
+									ogs.setId(model.getSepcificationList().get(m).getId());
+									ogs.setGoodsId(model.getId());
+									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+									ogs.setValue(model.getSepcificationList().get(m).getValue());
+									ogs.setModifier(loginUser.getId());
+									ogs.setModifytime(new Date());
+									ogs.setDr(false);
+									shopService.editordergoodspec(ogs);
+								}
+								else
+								{
+									//新增
+									ogs.setId(UuidUtil.get32UUID());
+									ogs.setGoodsId(model.getId());
+									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+									ogs.setValue(model.getSepcificationList().get(m).getValue());
+									ogs.setModifier(loginUser.getId());
+									ogs.setCreator(loginUser.getId());
+									ogs.setCreatetime(new Date());
+									ogs.setModifytime(new Date());
+									ogs.setDr(false);
+									shopService.addordergoodspec(ogs);
+								}
+							}
+						}
 						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 					} else {

@@ -32,7 +32,7 @@ public class OrderGoodSpecification implements Serializable {
     private  String value;
 
     @ApiModelProperty(value = "商品规格图片",required=false)
-    private  String pic_url;
+    private  String picUrl;
 
     @ApiModelProperty(value="修改人")
     private String modifier;

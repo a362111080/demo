@@ -72,6 +72,12 @@
     </insert>
 
 
+    <insert id="addordergoodspec" parameterType="OrderGoodSpecification">
+        insert into order_category(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr)
+        values(#{id},#{goodsId},#{specification},#{value},#{picUrl},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
+    </insert>
+
+
     <select id="GetOrderGoodsSort"  resultType="int">
         select count(*)+1 from order_goods a  where
             a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.category_id= #{categoryId,jdbcType=VARCHAR} and a.dr=0
@@ -87,6 +93,21 @@
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
         </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
     </update>
+
+    <update id="editordergoodspec" parameterType="OrderCategory">update order_goods_specification
+        <set>
+            <if test="specification!= null and specification!=''">specification= #{specification,jdbcType=VARCHAR},</if>
+            <if test="value!= null and name!=''">value= #{value,jdbcType=VARCHAR},</if>
+            <if test="goodsId!= null">goods_id= #{goodsId,jdbcType=VARCHAR},</if>
+            <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="modifier!= null">modifier= #{modifier,jdbcType=VARCHAR},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR}
+    </update>
+
+
+
 
     <update id="editordergood" parameterType="OrderGoods">update order_goods
         <set>
