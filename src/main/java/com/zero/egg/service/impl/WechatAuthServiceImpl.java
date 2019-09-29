@@ -146,7 +146,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
                     .eq("user_id", wechatAuth.getWechatAuthId())
                     .eq("dr", 0));
             //如果没有有效的绑定秘钥信息,则返回空
-            if (orderUserSecrets.size() < 1) {
+            if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
                 return null;
             }
             List<Shop> shops = new ArrayList<>();
