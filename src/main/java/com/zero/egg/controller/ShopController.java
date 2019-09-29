@@ -391,23 +391,6 @@ public class ShopController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				//处理图片信息
-				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-				if (commonsMultipartResolver.isMultipart(request)) {
-					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
-					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
-					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
-					if (thumbnailFile != null) {
-						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
-					}
-					//如果商品缩略图不为null,则添加
-					if (thumbnail != null && null != thumbnail.getImage()) {
-						String imgpath=addThumbnail(loginUser, thumbnail);
-						model.setPicUrl(imgpath);
-					}
-				}
-
 				int strval = shopService.addordercategory(model, loginUser);
 				if (strval > 0) {
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -448,22 +431,6 @@ public class ShopController {
 		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				//处理图片信息
-				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-				if (commonsMultipartResolver.isMultipart(request)) {
-					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
-					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
-					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
-					if (thumbnailFile != null) {
-						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
-					}
-					//如果商品缩略图不为null,则添加
-					if (thumbnail != null && null != thumbnail.getImage()) {
-						String imgpath=addThumbnail(loginUser, thumbnail);
-						model.setPicUrl(imgpath);
-					}
-				}
 				int strval = shopService.editrdercategory(model);
 				if (strval > 0) {
 					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
