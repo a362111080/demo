@@ -98,7 +98,7 @@ public class OrderGoodsController {
         }
         return message;
     }
-    @ApiOperation("列别瞎商品列表")
+    @ApiOperation("类别下商品列表")
     @RequestMapping(value = "/getcategorygoodslist", method = RequestMethod.POST)
     public Message getCategoryGoodsList(@RequestBody OrderGoodsRequestDTO model) {
         Message msg = new Message();
