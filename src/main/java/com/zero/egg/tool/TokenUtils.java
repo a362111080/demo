@@ -76,6 +76,20 @@ public class TokenUtils {
 
 
     /**
+     * 微信登录用
+     * @param id
+     * @return
+     */
+    public static String createJwtToken(String id,String subject) {
+        String issuer = "com.zero";
+        /**
+         * 有效时间7天
+         */
+        long ttlMillis = 3600 * 24 * 1000 * 7;
+        return createJwtToken(id, issuer, subject, ttlMillis);
+    }
+
+    /**
      * 生成Token
      *
      * @return token String

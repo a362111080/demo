@@ -1,9 +1,10 @@
 package com.zero.egg.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.SaasUser;
 import org.apache.ibatis.annotations.Param;
 
-public interface SaasUserMapper {
+public interface SaasUserMapper extends BaseMapper<SaasUser> {
 //    int deleteByPrimaryKey(String id);
 
 //    int insert(SaasUser record);
