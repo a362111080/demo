@@ -73,7 +73,7 @@
 
 
     <insert id="addordergoodspec" parameterType="OrderGoodSpecification">
-        insert into order_category(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr)
+        insert into order_goods_specification(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr)
         values(#{id},#{goodsId},#{specification},#{value},#{picUrl},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
     </insert>
 
@@ -97,7 +97,7 @@
     <update id="editordergoodspec" parameterType="OrderCategory">update order_goods_specification
         <set>
             <if test="specification!= null and specification!=''">specification= #{specification,jdbcType=VARCHAR},</if>
-            <if test="value!= null and name!=''">value= #{value,jdbcType=VARCHAR},</if>
+            <if test="value!= null and value!=''">value= #{value,jdbcType=VARCHAR},</if>
             <if test="goodsId!= null">goods_id= #{goodsId,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
@@ -119,7 +119,6 @@
             <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
             <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
-            <if test="unit!= null">unit= #{unit,jdbcType=VARCHAR},</if>
             <if test="price!= null">price= #{price,jdbcType=VARCHAR},</if>
             <if test="detail!= null">detail= #{detail,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
@@ -153,7 +152,7 @@
 
     <select id="GetOrderGoods"  resultType="com.zero.egg.model.OrderGoods" parameterType="OrderGoodsRequestDTO">
         SELECT * FROM order_goods a
-        where  1=1
+        where  a.dr=0
         <if test="name != null and name !=''">
             and   a.name LIKE '%${name}%'
         </if>
@@ -166,10 +165,37 @@
         <if test="shopId != null and shopId !=''">
             and   a.shop_id=#{shopId,jdbcType=VARCHAR}
         </if>
-        <if test="dr != null and dr !='' or 0 == dr">
-            and  a.dr=#{dr,jdbcType=VARCHAR}
+
+        <if test="isOnSale != null and isOnSale !='' or 0 == isOnSale">
+            and  a.is_on_sale=#{isOnSale,jdbcType=VARCHAR}
         </if>
 
+    </select>
+
+    <select id="GetOrderGoodSpecList"  resultType="com.zero.egg.model.OrderGoodSpecification" parameterType="OrderGoods">
+        SELECT * FROM order_goods_specification a
+        where  a.dr=0
+        <if test="id != null and id !=''">
+            and  a.goods_id=#{id,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+    <select id="getOrderGoodsForCheck"  resultType="OrderGoods" parameterType="OrderGoods">
+        SELECT * FROM order_goods a
+        where  a.dr=0
+        <if test="name != null and name !=''">
+            and  a.name=#{name,jdbcType=VARCHAR}
+        </if>
+        <if test="goodsSn != null and goodsSn !=''">
+            and  a.goods_sn=#{goodsSn,jdbcType=VARCHAR}
+        </if>
+        <if test="categoryId != null and categoryId !=''">
+            and   a.category_id=#{categoryId,jdbcType=VARCHAR}
+        </if>
+        <if test="id != null and id !=''">
+            and  a.id not in (#{id,jdbcType=VARCHAR})
+        </if>
     </select>
 
 

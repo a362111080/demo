@@ -532,89 +532,66 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺商品")
 	@RequestMapping(value="/addordergood",method=RequestMethod.POST)
-	public Message<Object> addordergood(OrderGoods model,HttpServletRequest request) {
+	public Message<Object> addordergood(@RequestBody  OrderGoods model) {
 		Message<Object> message = new Message<Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		//当前登录用户
-		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				//处理图片信息
-				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-				if (commonsMultipartResolver.isMultipart(request)) {
-					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
-					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
-					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
-					if (thumbnailFile != null) {
-						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
-					}
-					//如果商品缩略图不为null,则添加
-					if (thumbnail != null && null != thumbnail.getImage()) {
-					     String imgpath=addThumbnail(loginUser, thumbnail);
-					     model.setPicUrl(imgpath);
-					}
-					//商品多张展示图
-					List<String>  FileList= new ArrayList();
-					Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
-					for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-						CommonsMultipartFile rimgFile =(CommonsMultipartFile)entity.getValue();
-						if (!entity.getKey().equals("thumbnail")) {
-							ImageHolder rimg = new ImageHolder(rimgFile.getOriginalFilename(), rimgFile.getInputStream());
-							String rimgPaht = addThumbnail(loginUser, rimg);
-							FileList.add(rimgPaht);
-						}
-					}
-					if (FileList!=null && FileList.size()>0)
-					{
-						model.setGallery(mapper.writeValueAsString(FileList));
-					}
-				}
-
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
-					int sort = shopService.GetOrderGoodsSort(model);
-					model.setSortOrder(sort);
-					int strval = shopService.addordergood(model, loginUser);
-					if (strval > 0) {
-						//增加商品明细
-						if (model.getSepcificationList().size()>0)
-						{
-							for (int m = 0; m < model.getSepcificationList().size(); m++) {
-								//商品详情
-								OrderGoodSpecification   ogs=new OrderGoodSpecification();
-								ImageHolder goodpic = null;
-								String goodpathname="goodimg"+(m+1);
-								MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-								CommonsMultipartFile goodpicFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(goodpathname);
-								if (goodpicFile != null) {
-									goodpic = new ImageHolder(goodpicFile.getOriginalFilename(), goodpicFile.getInputStream());
-								}
-								//如果商品缩略图不为null,则添加
-								if (goodpic != null && null != goodpic.getImage()) {
-									String imgpath=addThumbnail(loginUser, goodpic);
-									ogs.setPicUrl(imgpath);
-								}
-								ogs.setId(UuidUtil.get32UUID());
-								ogs.setGoodsId(model.getId());
-								ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
-								ogs.setValue(model.getSepcificationList().get(m).getValue());
-								ogs.setModifier(loginUser.getId());
-								ogs.setCreator(loginUser.getId());
-								ogs.setCreatetime(new Date());
-								ogs.setModifytime(new Date());
-								ogs.setDr(false);
-								shopService.addordergoodspec(ogs);
-							}
-
-						}
-
-						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-					} else {
+					int  checkval=0;
+					//验证重名
+					OrderGoods  checkModel=new OrderGoods();
+					checkModel.setName(model.getName());
+					checkModel.setCategoryId(model.getCategoryId());
+					OrderGoods  checkname=shopService.getOrderGoodsForCheck(checkModel);
+					if (null!=checkname)
+					{
 						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-						message.setMessage("操作失败");
+						message.setMessage("商品名称重复");
+						checkval++;
+					}
+					checkModel.setName("");
+					checkModel.setGoodsSn(model.getGoodsSn());
+					OrderGoods  checkno=shopService.getOrderGoodsForCheck(checkModel);
+					if (null!=checkno)
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("商品编码重复");
+						checkval++;
+					}
+
+					if (checkval<1) {
+						int sort = shopService.GetOrderGoodsSort(model);
+						model.setSortOrder(sort);
+						int strval = shopService.addordergood(model, loginUser);
+						if (strval > 0) {
+							//增加商品明细
+							if (model.getSepcificationList().size() > 0) {
+								for (int m = 0; m < model.getSepcificationList().size(); m++) {
+									//商品详情
+									OrderGoodSpecification ogs = new OrderGoodSpecification();
+									ogs.setId(UuidUtil.get32UUID());
+									ogs.setGoodsId(model.getId());
+									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+									ogs.setValue(model.getSepcificationList().get(m).getValue());
+									ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+									ogs.setModifier(loginUser.getId());
+									ogs.setCreator(loginUser.getId());
+									ogs.setCreatetime(new Date());
+									ogs.setModifytime(new Date());
+									ogs.setDr(false);
+									shopService.addordergoodspec(ogs);
+								}
+							}
+							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						} else {
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage("操作失败");
+						}
 					}
 				}
 				else
@@ -650,106 +627,79 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="修改店铺商品")
 	@RequestMapping(value="/editordergood",method=RequestMethod.POST)
-	public Message<Object> editordergood(OrderGoods model,HttpServletRequest request) {
+	public Message<Object> editordergood(@RequestBody OrderGoods model) {
 		Message<Object> message = new Message<Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		//当前登录用户
-		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				//处理图片信息
-				CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-				if (commonsMultipartResolver.isMultipart(request)) {
-					//将servlet中的request转换成spring中的MultipartHttpServletRequest(spring)
-					MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-					//取出缩略图并构建ImageHolder对象,从MultipartHttpServletRequest中
-					CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("thumbnail");
-					if (thumbnailFile != null) {
-						thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
-					}
-					//如果商品缩略图不为null,则添加
-					if (thumbnail != null && null != thumbnail.getImage()) {
-						String imgpath=addThumbnail(loginUser, thumbnail);
-						model.setPicUrl(imgpath);
-					}
-
-
-					//商品多张展示图
-					List<String>  FileList= new ArrayList();
-					Map<String, MultipartFile> fileMap = multipartHttpServletRequest.getFileMap();
-
-					for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-						CommonsMultipartFile rimgFile =(CommonsMultipartFile)entity.getValue();
-						if (!entity.getKey().equals("thumbnail"))
-						{
-							ImageHolder rimg=new ImageHolder(rimgFile.getOriginalFilename(), rimgFile.getInputStream());
-							String rimgPaht=addThumbnail(loginUser,rimg);
-							FileList.add(rimgPaht);
-						}
-
-					}
-					if (FileList!=null && FileList.size()>0)
-					{
-						model.setGallery(mapper.writeValueAsString(FileList));
-					}
-
-				}
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
-					int strval = shopService.editordergood(model, loginUser);
-					if (strval > 0) {
 
-						//增加商品明细
-						if (model.getSepcificationList().size()>0)
-						{
-							for (int m = 0; m < model.getSepcificationList().size(); m++) {
-								//商品详情
-								OrderGoodSpecification   ogs=new OrderGoodSpecification();
-								ImageHolder goodpic = null;
-								String goodpathname="goodimg"+(m+1);
-								MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-								CommonsMultipartFile goodpicFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(goodpathname);
-								if (goodpicFile != null) {
-									goodpic = new ImageHolder(goodpicFile.getOriginalFilename(), goodpicFile.getInputStream());
-								}
-								//如果商品缩略图不为null,则添加
-								if (goodpic != null && null != goodpic.getImage()) {
-									String imgpath=addThumbnail(loginUser, goodpic);
-									ogs.setPicUrl(imgpath);
-								}
-								if (null !=model.getSepcificationList().get(m).getId()) {
-									//修改
-									ogs.setId(model.getSepcificationList().get(m).getId());
-									ogs.setGoodsId(model.getId());
-									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
-									ogs.setValue(model.getSepcificationList().get(m).getValue());
-									ogs.setModifier(loginUser.getId());
-									ogs.setModifytime(new Date());
-									ogs.setDr(false);
-									shopService.editordergoodspec(ogs);
-								}
-								else
-								{
-									//新增
-									ogs.setId(UuidUtil.get32UUID());
-									ogs.setGoodsId(model.getId());
-									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
-									ogs.setValue(model.getSepcificationList().get(m).getValue());
-									ogs.setModifier(loginUser.getId());
-									ogs.setCreator(loginUser.getId());
-									ogs.setCreatetime(new Date());
-									ogs.setModifytime(new Date());
-									ogs.setDr(false);
-									shopService.addordergoodspec(ogs);
+					//验证重名
+					int checkval=0;
+					OrderGoods  checkModel=new OrderGoods();
+					checkModel.setId(model.getId());
+					checkModel.setName(model.getName());
+					checkModel.setCategoryId(model.getCategoryId());
+					OrderGoods  checkname=shopService.getOrderGoodsForCheck(checkModel);
+					if (null!=checkname)
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("商品名称重复");
+						checkval++;
+					}
+					checkModel.setName("");
+					checkModel.setGoodsSn(model.getGoodsSn());
+					OrderGoods  checkno=shopService.getOrderGoodsForCheck(checkModel);
+					if (null!=checkno)
+					{
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("商品编码重复");
+						checkval++;
+					}
+					if (checkval<1) {
+						int strval = shopService.editordergood(model, loginUser);
+						if (strval > 0) {
+							//增加商品明细
+							if (model.getSepcificationList().size() > 0) {
+								for (int m = 0; m < model.getSepcificationList().size(); m++) {
+									//商品详情
+									OrderGoodSpecification ogs = new OrderGoodSpecification();
+									if (null != model.getSepcificationList().get(m).getId()) {
+										//修改
+										ogs.setId(model.getSepcificationList().get(m).getId());
+										ogs.setGoodsId(model.getId());
+										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+										ogs.setValue(model.getSepcificationList().get(m).getValue());
+										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+										ogs.setModifier(loginUser.getId());
+										ogs.setModifytime(new Date());
+										ogs.setDr(false);
+										shopService.editordergoodspec(ogs);
+									} else {
+										//新增
+										ogs.setId(UuidUtil.get32UUID());
+										ogs.setGoodsId(model.getId());
+										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+										ogs.setValue(model.getSepcificationList().get(m).getValue());
+										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+										ogs.setModifier(loginUser.getId());
+										ogs.setCreator(loginUser.getId());
+										ogs.setCreatetime(new Date());
+										ogs.setModifytime(new Date());
+										ogs.setDr(false);
+										shopService.addordergoodspec(ogs);
+									}
 								}
 							}
+							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						} else {
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage("操作失败");
 						}
-						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-					} else {
-						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-						message.setMessage("操作失败");
 					}
 				}
 				else
@@ -788,6 +738,12 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			List<OrderGoods>  ResponseDTO=shopService.GetOrderGoods(model);
 			if (ResponseDTO.size()>0) {
+
+				for (int m = 0; m < ResponseDTO.size(); m++) {
+
+					List<OrderGoodSpecification> spec = shopService.GetOrderGoodSpecList(ResponseDTO.get(m));
+					ResponseDTO.get(m).setSepcificationList(spec);
+				}
 				PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
 				message.setData(pageInfo);
 				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

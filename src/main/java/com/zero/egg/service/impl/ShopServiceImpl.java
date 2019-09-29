@@ -195,4 +195,14 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		return mapper.editordergoodspec(ogs);
 	}
 
+	@Override
+	public List<OrderGoodSpecification> GetOrderGoodSpecList(OrderGoods orderGoods) {
+		return mapper.GetOrderGoodSpecList(orderGoods);
+	}
+
+	@Override
+	public OrderGoods getOrderGoodsForCheck(OrderGoods model) {
+		return mapper.getOrderGoodsForCheck(model);
+	}
+
 }

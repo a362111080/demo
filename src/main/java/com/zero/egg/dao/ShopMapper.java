@@ -49,4 +49,8 @@ public interface ShopMapper extends BaseMapper<Shop> {
     int addordergoodspec(OrderGoodSpecification ogs);
 
     int editordergoodspec(OrderGoodSpecification ogs);
+
+    List<OrderGoodSpecification> GetOrderGoodSpecList(OrderGoods orderGoods);
+
+    OrderGoods getOrderGoodsForCheck(OrderGoods model);
 }
