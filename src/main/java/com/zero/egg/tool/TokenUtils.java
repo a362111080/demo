@@ -1,79 +1,38 @@
 package com.zero.egg.tool;
 
-import com.alibaba.fastjson.JSON;
-import com.zero.egg.enums.UserEnums;
-import com.zero.egg.security.user.SecurityUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
-@Component
 public class TokenUtils {
-    /**
-     * JWT签名加密key
-     */
-    public static String secret;
-    /**
-     * token参数头
-     */
-    public static String tokenHeader;
-    /**
-     * 权限参数头
-     */
-    public static String authHeader;
-    /**
-     * 用户类型参数头
-     */
-    public static String typeHeader;
-    /**
-     * token有效期
-     */
-    public static Integer tokenExpireTime;
+
 
     /**
-     * 不需要认证的接口
+     * 签名秘钥
      */
-    public static String antMatchers;
+    public static final String SECRET = "zero";
 
-    @Value("${jwt.secret}")
-    public void setSecret(String secret) {
-        TokenUtils.secret = secret;
+    /**
+     * 生成token
+     *
+     * @param id 一般传入userName
+     * @return
+     */
+    public static String createJwtToken(String id) {
+        String issuer = "com.zero";
+        String subject = "";
+        /**
+         * 有效时间7天
+         */
+        long ttlMillis = 3600 * 24 * 1000 * 7;
+        return createJwtToken(id, issuer, subject, ttlMillis);
     }
-
-    @Value("${jwt.tokenHeader}")
-    public void setTokenHeader(String tokenHeader) {
-        TokenUtils.tokenHeader = tokenHeader;
-    }
-
-    @Value("${jwt.authHeader}")
-    public void setAuthHeader(String authHeader) {
-        TokenUtils.authHeader = authHeader;
-    }
-
-    @Value("${jwt.expiration}")
-    public void setTokenExpireTime(Integer tokenExpireTime) {
-        TokenUtils.tokenExpireTime = tokenExpireTime;
-    }
-
-    @Value("${jwt.antMatchers}")
-    public void setAntMatchers(String antMatchers) {
-        TokenUtils.antMatchers = antMatchers;
-    }
-
-    @Value("${jwt.typeHeader}")
-    public void setTypeHeader(String typeHeader) {
-        TokenUtils.typeHeader = typeHeader;
-    }
-
 
     /**
      * 微信登录用
@@ -92,59 +51,55 @@ public class TokenUtils {
     /**
      * 生成Token
      *
+     * @param id        编号
+     * @param issuer    该JWT的签发者，是否使用是可选的
+     * @param subject   该JWT所面向的用户，是否使用是可选的；
+     * @param ttlMillis 签发时间 （有效时间，过期会报错）
      * @return token String
      */
-    public static String createJwtToken(UserDetails userDetails, Integer type) {
-        return createJwtToken(userDetails, "", type);
-    }
-
-    public static String createJwtToken(UserDetails userDetails, String issuer, Integer type) {
-        SecurityUserDetails securityUserDetails = (SecurityUserDetails) userDetails;
+    public static String createJwtToken(String id, String issuer, String subject, long ttlMillis) {
 
         // 签名算法 ，将对token进行签名
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+        // 生成签发时间
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
         // 通过秘钥签名JWT
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secret);
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-        String subject = null;
-        if (type.equals(UserEnums.Type.Order.index())) {
-            //如果用户类型为订货平台客户(没有绑定本地用户),则subject为""
-            subject = "";
-        }else{
-            subject = securityUserDetails.getLoginname();
-        }
-        JwtBuilder builder = Jwts.builder()
-                .setId(securityUserDetails.getId() + "")
+
+        // Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder().setId(id)
+                .setIssuedAt(now)
                 .setSubject(subject)
                 .setIssuer(issuer)
-                //自定义属性 放入用户拥有权限
-                .claim(authHeader, JSON.toJSONString(securityUserDetails.getAuthorities()))
-                //自定义属性 放入用户类型
-                .claim(typeHeader, type)
-                //失效时间
-                .setExpiration(new Date(System.currentTimeMillis() + tokenExpireTime * 24 * 60 * 60 * 1000))
                 .signWith(signatureAlgorithm, signingKey);
 
+        // if it has been specified, let's add the expiration
+        if (ttlMillis >= 0) {
+            long expMillis = nowMillis + ttlMillis;
+            Date exp = new Date(expMillis);
+            builder.setExpiration(exp);
+        }
+
+        // Builds the JWT and serializes it to a compact, URL-safe string
         return builder.compact();
+
     }
 
+    // Sample method to validate and read the JWT
     public static Claims parseJWT(String jwt) {
+        // This line will throw an exception if it is not a signed JWS (as expected)
         Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
                 .parseClaimsJws(jwt).getBody();
         return claims;
     }
 
-    public String getUserIdFromToken(String token) {
-        String userId;
-        try {
-            final Claims claims = parseJWT(token);
-            userId = claims.getId();
-        } catch (Exception e) {
-            userId = null;
-        }
-        return userId;
+    public static void main(String[] args) {
+        System.out.println(TokenUtils.createJwtToken("11111"));
     }
 
 
