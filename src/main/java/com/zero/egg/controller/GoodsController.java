@@ -41,6 +41,7 @@ public class GoodsController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         Message message = new Message();
         ImageHolder thumbnail = null;
+        String thumbnailAddr;
         //从session中获取servletContext,相当于tomcat容器了,然后转换成spring的CommonsMultipartResolver
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         try {
@@ -55,7 +56,8 @@ public class GoodsController {
                 }
                 //如果商品缩略图不为null,则添加
                 if (thumbnail != null && null != thumbnail.getImage()) {
-                    addThumbnail(user, thumbnail);
+                    thumbnailAddr = addThumbnail(user, thumbnail);
+                    message.setData(thumbnailAddr);
                 }
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -73,10 +75,10 @@ public class GoodsController {
      * @param loginUser     当前登录用户
      * @param imageHolder 图片处理的封装类
      */
-    private void addThumbnail(LoginUser loginUser, ImageHolder imageHolder) {
+    private String addThumbnail(LoginUser loginUser, ImageHolder imageHolder) {
         String dest = PathUtil.getShopImagePath(loginUser.getShopId());
         String thumbnailAddr = ImageUtil.generateThumbnal(imageHolder, dest);
-        //TODO 可以传商品信息,将thumbnailAddr赋值给商品信息
+        return thumbnailAddr;
     }
 
 
