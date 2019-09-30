@@ -3,7 +3,7 @@
 <mapper namespace="com.zero.egg.dao.BrokenGoodsMapper">
 
 <select id="GetBrokenTask" resultType="com.zero.egg.model.BrokenGoods">
-	SELECT a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,g.id as billid,
+	SELECT u.name as creator,a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,g.id as billid,
 	case when a.mode=1 then   CONCAT('实重','(',f.weight_min,'~',f.weight_max,')')  else a.marker  end as brokenmarker
 	FROM bd_broken_goods a
 	left join bd_customer b on a.customer_id=b.id
@@ -11,6 +11,7 @@
 	left join bd_category e on e.id=a.goods_categroy_id
 	left join bd_specification f on f.id=a.specification_id
 	left join bd_bill  g on g.bill_no=a.bill_no
+	left join bd_user  u on u.id=a.creator
 	where a.dr=0
 	<if test="type != null and type !=''">
 		and a.type=#{type,jdbcType=VARCHAR}
