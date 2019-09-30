@@ -55,4 +55,6 @@ public interface IShopService extends IService<Shop> {
     List<OrderGoodSpecification> GetOrderGoodSpecList(OrderGoods orderGoods);
 
     OrderGoods getOrderGoodsForCheck(OrderGoods model);
+
+
 }

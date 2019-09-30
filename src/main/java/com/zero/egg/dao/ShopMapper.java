@@ -53,4 +53,5 @@ public interface ShopMapper extends BaseMapper<Shop> {
     List<OrderGoodSpecification> GetOrderGoodSpecList(OrderGoods orderGoods);
 
     OrderGoods getOrderGoodsForCheck(OrderGoods model);
+
 }

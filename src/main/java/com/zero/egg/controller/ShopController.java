@@ -23,17 +23,12 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -603,7 +598,6 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			try {
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
-
 					//验证重名
 					int checkval=0;
 					OrderGoods  checkModel=new OrderGoods();
@@ -730,5 +724,25 @@ public class ShopController {
 		return message;
 	}
 
+
+	@LoginToken
+	@ApiOperation(value="删除店铺商品规格")
+	@RequestMapping(value="/delordergoodspec",method=RequestMethod.POST)
+	public Message<Object> delordergoodspec(@RequestBody OrderGoodSpecification model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setDr(true);
+		int strVal=shopService.editordergoodspec(model);
+		if (strVal>0) {
+
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("删除失败！");
+		}
+		return message;
+	}
 
 }

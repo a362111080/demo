@@ -202,6 +202,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
 	@Override
 	public OrderGoods getOrderGoodsForCheck(OrderGoods model) {
+
 		return mapper.getOrderGoodsForCheck(model);
 	}
 
