@@ -39,11 +39,7 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
              * 2.查询上架且未删除的商品信息,可以根据商品名模糊查询
              */
             PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
-            List<OrderGoods> orderGoods = orderGoodsMapper.selectList(new QueryWrapper<OrderGoods>()
-                    .eq("shop_id", model.getShopId())
-                    .eq("dr", false)
-                    .eq("is_on_sale", true)
-                    .like(StringUtils.isNotBlank(model.getName()), "name", model.getName()));
+            List<OrderGoods> orderGoods = orderGoodsMapper.getAllByShopId(model);
             if (orderGoods.size() < 1) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage("店铺无商品信息");
@@ -69,12 +65,7 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
              * 2.查询上架且未删除的商品信息,可以根据商品名模糊查询
              */
             PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
-            List<OrderGoods> orderGoods = orderGoodsMapper.selectList(new QueryWrapper<OrderGoods>()
-                    .eq("shop_id", model.getShopId())
-                    .eq("dr", false)
-                    .eq("is_on_sale", true)
-                    .eq("category_id",model.getCategoryId())
-                    .like(StringUtils.isNotBlank(model.getName()), "name", model.getName()));
+            List<OrderGoods> orderGoods = orderGoodsMapper.getAllByShopIdAndCategoryId(model);
             if (orderGoods.size() < 1) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage("店铺无商品信息");
