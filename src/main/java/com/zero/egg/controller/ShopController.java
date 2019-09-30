@@ -623,36 +623,38 @@ public class ShopController {
 						int strval = shopService.editordergood(model, loginUser);
 						if (strval > 0) {
 							//增加商品明细
-							if (model.getSepcificationList().size() > 0) {
-								for (int m = 0; m < model.getSepcificationList().size(); m++) {
-									//商品详情
-									OrderGoodSpecification ogs = new OrderGoodSpecification();
-									if (null != model.getSepcificationList().get(m).getId()) {
-										//修改
-										ogs.setId(model.getSepcificationList().get(m).getId());
-										ogs.setGoodsId(model.getId());
-										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
-										ogs.setValue(model.getSepcificationList().get(m).getValue());
-										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
-										ogs.setPrice(model.getSepcificationList().get(m).getPrice());
-										ogs.setModifier(loginUser.getId());
-										ogs.setModifytime(new Date());
-										ogs.setDr(false);
-										shopService.editordergoodspec(ogs);
-									} else {
-										//新增
-										ogs.setId(UuidUtil.get32UUID());
-										ogs.setGoodsId(model.getId());
-										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
-										ogs.setValue(model.getSepcificationList().get(m).getValue());
-										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
-										ogs.setPrice(model.getSepcificationList().get(m).getPrice());
-										ogs.setModifier(loginUser.getId());
-										ogs.setCreator(loginUser.getId());
-										ogs.setCreatetime(new Date());
-										ogs.setModifytime(new Date());
-										ogs.setDr(false);
-										shopService.addordergoodspec(ogs);
+							if (null !=model.getSepcificationList()) {
+								if (model.getSepcificationList().size() > 0) {
+									for (int m = 0; m < model.getSepcificationList().size(); m++) {
+										//商品详情
+										OrderGoodSpecification ogs = new OrderGoodSpecification();
+										if (null != model.getSepcificationList().get(m).getId()) {
+											//修改
+											ogs.setId(model.getSepcificationList().get(m).getId());
+											ogs.setGoodsId(model.getId());
+											ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+											ogs.setValue(model.getSepcificationList().get(m).getValue());
+											ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+											ogs.setPrice(model.getSepcificationList().get(m).getPrice());
+											ogs.setModifier(loginUser.getId());
+											ogs.setModifytime(new Date());
+											ogs.setDr(false);
+											shopService.editordergoodspec(ogs);
+										} else {
+											//新增
+											ogs.setId(UuidUtil.get32UUID());
+											ogs.setGoodsId(model.getId());
+											ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
+											ogs.setValue(model.getSepcificationList().get(m).getValue());
+											ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+											ogs.setPrice(model.getSepcificationList().get(m).getPrice());
+											ogs.setModifier(loginUser.getId());
+											ogs.setCreator(loginUser.getId());
+											ogs.setCreatetime(new Date());
+											ogs.setModifytime(new Date());
+											ogs.setDr(false);
+											shopService.addordergoodspec(ogs);
+										}
 									}
 								}
 							}
