@@ -125,7 +125,7 @@ public class LoginController {
                     response.setMsg("登录成功");
                 } else {
                     response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-                    response.setMsg("登录失败!，请联系管理员");
+                    response.setMsg("您的账号已到期,请联系管理员续费");
                 }
             } else {
                 response = new BaseResponse<>();
@@ -159,7 +159,7 @@ public class LoginController {
                     response.setMsg("登录成功");
                 } else {
                     response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
-                    response.setMsg("登录失败!，请联系管理员");
+                    response.setMsg("您的账号已到期,请联系管理员续费");
                 }
             }
             //如果能从header里面取到wxSessionkey,则证明该用户需要绑定本地账户
