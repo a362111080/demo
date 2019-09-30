@@ -382,7 +382,6 @@ public class ShopController {
 	public Message<Object> addordercategory(OrderCategory model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
-		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
 			try {
@@ -421,7 +420,6 @@ public class ShopController {
 	public Message<Object> editordercategory( OrderCategory model,HttpServletRequest request) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
-		ImageHolder thumbnail = null;
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {

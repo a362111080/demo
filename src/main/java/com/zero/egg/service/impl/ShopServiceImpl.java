@@ -97,31 +97,12 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
 	@Override
 	public int addordercategory(OrderCategory model, LoginUser loginUser) {
-		if (model.getPid()!=null)
-		{
-			//二级分类
-			model.setId(UuidUtil.get32UUID());
-			model.setModifytime(new Date());
-			model.setCreatetime(new Date());
-			model.setShopId(loginUser.getShopId());
-			model.setCompanyId(loginUser.getCompanyId());
-			model.setLevel("2");
-			model.setDr(false);
-
-
-		}
-		else
-		{
-			//一级分类
-			model.setId(UuidUtil.get32UUID());
-			model.setModifytime(new Date());
-			model.setCreatetime(new Date());
-			model.setShopId(loginUser.getShopId());
-			model.setCompanyId(loginUser.getCompanyId());
-			model.setLevel("1");
-			model.setDr(false);
-		}
-
+		model.setId(UuidUtil.get32UUID());
+		model.setModifytime(new Date());
+		model.setCreatetime(new Date());
+		model.setShopId(loginUser.getShopId());
+		model.setCompanyId(loginUser.getCompanyId());
+		model.setDr(false);
 		return mapper.addordercategory(model);
 	}
 
