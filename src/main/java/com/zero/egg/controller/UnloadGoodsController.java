@@ -137,29 +137,35 @@ public class UnloadGoodsController {
 										} else {
 											model.setWarn(false);
 										}
-									}
-									int strval = unloadGoodsService.AddUnloadDetl(model);
-									if (strval > 0) {
-										//任务自检
-										unloadGoodsService.RepaireUnloadTask(model.getTaskId());
-										UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
-										dto.setSupplierName(bar.getSupplierName());
-										dto.setCategoryName(bar.getCategoryName());
-										dto.setMarker(model.getMarker());
-										dto.setWarn(model.getWarn());
-										if (null != model.getTaskId()) {
-											//获取当前卸货任务已卸货数量，含本次
-											int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
-											dto.setCount(count);
-											message.setData(dto);
-										}
-										message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-										message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-									} else {
-										message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-										message.setMessage(UtilConstants.ResponseMsg.FAILED);
+										int strval = unloadGoodsService.AddUnloadDetl(model);
+										if (strval > 0) {
+											//任务自检
+											unloadGoodsService.RepaireUnloadTask(model.getTaskId());
+											UnLoadCountResponseDto dto = new UnLoadCountResponseDto();
+											dto.setSupplierName(bar.getSupplierName());
+											dto.setCategoryName(bar.getCategoryName());
+											dto.setMarker(model.getMarker());
+											dto.setWarn(model.getWarn());
+											if (null != model.getTaskId()) {
+												//获取当前卸货任务已卸货数量，含本次
+												int count = unloadGoodsService.GetTaskUnloadCount(model.getTaskId());
+												dto.setCount(count);
+												message.setData(dto);
+											}
+											message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+											message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+										} else {
+											message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+											message.setMessage(UtilConstants.ResponseMsg.FAILED);
 
+										}
 									}
+									else
+									{
+										message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+										message.setMessage("货位重量无匹配规格，请确认方案是否正确！");
+									}
+
 								} else {
 									message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 									message.setMessage("货位重量无效，请重新扫描！");

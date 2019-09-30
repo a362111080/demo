@@ -168,7 +168,6 @@
         <if test="shopId != null and shopId !=''">
             and   a.shop_id=#{shopId,jdbcType=VARCHAR}
         </if>
-
         <if test="isOnSale != null and isOnSale !='' or 0 == isOnSale">
             and  a.is_on_sale=#{isOnSale,jdbcType=VARCHAR}
         </if>
