@@ -155,7 +155,8 @@
     </select>
 
     <select id="GetOrderGoods"  resultType="com.zero.egg.model.OrderGoods" parameterType="OrderGoodsRequestDTO">
-        SELECT * FROM order_goods a
+        SELECT a.*,b.name as category FROM order_goods a
+        left join order_category b on a.category_id=b.id
         where  a.dr=0
         <if test="name != null and name !=''">
             and   a.name LIKE '%${name}%'

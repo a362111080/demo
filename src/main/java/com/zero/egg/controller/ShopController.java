@@ -690,6 +690,28 @@ public class ShopController {
 
 
 	@LoginToken
+	@ApiOperation(value="删除店铺商品规格")
+	@RequestMapping(value="/delordergood",method=RequestMethod.POST)
+	public Message<Object> delordergood(@RequestBody OrderGoods model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setDr(true);
+		int strVal=shopService.editordergood(model,loginUser);
+		if (strVal>0) {
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("删除失败！");
+		}
+		return message;
+	}
+
+
+	@LoginToken
 	@ApiOperation(value="查询店铺商品")
 	@RequestMapping(value="/queryordergoods",method=RequestMethod.POST)
 	public Message<Object> queryordergoods(@RequestBody OrderGoodsRequestDTO model) {
@@ -738,7 +760,8 @@ public class ShopController {
 		model.setDr(true);
 		int strVal=shopService.editordergoodspec(model);
 		if (strVal>0) {
-
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		}
 		else
 		{

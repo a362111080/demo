@@ -143,7 +143,8 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         model.setCompanyId(loginUser.getCompanyId());
         model.setModifytime(new Date());
         model.setCreatetime(new Date());
-        model.setDr(false);
+        model.setDr(model.getDr());
+
         return mapper.editordergood(model);
     }
 

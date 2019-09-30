@@ -44,6 +44,11 @@ public class OrderGoods implements Serializable {
     @ApiModelProperty(value = "商品所属类目ID",required=false)
     private  String categoryId;
 
+
+    @ApiModelProperty(value = "商品所属类目名称",required=false)
+    private  String category;
+
+
     @ApiModelProperty(value = "宣传图",required=false)
     private  String gallery;
 
