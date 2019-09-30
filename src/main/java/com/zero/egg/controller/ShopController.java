@@ -538,6 +538,7 @@ public class ShopController {
 									ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
 									ogs.setValue(model.getSepcificationList().get(m).getValue());
 									ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+									ogs.setPrice(model.getSepcificationList().get(m).getPrice());
 									ogs.setModifier(loginUser.getId());
 									ogs.setCreator(loginUser.getId());
 									ogs.setCreatetime(new Date());
@@ -633,6 +634,7 @@ public class ShopController {
 										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
 										ogs.setValue(model.getSepcificationList().get(m).getValue());
 										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+										ogs.setPrice(model.getSepcificationList().get(m).getPrice());
 										ogs.setModifier(loginUser.getId());
 										ogs.setModifytime(new Date());
 										ogs.setDr(false);
@@ -644,6 +646,7 @@ public class ShopController {
 										ogs.setSpecification(model.getSepcificationList().get(m).getSpecification());
 										ogs.setValue(model.getSepcificationList().get(m).getValue());
 										ogs.setPicUrl(model.getSepcificationList().get(m).getPicUrl());
+										ogs.setPrice(model.getSepcificationList().get(m).getPrice());
 										ogs.setModifier(loginUser.getId());
 										ogs.setCreator(loginUser.getId());
 										ogs.setCreatetime(new Date());

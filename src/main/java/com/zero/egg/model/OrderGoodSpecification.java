@@ -31,6 +31,9 @@ public class OrderGoodSpecification implements Serializable {
     @ApiModelProperty(value = "商品规格值",required=false)
     private  String value;
 
+    @ApiModelProperty(value = "商品预计价格",required=false)
+    private  String price;
+
     @ApiModelProperty(value = "商品规格图片",required=false)
     private  String picUrl;
 

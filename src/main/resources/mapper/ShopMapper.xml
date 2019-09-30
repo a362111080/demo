@@ -73,8 +73,8 @@
 
 
     <insert id="addordergoodspec" parameterType="OrderGoodSpecification">
-        insert into order_goods_specification(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr)
-        values(#{id},#{goodsId},#{specification},#{value},#{picUrl},#{creator},#{createtime},#{modifier},#{modifytime},#{dr})
+        insert into order_goods_specification(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr,price)
+        values(#{id},#{goodsId},#{specification},#{value},#{picUrl},#{creator},#{createtime},#{modifier},#{modifytime},#{dr},#{price})
     </insert>
 
 
@@ -99,6 +99,7 @@
             <if test="specification!= null and specification!=''">specification= #{specification,jdbcType=VARCHAR},</if>
             <if test="value!= null and value!=''">value= #{value,jdbcType=VARCHAR},</if>
             <if test="goodsId!= null">goods_id= #{goodsId,jdbcType=VARCHAR},</if>
+            <if test="price!= null and price!=''">price= #{price,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="modifier!= null">modifier= #{modifier,jdbcType=VARCHAR},</if>
