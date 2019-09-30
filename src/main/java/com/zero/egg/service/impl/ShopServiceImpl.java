@@ -179,4 +179,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		return mapper.getOrderGoodsForCheck(model);
 	}
 
+	@Override
+	public int updateGoodSepcification(OrderGoods model) {
+		return mapper.updateGoodSepcification(model);
+	}
+
 }

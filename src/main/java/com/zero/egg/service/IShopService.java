@@ -57,4 +57,5 @@ public interface IShopService extends IService<Shop> {
     OrderGoods getOrderGoodsForCheck(OrderGoods model);
 
 
+    int updateGoodSepcification(OrderGoods model);
 }

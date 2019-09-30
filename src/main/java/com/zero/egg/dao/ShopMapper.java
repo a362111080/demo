@@ -54,4 +54,5 @@ public interface ShopMapper extends BaseMapper<Shop> {
 
     OrderGoods getOrderGoodsForCheck(OrderGoods model);
 
+    int updateGoodSepcification(OrderGoods model);
 }

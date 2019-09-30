@@ -379,7 +379,7 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="新增店铺分类")
 	@RequestMapping(value="/addordercategory",method=RequestMethod.POST)
-	public Message<Object> addordercategory(OrderCategory model,HttpServletRequest request) {
+	public Message<Object> addordercategory(@RequestBody OrderCategory model) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -417,7 +417,7 @@ public class ShopController {
 	@LoginToken
 	@ApiOperation(value="修改店铺分类")
 	@RequestMapping(value="/editordercategory",method=RequestMethod.POST)
-	public Message<Object> editordercategory( OrderCategory model,HttpServletRequest request) {
+	public Message<Object> editordercategory(@RequestBody OrderCategory model) {
 		Message<Object> message = new Message<Object>();
 		//当前登录用户
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -468,6 +468,7 @@ public class ShopController {
 						model.setPid(ResponseDTO.get(m).getId());
 						List<OrderCategory> child = shopService.GetOrderCateGoryChild(model);
 						ResponseDTO.get(m).setOrderCategoryList(child);
+
 					}
 				}
 				message.setData(ResponseDTO);
@@ -623,7 +624,10 @@ public class ShopController {
 						int strval = shopService.editordergood(model, loginUser);
 						if (strval > 0) {
 							//增加商品明细
+							//先删除再增加
+							shopService.updateGoodSepcification(model);
 							if (null !=model.getSepcificationList()) {
+
 								if (model.getSepcificationList().size() > 0) {
 									for (int m = 0; m < model.getSepcificationList().size(); m++) {
 										//商品详情

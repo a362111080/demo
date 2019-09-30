@@ -107,6 +107,12 @@
         </set>where id= #{id,jdbcType=VARCHAR}
     </update>
 
+    <update id="updateGoodSepcification" parameterType="OrderGoods">
+            update order_goods_specification set  dr=1
+            where goods_id= #{id,jdbcType=VARCHAR}
+    </update>
+
+
 
 
 
