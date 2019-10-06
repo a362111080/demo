@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.OrderGoodsSpecificationMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderGoodsSpecification">
+    <!--@mbg.generated-->
+    <!--@Table order_goods_specification-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="goods_id" jdbcType="VARCHAR" property="goodsId" />
+    <result column="specification" jdbcType="VARCHAR" property="specification" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="dr" jdbcType="BOOLEAN" property="dr" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, goods_id, specification, `value`, pic_url, creator, createtime, modifier, modifytime, 
+    dr, price
+  </sql>
+</mapper>

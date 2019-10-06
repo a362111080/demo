@@ -46,6 +46,7 @@ public class OrderGoods implements Serializable {
 
 
     @ApiModelProperty(value = "商品所属类目名称",required=false)
+    @TableField(exist = false)
     private  String category;
 
 

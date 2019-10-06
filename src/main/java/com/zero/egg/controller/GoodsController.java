@@ -95,7 +95,7 @@ public class GoodsController {
                         thumbnail = new ImageHolder(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
                         //如果商品缩略图不为null,则添加
                         if (thumbnail != null && null != thumbnail.getImage()) {
-                            thumbnailAddr = addThumbnail(user, thumbnail);
+                            thumbnailAddr = addNomalImg(user, thumbnail);
                             addrs.add(thumbnailAddr);
                         }
                     }
@@ -121,6 +121,12 @@ public class GoodsController {
     private String addThumbnail(LoginUser loginUser, ImageHolder imageHolder) {
         String dest = PathUtil.getShopImagePath(loginUser.getShopId());
         String thumbnailAddr = ImageUtil.generateThumbnal(imageHolder, dest);
+        return thumbnailAddr;
+    }
+
+    private String addNomalImg(LoginUser loginUser, ImageHolder imageHolder) {
+        String dest = PathUtil.getShopImagePath(loginUser.getShopId());
+        String thumbnailAddr = ImageUtil.generateNomalImg(imageHolder, dest);
         return thumbnailAddr;
     }
 
