@@ -49,7 +49,7 @@ public class OrderSecretController {
             msg = orderSecretService.bindSecret(secret,user);
 
         } catch (Exception e) {
-            log.error("create address controller error:" + e);
+            log.error("bindSecret controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
@@ -67,6 +67,29 @@ public class OrderSecretController {
         try {
             LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
             msg = orderSecretService.getShopList(user);
+        } catch (Exception e) {
+            log.error("getshoplist controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @ApiOperation("订货平台用户取消绑定鸡蛋平台店铺")
+    @PostMapping("/cancel")
+    @LoginToken
+    public Message cancelSecret(@RequestBody BindSecretRequestDTO bindSecretRequestDTO){
+        //参数校验
+        BeanValidator.check(bindSecretRequestDTO);
+        Message msg = new Message();
+        try {
+            String secret = bindSecretRequestDTO.getSecret();
+            LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            msg = orderSecretService.cancelSecret(secret,user);
+
         } catch (Exception e) {
             log.error("create address controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Date;
 @ApiModel(value="com.zero.egg.model.OrderUserSecret")
 @Data
 @TableName(value = "order_user_secret")
+@Accessors(chain =true)
 public class OrderUserSecret implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     @ApiModelProperty(value="主键")
