@@ -58,7 +58,6 @@ public class OrderCartServiceImpl implements OrderCartService {
                     .eq("is_on_sale", true)
                     .eq("dr", false));
             OrderGoodsSpecification orderGoodsSpecification = orderGoodsSpecificationMapper.selectOne(new QueryWrapper<OrderGoodsSpecification>()
-                    .eq("id", orderGoods.getCategoryId())
                     .eq("goods_id", orderGoods.getId())
                     .eq("dr", false));
             orderCart = compactToOrderCartGood(orderGoods, addCartGoodRequestDTO, orderGoodsSpecification, loginUser);
