@@ -36,7 +36,7 @@ public class OrderBillController {
     @Autowired
     HttpServletRequest request;
 
-    @PostMapping(value = "/deletecartgoods")
+    @PostMapping(value = "/addnewbill")
     @LoginToken
     @ApiOperation("新增订单")
     public Message deleteCartGoods(@RequestBody AddOrderBillRequestDTO addOrderBillRequestDTO) {
@@ -48,7 +48,7 @@ public class OrderBillController {
             addOrderBillRequestDTO.setUserId(loginUser.getId());
             msg = orderBillService.addNewBill(addOrderBillRequestDTO);
         } catch (Exception e) {
-            log.error("deletecartgoods controller error:" + e);
+            log.error("addnewbill controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
