@@ -175,7 +175,7 @@ public class OrderCartController {
 
     @PostMapping(value = "/updatecartgoodscheck")
     @LoginToken
-    @ApiOperation("更新购物车商品数量")
+    @ApiOperation("更新购物车商品是否被勾选")
     public Message updateCartGoodsCheck(@RequestBody UpdateCartGoodsCheckRequestDTO updateCartGoodsCheckRequestDTO) {
         //参数校验
         BeanValidator.check(updateCartGoodsCheckRequestDTO);
