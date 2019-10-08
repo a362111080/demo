@@ -99,7 +99,7 @@ public class OrderCartServiceImpl implements OrderCartService {
              * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
              * 2.删除该用户在该店铺下的指定商品
              */
-            orderCartMapper.update(new OrderCart().setDr(false), new UpdateWrapper<OrderCart>()
+            orderCartMapper.update(new OrderCart().setDr(true), new UpdateWrapper<OrderCart>()
                     .in("id", deleteCartGoodsRequestDTO.getIds())
                     .eq("shop_id", deleteCartGoodsRequestDTO.getShopId())
                     .eq("user_id", deleteCartGoodsRequestDTO.getUserId()));
