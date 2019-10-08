@@ -1,6 +1,7 @@
 package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.BdCityMapper;
 import com.zero.egg.dao.OrderAddressMapper;
 import com.zero.egg.dao.OrderBillDetailMapper;
@@ -118,6 +119,12 @@ public class OrderBillServiceImpl implements OrderBillService {
             BigDecimal total  = BigDecimal.ZERO;
             for (String cartId : addOrderBillRequestDTO.getCartIds()) {
                 OrderCart orderCart = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
+                        .eq("id", cartId)
+                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
+                        .eq("user_id", addOrderBillRequestDTO.getUserId())
+                        .eq("dr", false));
+                //删除购物车商品信息
+                orderCartMapper.update(new OrderCart().setDr(true), new UpdateWrapper<OrderCart>()
                         .eq("id", cartId)
                         .eq("shop_id", addOrderBillRequestDTO.getShopId())
                         .eq("user_id", addOrderBillRequestDTO.getUserId())
