@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName DeleteCartGoodsRequestDTO
@@ -20,7 +21,7 @@ public class DeleteCartGoodsRequestDTO implements Serializable {
 
     @NotEmpty(message = "至少选择一个商品")
     @ApiModelProperty("待删除的商品id集合")
-    private String[] ids;
+    private List<String> ids;
 
     @NotBlank(message = "店铺id不能为空")
     private String shopId;
