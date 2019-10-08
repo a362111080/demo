@@ -22,4 +22,12 @@ public class AddOrderBillRequestDTO implements Serializable {
 
     @NotEmpty(message = "购物车商品id不能为空")
     private List<String> cartIds;
+
+    @NotBlank(message = "地址id不能为空")
+    private String addressId;
+
+    /**
+     * 用户留言
+     */
+    private String message;
 }

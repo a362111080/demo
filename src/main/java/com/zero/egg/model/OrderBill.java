@@ -58,7 +58,7 @@ public class OrderBill implements Serializable {
      */
     @TableField(value = "order_status")
     @ApiModelProperty(value = "订单状态")
-    private Short orderStatus;
+    private Integer orderStatus;
 
     /**
      * 收货地址id
@@ -142,6 +142,6 @@ public class OrderBill implements Serializable {
      */
     @TableField(value = "dr")
     @ApiModelProperty(value = "逻辑删除")
-    private Boolean dr;
+    private Boolean dr = false;
 
 }

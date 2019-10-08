@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @TableName(value = "order_order_detail")
-public class OrderBiilDetail implements Serializable {
+public class OrderBillDetail implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     @ApiModelProperty(value="null")
     private String id;
@@ -125,7 +125,7 @@ public class OrderBiilDetail implements Serializable {
      */
     @TableField(value = "dr")
     @ApiModelProperty(value="逻辑删除")
-    private Boolean dr;
+    private Boolean dr = false;
 
     private static final long serialVersionUID = 1L;
 }

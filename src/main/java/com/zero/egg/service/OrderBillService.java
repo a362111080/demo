@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 
 /**
@@ -15,5 +16,5 @@ public interface OrderBillService {
      * @param addOrderBillRequestDTO
      * @throws ServiceException
      */
-    void addNewBill(AddOrderBillRequestDTO addOrderBillRequestDTO) throws ServiceException;
+    Message addNewBill(AddOrderBillRequestDTO addOrderBillRequestDTO) throws ServiceException;
 }

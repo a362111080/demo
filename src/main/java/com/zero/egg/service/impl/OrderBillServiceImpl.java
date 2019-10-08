@@ -1,13 +1,39 @@
 package com.zero.egg.service.impl;
 
-import com.zero.egg.dao.OrderBiilDetailMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zero.egg.dao.BdCityMapper;
+import com.zero.egg.dao.OrderAddressMapper;
+import com.zero.egg.dao.OrderBillDetailMapper;
 import com.zero.egg.dao.OrderBillMapper;
+import com.zero.egg.dao.OrderCartMapper;
+import com.zero.egg.dao.OrderCategoryMapper;
+import com.zero.egg.dao.OrderGoodsMapper;
+import com.zero.egg.dao.ShopMapper;
+import com.zero.egg.enums.BillEnums;
+import com.zero.egg.model.BdCity;
+import com.zero.egg.model.OrderAddress;
+import com.zero.egg.model.OrderBill;
+import com.zero.egg.model.OrderBillDetail;
+import com.zero.egg.model.OrderCart;
+import com.zero.egg.model.OrderCategory;
+import com.zero.egg.model.OrderGoods;
+import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.service.OrderBillService;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author lym
@@ -20,11 +46,31 @@ public class OrderBillServiceImpl implements OrderBillService {
     private OrderBillMapper orderBillMapper;
 
     @Autowired
-    private OrderBiilDetailMapper orderBillDetailMapper;
+    private OrderBillDetailMapper orderBillDetailMapper;
+
+    @Autowired
+    private OrderAddressMapper orderAddressMapper;
+
+    @Autowired
+    private BdCityMapper bdCityMapper;
+
+    @Autowired
+    private ShopMapper shopMapper;
+
+    @Autowired
+    private OrderCartMapper orderCartMapper;
+
+    @Autowired
+    private OrderCategoryMapper orderCategoryMapper;
+
+    @Autowired
+    private OrderGoodsMapper orderGoodsMapper;
 
     @Override
-    public void addNewBill(AddOrderBillRequestDTO addOrderBillRequestDTO) throws ServiceException {
+    @Transactional
+    public Message addNewBill(AddOrderBillRequestDTO addOrderBillRequestDTO) throws ServiceException {
         try {
+            Message message = new Message();
             /**
              * TODO 验证登录用户绑定的shopIdList中是否有传过来的shopId
              * 1.从addOrderBillRequestDTO中获取addressId,,进而获取地址信息,检验地址有效性(是否未删除,是否是该登录用户的地址),并封装到OrderBill对象中
@@ -33,6 +79,111 @@ public class OrderBillServiceImpl implements OrderBillService {
              * 4.遍历购物车商品列表,计算小计金额,如果商品单价有一个为null,则OrderBill对象中的总计为null,否则叠加小计金额到总计
              * 5.删除购物车商品信息
              */
+            String addressId = addOrderBillRequestDTO.getAddressId();
+            OrderAddress orderAddress = orderAddressMapper.selectOne(new QueryWrapper<OrderAddress>()
+                    .eq("id", addressId)
+                    .eq("dr", false)
+                    .eq("user_id", addOrderBillRequestDTO.getUserId()));
+            if (null == orderAddress) {
+                throw new ServiceException("选择的地址有误!");
+            }
+            OrderBill orderBill = new OrderBill();
+            orderBill.setAddressId(addressId);
+            orderBill.setConsignee(orderAddress.getName());
+            //获取省市区地址
+            String mergerName = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
+                    .select("merger_name")
+                    .eq("id", orderAddress.getCityId()))
+                    .getMergerName();
+            //订单地址为省市区+详细地址
+            orderBill.setAddress(mergerName + orderAddress.getAddressDetail());
+            orderBill.setCreator(addOrderBillRequestDTO.getUserId());
+            orderBill.setCreatetime(new Date());
+            String companyId = shopMapper.selectOne(new QueryWrapper<Shop>()
+                    .select("company_id")
+                    .eq("id", addOrderBillRequestDTO.getShopId())
+                    .eq("dr", false))
+                    .getCompanyId();
+            orderBill.setCompanyId(companyId);
+            orderBill.setShopId(addOrderBillRequestDTO.getShopId());
+            if (StringUtils.isNotBlank(addOrderBillRequestDTO.getMessage())) {
+                orderBill.setMessage(addOrderBillRequestDTO.getMessage());
+            }
+            //返回消息(可能有的商品有异常)
+            StringBuffer sb = new StringBuffer();
+            //总价是否需要订单细节小计累加标识
+            Boolean totalPriceFlag = true;
+            OrderBillDetail orderBillDetail;
+            List<OrderBillDetail> orderBillDetailList = new ArrayList<>();
+            BigDecimal total  = BigDecimal.ZERO;
+            for (String cartId : addOrderBillRequestDTO.getCartIds()) {
+                OrderCart orderCart = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
+                        .eq("id", cartId)
+                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
+                        .eq("user_id", addOrderBillRequestDTO.getUserId())
+                        .eq("dr", false));
+                if (null == orderCart) {
+                    sb.append("购物车存在异常商品,商品名为" + orderCart.getGoodsName());
+                    continue;
+                }
+                orderBillDetail = new OrderBillDetail();
+                if (totalPriceFlag) {
+                    //如果单价不能转换成BigDecimal,则小计总价都为null
+                    if (!checkBigDecimal(orderCart.getPrice())) {
+                        totalPriceFlag = false;
+                    } else {
+                        orderBillDetail.setGoodsPrice(new BigDecimal(orderCart.getPrice()));
+                        orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
+                        orderBillDetail.setSubtotal(orderBillDetail.getGoodsPrice().multiply(orderBillDetail.getQuantity()));
+                        total.add(orderBillDetail.getSubtotal());
+                    }
+                }
+                orderBillDetail.setCompanyId(companyId);
+                orderBillDetail.setShopId(addOrderBillRequestDTO.getShopId());
+                orderBillDetail.setCartId(cartId);
+                String categoryId = orderGoodsMapper.selectOne(new QueryWrapper<OrderGoods>()
+                        .select("category_id")
+                        .eq("id", orderCart.getGoodsId())
+                        .eq("company_id", companyId)
+                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
+                        .eq("dr", false))
+                        .getCategoryId();
+                String categoryName = orderCategoryMapper.selectOne(new QueryWrapper<OrderCategory>()
+                        .select("category_id")
+                        .eq("id", categoryId)
+                        .eq("company_id", companyId)
+                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
+                        .eq("dr", false))
+                        .getName();
+                orderBillDetail.setOrderCategoryId(categoryId);
+                orderBillDetail.setOrderCategoryName(categoryName);
+                orderBillDetail.setSpecificationId(orderCart.getGoodSpecificationId());
+                orderBillDetail.setSpecificationName(orderCart.getGoodSpecificationName());
+                orderBillDetail.setSpecificationValue(orderCart.getGoodSpecificationValue());
+                orderBillDetail.setCreatetime(new Date());
+                orderBillDetailList.add(orderBillDetail);
+            }
+            //如果标识为true,则总账单有合计金额
+            if (totalPriceFlag) {
+                orderBill.setTotalPrice(total);
+            }
+            //设置SN
+            Integer count = orderBillMapper.selectCount(null);
+            DecimalFormat g1 = new DecimalFormat("000000000");
+            orderBill.setOrderSn(g1.format(count+1));
+            orderBill.setOrderStatus(BillEnums.OrderStatus.Not_Generated.index());
+            orderBillMapper.insert(orderBill);
+            for (OrderBillDetail orderBillDetail1 : orderBillDetailList) {
+                orderBillDetail1.setOrderId(orderBill.getId());
+                orderBillDetailMapper.insert(orderBillDetail1);
+            }
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            if (sb.length() > 0) {
+                message.setMessage(sb.toString());
+            } else {
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
+            return message;
         } catch (Exception e) {
             log.error("addNewBill failed" + e);
             if (e instanceof ServiceException) {
@@ -40,5 +191,26 @@ public class OrderBillServiceImpl implements OrderBillService {
             }
             throw new ServiceException("addNewBill failed" + e);
         }
+
     }
+
+    /**
+     * 判断String能否转换成BigDecimal
+     *
+     * @param targetString
+     * @return
+     */
+    private boolean checkBigDecimal(String targetString) {
+        BigDecimal tmp = null;
+        try {
+            tmp = new BigDecimal(targetString);
+        } catch (NumberFormatException e) {
+
+        }
+        if (tmp != null) {
+            return true;
+        }
+        return false;
+    }
+
 }

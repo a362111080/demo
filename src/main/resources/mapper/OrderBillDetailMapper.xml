@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zero.egg.dao.OrderBiilDetailMapper">
-  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderBiilDetail">
+<mapper namespace="com.zero.egg.dao.OrderBillDetailMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderBillDetail">
     <!--@mbg.generated-->
     <!--@Table order_order_detail-->
     <id column="id" jdbcType="VARCHAR" property="id" />
