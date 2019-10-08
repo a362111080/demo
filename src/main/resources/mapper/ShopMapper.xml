@@ -66,9 +66,9 @@
 
     <insert id="addordergood" parameterType="OrderGoods">
         insert into order_goods(id,company_id,shop_id,goods_sn,name,category_id,gallery,keywords,brief,is_on_sale,sort_order,
-                                pic_url,price,detail,createtime,modifytime,dr)
+                                pic_url,detail,createtime,modifytime,dr)
         values(#{id},#{companyId},#{shopId},#{goodsSn},#{name},#{categoryId},#{gallery},#{keywords},#{brief},#{isOnSale},
-               #{sortOrder},#{picUrl},#{price},#{detail},#{createtime},#{modifytime},#{dr})
+               #{sortOrder},#{picUrl},#{detail},#{createtime},#{modifytime},#{dr})
     </insert>
 
 
@@ -126,7 +126,6 @@
             <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
             <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
-            <if test="price!= null">price= #{price,jdbcType=VARCHAR},</if>
             <if test="detail!= null">detail= #{detail,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
             <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>

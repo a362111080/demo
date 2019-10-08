@@ -46,6 +46,7 @@ public class OrderGoods implements Serializable {
 
 
     @ApiModelProperty(value = "商品所属类目名称",required=false)
+    @TableField(exist = false)
     private  String category;
 
 
@@ -68,8 +69,6 @@ public class OrderGoods implements Serializable {
     @ApiModelProperty(value = "类目图片",required=false)
     private  String picUrl;
 
-    @ApiModelProperty(value = "价格",required=false)
-    private BigDecimal price;
 
     @ApiModelProperty(value = "商品介绍",required=false)
     private String detail;

@@ -1,5 +1,4 @@
 package com.zero.egg.service.impl;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.OrderSecretMapper;
@@ -18,6 +17,7 @@ import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,10 +45,11 @@ public class OrderSecretServiceImpl implements OrderSecretService {
     private ShopMapper shopMapper;
 
     @Override
+    @Transactional
     public Message bindSecret(String secret, LoginUser user) throws ServiceException {
         /**
-         * 1.根据secret查询order_secret获取id
-         * 2.根据id查询是否已经被绑定(secret已建立唯一索引)
+         * 1.根据secret查询order_secret获取id(secret已建立唯一索引)
+         * 2.根据id查询是否已经被绑定
          * 3.绑定
          */
         Message message = new Message();
@@ -60,6 +61,12 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                 log.error("=======no such secret=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
+                return message;
+            }
+            if (orderSecret.getStatus()) {
+                log.error("=======secret has been used=======");
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SECRET_HAS_BEEN_USED);
                 return message;
             }
             String secretId = orderSecret.getId();
@@ -84,7 +91,11 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                 orderUserSecret.setSecretId(secretId);
                 orderUserSecret.setCreator(user.getId());
                 orderUserSecret.setCreatetime(new Date());
+                //中间表关联
                 orderUserSecretMapper.insert(orderUserSecret);
+                //秘钥表修改秘钥状态
+                orderSecret.setStatus(true);
+                orderSecretMapper.updateById(orderSecret);
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -129,6 +140,40 @@ public class OrderSecretServiceImpl implements OrderSecretService {
         } catch (Exception e) {
             log.error("getShopList service error:" + e);
             throw new ServiceException("getShopList service error:" + e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public Message cancelSecret(String secret, LoginUser user) throws ServiceException {
+        /**
+         * 1.根据秘钥查出秘钥信息,并逻辑删除(secret已建立唯一索引)
+         * 2.根据秘钥id和userId查出关联表信息并删除
+         */
+        Message message = new Message();
+        try {
+            OrderSecret orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
+                    .eq("secret_key", secret)
+                    .eq("dr", false));
+            if (null == orderSecret || null == orderSecret.getId()) {
+                log.error("=======no such secret=======");
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
+                return message;
+            }
+            orderSecret.setDr(true);
+            //删除秘钥信息
+            orderSecretMapper.updateById(orderSecret);
+            orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
+                    .eq("secret_id", orderSecret.getId())
+                    .eq("dr", false)
+                    .eq("user_id", user.getId()));
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.error("cancelSecret service error:" + e);
+            throw new ServiceException("cancelSecret service error:" + e);
         }
     }
 }

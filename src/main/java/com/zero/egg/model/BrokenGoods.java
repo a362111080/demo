@@ -92,6 +92,10 @@ public class BrokenGoods extends PageDTO  implements Serializable {
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
 
+    @ApiModelProperty(value = "创建人名称",hidden=true)
+    private String creatorname;
+
+
     @ApiModelProperty(value = "创建时间",hidden=true)
     private Date createtime;
 

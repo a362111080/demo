@@ -15,12 +15,11 @@
         <result column="is_on_sale" property="isOnSale"/>
         <result column="sort_order" property="sortOrder"/>
         <result column="pic_url" property="picUrl"/>
-        <result column="price" property="price"/>
         <result column="detail" property="detail"/>
         <result column="createtime" property="createtime"/>
         <result column="modifytime" property="modifytime"/>
         <result column="dr" property="dr"/>
-        <collection property="sepcificationList" javaType="list" ofType="com.zero.egg.model.OrderGoodSpecification">
+        <collection property="sepcificationList" javaType="list" ofType="com.zero.egg.model.OrderGoodsSpecification">
             <id column="oid" property="id"/>
             <result column="goods_id" property="goodsId"/>
             <result column="specification" property="specification"/>
@@ -36,7 +35,7 @@
 
     <select id="getAllByShopId" resultMap="BaseResultMap">
         SELECT og.id,og.shop_id,og.company_id,og.goods_sn,og.name,og.category_id,og.gallery,
-         og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.price,og.detail,og.createtime,og.id,
+         og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.detail,og.createtime,og.id,
          og.modifytime,og.dr,ogs.id AS oid,ogs.goods_id,ogs.specification,ogs.specification,ogs.value,
          ogs.pic_url,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr
         FROM order_goods og
@@ -49,7 +48,7 @@
     </select>
     <select id="getAllByShopIdAndCategoryId" resultMap="BaseResultMap">
         SELECT og.id,og.shop_id,og.company_id,og.goods_sn,og.name,og.category_id,og.gallery,
-        og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.price,og.detail,og.createtime,og.id,
+        og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.detail,og.createtime,og.id,
         og.modifytime,og.dr,ogs.id AS oid,ogs.goods_id,ogs.specification,ogs.specification,ogs.value,
         ogs.pic_url,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr
         FROM order_goods og
