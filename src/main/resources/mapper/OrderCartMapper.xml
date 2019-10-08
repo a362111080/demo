@@ -36,16 +36,17 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, shop_id, user_id, good_specification_id,good_specification_name,good_specification_value,goods_id, goods_sn, goods_name, price,
-    `number`, `checked`, pic_url, createtime, modifytime, dr,weight_mode
+    oc.id, oc.shop_id, oc.user_id, oc.good_specification_id,oc.good_specification_name,oc.good_specification_value,oc.goods_id, oc.goods_sn,
+    oc.goods_name, oc.price,
+    oc.`number`,oc.`checked`,oc.pic_url,oc.createtime, oc.modifytime,oc.dr,oc.weight_mode
   </sql>
 
   <select id="getCartList" resultMap="BaseResultMap">
-    SELECT oc.<include refid="Base_Column_List"/> , ogs.id oid,ogs.goods_id,ogs.specification,
-    osg.value,ogs.pic_url o_pic_url,ogs.modifier o_modifier,ogs.creator o_creator,ogs.createtime o_createtime,
+    SELECT <include refid="Base_Column_List"></include>, ogs.id oid,ogs.goods_id,ogs.specification,
+    ogs.value,ogs.pic_url o_pic_url,ogs.modifier o_modifier,ogs.creator o_creator,ogs.createtime o_createtime,
     ogs.modifytime o_modifytime,ogs.dr o_dr
     FROM order_cart oc LEFT JOIN order_goods_specification ogs ON oc.goods_id = ogs.goods_id
     WHERE oc.dr = false AND ogs.dr = false AND oc.shop_id = #{shopId} AND oc.user_id = #{userId}
-    ORDER BY oc.`checked` DESC AND ORDER BY oc.`createtime` DESC
+    ORDER BY oc.`checked` DESC, oc.`createtime` DESC
   </select>
 </mapper>
