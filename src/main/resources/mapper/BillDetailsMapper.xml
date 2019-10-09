@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.BillDetailsMapper">
     <select id="getbilldetsils"  resultType="com.zero.egg.model.BillDetails">
-        select b.name as goodsCategoryName,a.*,d.mode,
+        select b.name as goodsCategoryName,a.*,d.mode,bu.name as createname,
         case when IFNULL(a.specification_id ,'')='' then CONCAT(c.name,' ','常规') else  CONCAT(c.name,'(','实重',d.weight_min,'~',d.weight_max,')') end as programName,
         CASE
 	      WHEN d.`mode`='1' THEN
@@ -14,6 +14,7 @@
         left join bd_category b on b.id=a.goods_category_id
         left join bd_specification_program c on c.id=a.program_id
         left join bd_specification d on d.id=a.specification_id
+        left join  bd_user  bu  on bu.id=a.creator
         where  a.bill_id=#{id,jdbcType=INTEGER}
     </select>
     <update id="updateDetails" parameterType="BillDetails">update bd_bill_details

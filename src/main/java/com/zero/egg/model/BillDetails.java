@@ -89,6 +89,10 @@ public class BillDetails  implements Serializable {
     @ApiModelProperty(value = "创建人",hidden=true)
     private String creator;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建人名称",hidden=true)
+    private String createname;
+
     @ApiModelProperty(value = "创建时间",hidden=true)
     private Date createtime;
 
