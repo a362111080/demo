@@ -68,6 +68,10 @@ public class Goods implements Serializable {
     @ApiModelProperty(value = "创建人")
     private String creator;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建人名称")
+    private String createname;
+
     @ApiModelProperty(value = "创建时间")
     private Date createtime;
 

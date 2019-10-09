@@ -56,7 +56,7 @@
 	</select>
 
 	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods" >
-		 SELECT u.name as creatorname, k.*,a.name as customername ,b.name as categoryname,c.bill_no,c.status as  billstatus,
+		 SELECT u.name as createname, k.*,a.name as customername ,b.name as categoryname,c.bill_no,c.status as  billstatus,
 		 case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 
 		 FROM bd_shipment_goods k
@@ -80,7 +80,7 @@
 		order by  k.createtime desc
 	</select>
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods">
-		SELECT 	u.name as creatorname, k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,f.status as billstatus,
+		SELECT 	u.name as createname, k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,f.status as billstatus,
 		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
 
 		FROM bd_goods k
