@@ -123,7 +123,16 @@ public class UserController {
 		//BaseResponse<Object> response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
-		message = userService.updateById(user, loginUser);
+		User  isUser=userService.getUserinfo(user);
+		if (isUser.getId().equals(user.getId())) {
+			message = userService.updateById(user, loginUser);
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("账号重复，请重新输入！");
+			return message;
+		}
 		return message;
 	}
 
