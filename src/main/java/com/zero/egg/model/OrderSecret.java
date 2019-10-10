@@ -12,7 +12,6 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -105,6 +104,6 @@ public class OrderSecret implements Serializable {
      * 前端传来的id数组(批量删除)
      */
     @TableField(exist = false)
-    private List<String> ids;
+    private String ids;
 
 }
