@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.User;
+import com.zero.egg.requestDTO.CompanyUserRequest;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.UserRequest;
+import com.zero.egg.responseDTO.CompanyinfoResponseDto;
+import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.StringTool;
@@ -41,6 +44,9 @@ public class UserController {
 
 	@Autowired
 	private IUserService userService;
+
+	@Autowired
+	private ICompanyUserService iCompanyUserService;
 
 	@LoginToken
 	@ApiOperation(value = "分页查询员工")
@@ -103,7 +109,21 @@ public class UserController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		User  isUser=userService.getUserinfo(user);
 		if (null==isUser) {
-			message = userService.save(user, loginUser);
+			//判断企业账号是否重名
+			CompanyUserRequest dto=new CompanyUserRequest();
+			dto.setLoginname(user.getLoginname());
+			List<CompanyinfoResponseDto> ilist=iCompanyUserService.getCompanyinfolist(dto);
+			if (ilist.size()>0) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("账号重复，请重新输入！");
+				return message;
+			}
+			else
+			{
+				message = userService.save(user, loginUser);
+				return message;
+			}
+
 		}
 		else
 		{
@@ -111,7 +131,7 @@ public class UserController {
 			message.setMessage("账号重复，请重新输入！");
 			return message;
 		}
-		return message;
+
 	}
 
 	@LoginToken
@@ -124,8 +144,23 @@ public class UserController {
 		Message<Object> message = new Message<Object>();
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		User  isUser=userService.getUserinfo(user);
-		if (isUser.getId().equals(user.getId())) {
-			message = userService.updateById(user, loginUser);
+		if (null==isUser || isUser.getId().equals(user.getId())) {
+			//判断企业账号是否重名
+			CompanyUserRequest dto=new CompanyUserRequest();
+			dto.setLoginname(user.getLoginname());
+			List<CompanyinfoResponseDto> ilist=iCompanyUserService.getCompanyinfolist(dto);
+			if (ilist.size()>0) {
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("账号重复，请重新输入！");
+				return message;
+			}
+			else
+			{
+				message = userService.updateById(user, loginUser);
+				return message;
+			}
+
+
 		}
 		else
 		{
@@ -133,7 +168,7 @@ public class UserController {
 			message.setMessage("账号重复，请重新输入！");
 			return message;
 		}
-		return message;
+
 	}
 
 	@LoginToken
