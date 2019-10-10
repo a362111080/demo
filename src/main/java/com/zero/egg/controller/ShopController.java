@@ -281,15 +281,32 @@ public class ShopController {
 				model.setShopid(loginUser.getShopId());
 				model.setModifier(loginUser.getId());
 				model.setModifytime(new Date());
-				int strval = shopService.editsecret(model);
-				if (strval > 0) {
-					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				if (null != model.getIds()) {
+					int cotVal=0;
+					List<String> idsList = StringTool.splitToList(model.getIds().toString(), ",");
+					if (idsList !=null) {
+						for (String id : idsList) {
+							model.setId(id);
+							cotVal+=shopService.editsecret(model);
+						}
+					}
+					if (cotVal > 0) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("操作失败");
+					}
 				}
-				else
-				{
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("操作失败");
+				else {
+					int strval = shopService.editsecret(model);
+					if (strval > 0) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("操作失败");
+					}
 				}
 			}
 			catch (Exception e) {

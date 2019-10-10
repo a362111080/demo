@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -99,5 +100,11 @@ public class OrderSecret implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "客户主键",required=false)
     private  String customername;
+
+    /**
+     * 前端传来的id数组(批量删除)
+     */
+    @TableField(exist = false)
+    private List<String> ids;
 
 }
