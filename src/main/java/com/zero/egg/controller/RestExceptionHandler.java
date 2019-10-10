@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Rest 异常处理器
- * 
+ *
  * @author anthony.guo
  */
 @Slf4j
@@ -28,7 +28,7 @@ public class RestExceptionHandler {
 		log.error(e.getMessage(), e);
 		return new Message(UtilConstants.ResponseCode.EXCEPTION_HEAD, e.getMessage());
     }
-	
+
 	@ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(value = AuthenticateException.class)
@@ -47,6 +47,18 @@ public class RestExceptionHandler {
 	@ResponseBody
 	@ExceptionHandler(value = ParamException.class)
 	public Message handleParamException(ParamException e) {
+		log.error(e.getMessage(), e);
+		return new Message(UtilConstants.ResponseCode.EXCEPTION_HEAD, e.getMessage());
+	}
+
+	/**
+	 * 处理空指针异常
+	 * @param e
+	 * @return
+	 */
+	@ResponseBody
+	@ExceptionHandler(value = NullPointerException.class)
+	public Message handleNullPointException(NullPointerException e) {
 		log.error(e.getMessage(), e);
 		return new Message(UtilConstants.ResponseCode.EXCEPTION_HEAD, e.getMessage());
 	}

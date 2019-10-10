@@ -3,6 +3,7 @@ package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
+import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -27,4 +28,11 @@ public interface OrderBillService {
      * @throws ServiceException
      */
     IPage listOrderBill(OrderBillListReqeustDTO orderBillListReqeustDTO) throws ServiceException;
+
+
+    /**
+     * 取消未接单的订单
+     * @throws ServiceException
+     */
+    void cancelorderBill(CancelMissedBillReqeustDTO cancelMissedBillReqeustDTO ) throws ServiceException;
 }

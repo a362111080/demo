@@ -22,6 +22,7 @@ import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
+import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.Message;
@@ -182,7 +183,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             Integer count = orderBillMapper.selectCount(null);
             DecimalFormat g1 = new DecimalFormat("000000000");
             orderBill.setOrderSn(g1.format(count + 1));
-            orderBill.setOrderStatus(BillEnums.OrderStatus.Not_Generated.index());
+            orderBill.setOrderStatus(BillEnums.OrderStatus.Missed.index());
             orderBillMapper.insert(orderBill);
             for (OrderBillDetail orderBillDetail1 : orderBillDetailList) {
                 orderBillDetail1.setOrderId(orderBill.getId());
@@ -221,6 +222,37 @@ public class OrderBillServiceImpl implements OrderBillService {
                 throw e;
             }
             throw new ServiceException("listOrderBill failed" + e);
+        }
+    }
+
+    @Override
+    public void cancelorderBill(CancelMissedBillReqeustDTO cancelMissedBillReqeustDTO) throws ServiceException {
+        try {
+            /**
+             * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
+             * 2.查询该订单是否为未接单的状态
+             * 3.删除该用户在该店铺下的指定订单
+             */
+            Integer orderStatus = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
+                    .select("order_status")
+                    .eq("id", cancelMissedBillReqeustDTO.getOrderId())
+                    .eq("shop_id", cancelMissedBillReqeustDTO.getShopId())
+                    .eq("user_id", cancelMissedBillReqeustDTO.getUserId()))
+                    .getOrderStatus();
+            //如果该账单不为未接单状态,则不允许取消
+            if (!orderStatus.equals(BillEnums.OrderStatus.Missed.index())) {
+                throw new ServiceException("该账单状态不为未接单状态,无法取消!");
+            }
+            orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
+                    .eq("id", cancelMissedBillReqeustDTO.getOrderId())
+                    .eq("shop_id", cancelMissedBillReqeustDTO.getShopId())
+                    .eq("user_id", cancelMissedBillReqeustDTO.getUserId()));
+        } catch (Exception e) {
+            log.error("cancelorderBill failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("cancelorderBill failed" + e);
         }
     }
 

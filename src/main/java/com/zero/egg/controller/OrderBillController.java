@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
+import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
@@ -70,6 +71,30 @@ public class OrderBillController {
             orderBillListReqeustDTO.setUserId(loginUser.getId());
             IPage iPage = orderBillService.listOrderBill(orderBillListReqeustDTO);
             msg.setData(iPage);
+            msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("listBill controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @PostMapping(value = "/cancelmissedbill")
+    @LoginToken
+    @ApiOperation("取消未接单的订货账单")
+    public Message listBill(@RequestBody CancelMissedBillReqeustDTO cancelMissedBillReqeustDTO) {
+        //参数校验
+        BeanValidator.check(cancelMissedBillReqeustDTO);
+        Message msg = new Message();
+        try {
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            cancelMissedBillReqeustDTO.setUserId(loginUser.getId());
+            orderBillService.cancelorderBill(cancelMissedBillReqeustDTO);
             msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
