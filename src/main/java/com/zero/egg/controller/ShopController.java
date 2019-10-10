@@ -283,7 +283,7 @@ public class ShopController {
 				model.setModifytime(new Date());
 				if (null != model.getIds()) {
 					int cotVal=0;
-					List<String> idsList = StringTool.splitToList(model.getIds().toString(), ",");
+					List<String> idsList = StringTool.splitToList(model.getIds(), ",");
 					if (idsList !=null) {
 						for (String id : idsList) {
 							model.setId(id);
