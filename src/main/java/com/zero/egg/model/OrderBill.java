@@ -40,6 +40,13 @@ public class OrderBill implements Serializable {
     private String shopId;
 
     /**
+     * 店铺名
+     */
+    @TableField(value = "shop_name")
+    @ApiModelProperty(value = "店铺名")
+    private String shopName;
+
+    /**
      * 订货平台用户表的用户ID
      */
     @TableField(value = "user_id")

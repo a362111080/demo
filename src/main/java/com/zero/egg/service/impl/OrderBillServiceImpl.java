@@ -2,6 +2,8 @@ package com.zero.egg.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.dao.BdCityMapper;
 import com.zero.egg.dao.OrderAddressMapper;
 import com.zero.egg.dao.OrderBillDetailMapper;
@@ -20,6 +22,7 @@ import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
+import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -100,11 +103,12 @@ public class OrderBillServiceImpl implements OrderBillService {
             orderBill.setAddress(mergerName + orderAddress.getAddressDetail());
             orderBill.setCreator(addOrderBillRequestDTO.getUserId());
             orderBill.setCreatetime(new Date());
-            String companyId = shopMapper.selectOne(new QueryWrapper<Shop>()
-                    .select("company_id")
+            Shop shop = shopMapper.selectOne(new QueryWrapper<Shop>()
+                    .select("company_id", "name")
                     .eq("id", addOrderBillRequestDTO.getShopId())
-                    .eq("dr", false))
-                    .getCompanyId();
+                    .eq("dr", false));
+            String companyId = shop.getCompanyId();
+            orderBill.setShopName(shop.getName());
             orderBill.setCompanyId(companyId);
             orderBill.setShopId(addOrderBillRequestDTO.getShopId());
             if (StringUtils.isNotBlank(addOrderBillRequestDTO.getMessage())) {
@@ -116,7 +120,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             Boolean totalPriceFlag = true;
             OrderBillDetail orderBillDetail;
             List<OrderBillDetail> orderBillDetailList = new ArrayList<>();
-            BigDecimal total  = BigDecimal.ZERO;
+            BigDecimal total = BigDecimal.ZERO;
             for (String cartId : addOrderBillRequestDTO.getCartIds()) {
                 OrderCart orderCart = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
                         .eq("id", cartId)
@@ -177,7 +181,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             //设置SN
             Integer count = orderBillMapper.selectCount(null);
             DecimalFormat g1 = new DecimalFormat("000000000");
-            orderBill.setOrderSn(g1.format(count+1));
+            orderBill.setOrderSn(g1.format(count + 1));
             orderBill.setOrderStatus(BillEnums.OrderStatus.Not_Generated.index());
             orderBillMapper.insert(orderBill);
             for (OrderBillDetail orderBillDetail1 : orderBillDetailList) {
@@ -199,6 +203,25 @@ public class OrderBillServiceImpl implements OrderBillService {
             throw new ServiceException("addNewBill failed" + e);
         }
 
+    }
+
+    @Override
+    public IPage listOrderBill(OrderBillListReqeustDTO orderBillListReqeustDTO) throws ServiceException {
+        try {
+            Page<OrderBill> page = new Page<OrderBill>(orderBillListReqeustDTO.getCurrent(), orderBillListReqeustDTO.getSize());
+            QueryWrapper<OrderBill> queryWrapper = new QueryWrapper();
+            queryWrapper.eq("user_id", orderBillListReqeustDTO.getUserId())
+                    .eq("dr", false)
+                    .eq(null != orderBillListReqeustDTO.getStatus(), "order_status", orderBillListReqeustDTO.getStatus());
+            IPage<OrderBill> orderBillList = orderBillMapper.selectBillList(page,queryWrapper);
+            return orderBillList;
+        } catch (Exception e) {
+            log.error("listOrderBill failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("listOrderBill failed" + e);
+        }
     }
 
     /**

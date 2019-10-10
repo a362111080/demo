@@ -1,10 +1,12 @@
 package com.zero.egg.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
@@ -39,7 +41,7 @@ public class OrderBillController {
     @PostMapping(value = "/addnewbill")
     @LoginToken
     @ApiOperation("新增订单")
-    public Message deleteCartGoods(@RequestBody AddOrderBillRequestDTO addOrderBillRequestDTO) {
+    public Message addNewBill(@RequestBody AddOrderBillRequestDTO addOrderBillRequestDTO) {
         //参数校验
         BeanValidator.check(addOrderBillRequestDTO);
         Message msg = new Message();
@@ -49,6 +51,29 @@ public class OrderBillController {
             msg = orderBillService.addNewBill(addOrderBillRequestDTO);
         } catch (Exception e) {
             log.error("addnewbill controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @PostMapping(value = "/listbill")
+    @LoginToken
+    @ApiOperation("订单列表")
+    public Message listBill(@RequestBody OrderBillListReqeustDTO orderBillListReqeustDTO) {
+        Message msg = new Message();
+        try {
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            orderBillListReqeustDTO.setUserId(loginUser.getId());
+            IPage iPage = orderBillService.listOrderBill(orderBillListReqeustDTO);
+            msg.setData(iPage);
+            msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("listBill controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());

@@ -7,6 +7,7 @@ import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.model.Category;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
+import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
@@ -52,6 +53,18 @@ public class BaseInfoServiceTest extends Apptest {
 
     @Autowired
     private ShipmentGoodsMapper shipmentGoodsMapper;
+
+    @Autowired
+    private OrderBillService orderBillService;
+
+
+    @Test
+    public void testBillList(){
+        OrderBillListReqeustDTO orderBillListReqeustDTO = new OrderBillListReqeustDTO();
+        orderBillListReqeustDTO.setUserId("8");
+        orderBillListReqeustDTO.setStatus(1);
+        orderBillService.listOrderBill(orderBillListReqeustDTO);
+    }
 
 
     @Test
