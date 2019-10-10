@@ -7,18 +7,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.CompanyEnums;
-import com.zero.egg.model.Company;
-import com.zero.egg.model.CompanyUser;
-import com.zero.egg.model.Customer;
-import com.zero.egg.model.Shop;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.CompanyRequest;
 import com.zero.egg.requestDTO.CompanyUserRequest;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.responseDTO.CompanyinfoResponseDto;
-import com.zero.egg.service.CustomerService;
-import com.zero.egg.service.ICompanyService;
-import com.zero.egg.service.ICompanyUserService;
-import com.zero.egg.service.IShopService;
+import com.zero.egg.service.*;
 import com.zero.egg.tool.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,7 +52,9 @@ public class CompanyController {
 
 	@Autowired
 	private HttpServletRequest request;
-	
+
+	@Autowired
+	private IUserService userService;
 	@LoginToken
 	@ApiOperation(value="查询企业")
 	@RequestMapping(value="/userlist",method=RequestMethod.POST)
@@ -146,6 +142,14 @@ public class CompanyController {
 			if (ilist.size()==1 && ilist.get(0).getCompanyId().equals(companyUser.getCompanyId()))
 			{
 				isExist="Y";
+				User  user=new User();
+				user.setLoginname(companyUser.getLoginname());
+				User isUser=userService.getUserinfo(user);
+				if (null!=isUser) {
+					isExist="N";
+					message.setMessage("账号已被使用，请重新输入");
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				}
 			}
 			else
 			{
