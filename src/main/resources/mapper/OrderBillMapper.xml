@@ -30,9 +30,14 @@
         oo.dr
     </sql>
     <select id="selectBillList" resultType="com.zero.egg.responseDTO.OrderBillListResponseDTO">
-        SELECT <include refid="Base_Column_List"/>,oc.pic_url AS pics FROM order_order oo
+        SELECT <include refid="Base_Column_List"/> FROM order_order oo
+        ${ew.customSqlSegment} ORDER BY  FIND_IN_SET(oo.order_status,'0,1,-1'),oo.createtime DESC
+    </select>
+
+    <select id="selectBillListPics" resultType="string">
+        SELECT oc.pic_url  FROM order_order oo
         LEFT JOIN order_order_detail ood ON oo.id = ood.order_id
         LEFT JOIN order_cart oc ON oc.id = ood.cart_id
-        ${ew.customSqlSegment} ORDER BY  FIND_IN_SET(oo.order_status,'0,1,-1'),oo.createtime DESC
+        WHERE oo.user_id = #{userId} AND oo.id = #{orderId}
     </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.zero.egg.responseDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,10 +10,11 @@ import java.util.List;
 
 /**
  * @ClassName OrderBillListResponseDTO
- * @Description 订货平淡账单列表ResponseDTO
+ * @Description 订货平台账单列表ResponseDTO
  * @Author lyming
  * @Date 2019/10/11 4:05 下午
  **/
+@Data
 public class OrderBillListResponseDTO implements Serializable {
 
     private static final long serialVersionUID = -4443461218050150025L;

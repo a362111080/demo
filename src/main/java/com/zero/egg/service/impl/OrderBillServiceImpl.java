@@ -219,6 +219,10 @@ public class OrderBillServiceImpl implements OrderBillService {
                     .eq("oo.dr", false)
                     .eq(null != orderBillListReqeustDTO.getStatus(), "oo.order_status", orderBillListReqeustDTO.getStatus());
             IPage<OrderBillListResponseDTO> orderBillList = orderBillMapper.selectBillList(page,queryWrapper);
+            for (OrderBillListResponseDTO orderBillListResponseDTO : orderBillList.getRecords()) {
+                List<String> pics = orderBillMapper.selectBillListPics(orderBillListReqeustDTO.getUserId(), orderBillListResponseDTO.getId());
+                orderBillListResponseDTO.setPics(pics);
+            }
             return orderBillList;
         } catch (Exception e) {
             log.error("listOrderBill failed" + e);

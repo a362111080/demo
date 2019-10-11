@@ -1,5 +1,4 @@
 package com.zero.egg.dao;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,6 +9,8 @@ import com.zero.egg.responseDTO.OrderBillListResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author lym
  */
@@ -17,4 +18,6 @@ import org.apache.ibatis.annotations.Param;
 public interface OrderBillMapper extends BaseMapper<OrderBill> {
 
     IPage<OrderBillListResponseDTO> selectBillList(Page<OrderBill> page, @Param(Constants.WRAPPER) QueryWrapper<OrderBill> queryWrapper);
+
+    List<String> selectBillListPics(@Param("userId") String userId,@Param("orderId") String orderId);
 }
