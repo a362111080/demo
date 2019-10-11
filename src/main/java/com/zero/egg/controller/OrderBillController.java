@@ -6,6 +6,7 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
+import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
@@ -95,6 +96,30 @@ public class OrderBillController {
             LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
             cancelMissedBillReqeustDTO.setUserId(loginUser.getId());
             orderBillService.cancelorderBill(cancelMissedBillReqeustDTO);
+            msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("cancelmissedbill controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @PostMapping(value = "/deletecompletedbill")
+    @LoginToken
+    @ApiOperation("删除已经完成的订货账单")
+    public Message deleteCompletedBill(@RequestBody DeleteCompletedBillReqeustDTO deleteCompletedBillReqeustDTO) {
+        //参数校验
+        BeanValidator.check(deleteCompletedBillReqeustDTO);
+        Message msg = new Message();
+        try {
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            deleteCompletedBillReqeustDTO.setUserId(loginUser.getId());
+            orderBillService.deleteCompletedBill(deleteCompletedBillReqeustDTO);
             msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {

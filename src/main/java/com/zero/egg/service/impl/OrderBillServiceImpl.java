@@ -23,6 +23,7 @@ import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
+import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.Message;
@@ -255,6 +256,37 @@ public class OrderBillServiceImpl implements OrderBillService {
                 throw e;
             }
             throw new ServiceException("cancelorderBill failed" + e);
+        }
+    }
+
+    @Override
+    public void deleteCompletedBill(DeleteCompletedBillReqeustDTO deleteCompletedBillReqeustDTO) throws ServiceException {
+        try {
+            /**
+             * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
+             * 2.查询该订单是否为已完成的状态
+             * 3.删除该用户在该店铺下的指定订单
+             */
+            Integer orderStatus = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
+                    .select("order_status")
+                    .eq("id", deleteCompletedBillReqeustDTO.getOrderId())
+                    .eq("shop_id", deleteCompletedBillReqeustDTO.getShopId())
+                    .eq("user_id", deleteCompletedBillReqeustDTO.getUserId()))
+                    .getOrderStatus();
+            //如果该账单不为已完成状态,则不允许删除
+            if (!orderStatus.equals(BillEnums.OrderStatus.Completed.index())) {
+                throw new ServiceException("该账单状态不为未接单状态,无法取消!");
+            }
+            orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
+                    .eq("id", deleteCompletedBillReqeustDTO.getOrderId())
+                    .eq("shop_id", deleteCompletedBillReqeustDTO.getShopId())
+                    .eq("user_id", deleteCompletedBillReqeustDTO.getUserId()));
+        } catch (Exception e) {
+            log.error("deleteCompletedBill failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("deleteCompletedBill failed" + e);
         }
     }
 
