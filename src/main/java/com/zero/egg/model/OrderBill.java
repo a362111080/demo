@@ -51,7 +51,7 @@ public class OrderBill implements Serializable {
      */
     @TableField(value = "user_id")
     @ApiModelProperty(value = "订货平台用户表的用户ID")
-    private Integer userId;
+    private String userId;
 
     /**
      * 订单编号

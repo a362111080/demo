@@ -93,6 +93,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                 throw new ServiceException("选择的地址有误!");
             }
             OrderBill orderBill = new OrderBill();
+            orderBill.setUserId(addOrderBillRequestDTO.getUserId());
             orderBill.setAddressId(addressId);
             orderBill.setConsignee(orderAddress.getName());
             //获取省市区地址
