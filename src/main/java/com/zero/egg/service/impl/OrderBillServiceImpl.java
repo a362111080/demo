@@ -275,7 +275,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                     .getOrderStatus();
             //如果该账单不为已完成状态,则不允许删除
             if (!orderStatus.equals(BillEnums.OrderStatus.Completed.index())) {
-                throw new ServiceException("该账单状态不为未接单状态,无法取消!");
+                throw new ServiceException("该账单状态不为已完成状态,无法删除!");
             }
             orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
                     .eq("id", deleteCompletedBillReqeustDTO.getOrderId())
