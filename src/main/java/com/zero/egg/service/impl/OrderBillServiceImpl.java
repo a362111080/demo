@@ -96,6 +96,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             orderBill.setUserId(addOrderBillRequestDTO.getUserId());
             orderBill.setAddressId(addressId);
             orderBill.setConsignee(orderAddress.getName());
+            orderBill.setMobile(orderAddress.getTel());
             //获取省市区地址
             String mergerName = bdCityMapper.selectOne(new QueryWrapper<BdCity>()
                     .select("merger_name")
