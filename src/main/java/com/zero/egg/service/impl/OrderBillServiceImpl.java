@@ -152,6 +152,8 @@ public class OrderBillServiceImpl implements OrderBillService {
                         orderBillDetail.setSubtotal(orderBillDetail.getGoodsPrice().multiply(orderBillDetail.getQuantity()));
                         total = total.add(orderBillDetail.getSubtotal());
                     }
+                } else {
+                    orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                 }
                 orderBillDetail.setCompanyId(companyId);
                 orderBillDetail.setShopId(addOrderBillRequestDTO.getShopId());
