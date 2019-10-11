@@ -147,7 +147,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                         orderBillDetail.setGoodsPrice(new BigDecimal(orderCart.getPrice()));
                         orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                         orderBillDetail.setSubtotal(orderBillDetail.getGoodsPrice().multiply(orderBillDetail.getQuantity()));
-                        total.add(orderBillDetail.getSubtotal());
+                        total = total.add(orderBillDetail.getSubtotal());
                     }
                 }
                 orderBillDetail.setCompanyId(companyId);
@@ -161,7 +161,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                         .eq("dr", false))
                         .getCategoryId();
                 String categoryName = orderCategoryMapper.selectOne(new QueryWrapper<OrderCategory>()
-                        .select("category_id")
+                        .select("name")
                         .eq("id", categoryId)
                         .eq("company_id", companyId)
                         .eq("shop_id", addOrderBillRequestDTO.getShopId())
