@@ -41,8 +41,9 @@
         <if test="companyId != null and companyId !=''">
             and  k.company_id=#{companyId,jdbcType=VARCHAR}
         </if>
-           and  k.dr=0
-
+        <if test="dr != null">
+            and  k.dr=#{dr,jdbcType=VARCHAR}
+        </if>
     </select>
 
 
