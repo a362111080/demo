@@ -142,18 +142,16 @@ public class OrderBillServiceImpl implements OrderBillService {
                     continue;
                 }
                 orderBillDetail = new OrderBillDetail();
+                orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                 if (totalPriceFlag) {
                     //如果单价不能转换成BigDecimal,则小计总价都为null
                     if (!checkBigDecimal(orderCart.getPrice())) {
                         totalPriceFlag = false;
                     } else {
                         orderBillDetail.setGoodsPrice(new BigDecimal(orderCart.getPrice()));
-                        orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                         orderBillDetail.setSubtotal(orderBillDetail.getGoodsPrice().multiply(orderBillDetail.getQuantity()));
                         total = total.add(orderBillDetail.getSubtotal());
                     }
-                } else {
-                    orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                 }
                 orderBillDetail.setCompanyId(companyId);
                 orderBillDetail.setShopId(addOrderBillRequestDTO.getShopId());
