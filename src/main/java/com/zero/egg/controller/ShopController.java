@@ -488,15 +488,11 @@ public class ShopController {
 
 					}
 				}
-				message.setData(ResponseDTO);
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}
-			else
-			{
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage("店铺无商品分类信息");
-			}
+			message.setData(ResponseDTO);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
 		}
 		else
 		{
@@ -751,16 +747,12 @@ public class ShopController {
 					List<OrderGoodSpecification> spec = shopService.GetOrderGoodSpecList(ResponseDTO.get(m));
 					ResponseDTO.get(m).setSepcificationList(spec);
 				}
-				PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
-				message.setData(pageInfo);
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 			}
-			else
-			{
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage("店铺无商品信息");
-			}
+			PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
+			message.setData(pageInfo);
+			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
 		}
 		else
 		{
