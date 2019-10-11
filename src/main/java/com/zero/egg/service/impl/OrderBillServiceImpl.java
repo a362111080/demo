@@ -25,6 +25,7 @@ import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
+import com.zero.egg.responseDTO.OrderBillListResponseDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -214,10 +215,10 @@ public class OrderBillServiceImpl implements OrderBillService {
         try {
             Page<OrderBill> page = new Page<OrderBill>(orderBillListReqeustDTO.getCurrent(), orderBillListReqeustDTO.getSize());
             QueryWrapper<OrderBill> queryWrapper = new QueryWrapper();
-            queryWrapper.eq("user_id", orderBillListReqeustDTO.getUserId())
-                    .eq("dr", false)
-                    .eq(null != orderBillListReqeustDTO.getStatus(), "order_status", orderBillListReqeustDTO.getStatus());
-            IPage<OrderBill> orderBillList = orderBillMapper.selectBillList(page,queryWrapper);
+            queryWrapper.eq("oo.user_id", orderBillListReqeustDTO.getUserId())
+                    .eq("oo.dr", false)
+                    .eq(null != orderBillListReqeustDTO.getStatus(), "oo.order_status", orderBillListReqeustDTO.getStatus());
+            IPage<OrderBillListResponseDTO> orderBillList = orderBillMapper.selectBillList(page,queryWrapper);
             return orderBillList;
         } catch (Exception e) {
             log.error("listOrderBill failed" + e);
