@@ -4,12 +4,15 @@ import com.Apptest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CategoryMapper;
+import com.zero.egg.dao.OrderBillMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.model.Category;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
+import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
+import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
 import com.zero.egg.tool.Message;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,19 @@ public class BaseInfoServiceTest extends Apptest {
     @Autowired
     private OrderBillService orderBillService;
 
+    @Autowired
+    private OrderBillMapper orderBillMapper;
+
+
+    @Test
+    public void test() {
+        OrderBillDetailsRequestDTO orderBillDetailsRequestDTO = new OrderBillDetailsRequestDTO();
+        orderBillDetailsRequestDTO.setUserId("95959f5fed6d239f6ce52efc8b20c349");
+        orderBillDetailsRequestDTO.setOrderId("4d5c7d9e928aad770f0d0e23112dfd0c");
+        OrderBillDetailResponseDTO orderBillDetailResponseDTO;
+        orderBillDetailResponseDTO = orderBillMapper.getOrderBillDetail(orderBillDetailsRequestDTO.getUserId(),orderBillDetailsRequestDTO.getOrderId());
+        System.out.println(orderBillDetailResponseDTO);
+    }
 
     @Test
     public void testBillList(){

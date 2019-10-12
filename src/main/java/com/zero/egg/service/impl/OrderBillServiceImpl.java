@@ -24,7 +24,9 @@ import com.zero.egg.model.Shop;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
+import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
+import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
 import com.zero.egg.responseDTO.OrderBillListResponseDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.Message;
@@ -292,6 +294,25 @@ public class OrderBillServiceImpl implements OrderBillService {
                 throw e;
             }
             throw new ServiceException("deleteCompletedBill failed" + e);
+        }
+    }
+
+    @Override
+    public Message getOrderBillDetails(OrderBillDetailsRequestDTO orderBillDetailsRequestDTO) throws ServiceException {
+        Message message = new Message();
+        try {
+            OrderBillDetailResponseDTO orderBillDetailResponseDTO;
+            orderBillDetailResponseDTO = orderBillMapper.getOrderBillDetail(orderBillDetailsRequestDTO.getUserId(),orderBillDetailsRequestDTO.getOrderId());
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(orderBillDetailResponseDTO);
+            return message;
+        } catch (Exception e) {
+            log.error("getOrderBillDetails failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("getOrderBillDetails failed" + e);
         }
     }
 

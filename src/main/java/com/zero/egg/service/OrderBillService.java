@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
+import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -42,4 +43,12 @@ public interface OrderBillService {
      * @throws ServiceException
      */
     void deleteCompletedBill(DeleteCompletedBillReqeustDTO deleteCompletedBillReqeustDTO) throws ServiceException;
+
+    /**
+     * 获取订货平台订单详情
+     * @param orderBillDetailsRequestDTO
+     * @return
+     * @throws ServiceException
+     */
+    Message getOrderBillDetails(OrderBillDetailsRequestDTO orderBillDetailsRequestDTO) throws ServiceException;
 }

@@ -8,6 +8,7 @@ import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.BeanValidator;
@@ -124,6 +125,28 @@ public class OrderBillController {
             msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         } catch (Exception e) {
             log.error("listBill controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @PostMapping(value = "/getorderbilldetails")
+    @LoginToken
+    @ApiOperation("获取订货平台订单细节")
+    public Message getOrderBillDetails(@RequestBody OrderBillDetailsRequestDTO orderBillDetailsRequestDTO) {
+        //参数校验
+        BeanValidator.check(orderBillDetailsRequestDTO);
+        Message msg = new Message();
+        try {
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            orderBillDetailsRequestDTO.setUserId(loginUser.getId());
+            msg = orderBillService.getOrderBillDetails(orderBillDetailsRequestDTO);
+        } catch (Exception e) {
+            log.error("cancelmissedbill controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
