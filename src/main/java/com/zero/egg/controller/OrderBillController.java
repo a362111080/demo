@@ -4,6 +4,8 @@ package com.zero.egg.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
+import com.zero.egg.enums.BillEnums;
+import com.zero.egg.model.OrderBill;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
@@ -154,5 +156,22 @@ public class OrderBillController {
             msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
+    }
+
+
+    @PostMapping(value = "/editorderstatus")
+    @LoginToken
+    @ApiOperation("编辑订单状态")
+    public Message editorderstatus(@RequestBody OrderBill model) {
+        Message<Object> message = new Message<Object>();
+        //当前登录用户
+        model.setOrderStatus(BillEnums.OrderStatus.Received.index());
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
+        orderBillService.editorderstatus(model);
+        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        return message;
     }
 }

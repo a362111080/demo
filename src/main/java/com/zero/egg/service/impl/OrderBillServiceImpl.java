@@ -316,6 +316,22 @@ public class OrderBillServiceImpl implements OrderBillService {
         }
     }
 
+    @Override
+    public void editorderstatus(OrderBill model) {
+        try {
+            orderBillMapper.update(new OrderBill().setOrderStatus(model.getOrderStatus()).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
+                    .eq("id", model.getId())
+                    .eq("shop_id", model.getShopId())
+                    .eq("user_id", model.getUserId()));
+        }catch (Exception e) {
+            log.error("deleteCompletedBill failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("deleteCompletedBill failed" + e);
+        }
+    }
+
     /**
      * 判断String能否转换成BigDecimal
      *

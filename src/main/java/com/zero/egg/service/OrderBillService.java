@@ -2,6 +2,7 @@ package com.zero.egg.service;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.zero.egg.model.OrderBill;
 import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
 import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
 import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
@@ -51,4 +52,6 @@ public interface OrderBillService {
      * @throws ServiceException
      */
     Message getOrderBillDetails(OrderBillDetailsRequestDTO orderBillDetailsRequestDTO) throws ServiceException;
+
+    void editorderstatus(OrderBill model);
 }
