@@ -48,8 +48,9 @@ public class OrderCartServiceImpl implements OrderCartService {
             /**
              *  TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端addCartGoodRequestDTO中的shopId
              * 2. 根据shopId和goods_id查询商品信息
+             * 2.1 如果商品规格已经存在于购物车中,直接加数量
              * 3. 根据商品的规格id查询价格
-             * 3. 将商品信息组装到购物车商品中
+             * 4. 将商品信息组装到购物车商品中
              */
             OrderCart orderCart = new OrderCart();
             OrderGoods orderGoods = orderGoodsMapper.selectOne(new QueryWrapper<OrderGoods>()
@@ -58,11 +59,30 @@ public class OrderCartServiceImpl implements OrderCartService {
                     .eq("is_on_sale", true)
                     .eq("dr", false));
             OrderGoodsSpecification orderGoodsSpecification = orderGoodsSpecificationMapper.selectOne(new QueryWrapper<OrderGoodsSpecification>()
-                    .eq("id",addCartGoodRequestDTO.getGoodSpecificationId())
+                    .eq("id", addCartGoodRequestDTO.getGoodSpecificationId())
                     .eq("goods_id", orderGoods.getId())
                     .eq("dr", false));
-            orderCart = compactToOrderCartGood(orderGoods, addCartGoodRequestDTO, orderGoodsSpecification, loginUser);
-            orderCartMapper.insert(orderCart);
+            //如果相同规格的商品已经存在于购物车中,则直接改变数量
+            Integer existCount = orderCartMapper.selectCount(new QueryWrapper<OrderCart>()
+                    .eq("shop_id", addCartGoodRequestDTO.getShop_id())
+                    .eq("user_id", loginUser.getId())
+                    .eq("goods_id", addCartGoodRequestDTO.getGoods_id())
+                    .eq("good_specification_id", orderGoodsSpecification.getId())
+                    .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
+                    .eq("dr", false));
+            if (existCount > 0) {
+                Integer updateCount = existCount + addCartGoodRequestDTO.getNumber();
+                orderCartMapper.update(orderCart.setNumber(updateCount), new UpdateWrapper<OrderCart>()
+                        .eq("shop_id", addCartGoodRequestDTO.getShop_id())
+                        .eq("user_id", loginUser.getId())
+                        .eq("goods_id", addCartGoodRequestDTO.getGoods_id())
+                        .eq("good_specification_id", orderGoodsSpecification.getId())
+                        .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
+                        .eq("dr", false));
+            } else {
+                orderCart = compactToOrderCartGood(orderGoods, addCartGoodRequestDTO, orderGoodsSpecification, loginUser);
+                orderCartMapper.insert(orderCart);
+            }
         } catch (Exception e) {
             log.error("addProductToCart failed" + e);
             if (e instanceof ServiceException) {
