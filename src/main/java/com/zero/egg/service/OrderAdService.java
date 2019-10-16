@@ -1,5 +1,7 @@
 package com.zero.egg.service;
 
+import com.zero.egg.model.OrderAd;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 
@@ -14,4 +16,8 @@ public interface OrderAdService {
      * @throws ServiceException
      */
     Message getAdList() throws ServiceException;
+
+    int addOrderad(OrderAd model, LoginUser loginUser);
+
+    int editorderad(OrderAd model, LoginUser loginUser);
 }

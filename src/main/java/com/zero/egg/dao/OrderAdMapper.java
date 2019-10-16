@@ -9,4 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface OrderAdMapper extends BaseMapper<OrderAd> {
+    int addorderad(OrderAd model);
+
+    int editorderad(OrderAd model);
 }

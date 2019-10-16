@@ -23,4 +23,30 @@
     id, `name`, link, url, `position`, content, start_time, end_time, enabled, creator, 
     createtime, modifier, modifytime, dr
   </sql>
+
+
+  <insert id="addorderad" parameterType="OrderAd">
+    insert into order_ad(id,name,link,url,position,content,start_time,end_time,enabled,modifier,modifytime,dr,creator,createtime)
+    values(#{id},#{name},#{link},#{url},#{position},#{content},#{startTime},#{endTime},#{enabled},#{modifier},#{modifytime},#{dr},#{creator},#{createtime})
+  </insert>
+
+
+
+  <update id="editorderad" parameterType="OrderAd">update order_ad
+    <set>
+      <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+      <if test="link!= null and link!=''">link= #{link,jdbcType=VARCHAR},</if>
+      <if test="url!= null and url!=''">url= #{url,jdbcType=VARCHAR},</if>
+      <if test="position!= null position url!=''">position= #{position,jdbcType=VARCHAR},</if>
+      <if test="content!= null and content!=''">content= #{content,jdbcType=VARCHAR},</if>
+      <if test="startTime!= null and startTime!=''">start_time= #{startTime,jdbcType=VARCHAR},</if>
+      <if test="endTime!= null and endTime!=''">end_time= #{endTime,jdbcType=VARCHAR},</if>
+      <if test="enabled!= null and enabled!=''">enabled= #{enabled,jdbcType=VARCHAR},</if>
+      <if test="modifier!= null">modifier= #{modifier,jdbcType=DATE},</if>
+      <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+      <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+    </set>where id= #{id,jdbcType=VARCHAR}
+  </update>
+
+
 </mapper>
