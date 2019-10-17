@@ -1,6 +1,7 @@
 package com.zero.egg.service;
 
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderDirectPurchaseRequestDTO;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -22,4 +23,11 @@ public interface OrderGoodsService {
      * @throws ServiceException
      */
     Message getGoodsListByCategoryId(OrderGoodsRequestDTO model, LoginUser loginUser) throws ServiceException;
+
+    /**
+     * 直接购买商品
+     * @param orderDirectPurchaseRequestDTO
+     * @return
+     */
+    Message directToPurchase(OrderDirectPurchaseRequestDTO orderDirectPurchaseRequestDTO) throws ServiceException;
 }

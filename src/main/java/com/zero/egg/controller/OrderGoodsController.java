@@ -4,10 +4,12 @@ import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.model.OrderCategory;
 import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.OrderDirectPurchaseRequestDTO;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.responseDTO.OrderCategoryResponseDTO;
 import com.zero.egg.service.IShopService;
 import com.zero.egg.service.OrderGoodsService;
+import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
@@ -45,6 +47,7 @@ public class OrderGoodsController {
 
     @ApiOperation("商品列表")
     @RequestMapping(value = "/getgoodslist", method = RequestMethod.POST)
+    @LoginToken
     public Message getGoodsList(@RequestBody OrderGoodsRequestDTO model) {
         Message msg = new Message();
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -98,8 +101,10 @@ public class OrderGoodsController {
         }
         return message;
     }
+
     @ApiOperation("类别下商品列表")
     @RequestMapping(value = "/getcategorygoodslist", method = RequestMethod.POST)
+    @LoginToken
     public Message getCategoryGoodsList(@RequestBody OrderGoodsRequestDTO model) {
         Message msg = new Message();
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
@@ -111,6 +116,28 @@ public class OrderGoodsController {
                 return msg;
             }
             msg = orderGoodsService.getGoodsListByCategoryId(model, loginUser);
+        } catch (Exception e) {
+            log.error("getAdList controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @ApiOperation("商品直接提交订单")
+    @RequestMapping(value = "/addnewbill", method = RequestMethod.POST)
+    @LoginToken
+    public Message addNewBill(@RequestBody OrderDirectPurchaseRequestDTO orderDirectPurchaseRequestDTO) {
+        Message msg = new Message();
+        //参数校验
+        BeanValidator.check(orderDirectPurchaseRequestDTO);
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        orderDirectPurchaseRequestDTO.setUserId(loginUser.getId());
+        try {
+            msg = orderGoodsService.directToPurchase(orderDirectPurchaseRequestDTO);
         } catch (Exception e) {
             log.error("getAdList controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

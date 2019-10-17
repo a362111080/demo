@@ -54,8 +54,8 @@ public class OrderCartServiceImpl implements OrderCartService {
              */
             OrderCart orderCart = new OrderCart();
             OrderGoods orderGoods = orderGoodsMapper.selectOne(new QueryWrapper<OrderGoods>()
-                    .eq("id", addCartGoodRequestDTO.getGoods_id())
-                    .eq("shop_id", addCartGoodRequestDTO.getShop_id())
+                    .eq("id", addCartGoodRequestDTO.getGoodsId())
+                    .eq("shop_id", addCartGoodRequestDTO.getShopId())
                     .eq("is_on_sale", true)
                     .eq("dr", false));
             OrderGoodsSpecification orderGoodsSpecification = orderGoodsSpecificationMapper.selectOne(new QueryWrapper<OrderGoodsSpecification>()
@@ -64,18 +64,18 @@ public class OrderCartServiceImpl implements OrderCartService {
                     .eq("dr", false));
             //如果相同规格的商品已经存在于购物车中,则直接改变数量
             Integer existCount = orderCartMapper.selectCount(new QueryWrapper<OrderCart>()
-                    .eq("shop_id", addCartGoodRequestDTO.getShop_id())
+                    .eq("shop_id", addCartGoodRequestDTO.getShopId())
                     .eq("user_id", loginUser.getId())
-                    .eq("goods_id", addCartGoodRequestDTO.getGoods_id())
+                    .eq("goods_id", addCartGoodRequestDTO.getGoodsId())
                     .eq("good_specification_id", orderGoodsSpecification.getId())
                     .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
                     .eq("dr", false));
             if (existCount > 0) {
                 Integer updateCount = existCount + addCartGoodRequestDTO.getNumber();
                 orderCartMapper.update(orderCart.setNumber(updateCount), new UpdateWrapper<OrderCart>()
-                        .eq("shop_id", addCartGoodRequestDTO.getShop_id())
+                        .eq("shop_id", addCartGoodRequestDTO.getShopId())
                         .eq("user_id", loginUser.getId())
-                        .eq("goods_id", addCartGoodRequestDTO.getGoods_id())
+                        .eq("goods_id", addCartGoodRequestDTO.getGoodsId())
                         .eq("good_specification_id", orderGoodsSpecification.getId())
                         .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
                         .eq("dr", false));

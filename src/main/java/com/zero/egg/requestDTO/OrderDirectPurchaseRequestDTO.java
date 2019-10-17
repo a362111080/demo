@@ -2,19 +2,28 @@ package com.zero.egg.requestDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * @ClassName AddCartGoodRequestDTO
+ * @ClassName OrderDirectPurchaseRequestDTO
+ * @Description 商品直接购买RequestDTO
  * @Author lyming
- * @Date 2019/9/30 3:35 下午
+ * @Date 2019/10/17 4:02 下午
  **/
 @Data
-public class AddCartGoodRequestDTO implements Serializable {
+@Accessors(chain = true)
+public class OrderDirectPurchaseRequestDTO implements Serializable {
 
-    private static final long serialVersionUID = -4682782421135772112L;
+    private static final long serialVersionUID = 554372081585271782L;
+
+    /**
+     * 用户id
+     */
+    private String userId;
 
     @NotNull(message = "商品id不能为空")
     private String goodsId;
@@ -31,5 +40,13 @@ public class AddCartGoodRequestDTO implements Serializable {
 
     @NotNull(message = "数量不能为空")
     private Integer number;
+
+    @NotBlank(message = "地址id不能为空")
+    private String addressId;
+
+    /**
+     * 用户留言
+     */
+    private String message;
 
 }
