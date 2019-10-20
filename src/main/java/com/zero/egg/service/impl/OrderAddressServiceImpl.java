@@ -46,6 +46,7 @@ public class OrderAddressServiceImpl implements OrderAddressService {
             orderAddressMapper.insert(orderAddress);
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(orderAddress);
             return message;
         } catch (Exception e) {
             log.error("createAddress service error:" + e);
