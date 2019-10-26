@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @ApiModel(value = "com.zero.egg.model.OrderBill")
 @Data
@@ -150,5 +151,16 @@ public class OrderBill implements Serializable {
     @TableField(value = "dr")
     @ApiModelProperty(value = "逻辑删除")
     private Boolean dr = false;
+
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "订单明细",required=false)
+    private List<OrderBillDetail> OrderDetlList;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "送货员",required=false)
+    private String dispatchman;
 
 }

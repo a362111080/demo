@@ -3,13 +3,12 @@ package com.zero.egg.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.model.OrderBill;
-import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
-import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
-import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
-import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
-import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
+import com.zero.egg.model.OrderBillDetail;
+import com.zero.egg.requestDTO.*;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+
+import java.util.List;
 
 /**
  * 订货平台订单Service
@@ -54,4 +53,8 @@ public interface OrderBillService {
     Message getOrderBillDetails(OrderBillDetailsRequestDTO orderBillDetailsRequestDTO) throws ServiceException;
 
     void editorderstatus(OrderBill model);
+
+    List<OrderBill> queryshoporder(OrderGoodsRequestDTO model);
+
+    List<OrderBillDetail> GetOrderGoodDelList(OrderBill orderBill);
 }

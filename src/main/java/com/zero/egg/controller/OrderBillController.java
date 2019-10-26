@@ -2,16 +2,16 @@ package com.zero.egg.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.BillEnums;
 import com.zero.egg.model.OrderBill;
-import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
-import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
-import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
-import com.zero.egg.requestDTO.LoginUser;
-import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
-import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
+import com.zero.egg.model.OrderBillDetail;
+import com.zero.egg.model.OrderGoodSpecification;
+import com.zero.egg.model.OrderGoods;
+import com.zero.egg.requestDTO.*;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.BeanValidator;
 import com.zero.egg.tool.Message;
@@ -21,12 +21,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author lym
@@ -174,4 +172,39 @@ public class OrderBillController {
         message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
         return message;
     }
+
+
+    @LoginToken
+    @ApiOperation(value="查询店铺订单")
+    @RequestMapping(value="/queryshoporder",method= RequestMethod.POST)
+    public Message<Object> queryshoporder(@RequestBody OrderGoodsRequestDTO model) {
+        Message<Object> message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
+        if (loginUser.getCompanyId()!=null) {
+            List<OrderBill> ResponseDTO=orderBillService.queryshoporder(model);
+            if (ResponseDTO.size()>0) {
+                for (int m = 0; m < ResponseDTO.size(); m++) {
+                    List<OrderBillDetail> spec = orderBillService.GetOrderGoodDelList(ResponseDTO.get(m));
+                    ResponseDTO.get(m).setOrderDetlList(spec);
+                }
+            }
+            PageInfo<OrderBill> pageInfo = new PageInfo<>(ResponseDTO);
+            message.setData(pageInfo);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
+        }
+        else
+        {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage("操作失败，无企业信息");
+        }
+        return message;
+    }
+
+
 }

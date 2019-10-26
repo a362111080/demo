@@ -127,5 +127,15 @@ public class OrderBillDetail implements Serializable {
     @ApiModelProperty(value="逻辑删除")
     private Boolean dr = false;
 
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "商品名称",required=false)
+    private String goodsName;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "计重方式",required=false)
+    private String weightMode;
+
+
     private static final long serialVersionUID = 1L;
 }

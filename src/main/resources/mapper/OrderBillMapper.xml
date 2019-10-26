@@ -45,6 +45,30 @@
         WHERE oo.user_id = #{userId} AND oo.id = #{orderId}
     </select>
 
+
+    <select id="queryshoporder" resultType="OrderBill">
+        SELECT b.name as dispatchman, a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name,
+        a.message,a.consignee
+        FROM order_order a
+         left join bd_user b on a.dispatchman =b.id
+         left join  order_user_secret  c on c.user_id=a.user_id
+         left join  order_secret e on e.id=c.secret_id
+         left join bd_customer d on d.id=e.customer_id
+        WHERE a.company_id = #{companyId} AND a.shop_id =#{shopId}
+        and a.dr=0
+    </select>
+
+
+    <select id="GetOrderGoodDelList" resultType="OrderBillDetail">
+        select * from order_order_detail  m
+        left join order_cart d on m.cart_id=d.id
+        where m.order_id=#{id}
+        and m.dr=0
+    </select>
+
+
+
+
     <resultMap id="GetBillDetailMap" type="com.zero.egg.responseDTO.OrderBillDetailResponseDTO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="company_id" jdbcType="VARCHAR" property="companyId"/>

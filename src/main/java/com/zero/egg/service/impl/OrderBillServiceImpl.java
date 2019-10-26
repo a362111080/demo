@@ -21,11 +21,7 @@ import com.zero.egg.model.OrderCart;
 import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.Shop;
-import com.zero.egg.requestDTO.AddOrderBillRequestDTO;
-import com.zero.egg.requestDTO.CancelMissedBillReqeustDTO;
-import com.zero.egg.requestDTO.DeleteCompletedBillReqeustDTO;
-import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
-import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
+import com.zero.egg.requestDTO.*;
 import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
 import com.zero.egg.responseDTO.OrderBillListResponseDTO;
 import com.zero.egg.service.OrderBillService;
@@ -319,7 +315,7 @@ public class OrderBillServiceImpl implements OrderBillService {
     @Override
     public void editorderstatus(OrderBill model) {
         try {
-            orderBillMapper.update(new OrderBill().setOrderStatus(model.getOrderStatus()).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
+            orderBillMapper.update(new OrderBill().setOrderStatus(model.getOrderStatus()).setEndTime(new Date()).setDispatchman(model.getDispatchman()), new UpdateWrapper<OrderBill>()
                     .eq("id", model.getId())
                     .eq("shop_id", model.getShopId())
                     .eq("user_id", model.getUserId()));
@@ -330,6 +326,16 @@ public class OrderBillServiceImpl implements OrderBillService {
             }
             throw new ServiceException("deleteCompletedBill failed" + e);
         }
+    }
+
+    @Override
+    public List<OrderBill> queryshoporder(OrderGoodsRequestDTO model) {
+        return orderBillMapper.queryshoporder(model);
+    }
+
+    @Override
+    public List<OrderBillDetail> GetOrderGoodDelList(OrderBill orderBill) {
+        return orderBillMapper.GetOrderGoodDelList(orderBill);
     }
 
     /**
