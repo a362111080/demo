@@ -207,4 +207,36 @@ public class OrderBillController {
     }
 
 
+
+    @LoginToken
+    @ApiOperation(value="查询订单")
+    @RequestMapping(value="/querystafforder",method= RequestMethod.POST)
+    public Message<Object> querystafforder(@RequestBody OrderGoodsRequestDTO model) {
+        Message<Object> message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
+        if (loginUser.getCompanyId()!=null) {
+            List<OrderBill> ResponseDTO=orderBillService.queryshoporder(model);
+            if (ResponseDTO.size()>0) {
+                for (int m = 0; m < ResponseDTO.size(); m++) {
+                    List<OrderBillDetail> spec = orderBillService.GetOrderGoodDelList(ResponseDTO.get(m));
+                    ResponseDTO.get(m).setOrderDetlList(spec);
+                }
+            }
+            PageInfo<OrderBill> pageInfo = new PageInfo<>(ResponseDTO);
+            message.setData(pageInfo);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
+        }
+        else
+        {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage("操作失败，无企业信息");
+        }
+        return message;
+    }
+
+
 }

@@ -31,6 +31,10 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
     @ApiModelProperty(value="是否上架")
     private Boolean isOnSale;
 
+
+    @ApiModelProperty(value="送货员")
+    private String dispatchman;
+
     @ApiModelProperty(value="删除标识")
     private Boolean dr;
 }
