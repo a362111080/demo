@@ -190,20 +190,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                         throw new AuthenticateException(401, "账号需要续费");
                     }
                     //如果当前用户是移动端,则需验证微信登录是否过期
-                    if (user.getType().equals(UserEnums.Type.Boss.index())
-                            || user.getType().equals(UserEnums.Type.Staff.index())) {
-                        String wxSessionkey = claims.getSubject();
-                        if (null == wxSessionkey || "".equals(wxSessionkey)) {
-                            throw new AuthenticateException(401, "token令牌错误");
-                        }
-                        /**
-                         * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
-                         */
-                        if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
-                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
-                            throw new AuthenticateException(401, "token失效，请重新登录");
-                        }
-                    }
+//                    if (user.getType().equals(UserEnums.Type.Boss.index())
+//                            || user.getType().equals(UserEnums.Type.Staff.index())) {
+//                        String wxSessionkey = claims.getSubject();
+//                        if (null == wxSessionkey || "".equals(wxSessionkey)) {
+//                            throw new AuthenticateException(401, "token令牌错误");
+//                        }
+//                        /**
+//                         * 如果redis里存在对应key且对应value不为null,则认为登录时间没有过期
+//                         */
+//                        if (!jedisKeys.exists(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)
+//                                || null == jedisStrings.get(UtilConstants.RedisPrefix.WXUSER_REDIS_SESSION + wxSessionkey)) {
+//                            throw new AuthenticateException(401, "token失效，请重新登录");
+//                        }
+//                    }
                     /**
                      * 对于店铺用户(除去企业用户),额外存储店铺类型
                      */
