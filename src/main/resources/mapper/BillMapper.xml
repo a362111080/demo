@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.BillMapper">
+    <sql id="Base_Column_List">
+	id,
+	shop_id,
+	company_id,
+	bill_no,
+	cussup_id,
+	bill_date,
+	`type`,
+	quantity,
+	amount,
+	real_amount,
+	`status`,
+	remark,
+	creator,
+	createtime,
+	modifier,
+	modifytime,
+	categoryname,
+	dr,
+	task_id
+</sql>
+    <resultMap id="BaseResultMap" type="com.zero.egg.model.Bill">
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="bill_no" property="billNo"/>
+        <result column="cussup_id" property="cussupId"/>
+        <result column="bill_date" property="billDate"/>
+        <result column="type" property="type"/>
+        <result column="quantity" property="quantity"/>
+        <result column="amount" property="amount"/>
+        <result column="real_amount" property="realAmount"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="creator" property="creator"/>
+        <result column="createtime" property="createtime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifytime" property="modifytime"/>
+        <result column="categoryname" property="categoryname"/>
+        <result column="dr" property="dr"/>
+        <result column="task_id" property="taskId"/>
+    </resultMap>
+    <select id="GetSupplierList" parameterType="SupplierRequestDTO" resultType="com.zero.egg.model.Supplier">
+        select  k.*,lv1.id as city1,lv2.id as city2 from bd_supplier k
+        left join bd_city   lv3  on lv3.id=k.city_id
+        left join bd_city   lv2  on lv2.id=lv3.parent_id
+        left join bd_city   lv1  on lv1.id=lv2.parent_id
+        <where>
+            <if test="shortname != null and shortname !=''">
+                and k.short_name LIKE '%${shortname}%'
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr=0  and  k.id in (select DISTINCT n.cussup_id   from  bd_bill n where n.dr=0)
+        </where>
+    </select>
+    <select id="GetCustomerList" parameterType="CustomerRequestDTO" resultType="com.zero.egg.model.Customer">
+        select  k.*,lv1.id as city1,lv2.id as city2 from bd_customer k
+        left join bd_city   lv3  on lv3.id=k.city_id
+        left join bd_city   lv2  on lv2.id=lv3.parent_id
+        left join bd_city   lv1  on lv1.id=lv2.parent_id
+        <where>
+            <if test="shortname != null and shortname !=''">
+                and k.short_name LIKE '%${shortname}%'
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr=0  and  k.id in (select DISTINCT n.cussup_id   from  bd_bill n where n.dr=0)
+        </where>
+    </select>
+    <select id="getBilllist" parameterType="BillRequest" resultType="com.zero.egg.model.Bill">
+        select a.bill_no,a.bill_date,a.type,a.quantity,a.amount,a.remark,a.status,a.dr,a.shop_id,
+        a.cussup_id,a.company_id,a.id,a.real_amount as realAmount,a.categoryname,a.task_id,
+        CASE WHEN IFNULL(c.name,'')=''	THEN b.name ELSE c.name END  as csname,
+        CASE WHEN IFNULL(c.short_name,'')=''	THEN b.short_name ELSE c.short_name END  as shortname
+        from bd_bill a
+        left join bd_supplier  b on a.cussup_id=b.id
+        left join bd_customer  c on a.cussup_id=c.id
+        <where>
+            a.dr = 0
+            <if test="billNo != null and billNo !=''">
+                and a.bill_no  LIKE '%${billNo}%'
+            </if>
+            <if test="cussupId != null and cussupId !=''">
+                and a.cussup_id=#{cussupId,jdbcType=VARCHAR}
+            </if>
+            <if test="keyword != null and keyword !=''">
+                and (c.short_name LIKE '%${keyword}%' or b.short_name LIKE '%${keyword}%' or b.name LIKE '%${keyword}%' or c.name LIKE '%${keyword}%' )
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and a.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and a.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null  and status !=''">
+                and a.status=#{status,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null  and type !=''">
+                and a.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="begintime != null  and begintime !=''">
+                and a.bill_date <![CDATA[ >= ]]> #{begintime,jdbcType=VARCHAR}
+            </if>
+            <if test="endtime != null  and endtime !=''">
+                and a.bill_date <![CDATA[ <= ]]> #{endtime,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY FIND_IN_SET(CONCAT(a.type,a.status),'31,20,30,11,21,1-1,2-1,3-1'), a.bill_date desc
+
+
+    </select>
+    <select id="getBillCategorySum" parameterType="String" resultType="com.zero.egg.responseDTO.CategorySum">
+        select b.name as goodsCategoryName,sum(a.quantity) as CountNum,b.id as goodsCategoryId from bd_bill_details   a
+        left join bd_category b on a.goods_category_id=b.id
+        where bill_id=#{id,jdbcType=INTEGER}
+        group by b.name,b.id
+    </select>
+
+    <select id="getOneByIdAndCompanyIdAndShopIdAndDr" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bd_bill
+        where id=#{id} and company_id=#{companyId} and shop_id=#{shopId} and dr=0
+    </select>
+
+</mapper>

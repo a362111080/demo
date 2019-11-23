@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.OrderCartMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderCart">
+    <!--@mbg.generated-->
+    <!--@Table order_cart-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="shop_id" jdbcType="VARCHAR" property="shopId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="good_specification_id" jdbcType="VARCHAR" property="goodSpecificationId" />
+    <result column="good_specification_name" jdbcType="VARCHAR" property="goodSpecificationName" />
+    <result column="good_specification_value" jdbcType="VARCHAR" property="goodSpecificationValue" />
+    <result column="goods_id" jdbcType="VARCHAR" property="goodsId" />
+    <result column="goods_sn" jdbcType="VARCHAR" property="goodsSn" />
+    <result column="weight_mode" jdbcType="INTEGER" property="weightMode" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="checked" jdbcType="BOOLEAN" property="checked" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="dr" jdbcType="BOOLEAN" property="dr" />
+    <collection property="sepcificationList" javaType="list" ofType="com.zero.egg.model.OrderGoodsSpecification">
+      <id column="oid" property="id"/>
+      <result column="goods_id" property="goodsId"/>
+      <result column="specification" property="specification"/>
+      <result column="value" property="value"/>
+      <result column="o_pic_url" property="picUrl"/>
+      <result column="o_modifier" property="modifier"/>
+      <result column="o_creator" property="creator"/>
+      <result column="o_createtime" property="createtime"/>
+      <result column="o_modifytime" property="modifytime"/>
+      <result column="o_dr" property="dr"/>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    oc.id, oc.shop_id, oc.user_id, oc.good_specification_id,oc.good_specification_name,oc.good_specification_value,oc.goods_id, oc.goods_sn,
+    oc.goods_name, oc.price,
+    oc.`number`,oc.`checked`,oc.pic_url,oc.createtime, oc.modifytime,oc.dr,oc.weight_mode
+  </sql>
+
+  <select id="getCartList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"></include>, ogs.id oid,ogs.goods_id,ogs.specification,
+    ogs.value,ogs.pic_url o_pic_url,ogs.modifier o_modifier,ogs.creator o_creator,ogs.createtime o_createtime,
+    ogs.modifytime o_modifytime,ogs.dr o_dr
+    FROM order_cart oc LEFT JOIN order_goods_specification ogs ON oc.goods_id = ogs.goods_id
+    WHERE oc.dr = false AND ogs.dr = false AND oc.shop_id = #{shopId} AND oc.user_id = #{userId}
+    ORDER BY oc.`checked` DESC, oc.`createtime` DESC
+  </select>
+</mapper>

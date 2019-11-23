@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.TaskMapper">
+    <select id="QueryTaskList" resultType="com.zero.egg.model.Task">
+        SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as
+        cussupId,
+        c.category_id as categoryId
+        FROM bd_task a
+        left join bd_task_program b on a.id=b.task_id and b.active=1
+        left join bd_specification_program c on b.program_id=c.id
+        left join bd_supplier d on d.id=a.cussup_id
+        left join bd_category e on e.id=c.category_id
+        <where>
+            <if test="type != null and type !=''">
+                and a.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null and companyId !=''">
+                and a.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and a.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !=''">
+                and a.status in (${status})
+            </if>
+            <if test="supplierId != null and supplierId !=''">
+                and a.cussup_id=#{supplierId,jdbcType=VARCHAR}
+            </if>
+            <if test="equipmentNo != null and equipmentNo !=''">
+                and a.equipment_no=#{equipmentNo,jdbcType=VARCHAR}
+            </if>
+            and a.dr=0 order by a.createtime
+        </where>
+    </select>
+    <update id="UpdateUnloadDetl" parameterType="java.lang.String">
+            update bd_unload_goods set dr=1
+            where task_id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="UnloadProChange" parameterType="Task">
+            update bd_task_program set active=1
+            where task_id = #{id,jdbcType=VARCHAR} and program_id=#{newProgram,jdbcType=VARCHAR}
+    </update>
+
+    <update id="UnloadProStop" parameterType="java.lang.String">
+            update bd_task_program set active=0
+            where task_id = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+
+
+    <select id="GetUnloadDetl" resultType="com.zero.egg.model.UnloadGoods">
+        select * from bd_unload_goods  k
+        where k.task_id= #{id,jdbcType=VARCHAR}
+        and k.dr=0
+    </select>
+    <insert id="InsertGoods" parameterType="Goods">
+    insert into bd_goods(id,shop_id,company_id,supplier_id,specification_id,goods_category_id,goods_no,marker,mode,weight,remark,creator,createtime,modifier,modifytime,dr)
+    values(#{id},#{shopId},#{companyId},#{supplierId},#{specificationId},#{goodsCategoryId},
+    #{goodsNo},#{marker},#{mode},#{weight},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
+    </insert>
+    <select id="IsExtis" resultType="int">
+        select COUNT(1) as sumVal from bd_stock  k
+        where k.specification_id= #{SpecificationId,jdbcType=VARCHAR}
+        and k.dr=0
+    </select>
+    <select id="GetActiveTaskBySupplier" resultType="int">
+        select COUNT(1) as sumVal from bd_task  k
+        where k.cussup_id= #{supplierId,jdbcType=VARCHAR}
+        and k.dr=0 and  k.status in ('3','0') and type =1
+    </select>
+    <select id="IsExtisUnloadTaskProgram" resultType="int">
+        select COUNT(1) as sumVal from bd_task_program  k
+        where k.program_id= #{newProgram,jdbcType=VARCHAR}
+        and k.task_id= #{id,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="GetUnloadReport" resultType="com.zero.egg.responseDTO.UnloadReport">
+        select k.shop_id,k.company_id,k.specification_id,COUNT(1) sumval,ca.name as categoryname
+        from bd_unload_goods  k
+         left join bd_specification  n on n.id=k.specification_id
+         left join bd_specification_program  m on m.id=n.program_id
+         left join bd_category  ca on ca.id=m.category_id
+        where k.task_id=#{id,jdbcType=VARCHAR}
+        group by k.shop_id,k.company_id,k.specification_id,ca.name
+    </select>
+    <select id="QueryShipmentTaskList" resultType="com.zero.egg.model.Task">
+        SELECT
+            t.id,
+            t.cussup_id as cussupid,
+            t.remark,
+            t.`status`,
+            t.type,
+            c.`name` AS cussupName
+        FROM
+            bd_task t
+        LEFT JOIN bd_customer c ON t.cussup_id = c.id
+        WHERE
+            t.type = 2
+        AND t.dr = 0
+        AND t.`status` IN (0, 3)
+        AND t.company_id=#{companyId,jdbcType=VARCHAR}
+        AND t.shop_id=#{shopId,jdbcType=VARCHAR}
+        ORDER BY t.createtime
+    </select>
+
+
+    <insert id="insertStock" parameterType="Stock">
+    insert into bd_stock(id,shop_id,company_id,specification_id,quantity,remark,creator,createtime,modifier,modifytime,dr)
+    values(#{id},#{shopId},#{companyId},#{specificationId},#{quantity},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
+    </insert>
+    <update id="updateStock" parameterType="com.zero.egg.responseDTO.UnloadReport">
+            update bd_stock set quantity=quantity+ #{sumval,jdbcType=DECIMAL}
+            where specification_id = #{specificationId,jdbcType=VARCHAR}  and dr=0
+    </update>
+    <insert id="insertBillDetails" parameterType="BillDetails">
+        insert into bd_bill_details(id,shop_id,company_id,bill_id,goods_category_id,program_id,price,quantity,amount,creator,createtime,modifier,modifytime,dr,specification_id)
+        values(#{id},#{shopId},#{companyId},#{billId},#{goodsCategoryId},#{programId},#{price},#{quantity},#{amount},#{creator},#{createtime},#{modifier},#{modifytime},0,#{specificationId})
+    </insert>
+    <insert id="insertBill" parameterType="Bill">
+        insert into bd_bill(id,shop_id,company_id,bill_no,cussup_id,bill_date,type,quantity,amount,status,creator,createtime,modifier,modifytime,dr,real_amount,categoryname,task_id)
+        values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
+               #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskId})
+    </insert>
+
+</mapper>

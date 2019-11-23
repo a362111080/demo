@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.BrokenGoodsMapper">
+
+<select id="GetBrokenTask" resultType="com.zero.egg.model.BrokenGoods">
+	SELECT u.name as creatorname,a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,g.id as billid,
+	case when a.mode=1 then   CONCAT('实重','(',f.weight_min,'~',f.weight_max,')')  else a.marker  end as brokenmarker
+	FROM bd_broken_goods a
+	left join bd_customer b on a.customer_id=b.id
+	left join bd_supplier c on a.customer_id=c.id
+	left join bd_category e on e.id=a.goods_categroy_id
+	left join bd_specification f on f.id=a.specification_id
+	left join bd_bill  g on g.bill_no=a.bill_no
+	left join bd_user  u on u.id=a.creator
+	where a.dr=0
+	<if test="type != null and type !=''">
+		and a.type=#{type,jdbcType=VARCHAR}
+	</if>
+	<if test="status != null and status !=''">
+		and a.status=#{status,jdbcType=VARCHAR}
+	</if>
+	<if test="shopId != null and shopId !=''">
+		and a.shop_id=#{shopId,jdbcType=VARCHAR}
+	</if>
+	<if test="companyId != null and companyId !=''">
+		and a.company_id=#{companyId,jdbcType=VARCHAR}
+	</if>
+	<if test="keyword != null and keyword !=''">
+		and (b.name LIKE '%${keyword}%' or  c.name LIKE '%${keyword}%' or a.bill_no LIKE '%${keyword}%' or a.goods_no LIKE '%${keyword}%')
+	</if>
+    order by  a.createtime desc
+</select>
+
+	<select id="CheckBroken"  resultType="com.zero.egg.model.BrokenGoods">
+		SELECT a.*,IFNULL(b.name,c.name) as customername,e.name as categroyname,g.id as billid,
+		case when a.mode=1 then   CONCAT('实重','(',f.weight_min,'~',f.weight_max,')')  else a.marker  end as brokenmarker
+		FROM bd_broken_goods a
+		left join bd_customer b on a.customer_id=b.id
+		left join bd_supplier c on a.customer_id=c.id
+		left join bd_category e on e.id=a.goods_categroy_id
+		left join bd_specification f on f.id=a.specification_id
+		left join bd_bill  g on g.bill_no=a.bill_no
+		where a.dr=0
+		<if test="_parameter != null and _parameter !=''">
+			and a.goods_no=#{_parameter,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="isNewGood" resultType="com.zero.egg.model.Goods" parameterType="string" >
+		select * from bd_goods k
+		<where>
+			<if test="_parameter != null and _parameter != ''">
+				and  k.goods_no  like '%${_parameter}%'  and  k.dr=0
+			</if>
+		</where>
+	</select>
+
+	<select id="GetBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods" >
+		 SELECT u.name as createname, k.*,a.name as customername ,b.name as categoryname,c.bill_no,c.status as  billstatus,
+		 case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
+
+		 FROM bd_shipment_goods k
+		 left join bd_customer a on a.id=k.customer_id
+		 left join bd_category b on b.id=k.goods_category_id
+		 left join bd_bill c on c.task_id=k.task_id
+		 left join bd_specification d on d.id=k.specification_id
+		 left join bd_user  u on u.id=k.creator
+		<where>
+			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
+				and  k.goods_no  like '%${brokenGoodsNo}%'
+			</if>
+			<if test="shopId != null and shopId != ''">
+				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
+			</if>
+			<if test="companyId != null and companyId !=''">
+				and k.company_id=#{companyId,jdbcType=VARCHAR}
+			</if>
+			and  k.dr=0
+		</where>
+		order by  k.createtime desc
+	</select>
+	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods">
+		SELECT 	u.name as createname, k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,f.status as billstatus,
+		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
+
+		FROM bd_goods k
+	    left join bd_supplier a on a.id=k.supplier_id
+	    left join bd_category b on b.id=k.goods_category_id
+		left join bd_specification d on d.id=k.specification_id
+		left join bd_unload_goods  e on e.goods_no=k.goods_no
+		left join bd_bill f on f.task_id=e.task_id
+		left join bd_user  u on u.id=k.creator
+		<where>
+			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
+				and  k.goods_no =#{brokenGoodsNo,jdbcType=VARCHAR}
+			</if>
+			<if test="shopId != null and shopId != ''">
+				and  k.shop_id  = #{shopId,jdbcType=VARCHAR}
+			</if>
+			<if test="companyId != null and companyId !=''">
+				and k.company_id=#{companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="changeGoodsNo != null and changeGoodsNo != ''">
+				and  k.goods_no =#{changeGoodsNo,jdbcType=VARCHAR}
+			</if>
+			<if test="dr != null and dr !='' or 0 == dr">
+				and  k.dr=#{dr,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<update id="updateGoodsDr" parameterType="java.lang.String">
+		update bd_goods set dr=1
+		where goods_no = #{brokenGoodsNo,jdbcType=VARCHAR}
+	</update>
+
+	<select id="GetBarCodeInfo" resultType="com.zero.egg.model.BarCode" parameterType="string">
+		select * from bd_barcode  k where   k.dr=0 and
+		 k.id=#{goodsNo,jdbcType=VARCHAR}
+	</select>
+
+</mapper>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.ShopMapper">
+
+    <select id="getShopListByCompanid"  resultType="com.zero.egg.model.Shop">
+        select  a.*,lv1.id as city1,lv2.id as city2 from bd_shop  a
+        left join bd_city   lv3  on lv3.id=a.city_id
+        left join bd_city   lv2  on lv2.id=lv3.parent_id
+        left join bd_city   lv1  on lv1.id=lv2.parent_id
+        where a.company_id= #{companyId,jdbcType=VARCHAR}
+        and a.dr = false
+    </select>
+
+    <select id="getClietnUseCountByShopid"  resultType="int">
+       select count(*) from bd_user a  where
+       a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.type= #{type,jdbcType=INTEGER} and a.dr=0
+    </select>
+
+    <insert id="addsecret" parameterType="OrderSecret">
+     insert into order_secret(id,company_id,shop_id,secret_key,creator,createtime,modifier,modifytime,dr,customer_id,status)
+     values(REPLACE(UUID(),'-',''),#{companyid},#{shopid},#{secretKey},#{creator},#{createtime},#{modifier},#{modifytime},#{dr},#{customerId},#{status})
+     </insert>
+
+
+    <select id="GetShopSecret"  resultType="com.zero.egg.model.OrderSecret">
+        select k.*,b.createtime as bindtime,c.name,c.phone,c.type,c.status,ct.name as customername
+        from  order_secret k
+        left join bd_customer ct on ct.id=k.customer_id
+        left join order_user_secret  b  on k.id=b.secret_id
+        left join order_user c  on  c.id=b.user_id
+        where  1=1
+        <if test="status != null and status !=''">
+          and  k.status=#{status,jdbcType=VARCHAR}
+        </if>
+        <if test="keyword != null and keyword !=''">
+            and ct.name  LIKE '%${keyword}%'
+        </if>
+        <if test="code != null and code !=''">
+            and  k.shop_id=#{code,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and  k.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="dr != null">
+            and  k.dr=#{dr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+
+    <update id="editsecret" parameterType="OrderSecret">update order_secret
+        <set>
+            <if test="status!= null">status= #{status,jdbcType=VARCHAR},</if>
+            <if test="modifier!= null">modifier= #{modifier,jdbcType=DATE},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}
+    </update>
+
+
+
+    <insert id="addordercategory" parameterType="OrderCategory">
+        insert into order_category(id,company_id,shop_id,name,pid,createtime,level,sort_order,icon_url,pic_url,modifytime,dr)
+        values(#{id},#{companyId},#{shopId},#{name},#{pid},#{createtime},#{level},#{sortOrder},#{iconUrl},#{picUrl},#{modifytime},#{dr})
+    </insert>
+
+
+    <insert id="addordergood" parameterType="OrderGoods">
+        insert into order_goods(id,company_id,shop_id,goods_sn,name,category_id,gallery,keywords,brief,is_on_sale,sort_order,
+                                pic_url,detail,createtime,modifytime,dr)
+        values(#{id},#{companyId},#{shopId},#{goodsSn},#{name},#{categoryId},#{gallery},#{keywords},#{brief},#{isOnSale},
+               #{sortOrder},#{picUrl},#{detail},#{createtime},#{modifytime},#{dr})
+    </insert>
+
+
+    <insert id="addordergoodspec" parameterType="OrderGoodSpecification">
+        insert into order_goods_specification(id,goods_id,specification,value,pic_url,creator,createtime,modifier,modifytime,dr,price)
+        values(#{id},#{goodsId},#{specification},#{value},#{picUrl},#{creator},#{createtime},#{modifier},#{modifytime},#{dr},#{price})
+    </insert>
+
+
+    <select id="GetOrderGoodsSort"  resultType="int">
+        select count(*)+1 from order_goods a  where
+            a.shop_id= #{shopId,jdbcType=VARCHAR}  and a.category_id= #{categoryId,jdbcType=VARCHAR} and a.dr=0
+    </select>
+
+    <update id="editrdercategory" parameterType="OrderCategory">update order_category
+        <set>
+            <if test="pid!= null and pid!=''">name= #{pid,jdbcType=VARCHAR},</if>
+            <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+            <if test="iconUrl!= null">icon_url= #{iconUrl,jdbcType=VARCHAR},</if>
+            <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="editordergoodspec" parameterType="OrderCategory">update order_goods_specification
+        <set>
+            <if test="specification!= null and specification!=''">specification= #{specification,jdbcType=VARCHAR},</if>
+            <if test="value!= null and value!=''">value= #{value,jdbcType=VARCHAR},</if>
+            <if test="goodsId!= null">goods_id= #{goodsId,jdbcType=VARCHAR},</if>
+            <if test="price!= null and price!=''">price= #{price,jdbcType=VARCHAR},</if>
+            <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="modifier!= null">modifier= #{modifier,jdbcType=VARCHAR},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateGoodSepcification" parameterType="OrderGoods">
+            update order_goods_specification set  dr=1
+            where goods_id= #{id,jdbcType=VARCHAR}
+    </update>
+
+
+
+
+
+    <update id="editordergood" parameterType="OrderGoods">update order_goods
+        <set>
+            <if test="goodsSn!= null and goodsSn!=''">goods_sn= #{goodsSn,jdbcType=VARCHAR},</if>
+            <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+            <if test="categoryId!= null">category_id= #{categoryId,jdbcType=VARCHAR},</if>
+            <if test="keywords!= null">keywords= #{keywords,jdbcType=VARCHAR},</if>
+            <if test="gallery!= null">gallery= #{gallery,jdbcType=VARCHAR},</if>
+            <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
+            <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
+            <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
+            <if test="detail!= null">detail= #{detail,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="dr!= null">dr= #{dr,jdbcType=VARCHAR}</if>
+        </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopId,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="GetOrderCateGory"  resultType="com.zero.egg.responseDTO.OrderCategoryResponseDTO">
+        SELECT * FROM order_category a
+        where  a.pid=''
+        <if test="shopId != null and shopId !=''">
+           and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="dr != null and dr !='' or 0 == dr">
+          and  a.dr=#{dr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="GetOrderCateGoryChild"  resultType="com.zero.egg.model.OrderCategory" parameterType="OrderCategory">
+        SELECT a.*,b.name as pname FROM order_category a
+        left join order_category b on a.pid=b.id
+        where  a.pid=#{pid,jdbcType=VARCHAR}
+        <if test="shopId != null and shopId !=''">
+          and   a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="childdr != null and childdr !='' or 0 == childdr">
+            and  a.dr=#{childdr,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="GetOrderGoods"  resultType="com.zero.egg.model.OrderGoods" parameterType="OrderGoodsRequestDTO">
+        SELECT a.*,b.name as category FROM order_goods a
+        left join order_category b on a.category_id=b.id
+        where  a.dr=0
+        <if test="id != null and id !=''">
+            and   a.id=#{id,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name !=''">
+            and   a.name LIKE '%${name}%'
+        </if>
+        <if test="goodsSn != null and goodsSn !=''">
+            and   a.goods_sn LIKE '%${goodsSn}%'
+        </if>
+        <if test="categoryId != null and categoryId !=''">
+            and   a.category_id=#{categoryId,jdbcType=VARCHAR}
+        </if>
+        <if test="shopId != null and shopId !=''">
+            and   a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and   a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="isOnSale != null and isOnSale !='' or 0 == isOnSale">
+            and  a.is_on_sale=#{isOnSale,jdbcType=VARCHAR}
+        </if>
+
+    </select>
+
+    <select id="GetOrderGoodSpecList"  resultType="com.zero.egg.model.OrderGoodSpecification" parameterType="OrderGoods">
+        SELECT * FROM order_goods_specification a
+        where  a.dr=0
+        <if test="id != null and id !=''">
+            and  a.goods_id=#{id,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+    <select id="getOrderGoodsForCheck"  resultType="OrderGoods" parameterType="OrderGoods">
+        SELECT * FROM order_goods a
+        where  a.dr=0
+        <if test="name != null and name !=''">
+            and  a.name=#{name,jdbcType=VARCHAR}
+        </if>
+        <if test="goodsSn != null and goodsSn !=''">
+            and  a.goods_sn=#{goodsSn,jdbcType=VARCHAR}
+        </if>
+        <if test="categoryId != null and categoryId !=''">
+            and   a.category_id=#{categoryId,jdbcType=VARCHAR}
+        </if>
+        <if test="id != null and id !=''">
+            and  a.id not in (#{id,jdbcType=VARCHAR})
+        </if>
+    </select>
+
+
+</mapper>

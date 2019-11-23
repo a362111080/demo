@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.UserMapper">
+    <select id="getUserinfo" parameterType="com.zero.egg.model.User" resultType="com.zero.egg.model.User">
+
+        select * from bd_user k
+        where k.dr=0  and  k.loginname=#{loginname,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="GetUserUpdateClientCount" parameterType="com.zero.egg.model.User" resultType="int">
+        select info.portcount-info.counts from (
+        select count(*) as counts,a.type,
+        case when a.type='1' then  b.pc_client
+        when  a.type='2' then b.boss_client
+        when a.type='3' THEN b.staff_client
+        else b.device_client  end as portcount
+        from bd_user  a
+        left join bd_shop b on a.shop_id=b.id
+        where a.shop_id= #{shopId,jdbcType=VARCHAR}
+        and a.dr=0 and a.id not in ( #{id,jdbcType=VARCHAR} )  and  a.type=#{type,jdbcType=VARCHAR}
+        group by a.type,b.pc_client,b.boss_client,b.staff_client,b.device_client)  info
+    </select>
+
+
+    <select id="getUserList" parameterType="com.zero.egg.requestDTO.UserRequest"
+            resultType="com.zero.egg.responseDTO.UserListResponseDTO">
+        SELECT
+        u.id,
+        u.shop_id,
+        u.company_id,
+        u.code,
+        u.loginname,
+        u.type,
+        u.name,
+        u.sex,
+        u.phone,
+        u.password,
+        u.status,
+        u.creator,
+        u.createtime,
+        u.modifier,
+        u.modifytime,
+        u.dr,
+        s.name AS shopName
+        FROM
+        bd_user u
+        LEFT JOIN supper_egg_dev.bd_shop s
+        ON u.shop_id = s.id
+        <where>
+            u.dr = 0
+            AND u.company_id = #{companyId,jdbcType=VARCHAR}
+            <if test="null!=name and ''!=name">
+                AND u.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="null!=code and ''!=code">
+                AND u.code LIKE CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="null!=status and ''!=status">
+                AND u.status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="null!=type and ''!=type">
+                AND u.type = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="null!=shopId and ''!=shopId">
+                AND u.shop_id = #{shopId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

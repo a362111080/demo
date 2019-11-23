@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.CustomerMapper">
+    <sql id="Base_Column_List">
+	id,
+	shop_id,
+	company_id,
+	code,
+	`name`,
+	weight_mode,
+	short_name,
+	`type`,
+	phone,
+	linkman,
+	remark,
+	`status`,
+	creator,
+	createtime,
+	modifier,
+	modifytime,
+	city_id,
+	is_retail
+</sql>
+    <resultMap id="BaseResultMap" type="com.zero.egg.model.Customer">
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopid"/>
+        <result column="company_id" property="companyid"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="weight_mode" property="weightMode"/>
+        <result column="short_name" property="shortname"/>
+        <result column="type" property="type"/>
+        <result column="phone" property="phone"/>
+        <result column="linkman" property="linkman"/>
+        <result column="remark" property="remark"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="createtime" property="createtime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifytime" property="modifytime"/>
+        <result column="city_id" property="cityid"/>
+        <result column="is_retail" property="isRetail"/>
+    </resultMap>
+    <insert id="AddCustomer" parameterType="Customer">insert into bd_customer(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr,weight_mode,is_retail)
+    values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('CT',LPAD((SELECT COUNT(1)+1 from bd_customer),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0,#{weightMode},#{isRetail})</insert>
+    <update id="UpdateCustomer" parameterType="Customer">update bd_customer
+        <set>
+            <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+            <if test="shortname!= null and shortname!=''">short_name= #{shortname,jdbcType=VARCHAR},</if>
+            <if test="type!= null and type!=''">type= #{type,jdbcType=VARCHAR},</if>
+            <if test="linkman!= null and linkman!=''">linkman= #{linkman,jdbcType=VARCHAR},</if>
+            <if test="remark!= null and remark!=''">remark= #{remark,jdbcType=VARCHAR},</if>
+            <if test="phone!= null and phone!=''">phone= #{phone,jdbcType=VARCHAR},</if>
+            <if test="status!= null and status !=''">status= #{status,jdbcType=VARCHAR},</if>
+            <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
+            <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+            <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
+            <if test="weightMode!= null">weight_mode= #{weightMode,jdbcType=VARCHAR},</if>
+        </set>
+        where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}
+    </update>
+
+    <update id="DeleteCustomer" parameterType="java.util.List">
+        <if test="list!=null">
+
+            update bd_customer set dr=1 where id in
+            <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+    </update>
+    <select id="GetCustomerList" parameterType="CustomerRequestDTO" resultType="com.zero.egg.model.Customer">
+        select k.*,lv1.id as city1,lv2.id as city2 from bd_customer k
+        left join bd_city lv3 on lv3.id=k.city_id
+        left join bd_city lv2 on lv2.id=lv3.parent_id
+        left join bd_city lv1 on lv1.id=lv2.parent_id
+        <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type !=''">
+                and k.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name !=''">
+                and k.name LIKE '%${name}%'
+            </if>
+            <if test="checkname != null and checkname !=''">
+                and k.name=#{checkname,jdbcType=VARCHAR}
+            </if>
+            <if test="bindSecret != null and bindSecret !=''">
+                and k.id  not in (select distinct n.customer_id from order_secret n where n.dr=0)
+            </if>
+            <if test="status != null and status !='-1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr = 0
+            and k.is_retail = 0
+            and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            and k.company_id=#{companyId,jdbcType=VARCHAR}
+        </where>
+    </select>
+
+    <select id="getShipmentSupplierList" parameterType="CustomerRequestDTO" resultType="com.zero.egg.model.Customer">
+        select k.*from bd_customer k
+        <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type !=''">
+                and k.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name !=''">
+                and k.name LIKE '%${name}%'
+            </if>
+            <if test="checkname != null and checkname !=''">
+                and k.name=#{checkname,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status !='-1' and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr = 0
+            and k.company_id=#{companyId,jdbcType=VARCHAR}
+            and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            order by k.is_retail DESC
+        </where>
+    </select>
+
+
+    <select id="GetCitys" parameterType="city" resultType="city">
+        select * from bd_city k
+        <where>
+            <if test="parentId != null and parentId !=''">
+                k.parent_id=#{parentId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+<!--auto generated by MybatisCodeHelper on 2019-08-02-->
+    <select id="getOneById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bd_customer
+        where id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.OrderBillDetailMapper">
+  <resultMap id="BaseResultMap" type="com.zero.egg.model.OrderBillDetail">
+    <!--@mbg.generated-->
+    <!--@Table order_order_detail-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="shop_id" jdbcType="VARCHAR" property="shopId" />
+    <result column="cart_id" jdbcType="VARCHAR" property="cartId" />
+    <result column="order_category_id" jdbcType="VARCHAR" property="orderCategoryId" />
+    <result column="order_category_name" jdbcType="VARCHAR" property="orderCategoryName" />
+    <result column="specification_id" jdbcType="VARCHAR" property="specificationId" />
+    <result column="specification_name" jdbcType="VARCHAR" property="specificationName" />
+    <result column="specification_value" jdbcType="VARCHAR" property="specificationValue" />
+    <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+    <result column="quantity" jdbcType="DECIMAL" property="quantity" />
+    <result column="subtotal" jdbcType="DECIMAL" property="subtotal" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="dr" jdbcType="BOOLEAN" property="dr" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, order_id, company_id, shop_id, cart_id, order_category_id, order_category_name, specification_id,
+    specification_name, specification_value, goods_price, quantity, subtotal, createtime,
+    modifytime, dr
+  </sql>
+</mapper>

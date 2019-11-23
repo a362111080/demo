@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.SupplierMapper">
+    <insert id="AddSupplier" parameterType="Supplier">insert into bd_supplier(id,code,name,short_name,type,phone,linkman,status,remark,shop_id,creator,createtime,company_id,modifier,modifytime,city_id,dr)
+    values(REPLACE(UUID(),'-',''),(select a.spcode from(SELECT CONCAT('SP',LPAD((SELECT COUNT(1)+1 from bd_supplier),4,'0')) as spcode FROM DUAL) a),#{name},#{shortname},#{type},#{phone},#{linkman},
+           #{status},#{remark},#{shopid},#{creator},#{createtime},#{companyid},#{modifier},#{modifytime},#{cityid},0)</insert>
+    <update id="UpdateSupplier" parameterType="Supplier">update bd_supplier
+    <set>
+        <if test="name!= null and name!=''">name= #{name,jdbcType=VARCHAR},</if>
+        <if test="shortname!= null and shortname!=''">short_name= #{shortname,jdbcType=VARCHAR},</if>
+        <if test="type!= null and type!=''">type= #{type,jdbcType=VARCHAR},</if>
+        <if test="linkman!= null and linkman!=''">linkman= #{linkman,jdbcType=VARCHAR},</if>
+        <if test="remark!= null and remark!=''">remark= #{remark,jdbcType=VARCHAR},</if>
+        <if test="phone!= null and phone!=''">phone= #{phone,jdbcType=VARCHAR},</if>
+        <if test="status!= null and status !=''">status= #{status,jdbcType=VARCHAR},</if>
+        <if test="modifier!= null and modifier!=''">modifier= #{modifier,jdbcType=VARCHAR},</if>
+        <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
+        <if test="cityid!= null">city_id= #{cityid,jdbcType=VARCHAR},</if>
+    </set>where id= #{id,jdbcType=VARCHAR} and shop_id= #{shopid,jdbcType=VARCHAR}</update>
+    <update id="DeleteSupplier" parameterType="java.util.List">
+        <if test="list!=null">
+            update bd_supplier set dr=1
+            where id in
+            <foreach collection="list" item="id" index= "index" open="(" close=")" separator =",">
+                    #{id}
+            </foreach>
+        </if>
+    </update>
+    <select id="GetSupplierList" parameterType="SupplierRequestDTO" resultType="com.zero.egg.model.Supplier">
+    		select  k.*,lv1.id as city1,lv2.id as city2 from bd_supplier k
+            left join bd_city   lv3  on lv3.id=k.city_id
+            left join bd_city   lv2  on lv2.id=lv3.parent_id
+            left join bd_city   lv1  on lv1.id=lv2.parent_id
+        <where>
+            <if test="id != null and id !=''">
+                k.id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null and code !=''">
+                k.code=#{code,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null and type !=''">
+                and k.type=#{type,jdbcType=VARCHAR}
+            </if>
+            <if test="shortname != null and shortname !=''">
+                and k.short_name LIKE '%${shortname}%'
+            </if>
+            <if test="name != null and name !=''">
+                and k.name LIKE '%${name}%'
+            </if>
+            <if test="checkname != null and checkname !=''">
+                and k.name=#{checkname,jdbcType=VARCHAR}
+            </if>
+
+            <if test="companyId != null and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+            <if test="shopId != null and shopId !=''">
+                and k.shop_id=#{shopId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null  and status !=''">
+                and k.status=#{status,jdbcType=INTEGER}
+            </if>
+            and k.dr=0
+        </where>
+    </select>
+</mapper>

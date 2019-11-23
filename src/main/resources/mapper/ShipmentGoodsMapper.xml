@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.egg.dao.ShipmentGoodsMapper">
+
+    <select id="listByCondition" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT s.*,p.id as programId,p.name as programName,c.id as categoryId,c.name as categoryName,u.name as operator
+        FROM bd_shipment_goods s
+        left JOIN bd_user u ON s.creator = u.id
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        INNER JOIN bd_category c ON p.category_id = c.id
+
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="countprogram" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT p.id as programId,p.name as programName FROM bd_shipment_goods s
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="countcategory" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT c.id as categoryId,c.name as categoryName FROM bd_shipment_goods s
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        INNER JOIN bd_category c ON p.category_id = c.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="countspecification" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT s.specification_id,s.marker,COUNT(s.specification_id) as count FROM bd_shipment_goods s
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        INNER JOIN bd_category c ON p.category_id = c.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="todaycountcategory" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT c.id as categoryId,c.name as categoryName FROM (SELECT * FROM bd_shipment_goods
+        <where>
+            <if test="tw.unloadBeginTime == null or tw.unloadEndTime==null ">
+				and to_days(createtime) = to_days(now())
+            </if>
+            <if test="tw.unloadBeginTime != null and tw.unloadEndTime != null">
+				and to_days(createtime) <![CDATA[>=]]> to_days(#{tw.unloadBeginTime})
+            </if>
+            <if test="tw.unloadBeginTime != null and tw.unloadEndTime != null">
+				and to_days(createtime) <![CDATA[<=]]> to_days(#{tw.unloadEndTime})
+            </if>
+            and dr = false
+        </where>
+        ) s
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        INNER JOIN bd_category c ON p.category_id = c.id
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="todaycountspecification" resultType="com.zero.egg.responseDTO.ShipmentGoodsResponse">
+        SELECT s.specification_id,s.marker,COUNT(s.specification_id) as count FROM (SELECT * FROM bd_shipment_goods
+		<where>
+			<if test="tw.unloadBeginTime == null or tw.unloadEndTime==null ">
+				and to_days(createtime) = to_days(now())
+			</if>
+			<if test="tw.unloadBeginTime != null and tw.unloadEndTime != null">
+				and to_days(createtime) <![CDATA[>=]]> to_days(#{tw.unloadBeginTime})
+			</if>
+			<if test="tw.unloadBeginTime != null and tw.unloadEndTime != null">
+				and to_days(createtime) <![CDATA[<=]]> to_days(#{tw.unloadEndTime})
+			</if>
+			and dr = false
+		</where>) s
+        INNER JOIN bd_specification sp ON s.specification_id = sp.id
+        INNER JOIN bd_specification_program p ON sp.program_id = p.id
+        INNER JOIN bd_category c ON p.category_id = c.id
+        ${ew.customSqlSegment}
+    </select>
+</mapper>
