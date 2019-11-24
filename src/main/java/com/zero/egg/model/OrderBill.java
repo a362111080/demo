@@ -159,8 +159,8 @@ public class OrderBill implements Serializable {
     private List<OrderBillDetail> OrderDetlList;
 
 
-    @TableField(exist = false)
-    @ApiModelProperty(value = "送货员",required=false)
-    private String dispatchman;
+    @TableField(value = "accept_status")
+    @ApiModelProperty(value = "受理状态",required=false)
+    private String acceptStatus;
 
 }
