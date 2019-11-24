@@ -1,4 +1,5 @@
 package com.zero.egg.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.OrderSecretMapper;
@@ -117,20 +118,24 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                     .eq("dr", 0));
             //如果没有有效的绑定秘钥信息,则返回空
             if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
-                return null;
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+                return message;
             }
             List<Shop> shops = new ArrayList<>();
             Shop shop;
             OrderSecret orderSecret;
             for (OrderUserSecret orderUserSecret : orderUserSecrets) {
                 orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
-                        .select("shop_id", "company_id")
+                        .select("shop_id", "company_id", "secret_key")
                         .eq("id", orderUserSecret.getSecretId())
-                        .eq("dr", 0));
+                        .eq("dr", 0)
+                        .eq("status", 1));
                 shop = shopMapper.selectOne(new QueryWrapper<Shop>()
                         .eq("id", orderSecret.getShopid())
                         .eq("company_id", orderSecret.getCompanyid())
                         .eq("dr", 0));
+                shop.setSecret(orderSecret.getSecretKey());
                 shops.add(shop);
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
@@ -161,7 +166,9 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                 message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
                 return message;
             }
-            orderSecret.setDr(true);
+            //改变status状态
+//            orderSecret.setDr(true);
+            orderSecret.setStatus(false);
             //删除秘钥信息
             orderSecretMapper.updateById(orderSecret);
             orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()

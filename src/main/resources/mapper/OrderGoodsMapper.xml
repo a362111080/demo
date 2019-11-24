@@ -29,6 +29,7 @@
             <result column="creator" property="creator"/>
             <result column="createtime" property="createtime"/>
             <result column="modifytime" property="modifytime"/>
+            <result column="price" property="price"/>
             <result column="dr" property="dr"/>
         </collection>
     </resultMap>
@@ -37,7 +38,7 @@
         SELECT og.id,og.shop_id,og.company_id,og.goods_sn,og.name,og.category_id,og.gallery,
          og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.detail,og.createtime,og.id,
          og.modifytime,og.dr,ogs.id AS oid,ogs.goods_id,ogs.specification,ogs.specification,ogs.value,
-         ogs.pic_url AS pic,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr
+         ogs.pic_url AS pic,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr,ogs.price
         FROM order_goods og
         LEFT JOIN order_goods_specification ogs ON og.id = ogs.goods_id
         WHERE og.shop_id = #{shopId}
@@ -50,7 +51,7 @@
         SELECT og.id,og.shop_id,og.company_id,og.goods_sn,og.name,og.category_id,og.gallery,
         og.keywords,og.brief,og.is_on_sale,og.sort_order,og.pic_url,og.detail,og.createtime,og.id,
         og.modifytime,og.dr,ogs.id AS oid,ogs.goods_id,ogs.specification,ogs.specification,ogs.value,
-        ogs.pic_url AS pic,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr
+        ogs.pic_url AS pic,ogs.modifier,ogs.creator,ogs.createtime,ogs.modifytime,ogs.dr,ogs.price
         FROM order_goods og
         LEFT JOIN order_goods_specification ogs ON og.id = ogs.goods_id
         WHERE og.shop_id = #{shopId}
