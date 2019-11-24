@@ -171,6 +171,10 @@ public interface UtilConstants {
          * 秘钥已经被使用
          */
         public static final String SECRET_HAS_BEEN_USED = "秘钥已经被使用";
+        /**
+         * 没有合作的店铺信息
+         */
+        public static final String NO_COOPERATE_SHOP = "没有合作的店铺信息";
     }
 
     /**

@@ -118,7 +118,9 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                     .eq("dr", 0));
             //如果没有有效的绑定秘钥信息,则返回空
             if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
-                return null;
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+                return message;
             }
             List<Shop> shops = new ArrayList<>();
             Shop shop;
