@@ -115,6 +115,7 @@
             <result column="dsubtotal" property="subtotal"/>
             <result column="dcreatetime" property="createtime"/>
             <result column="dmodifytime" property="modifytime"/>
+            <result column="weightMode" property="weightMode"/>
             <result column="ddr" property="dr"/>
         </collection>
     </resultMap>
@@ -127,8 +128,9 @@
     </sql>
 
     <select id="getOrderBillDetail" resultMap="GetBillDetailMap">
-        SELECT <include refid="Base_Column_List"/>, <include refid="Detail_Sql"/> FROM order_order oo
+        SELECT <include refid="Base_Column_List"/>, <include refid="Detail_Sql"/>,oc.weight_mode AS weightMode FROM order_order oo
         LEFT JOIN order_order_detail ood ON oo.id = ood.order_id
+        LEFT JOIN order_cart oc ON oc.id = ood.cart_id
         WHERE oo.id = #{orderId} AND oo.user_id = #{userId} AND oo.dr = false
     </select>
 
