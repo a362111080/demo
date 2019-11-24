@@ -83,7 +83,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		se.setCustomerId(shop.getCustomerId());
 		se.setCreator(loginUser.getId());
 		se.setModifier(loginUser.getId());
-		se.setStatus(false);
+		se.setStatus(true);
 		se.setCreatetime(new Date());
 		se.setModifytime(new Date());
 		se.setDr(false);
