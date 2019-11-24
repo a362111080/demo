@@ -131,6 +131,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                         .eq("id", orderSecret.getShopid())
                         .eq("company_id", orderSecret.getCompanyid())
                         .eq("dr", 0));
+                shop.setSecret(orderSecret.getSecretKey());
                 shops.add(shop);
             }
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
