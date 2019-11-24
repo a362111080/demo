@@ -160,7 +160,7 @@ public class OrderBill implements Serializable {
 
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "送货员",required=false)
-    private String dispatchman;
+    @ApiModelProperty(value = "受理状态",required=false)
+    private String acceptStatus;
 
 }
