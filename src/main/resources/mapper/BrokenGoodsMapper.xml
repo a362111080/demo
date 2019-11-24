@@ -64,7 +64,7 @@
 		 left join bd_category b on b.id=k.goods_category_id
 		 left join bd_bill c on c.task_id=k.task_id
 		 left join bd_specification d on d.id=k.specification_id
-		 left join bd_user  u on u.id=k.creator
+		 left join bd_user  u on u.id=e.user_id
 		<where>
 			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
 				and  k.goods_no  like '%${brokenGoodsNo}%'
@@ -89,7 +89,7 @@
 		left join bd_specification d on d.id=k.specification_id
 		left join bd_unload_goods  e on e.goods_no=k.goods_no
 		left join bd_bill f on f.task_id=e.task_id
-		left join bd_user  u on u.id=k.creator
+		left join bd_user  u on u.id=e.user_id
 		<where>
 			<if test="brokenGoodsNo != null and brokenGoodsNo != ''">
 				and  k.goods_no =#{brokenGoodsNo,jdbcType=VARCHAR}
