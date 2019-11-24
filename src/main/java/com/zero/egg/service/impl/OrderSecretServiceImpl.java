@@ -124,7 +124,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
             OrderSecret orderSecret;
             for (OrderUserSecret orderUserSecret : orderUserSecrets) {
                 orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
-                        .select("shop_id", "company_id")
+                        .select("shop_id", "company_id","secret_key")
                         .eq("id", orderUserSecret.getSecretId())
                         .eq("dr", 0));
                 shop = shopMapper.selectOne(new QueryWrapper<Shop>()
