@@ -1,19 +1,25 @@
 package com.zero.egg.service;
 
 import com.Apptest;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.OrderBillMapper;
+import com.zero.egg.dao.ResourceMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.model.Category;
+import com.zero.egg.model.Resource;
 import com.zero.egg.requestDTO.CategoryRequestDTO;
 import com.zero.egg.requestDTO.OrderBillDetailsRequestDTO;
 import com.zero.egg.requestDTO.OrderBillListReqeustDTO;
 import com.zero.egg.requestDTO.SpecificationProgramRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
+import com.zero.egg.tool.HttpClientUtil;
 import com.zero.egg.tool.Message;
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -63,6 +70,32 @@ public class BaseInfoServiceTest extends Apptest {
     @Autowired
     private OrderBillMapper orderBillMapper;
 
+    @Autowired
+    private ResourceMapper resourceMapper;
+    @Test
+    public void getAllAPIs(){
+        String apis = HttpClientUtil.doGet("https://www.wuzero.com/api/v2/api-docs");
+        JSONObject apiObj = JSON.parseObject(apis);
+        JSONObject paths = (JSONObject) apiObj.get("paths");
+        Map<String, String> urlSunmmary = new HashedMap();
+        JSONObject value;
+        JSONObject post;
+        Resource resource ;
+        for (Map.Entry<String,Object> entry: paths.entrySet()) {
+            resource = new Resource();
+            value = (JSONObject) entry.getValue();
+            post = (JSONObject)value.get("post");
+            if (post == null) {
+                post = (JSONObject)value.get("get");
+            }
+            urlSunmmary.put(entry.getKey(), post.get("summary").toString());
+            resource.setName(post.get("summary").toString());
+            resource.setContent(entry.getKey());
+            resourceMapper.insert(resource);
+            resource = null;
+        }
+
+    }
 
     @Test
     public void test() {
