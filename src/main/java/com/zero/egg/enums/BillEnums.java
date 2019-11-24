@@ -48,7 +48,7 @@ public class BillEnums {
 
 	public enum OrderStatus {
 
-		Received(1, "已接单"), Completed(-1, "已完成"), Missed(0, "未接单");
+		Received(2, "已接单"), Completed(3, "已完成"), Missed(1, "未接单"),Canceld(4,"已取消");
 
 		private Integer index;
 		private String note;
