@@ -42,7 +42,7 @@
         LEFT JOIN order_goods_specification ogs ON og.id = ogs.goods_id
         WHERE og.shop_id = #{shopId}
         <if test="name != null and name != ''">
-            AND og.name LIKE CONCAT('%',name,'%')
+            AND og.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
         </if>
        AND og.dr = 0 AND ogs.dr = 0 AND og.is_on_sale = 1
     </select>
@@ -55,7 +55,7 @@
         LEFT JOIN order_goods_specification ogs ON og.id = ogs.goods_id
         WHERE og.shop_id = #{shopId}
         <if test="name != null and name != ''">
-            AND og.name LIKE CONCAT('%',name,'%')
+            AND og.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
         </if>
         AND og.category_id = #{categoryId}
         AND og.dr = 0
