@@ -42,6 +42,12 @@ public class OrderGoodsSpecification implements Serializable {
     private String picUrl;
 
     /**
+     * 商品规格图片,联查用
+     */
+    @TableField(exist = false)
+    private String pic;
+
+    /**
      * 创建人
      */
     @TableField(value = "creator")
