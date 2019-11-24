@@ -167,11 +167,11 @@ public class OrderBillController {
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         model.setShopId(loginUser.getShopId());
         model.setCompanyId(loginUser.getCompanyId());
-        if(model.getOrderStatus().toString()==BillEnums.OrderStatus.Received.index().toString())
+        if(model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Received.index().toString()))
         {
             model.setAcceptStatus(BillEnums.OrderStatus.Received.index().toString());
         }
-        if(model.getOrderStatus().toString()==BillEnums.OrderStatus.Canceld.index().toString())
+        if(model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Canceld.index().toString()))
         {
             model.setAcceptStatus(BillEnums.OrderStatus.Canceld.index().toString());
         }

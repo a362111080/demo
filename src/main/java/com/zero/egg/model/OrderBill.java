@@ -159,7 +159,7 @@ public class OrderBill implements Serializable {
     private List<OrderBillDetail> OrderDetlList;
 
 
-    @TableField(exist = false)
+    @TableField(value = "accept_status")
     @ApiModelProperty(value = "受理状态",required=false)
     private String acceptStatus;
 
