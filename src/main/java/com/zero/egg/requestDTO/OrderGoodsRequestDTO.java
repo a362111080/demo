@@ -37,4 +37,7 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
 
     @ApiModelProperty(value="删除标识")
     private Boolean dr;
+
+    @ApiModelProperty(value="订单编号")
+    private String orderSn;
 }
