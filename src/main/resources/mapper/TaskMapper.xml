@@ -11,6 +11,9 @@
         left join bd_supplier d on d.id=a.cussup_id
         left join bd_category e on e.id=c.category_id
         <where>
+            <if test="id != null and id !=''">
+                and a.id=#{id,jdbcType=VARCHAR}
+            </if>
             <if test="type != null and type !=''">
                 and a.type=#{type,jdbcType=VARCHAR}
             </if>

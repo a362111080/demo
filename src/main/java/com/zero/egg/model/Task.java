@@ -132,5 +132,8 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
     public List<BillDetails>  UnloadDetails;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "操作前任务状态",hidden=true)
+    private String statusBefore;
 
 }
