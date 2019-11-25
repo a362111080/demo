@@ -163,6 +163,21 @@
     </select>
 
 
+    <select id="getUserList"  resultType="com.zero.egg.model.User">
+        SELECT * FROM bd_user a
+        where 1=1
+        <if test="shopId != null and shopId !=''">
+            and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name !=''">
+            and  a.name=#{name,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
 
 
     <select id="GetOrderCateGoryChild"  resultType="com.zero.egg.model.OrderCategory" parameterType="OrderCategory">

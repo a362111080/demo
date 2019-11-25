@@ -60,4 +60,6 @@ public interface IShopService extends IService<Shop> {
     int updateGoodSepcification(OrderGoods model);
 
     List<OrderCategory> getCategoryInfo(OrderCategory model);
+
+    List<User> getUserList(User user);
 }

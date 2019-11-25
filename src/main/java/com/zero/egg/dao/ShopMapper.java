@@ -57,4 +57,6 @@ public interface ShopMapper extends BaseMapper<Shop> {
     int updateGoodSepcification(OrderGoods model);
 
     List<OrderCategory> getCategoryInfo(OrderCategory model);
+
+    List<User> getUserList(User user);
 }

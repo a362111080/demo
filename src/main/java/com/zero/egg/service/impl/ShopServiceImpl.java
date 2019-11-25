@@ -190,4 +190,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		return mapper.getCategoryInfo(model);
 	}
 
+	@Override
+	public List<User> getUserList(User user) {
+		return mapper.getUserList(user);
+	}
+
 }

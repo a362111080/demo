@@ -152,14 +152,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 					checkResult = false;
 				}
 			}
+
+
 			if (checkResult) {
-				if (save(user)) {
-					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-				}else {
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.FAILED);
+
+				//验证名称是否重复
+				List<User> res =shopService.getUserList(user);
+				if (res.size()>0 )
+				{
+					 if (res.get(0).getId().equals(user.getId()))
+					 {
+						 if (save(user)) {
+							 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						 }else {
+							 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							 message.setMessage(UtilConstants.ResponseMsg.FAILED);
+						 }
+					 }
+					 else
+					 {
+						 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						 message.setMessage("姓名重复，请重新输入！");
+					 }
 				}
+				else
+				{
+					if (save(user)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+
+
+
 			}else {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 			}
@@ -279,14 +308,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		}
 		else
 		{
-			user.setModifytime(new Date());
-			if (updateById(user)) {
-				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-			}else {
-				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-				message.setMessage(UtilConstants.ResponseMsg.FAILED);
+			//验证名称是否重复
+			List<User> res =shopService.getUserList(user);
+			if (res.size()>0 )
+			{
+				if (res.get(0).getId().equals(user.getId()))
+				{
+					user.setModifytime(new Date());
+					if (updateById(user)) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					}else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.FAILED);
+					}
+				}
+				else
+				{
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage("姓名重复，请重新输入！");
+				}
 			}
+			else
+			{
+				user.setModifytime(new Date());
+				if (updateById(user)) {
+					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				}else {
+					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+					message.setMessage(UtilConstants.ResponseMsg.FAILED);
+				}
+			}
+
+
 		}
 
 
