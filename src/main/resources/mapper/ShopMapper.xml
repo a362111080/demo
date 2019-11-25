@@ -148,6 +148,23 @@
         </if>
     </select>
 
+    <select id="getCategoryInfo"  resultType="com.zero.egg.model.OrderCategory">
+        SELECT * FROM order_category a
+        where 1=1
+        <if test="shopId != null and shopId !=''">
+            and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name !=''">
+            and  a.name=#{name,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+
+
     <select id="GetOrderCateGoryChild"  resultType="com.zero.egg.model.OrderCategory" parameterType="OrderCategory">
         SELECT a.*,b.name as pname FROM order_category a
         left join order_category b on a.pid=b.id

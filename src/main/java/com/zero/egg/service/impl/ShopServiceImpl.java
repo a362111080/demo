@@ -184,4 +184,10 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 		return mapper.updateGoodSepcification(model);
 	}
 
+	@Override
+	public List<OrderCategory> getCategoryInfo(OrderCategory model) {
+
+		return mapper.getCategoryInfo(model);
+	}
+
 }

@@ -402,16 +402,24 @@ public class ShopController {
 		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				int strval = shopService.addordercategory(model, loginUser);
-				if (strval > 0) {
-					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-				}
-				else
-				{
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("操作失败");
-				}
+			    //判断类目名称是否重复
+                List<OrderCategory> res =shopService.getCategoryInfo(model);
+                if (res.size()>0) {
+                    message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                    message.setMessage("类目名称重复！");
+                }
+                else
+                {
+                    int strval = shopService.addordercategory(model, loginUser);
+                    if (strval > 0) {
+                        message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                        message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                    } else {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage("操作失败");
+                    }
+
+                }
 			}
 			catch (Exception e) {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -441,16 +449,25 @@ public class ShopController {
 		model.setShopId(loginUser.getShopId());
 		if (loginUser.getCompanyId()!=null) {
 			try {
-				int strval = shopService.editrdercategory(model);
-				if (strval > 0) {
-					message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-					message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-				}
-				else
-				{
-					message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-					message.setMessage("操作失败");
-				}
+                //判断类目名称是否重复
+                List<OrderCategory> res =shopService.getCategoryInfo(model);
+                if (res.size()>0) {
+                    if (res.get(0).getId()==model.getId()) {
+                        int strval = shopService.editrdercategory(model);
+                        if (strval > 0) {
+                            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                        } else {
+                            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                            message.setMessage("操作失败");
+                        }
+                    }
+                    else
+                    {
+                        message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                        message.setMessage("类目名称重复！");
+                    }
+                }
 			}
 			catch (Exception e) {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
