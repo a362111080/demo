@@ -119,6 +119,7 @@ public class CustomerManageController {
             CustomerRequestDTO dto = new CustomerRequestDTO();
             dto.setCheckname(model.getName());
             dto.setShopId(user.getShopId());
+            dto.setShopId(user.getShopId());
             List<Customer> isCheck = CustomerSv.GetCustomerList(dto);
             if (isCheck.size() == 0) {
 

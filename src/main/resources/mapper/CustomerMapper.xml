@@ -101,7 +101,10 @@
             and k.dr = 0
             and k.is_retail = 0
             and k.shop_id=#{shopId,jdbcType=VARCHAR}
-            and k.company_id=#{companyId,jdbcType=VARCHAR}
+            <if test="companyId != null  and companyId !=''">
+                and k.company_id=#{companyId,jdbcType=VARCHAR}
+            </if>
+
         </where>
     </select>
 
