@@ -373,6 +373,7 @@ public class TaskController {
             //获取当前任务状态
             TaskRequest ckdto=new TaskRequest();
             ckdto.setId(model.getId());
+            ckdto.setType(TaskEnums.Type.Unload.index().toString());
             List<Task> res = taskService.QueryTaskList(ckdto);
             if (res.get(0).getStatus().equals(model.getStatusBefore())) {
                 if (null != model.getId()) {
