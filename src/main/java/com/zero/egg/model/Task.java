@@ -104,25 +104,14 @@ public class Task implements Serializable {
 	}
 
 
-    @TableField(exist = false)
-    @ApiModelProperty(value = "卸货任务结束使用",hidden=true)
-    private String cussupid;
-
     public String getCussupId() {
-        return cussupid;
+        return cussupId;
     }
 
     public void setCussupId(String cussupId) {
         this.cussupId = cussupId;
     }
 
-    public String getCussupid() {
-        return cussupid;
-    }
-
-    public void setCussupid() {
-        this.cussupid = this.cussupId;
-    }
 
     @TableField(exist = false)
     @ApiModelProperty(value = "更好任务方案使用",hidden=true)
