@@ -267,7 +267,7 @@ public class TaskController {
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
-
+            task.setCussupid();
             /**
              * 权限判断,只有PC端和老板移动端能取消任务
              */

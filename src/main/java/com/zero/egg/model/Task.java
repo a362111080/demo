@@ -120,8 +120,8 @@ public class Task implements Serializable {
         return cussupid;
     }
 
-    public void setCussupid(String cussupid) {
-        this.cussupid = cussupid;
+    public void setCussupid() {
+        this.cussupid = this.cussupId;
     }
 
     @TableField(exist = false)
