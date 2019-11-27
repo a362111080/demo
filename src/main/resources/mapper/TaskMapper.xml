@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.TaskMapper">
+    <resultMap id="BaseResultMap" type="Task">
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="equipment_no" property="equipmentNo"/>
+        <result column="status" property="status"/>
+        <result column="type" property="type"/>
+        <result column="remark" property="remark"/>
+        <result column="creator" property="creator"/>
+        <result column="createtime" property="createtime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifytime" property="modifytime"/>
+        <result column="dr" property="dr"/>
+    </resultMap>
+
     <select id="QueryTaskList" resultType="com.zero.egg.model.Task">
         SELECT a.*,b.program_id,c.name as programName,d.name as cussupName,e.name as categoryname,a.cussup_id as
         cussupId,
@@ -88,10 +103,10 @@
         where k.task_id=#{id,jdbcType=VARCHAR}
         group by k.shop_id,k.company_id,k.specification_id,ca.name
     </select>
-    <select id="QueryShipmentTaskList" resultType="com.zero.egg.model.Task">
+    <select id="QueryShipmentTaskList" resultMap="BaseResultMap">
         SELECT
             t.id,
-            t.cussup_id as cussupid,
+            t.cussup_id,
             t.remark,
             t.`status`,
             t.type,
@@ -126,5 +141,31 @@
         values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
                #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskId})
     </insert>
+    <sql id="Join_Column_List">
+        <!--@mbg.generated-->
+        bd_goods.id as bd_goods_id,
+        bd_goods.shop_id as bd_goods_shop_id,
+        bd_goods.company_id as bd_goods_company_id,
+        bd_goods.cussup_id as bd_goods_cussup_id,
+        bd_goods.cussup_name as bd_goods_cussup_name,
+        bd_goods.program_id as bd_goods_program_id,
+        bd_goods.program_name as bd_goods_program_name,
+        bd_goods.category_id as bd_goods_category_id,
+        bd_goods.categoryname as bd_goods_categoryname,
+        bd_goods.equipment_no as bd_goods_equipment_no,
+        bd_goods.status as bd_goods_status,
+        bd_goods.type as bd_goods_type,
+        bd_goods.remark as bd_goods_remark,
+        bd_goods.creator as bd_goods_creator,
+        bd_goods.createtime as bd_goods_createtime,
+        bd_goods.modifier as bd_goods_modifier,
+        bd_goods.modifytime as bd_goods_modifytime,
+        bd_goods.dr as bd_goods_dr,
+        bd_goods.cussupid as bd_goods_cussupid,
+        bd_goods.new_program as bd_goods_new_program,
+        bd_goods.unload_details as bd_goods_unload_details,
+        bd_goods.status_before as bd_goods_status_before
+    </sql>
+
 
 </mapper>
