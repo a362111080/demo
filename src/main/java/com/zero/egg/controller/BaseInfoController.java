@@ -576,7 +576,7 @@ public class BaseInfoController {
             return message;
         } catch (Exception e) {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-            message.setMessage(e.toString());
+            message.setMessage(e.getMessage());
             return message;
         }
 
