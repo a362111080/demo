@@ -53,5 +53,5 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForTimeSpan(UnloadGoods model);
 
-    int SpecificationIsUsed(Specification specification);
+    Integer SpecificationIsUsed(Specification specification);
 }

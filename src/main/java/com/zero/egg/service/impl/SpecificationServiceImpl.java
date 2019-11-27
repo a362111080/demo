@@ -94,7 +94,7 @@ public class SpecificationServiceImpl implements SpecificationService {
             /**
              * 如果方案被使用过,则不能被修改
              */
-            int existFlag = unloadGoodsMapper.SpecificationIsUsed(specification);
+            Integer existFlag = unloadGoodsMapper.SpecificationIsUsed(specification);
             if (existFlag == 1) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SPECIFICATION_USED);
