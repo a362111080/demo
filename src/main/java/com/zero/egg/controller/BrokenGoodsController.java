@@ -311,7 +311,7 @@ public class BrokenGoodsController {
 				//自损
 				Goods  broken=  brokenGoodsService.GetStoBrokenInfo(brokenGoods);
 				if (null!=broken) {
-				    if (broken.getDr().equals(0)) {
+				    if (broken.getDr().equals(false)) {
                         List<BrokenGoods> HadBrokenList = brokenGoodsService.CheckBroken(brokenGoods.getBrokenGoodsNo());
                         if (HadBrokenList.size() == 0) {
                             //自损扫码后直接完成，改变商品状态。

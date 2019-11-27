@@ -82,7 +82,6 @@
 	<select id="GetStoBrokenInfo" resultType="com.zero.egg.model.Goods" parameterType="BrokenGoods">
 		SELECT 	u.name as createname, k.*,a.name as suppliername ,b.name as categoryname,f.bill_no,f.status as billstatus,
 		case when k.mode=1 then   CONCAT('实重','(',d.weight_min,'~',d.weight_max,')')  else k.marker  end as brokenmarker
-
 		FROM bd_goods k
 	    left join bd_supplier a on a.id=k.supplier_id
 	    left join bd_category b on b.id=k.goods_category_id
