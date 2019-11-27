@@ -500,6 +500,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         blankBillDTO.setMode(Integer.parseInt(entryIn.getValue().get(0).getMode()));
 
                         BigDecimal totalWeight = BigDecimal.ZERO;
+                        BigDecimal totalWeightBefore = BigDecimal.ZERO;
                         String specificationId = entryIn.getKey();
                         blankBillDTO.setSpecificationId(specificationId);
 
@@ -508,10 +509,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                                 .eq("shop_id", requestDTO.getShopId())
                                 .eq("company_id", requestDTO.getCompanyId()));
                         blankBillDTO.setProgramId(specification.getProgramId());
+                        blankBillDTO.setNumbericalBefore(specification.getNumerical());
 
                         //循环出货商品,累加重量
                         for (ShipmentGoods shipmentGoods : entryIn.getValue()) {
                             totalWeight = totalWeight.add(shipmentGoods.getWeight());
+                            totalWeightBefore = totalWeight;
                         }
                         //如果mode为1(去皮),则需要做额外处理
                         if (blankBillDTO.getMode() == 1) {
@@ -520,10 +523,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                             totalWeight = totalWeight.add(needToSubtract);
                             blankBillDTO.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                             blankBillDTO.setTotalWeight(totalWeight);
-
+                            blankBillDTO.setTotalWeightBefore(totalWeightBefore);
                         } else {
                             blankBillDTO.setMarker(specification.getMarker());
                             blankBillDTO.setTotalWeight(totalWeight);
+                            blankBillDTO.setTotalWeightBefore(totalWeightBefore);
                         }
                         blankBillDTOList.add(blankBillDTO);
                         blankBillDTO = null;

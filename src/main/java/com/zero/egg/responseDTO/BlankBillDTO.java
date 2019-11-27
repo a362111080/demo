@@ -56,6 +56,9 @@ public class BlankBillDTO implements Serializable {
     @ApiModelProperty(value = "去皮值(仅用于包转去皮时使用)", required = false)
     private BigDecimal numberical;
 
+    @ApiModelProperty(value = "去皮值(仅用于去皮进货时所选方案的去皮值)", required = false)
+    private BigDecimal numbericalBefore;
+
     @ApiModelProperty(value = "数量", required = false)
     private Long quantity;
 
@@ -64,4 +67,7 @@ public class BlankBillDTO implements Serializable {
 
     @ApiModelProperty(value = "小计", required = false)
     private BigDecimal subTotal;
+
+    @ApiModelProperty(value = "没去皮时,实重总和", required = false)
+    private BigDecimal totalWeightBefore;
 }

@@ -161,7 +161,9 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 BigDecimal quantity = new BigDecimal(blankBillDTO.getQuantity());
                 /*
                  * 账单细节应收金额后端重新计算
-                 * 如果货物原本是去皮方式,现在也是去皮方式,小计=价格*重量
+                 * 如果货物原本是去皮方式,现在也是去皮方式,
+                 *             如果没有重新输入去皮值 小计=价格*重量
+                 *             如果重新输入去皮值 小计=价格*(去皮前重量-数量*新去皮值)
                  * 如果货物原本是包方式,现在也是包方式,小计=价格*数量
                  * 如果货物原本是去皮方式,现在是包方式,小计=价格*数量
                  * 如果货物原本是包方式,现在是去皮方式,小计=价格*(重量-数量*去皮值),去皮值=blankBillDTO.getNumberical()
@@ -173,7 +175,11 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     if (1 == blankBillDTO.getMode()) {
                         billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                         /* 去皮进,按斤出 */
-                        subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                        if (null == blankBillDTO.getNumberical()) {
+                            subTotal = price.multiply(blankBillDTO.getTotalWeight());
+                        } else {
+                            subTotal = price.multiply(blankBillDTO.getTotalWeightBefore().subtract(quantity.multiply(blankBillDTO.getNumberical())));
+                        }
                     } else if (2 == blankBillDTO.getMode()) {
                         billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                         billDetails.setNumberical(blankBillDTO.getNumberical());
