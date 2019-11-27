@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.UnloadGoodsMapper;
 import com.zero.egg.model.Specification;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.SaveSpecificationRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.responseDTO.SpecificationResponseDTO;
 import com.zero.egg.service.SpecificationService;
@@ -224,6 +226,44 @@ public class SpecificationServiceImpl implements SpecificationService {
         } catch (Exception e) {
             log.info("batchDeleteStandardDetlByIds error", e);
             throw new ServiceException("batchDeleteStandardDetlByIds error");
+        }
+    }
+
+    @Override
+    public Message saveSpecification(SaveSpecificationRequestDTO saveSpecificationRequestDTO, LoginUser user) {
+        Message message = new Message();
+        try {
+            String name = user.getName();
+            //获取当前方案下所有细节id集合并置为删除状态
+            List<String> ids = this.listStandardDetlIDsByProgramId(saveSpecificationRequestDTO
+                    .getSpecificationRequestDTOS().get(0).getProgramId(), user.getCompanyId(), user.getShopId());
+            /** 如果该方案下细节书不为null**/
+            if (null != ids && 0 < ids.size()) {
+                this.batchDeleteStandardDetlByIds(ids);
+            }
+            /* 迭代方案细节列表,将店铺id和企业id赋予给方案细节,并判断方案细节的id是否为空,为空走新增流程,否则走编辑 */
+            List<SpecificationRequestDTO> dtoList = saveSpecificationRequestDTO.getSpecificationRequestDTOS();
+            for (SpecificationRequestDTO requestDTO : dtoList) {
+                requestDTO.setCompanyId(user.getCompanyId());
+                requestDTO.setShopId(user.getShopId());
+                requestDTO.setModifier(name);
+                if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
+                    //编辑
+                    message = this.updateStandardDetl(requestDTO);
+                } else {
+                    requestDTO.setCreator(name);
+                    message = this.addStandardDetl(requestDTO);
+                }
+                if (message.getState() == UtilConstants.ResponseCode.EXCEPTION_HEAD) {
+                    throw new ServiceException(message.getMessage());
+                }
+            }
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.error("saveSpecification failed:" + e);
+            throw new ServiceException(message.getMessage());
         }
     }
 }

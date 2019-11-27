@@ -1,6 +1,8 @@
 package com.zero.egg.service;
 
 import com.zero.egg.model.Specification;
+import com.zero.egg.requestDTO.LoginUser;
+import com.zero.egg.requestDTO.SaveSpecificationRequestDTO;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.tool.Message;
 
@@ -52,7 +54,7 @@ public interface SpecificationService {
      * @return
      */
     public List<String> listStandardDetlIDsByProgramId(String programId, String companyId, String shopId);
-    
+
     public Specification getById(Specification specification);
 
     /**
@@ -61,4 +63,12 @@ public interface SpecificationService {
      * @param ids
      */
     void batchDeleteStandardDetlByIds(List<String> ids);
+
+    /**
+     * 保存方案细节(包括新增和修改和删除)
+     * @param saveSpecificationRequestDTO
+     * @param user
+     * @return
+     */
+    public Message saveSpecification(SaveSpecificationRequestDTO saveSpecificationRequestDTO, LoginUser user);
 }

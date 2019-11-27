@@ -568,33 +568,7 @@ public class BaseInfoController {
             if (null != saveSpecificationRequestDTO && null != saveSpecificationRequestDTO.getSpecificationRequestDTOS()
                     && !saveSpecificationRequestDTO.getSpecificationRequestDTOS().isEmpty()
                     && null != user.getCompanyId() && null != user.getShopId()) {
-                String name = user.getName();
-                //获取当前方案下所有细节id集合并置为删除状态
-                List<String> ids = specificationService.listStandardDetlIDsByProgramId(saveSpecificationRequestDTO
-                        .getSpecificationRequestDTOS().get(0).getProgramId(), user.getCompanyId(), user.getShopId());
-                /** 如果该方案下细节书不为null**/
-                if (null != ids && 0 < ids.size()) {
-                    specificationService.batchDeleteStandardDetlByIds(ids);
-                }
-                /* 迭代方案细节列表,将店铺id和企业id赋予给方案细节,并判断方案细节的id是否为空,为空走新增流程,否则走编辑 */
-                List<SpecificationRequestDTO> dtoList = saveSpecificationRequestDTO.getSpecificationRequestDTOS();
-                for (SpecificationRequestDTO requestDTO : dtoList) {
-                    requestDTO.setCompanyId(user.getCompanyId());
-                    requestDTO.setShopId(user.getShopId());
-                    requestDTO.setModifier(name);
-                    if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
-                        //编辑
-                        message = specificationService.updateStandardDetl(requestDTO);
-                    } else {
-                        requestDTO.setCreator(name);
-                        message = specificationService.addStandardDetl(requestDTO);
-                    }
-                    if (message.getState() == UtilConstants.ResponseCode.EXCEPTION_HEAD) {
-                        throw new ServiceException(message.getMessage());
-                    }
-                }
-                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+                message = specificationService.saveSpecification(saveSpecificationRequestDTO, user);
             } else {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
