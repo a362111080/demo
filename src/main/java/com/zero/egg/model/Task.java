@@ -109,7 +109,7 @@ public class Task implements Serializable {
     private String cussupid;
 
     public String getCussupId() {
-        return cussupId;
+        return cussupid;
     }
 
     public void setCussupId(String cussupId) {
