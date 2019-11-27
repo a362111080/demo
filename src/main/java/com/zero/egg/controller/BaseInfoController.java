@@ -584,10 +584,13 @@ public class BaseInfoController {
                     requestDTO.setModifier(name);
                     if (null != requestDTO.getId() && !"".equals(requestDTO.getId())) {
                         //编辑
-                        specificationService.updateStandardDetl(requestDTO);
+                        message = specificationService.updateStandardDetl(requestDTO);
                     } else {
                         requestDTO.setCreator(name);
-                        specificationService.addStandardDetl(requestDTO);
+                        message = specificationService.addStandardDetl(requestDTO);
+                    }
+                    if (message.getState() == UtilConstants.ResponseCode.EXCEPTION_HEAD) {
+                        throw new ServiceException(message.getMessage());
                     }
                 }
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);

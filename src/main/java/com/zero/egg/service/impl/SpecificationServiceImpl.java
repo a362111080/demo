@@ -3,6 +3,7 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zero.egg.dao.SpecificationMapper;
+import com.zero.egg.dao.UnloadGoodsMapper;
 import com.zero.egg.model.Specification;
 import com.zero.egg.requestDTO.SpecificationRequestDTO;
 import com.zero.egg.responseDTO.SpecificationResponseDTO;
@@ -35,6 +36,9 @@ public class SpecificationServiceImpl implements SpecificationService {
 
     @Autowired
     private SpecificationMapper specificationMapper;
+
+    @Autowired
+    private UnloadGoodsMapper unloadGoodsMapper;
 
     /**
      * 新增方案细节
@@ -85,6 +89,15 @@ public class SpecificationServiceImpl implements SpecificationService {
         Specification specification = new Specification();
         try {
             TransferUtil.copyProperties(specification, specificationRequestDTO);
+            /**
+             * 如果方案被使用过,则不能被修改
+             */
+            int existFlag = unloadGoodsMapper.SpecificationIsUsed(specification);
+            if (existFlag == 1) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SPECIFICATION_USED);
+                return message;
+            }
             /**
              * 如果计重方式是包,则不计重
              */

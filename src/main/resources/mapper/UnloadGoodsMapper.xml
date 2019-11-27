@@ -2,101 +2,113 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.egg.dao.UnloadGoodsMapper">
     <insert id="AddUnloadDetl" parameterType="UnloadGoods">
-    insert into bd_unload_goods(id,shop_id,company_id,supplier_id,specification_id,program_id,task_id,goods_category_id,goods_no,marker,mode,weight,warn,remark,creator,createtime,modifier,modifytime,dr)
-    values(REPLACE(UUID(),'-',''),#{shopId},#{companyId},#{supplierId},#{specificationId},#{programId},#{taskId},#{goodsCategoryId},
-    #{goodsNo},#{marker},#{mode},#{weight},#{warn},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
+        insert into
+        bd_unload_goods(id,shop_id,company_id,supplier_id,specification_id,program_id,task_id,goods_category_id,goods_no,marker,mode,weight,warn,remark,creator,createtime,modifier,modifytime,dr)
+        values(REPLACE(UUID(),'-',''),#{shopId},#{companyId},#{supplierId},#{specificationId},#{programId},#{taskId},#{goodsCategoryId},
+        #{goodsNo},#{marker},#{mode},#{weight},#{warn},#{remark},#{creator},#{createtime},#{modifier},#{modifytime},0)
     </insert>
-    <select id="CheckWeight"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
-        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode,k.warn FROM bd_specification  k
+    <select id="CheckWeight" resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
+        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode,k.warn FROM bd_specification
+        k
         where k.program_id=#{programId}
-          and k.weight_min <![CDATA[ <= ]]> #{weight}
-          and k.weight_max <![CDATA[ > ]]> #{weight}
-          and k.dr=0
+        and k.weight_min <![CDATA[ <= ]]> #{weight}
+        and k.weight_max <![CDATA[ > ]]> #{weight}
+        and k.dr=0
     </select>
-    <select id="CheckWeightForWarning"  resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
-        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode  FROM bd_specification  k
+    <select id="CheckWeightForWarning" resultType="com.zero.egg.responseDTO.UnLoadResponseDto">
+        SELECT IFNULL(k.numerical,0) as numerical ,k.marker,k.id as specificationId,k.mode FROM bd_specification k
         where k.program_id=#{programId}
         order by k.weight_min limit 1
     </select>
 
 
-    <select id="QueryUnloadGood"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as sumVal,sum(info.warNum) as  warNum,info.mode,info.specification_id,sum(info.sumweight) as sumweight
+    <select id="QueryUnloadGood" resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select
+        info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,sum(info.sumVal) as
+        sumVal,sum(info.warNum) as warNum,info.mode,info.specification_id,sum(info.sumweight) as sumweight
         from (
-        select b.name,a.supplier_id,a.task_id,sum(1) as sumVal,		round(sum(a.marker),2) as sumweight,
+        select b.name,a.supplier_id,a.task_id,sum(1) as sumVal, round(sum(a.marker),2) as sumweight,
         CASE when sp.mode = '1' and s.type='1' THEN CONCAT(pro.name,'(','实重',sp.weight_min,'~',sp.weight_max,')')
-        when sp.mode='2'  and s.type='1' THEN CONCAT( pro.NAME, ' ', '常规' )
-        when s.type='2'  then  CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
-        else  CONCAT(pro.name,' ','常规')
+        when sp.mode='2' and s.type='1' THEN CONCAT( pro.NAME, ' ', '常规' )
+        when s.type='2' then CONCAT( pro.NAME, '(', '实重', sp.weight_min, '~', sp.weight_max, ')' )
+        else CONCAT(pro.name,' ','常规')
         end as programname,a.program_id as programId,a.goods_category_id as goodsCategoryId,
         CASE
         WHEN sp.MODE = '1' and s.type='1' THEN a.specification_id
-        when sp.mode='2'  and s.type='1' THEN  ''
-        when s.type='2'  then  a.specification_id
+        when sp.mode='2' and s.type='1' THEN ''
+        when s.type='2' then a.specification_id
         ELSE ''
         END AS specification_id,
         CASE
-        WHEN sp.mode = '1' and s.type='1' THEN  sp.weight_min
-        when sp.mode='2'  and s.type='1' THEN  ''
-        when s.type='2'  then  sp.weight_min
+        WHEN sp.mode = '1' and s.type='1' THEN sp.weight_min
+        when sp.mode='2' and s.type='1' THEN ''
+        when s.type='2' then sp.weight_min
         ELSE ''
         END AS weight_min, war.warNum,sp.mode
-        from  bd_unload_goods  a
+        from bd_unload_goods a
         INNER JOIN bd_shop s ON s.id = a.shop_id
-        left join bd_category  b  on  a.goods_category_id=b.id
-        left join bd_specification  sp on sp.id=a.specification_id
+        left join bd_category b on a.goods_category_id=b.id
+        left join bd_specification sp on sp.id=a.specification_id
         left join bd_specification_program pro on pro.id=a.program_id
         left join (
-        select m.task_id, m.program_id, sum(1) as warNum,m.goods_category_id,m.specification_id from bd_unload_goods m where m.warn=true  and m.task_id=#{taskId}
+        select m.task_id, m.program_id, sum(1) as warNum,m.goods_category_id,m.specification_id from bd_unload_goods m
+        where m.warn=true and m.task_id=#{taskId}
         GROUP BY m.task_id,m.program_id,m.goods_category_id,m.specification_id
-        ) war on war.task_id=a.task_id and war.program_id=a.program_id  and war.goods_category_id=a.goods_category_id and a.specification_id=war.specification_id
-        where  a.task_id=#{taskId} and  a.dr=0
-        GROUP BY  a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode,s.type)  info
-        group by info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id,info.weight_min
-        order by info.goodsCategoryId,info.programname,info.weight_min	 desc
+        ) war on war.task_id=a.task_id and war.program_id=a.program_id and war.goods_category_id=a.goods_category_id and
+        a.specification_id=war.specification_id
+        where a.task_id=#{taskId} and a.dr=0
+        GROUP BY
+        a.task_id,b.id,a.supplier_id,pro.name,a.program_id,a.goods_category_id,a.specification_id,sp.mode,s.type) info
+        group by
+        info.name,info.supplier_id,info.programname,info.programId,info.goodsCategoryId,info.task_id,info.mode,info.specification_id,info.weight_min
+        order by info.goodsCategoryId,info.programname,info.weight_min desc
     </select>
-    <select id="QueryUnloadGoodForDay"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
-        left join  bd_category  b  on  a.goods_category_id=b.id
-        where  a.shop_id=#{shopId}   and  left(a.createtime,10)=#{unloadTime} and  a.dr=0
-        GROUP BY  a.shop_id,b.id
+    <select id="QueryUnloadGoodForDay" resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select b.name,a.shop_id,b.id,sum(1) as sumVal from bd_unload_goods a
+        left join bd_category b on a.goods_category_id=b.id
+        where a.shop_id=#{shopId} and left(a.createtime,10)=#{unloadTime} and a.dr=0
+        GROUP BY a.shop_id,b.id
     </select>
 
-    <select id="QueryUnloadGoodForTimeSpan" parameterType="UnloadGoods"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select b.name,a.shop_id,b.id,sum(1) as sumVal from  bd_unload_goods  a
-        left join  bd_category  b  on  a.goods_category_id=b.id
+    <select id="QueryUnloadGoodForTimeSpan" parameterType="UnloadGoods"
+            resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select b.name,a.shop_id,b.id,sum(1) as sumVal from bd_unload_goods a
+        left join bd_category b on a.goods_category_id=b.id
         <where>
-            <if test="UnloadBeginTime != null and UnloadBeginTime != ''">AND to_days(a.createtime) <![CDATA[>=]]> to_days(#{UnloadBeginTime})</if>
-            <if test="UnloadEndTime != null and UnloadEndTime != ''">AND  to_days(a.createtime) <![CDATA[<=]]> to_days(#{UnloadEndTime})</if>
+            <if test="UnloadBeginTime != null and UnloadBeginTime != ''">AND to_days(a.createtime) <![CDATA[>=]]>
+                to_days(#{UnloadBeginTime})
+            </if>
+            <if test="UnloadEndTime != null and UnloadEndTime != ''">AND to_days(a.createtime) <![CDATA[<=]]>
+                to_days(#{UnloadEndTime})
+            </if>
         </where>
-        and  a.shop_id=#{shopId}
-        and  a.dr=0
-        GROUP BY  a.shop_id,b.id
+        and a.shop_id=#{shopId}
+        and a.dr=0
+        GROUP BY a.shop_id,b.id
     </select>
 
 
-
-    <select id="GetTaskUnloadCount"  resultType="int">
-        select COUNT(1) as sumVal from  bd_unload_goods  a
-        where  a.task_id=#{taskId} and  a.dr=0
+    <select id="GetTaskUnloadCount" resultType="int">
+        select COUNT(1) as sumVal from bd_unload_goods a
+        where a.task_id=#{taskId} and a.dr=0
     </select>
 
     <select id="GetTaskStatusBySupplier" parameterType="java.lang.String" resultType="java.lang.String">
-       select  CONCAT(a.status,",",a.id,",",b.program_id,",",c.category_id) as status from  bd_task  a
-        left  join  bd_task_program b on a.id=b.task_id  and b.active=TRUE
+        select CONCAT(a.status,",",a.id,",",b.program_id,",",c.category_id) as status from bd_task a
+        left join bd_task_program b on a.id=b.task_id and b.active=TRUE
         left join bd_specification_program c on c.id=b.program_id
-        where  a.cussup_id=#{supplierId} and  a.dr=0  and a.status in ('3','0')
+        where a.cussup_id=#{supplierId} and a.dr=0 and a.status in ('3','0')
     </select>
 
-    <select id="GetTaskProgram"  resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
-        select a.program_id as programId,b.category_id as goodsCategoryId,a.task_id,e.status from bd_task_program  a
-        left join bd_specification_program  b on a.program_id=b.id
-        left join bd_task  e on e.id=a.task_id
-        where a.active=1  and a.task_id= #{taskId,jdbcType=VARCHAR}
+    <select id="GetTaskProgram" resultType="com.zero.egg.responseDTO.UnLoadGoodsQueryResponseDto">
+        select a.program_id as programId,b.category_id as goodsCategoryId,a.task_id,e.status from bd_task_program a
+        left join bd_specification_program b on a.program_id=b.id
+        left join bd_task e on e.id=a.task_id
+        where a.active=1 and a.task_id= #{taskId,jdbcType=VARCHAR}
     </select>
 
 
-    <select id="GetUnloadList"  resultType="com.zero.egg.model.UnloadGoods">
+    <select id="GetUnloadList" resultType="com.zero.egg.model.UnloadGoods">
         SELECT a.*,b.name as categoryName FROM bd_unload_goods a
         left join bd_category b on a.goods_category_id=b.id
         where task_id=#{taskId}
@@ -110,33 +122,36 @@
 
     </select>
 
-    <select id="GetBarCodeInfo"  resultType="com.zero.egg.model.BarCode">
-       select * from bd_barcode  k where k.id=#{qrCode,jdbcType=VARCHAR}  and  k.dr=0
+    <select id="GetBarCodeInfo" resultType="com.zero.egg.model.BarCode">
+        select * from bd_barcode k where k.id=#{qrCode,jdbcType=VARCHAR} and k.dr=0
     </select>
-    <select id="GoodNoIsExists"  parameterType="java.lang.String" resultType="int">
-        select COUNT(1) from bd_unload_goods  k where k.goods_no=#{currentCode,jdbcType=VARCHAR}  and  k.dr=0
+    <select id="GoodNoIsExists" parameterType="java.lang.String" resultType="int">
+        select COUNT(1) from bd_unload_goods k where k.goods_no=#{currentCode,jdbcType=VARCHAR} and k.dr=0
     </select>
 
     <delete id="RepaireUnloadTask" parameterType="java.lang.String">
-        delete from  bd_unload_goods  where id IN(
-            SELECT id  from (
-            SELECT n.id FROM bd_unload_goods n where n.goods_no in(
-                SELECT k.goods_no from bd_unload_goods k
-                where k.task_id=#{taskId,jdbcType=VARCHAR}
-                group by  k.goods_no  HAVING COUNT(goods_no)>1)
-                AND id  not IN(SELECT min(id) FROM bd_unload_goods GROUP BY goods_no HAVING COUNT(goods_no) > 1)
-              ) as t
+        delete from bd_unload_goods where id IN(
+        SELECT id from (
+        SELECT n.id FROM bd_unload_goods n where n.goods_no in(
+        SELECT k.goods_no from bd_unload_goods k
+        where k.task_id=#{taskId,jdbcType=VARCHAR}
+        group by k.goods_no HAVING COUNT(goods_no)>1)
+        AND id not IN(SELECT min(id) FROM bd_unload_goods GROUP BY goods_no HAVING COUNT(goods_no) > 1)
+        ) as t
         )
     </delete>
 
-    <delete  id="RemoveUnloadGood" parameterType="UnloadGoods">
+    <delete id="RemoveUnloadGood" parameterType="UnloadGoods">
         delete from bd_unload_goods
-        where  id = #{id,jdbcType=VARCHAR}
-    </delete >
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
 
     <select id="GetTaskinfo" resultType="Task">
         select * from bd_task k
-        where k.id=#{taskId,jdbcType=VARCHAR}  and k.dr=0  and  k.status in ('3','0')
+        where k.id=#{taskId,jdbcType=VARCHAR} and k.dr=0 and k.status in ('3','0')
+    </select>
+    <select id="SpecificationIsUsed" resultType="int">
+        SELECT 1 FROM bd_unload_goods WHERE specification_id = #{id,jdbcType=VARCHAR} LIMIT 1;
     </select>
 
 </mapper>

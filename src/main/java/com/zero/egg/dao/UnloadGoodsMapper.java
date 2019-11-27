@@ -2,6 +2,7 @@ package com.zero.egg.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.BarCode;
+import com.zero.egg.model.Specification;
 import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.UnloadGoodsRequest;
@@ -51,4 +52,6 @@ public interface UnloadGoodsMapper extends BaseMapper<UnloadGoods> {
     int RemoveUnloadGood(UnloadGoods model);
 
     List<UnLoadGoodsQueryResponseDto> QueryUnloadGoodForTimeSpan(UnloadGoods model);
+
+    int SpecificationIsUsed(Specification specification);
 }

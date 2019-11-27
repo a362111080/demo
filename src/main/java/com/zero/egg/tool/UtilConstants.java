@@ -175,6 +175,10 @@ public interface UtilConstants {
          * 没有合作的店铺信息
          */
         public static final String NO_COOPERATE_SHOP = "没有合作的店铺信息";
+        /**
+         * 方案已经被使用,不能被修改,但是可以删除,不影响历史数据
+         */
+        public static final String SPECIFICATION_USED = "方案已经被使用,不能被修改,但是可以删除,不影响历史数据";
     }
 
     /**
