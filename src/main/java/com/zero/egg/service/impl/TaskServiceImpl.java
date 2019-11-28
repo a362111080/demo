@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.cache.JedisUtil;
 import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
+import com.zero.egg.dao.BrokenGoodsMapper;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
@@ -17,6 +18,7 @@ import com.zero.egg.enums.BillEnums;
 import com.zero.egg.enums.TaskEnums;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Category;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
@@ -45,12 +47,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -99,6 +105,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private SpecificationMapper specificationMapper;
+
+    @Autowired
+    private BrokenGoodsMapper brokenGoodsMapper;
 
 
     @Override
@@ -333,6 +342,42 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 redisGood = JsonUtils.jsonToPojo(jsonString, GoodsResponse.class);
                 goodsResponseList.add(redisGood);
             }
+            //商品编号集合
+            Set<String> goodsNoSet = new HashSet<>();
+            for (GoodsResponse goodsResponse : goodsResponseList) {
+                goodsNoSet.add(goodsResponse.getGoodsNo());
+            }
+            //验证每箱货是否已经被报损,如果是,则要返回这些已经报损的货物编号,提示删除后再结束任务
+            //坏掉的货物商品编号
+            List<String> brokenGoods = brokenGoodsMapper.selectList(new QueryWrapper<BrokenGoods>()
+                    .eq("company_id", task.getCompanyId())
+                    .eq("shop_id", task.getShopId())
+                    .eq("dr", false)
+                    .in("goods_no", goodsNoSet))
+                    .stream()
+                    .map(v->v.getGoodsNo())
+                    .collect(Collectors.toList());
+            brokenGoods.removeAll(Collections.singleton(null));
+            //需要被换的货物商品编号
+            List<String> chageGoods = brokenGoodsMapper.selectList(new QueryWrapper<BrokenGoods>()
+                    .eq("company_id", task.getCompanyId())
+                    .eq("shop_id", task.getShopId())
+                    .eq("dr", false)
+                    .in("change_goods_no", goodsNoSet))
+                    .stream()
+                    .map(v->v.getChangeGoodsNo())
+                    .collect(Collectors.toList());
+            chageGoods.removeAll(Collections.singleton(null));
+            List<String> collect = Stream.of(brokenGoods, chageGoods)
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .collect(Collectors.toList());
+            if (collect.size() > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.BROKEN_GOODS_IN_TASK);
+                message.setData(collect);
+                return message;
+            }
             Goods goods = null;
             Stock stock = null;
             BigDecimal quantity;
@@ -346,9 +391,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                  * 3.从库存里对应规格数量-1
                  * 4.//TODO 统计员工工作量
                  */
-                goods = new Goods();
-                goods.setDr(true);
-                goodsMapper.update(goods, new UpdateWrapper<Goods>()
+                goodsMapper.update(new Goods().setDr(true), new UpdateWrapper<Goods>()
                         .eq("goods_no", goodsResponse.getGoodsNo())
                         .eq("company_id", task.getCompanyId())
                         .eq("shop_id", task.getShopId())

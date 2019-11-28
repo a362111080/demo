@@ -179,6 +179,14 @@ public interface UtilConstants {
          * 方案已经被使用,不能被修改,但是可以删除,不影响历史数据
          */
         public static final String SPECIFICATION_USED = "方案已经被使用,不能被修改,但是可以删除,不影响历史数据";
+        /**
+         * 任务中有货物已经报损,请移除后结束任务
+         */
+        public static final String BROKEN_GOODS_IN_TASK = "任务中有货物已经报损,请移除后结束任务";
+        /**
+         * 存在已经报损的货物,不能取消账单
+         */
+        public static final String BROKEN_GOODS_IN_BILL = "存在已经报损的货物,不能取消账单";
     }
 
     /**

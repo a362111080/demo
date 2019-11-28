@@ -39,12 +39,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -241,7 +244,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                     .select("type")
                     .eq("id", bill.getId()))
                     .getType();
-            if (TaskEnums.Type.Retail.index()==Integer.parseInt(type) && null != bill.getRealAmount()) {
+            if (TaskEnums.Type.Retail.index() == Integer.parseInt(type) && null != bill.getRealAmount()) {
                 bill.setRealAmount(null);
             }
             //需要更新库的账单细节对象
@@ -323,13 +326,6 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_ERROR);
                 return message;
             }
-            bill.setDr(true);
-            //对应账单逻辑删除
-            mapper.updateById(bill);
-            BillDetails billDetails = new BillDetails();
-            //对应账单细节逻辑删除
-            billDetailsMapper.update(new BillDetails().setDr(true), new UpdateWrapper<BillDetails>()
-                    .eq("bill_id", requestDTO.getBillId()));
             //查出对应出货商品集合
             List<ShipmentGoods> shipmentGoodsList = shipmentGoodsMapper.selectList(new QueryWrapper<ShipmentGoods>()
                     .select("id,specification_id,goods_no")
@@ -349,14 +345,31 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 shipmentGoodsIdSet.add(shipmentGoods.getId());
                 goodsNoSet.add(shipmentGoods.getGoodsNo());
             }
-            Integer brokenCount = brokenGoodsMapper.selectCount(new QueryWrapper<BrokenGoods>()
+            //验证每箱货是否已经被报损,如果是,则要返回这些已经报损的货物编号,提示删除后再结束任务
+            //坏掉的货物商品编号
+            List<String> brokenGoods = brokenGoodsMapper.selectList(new QueryWrapper<BrokenGoods>()
                     .eq("company_id", requestDTO.getCompanyId())
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("dr", false)
-                    .in("goods_no", goodsNoSet));
-            if (brokenCount > 0) {
-                throw new ServiceException("存在已经报损的货物,不能取消账单");
+                    .in("goods_no", goodsNoSet))
+                    .stream()
+                    .map(v -> v.getGoodsNo())
+                    .collect(Collectors.toList());
+            brokenGoods.removeAll(Collections.singleton(null));
+            if (brokenGoods.size() > 0) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.BROKEN_GOODS_IN_TASK);
+                message.setData(brokenGoods);
+                return message;
             }
+            bill.setDr(true);
+            //对应账单逻辑删除
+            mapper.updateById(bill);
+            BillDetails billDetails = new BillDetails();
+            //对应账单细节逻辑删除
+            billDetailsMapper.update(new BillDetails().setDr(true), new UpdateWrapper<BillDetails>()
+                    .eq("bill_id", requestDTO.getBillId()));
+
             //逻辑删除已出货物信息
             shipmentGoodsMapper.update(new ShipmentGoods().setDr(true), new UpdateWrapper<ShipmentGoods>()
                     .eq("company_id", requestDTO.getCompanyId())
