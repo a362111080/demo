@@ -57,8 +57,9 @@ public class OrderBillController {
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
+            } else {
+                msg.setMessage((UtilConstants.ResponseMsg.FAILED));
             }
-            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
     }
@@ -80,8 +81,9 @@ public class OrderBillController {
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
+            } else {
+                msg.setMessage((UtilConstants.ResponseMsg.FAILED));
             }
-            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
     }
@@ -104,8 +106,9 @@ public class OrderBillController {
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
+            } else {
+                msg.setMessage((UtilConstants.ResponseMsg.FAILED));
             }
-            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
     }
@@ -128,8 +131,9 @@ public class OrderBillController {
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
+            } else {
+                msg.setMessage((UtilConstants.ResponseMsg.FAILED));
             }
-            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
     }
@@ -150,8 +154,9 @@ public class OrderBillController {
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             if (e instanceof ServiceException) {
                 msg.setMessage(e.getMessage());
+            } else {
+                msg.setMessage((UtilConstants.ResponseMsg.FAILED));
             }
-            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
         }
         return msg;
     }
@@ -167,12 +172,10 @@ public class OrderBillController {
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         model.setShopId(loginUser.getShopId());
         model.setCompanyId(loginUser.getCompanyId());
-        if(model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Received.index().toString()))
-        {
+        if (model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Received.index().toString())) {
             model.setAcceptStatus(BillEnums.OrderStatus.Received.index().toString());
         }
-        if(model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Canceld.index().toString()))
-        {
+        if (model.getOrderStatus().toString().equals(BillEnums.OrderStatus.Canceld.index().toString())) {
             model.setAcceptStatus(BillEnums.OrderStatus.Canceld.index().toString());
         }
         orderBillService.editorderstatus(model);
@@ -183,8 +186,8 @@ public class OrderBillController {
 
 
     @LoginToken
-    @ApiOperation(value="查询店铺订单")
-    @RequestMapping(value="/queryshoporder",method= RequestMethod.POST)
+    @ApiOperation(value = "查询店铺订单")
+    @RequestMapping(value = "/queryshoporder", method = RequestMethod.POST)
     public Message<Object> queryshoporder(@RequestBody OrderGoodsRequestDTO model) {
         Message<Object> message = new Message<Object>();
         //当前登录用户
@@ -192,9 +195,9 @@ public class OrderBillController {
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         model.setShopId(loginUser.getShopId());
         model.setCompanyId(loginUser.getCompanyId());
-        if (loginUser.getCompanyId()!=null) {
-            List<OrderBill> ResponseDTO=orderBillService.queryshoporder(model);
-            if (ResponseDTO.size()>0) {
+        if (loginUser.getCompanyId() != null) {
+            List<OrderBill> ResponseDTO = orderBillService.queryshoporder(model);
+            if (ResponseDTO.size() > 0) {
                 for (int m = 0; m < ResponseDTO.size(); m++) {
                     List<OrderBillDetail> spec = orderBillService.GetOrderGoodDelList(ResponseDTO.get(m));
                     ResponseDTO.get(m).setOrderDetlList(spec);
@@ -205,9 +208,7 @@ public class OrderBillController {
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 
-        }
-        else
-        {
+        } else {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage("操作失败，无企业信息");
         }
@@ -215,18 +216,17 @@ public class OrderBillController {
     }
 
 
-
     @LoginToken
-    @ApiOperation(value="查询订单")
-    @RequestMapping(value="/querystafforder",method= RequestMethod.POST)
+    @ApiOperation(value = "查询订单")
+    @RequestMapping(value = "/querystafforder", method = RequestMethod.POST)
     public Message<Object> querystafforder(@RequestBody OrderGoodsRequestDTO model) {
         Message<Object> message = new Message<Object>();
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
-        if (loginUser.getCompanyId()!=null) {
-            List<OrderBill> ResponseDTO=orderBillService.queryshoporder(model);
-            if (ResponseDTO.size()>0) {
+        if (loginUser.getCompanyId() != null) {
+            List<OrderBill> ResponseDTO = orderBillService.queryshoporder(model);
+            if (ResponseDTO.size() > 0) {
                 for (int m = 0; m < ResponseDTO.size(); m++) {
                     List<OrderBillDetail> spec = orderBillService.GetOrderGoodDelList(ResponseDTO.get(m));
                     ResponseDTO.get(m).setOrderDetlList(spec);
@@ -237,9 +237,7 @@ public class OrderBillController {
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 
-        }
-        else
-        {
+        } else {
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
             message.setMessage("操作失败，无企业信息");
         }
