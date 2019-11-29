@@ -247,7 +247,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                     .getOrderStatus();
             //如果该账单不为未接单状态,则不允许取消
             if (!orderStatus.equals(BillEnums.OrderStatus.Missed.index())) {
-                throw new ServiceException("该账单状态不为未接单状态,无法取消!");
+                throw new ServiceException("卖家已接单,请与卖家协商取消!");
             }
             orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
                     .eq("id", cancelMissedBillReqeustDTO.getOrderId())
