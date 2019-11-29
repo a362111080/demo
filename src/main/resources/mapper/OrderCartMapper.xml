@@ -20,6 +20,7 @@
     <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
     <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
     <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    <result column="effect_flag" jdbcType="BOOLEAN" property="effectFlag"/>
     <result column="dr" jdbcType="BOOLEAN" property="dr" />
     <collection property="sepcificationList" javaType="list" ofType="com.zero.egg.model.OrderGoodsSpecification">
       <id column="oid" property="id"/>
@@ -38,7 +39,7 @@
     <!--@mbg.generated-->
     oc.id, oc.shop_id, oc.user_id, oc.good_specification_id,oc.good_specification_name,oc.good_specification_value,oc.goods_id, oc.goods_sn,
     oc.goods_name, oc.price,
-    oc.`number`,oc.`checked`,oc.pic_url,oc.createtime, oc.modifytime,oc.dr,oc.weight_mode
+    oc.`number`,oc.`checked`,oc.pic_url,oc.createtime, oc.modifytime,oc.dr,oc.weight_mode,oc.effect_flag
   </sql>
 
   <select id="getCartList" resultMap="BaseResultMap">

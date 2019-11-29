@@ -42,8 +42,8 @@ import java.util.List;
 @Api(value="店铺管理")
 @RequestMapping("/shop")
 public class ShopController {
-	
-	
+
+
 	@Autowired
 	private IShopService shopService;
 
@@ -72,9 +72,9 @@ public class ShopController {
 		message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
 		message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 		return message;
-		
+
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="根据Id查询店铺")
 	@RequestMapping(value="/get.data",method=RequestMethod.POST)
@@ -92,7 +92,7 @@ public class ShopController {
 		}
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="根据企业id查询店铺")
 	@RequestMapping(value="/get-company.data",method=RequestMethod.POST)
@@ -113,7 +113,7 @@ public class ShopController {
 		}
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="新增店铺")
 	@RequestMapping(value="/add.do",method=RequestMethod.POST)
@@ -126,7 +126,7 @@ public class ShopController {
 		message =shopService.save(shop, loginUser);
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="根据id修改店铺信息")
 	@RequestMapping(value="/edit.do",method=RequestMethod.POST)
@@ -146,7 +146,7 @@ public class ShopController {
 		}
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="停用店铺")
 	@RequestMapping(value="/stopshop.do",method=RequestMethod.POST)
@@ -170,7 +170,7 @@ public class ShopController {
 		}
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="根据id删除店铺信息")
 	@RequestMapping(value="/del.do",method=RequestMethod.POST)
@@ -193,7 +193,7 @@ public class ShopController {
 		}
 		return message;
 	}
-	
+
 	@LoginToken
 	@ApiOperation(value="批量删除店铺信息")
 	@RequestMapping(value="/batchdel.do",method=RequestMethod.POST)
@@ -224,7 +224,7 @@ public class ShopController {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
 				message.setMessage(UtilConstants.ResponseMsg.FAILED);
 		}
-		
+
 		return message;
 	}
 
@@ -724,7 +724,7 @@ public class ShopController {
 
 
 	@LoginToken
-	@ApiOperation(value="删除店铺商品规格")
+	@ApiOperation(value="删除店铺商品")
 	@RequestMapping(value="/delordergood",method=RequestMethod.POST)
 	public Message<Object> delordergood(@RequestBody OrderGoods model) {
 		Message<Object> message = new Message<Object>();

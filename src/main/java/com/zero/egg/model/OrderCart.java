@@ -120,6 +120,12 @@ public class OrderCart implements Serializable {
     @TableField(value = "dr")
     private Boolean dr;
 
+    /**
+     * 是否有效(0:无效 1:有效)
+     */
+    @TableField(value = "effect_flag")
+    private Boolean effectFlag;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "商品规格列表",hidden=true)
     private List<OrderGoodsSpecification> sepcificationList;
