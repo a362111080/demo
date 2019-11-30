@@ -53,15 +53,15 @@
          left join  order_user_secret  c on c.user_id=a.user_id
          left join  order_secret e on e.id=c.secret_id
          left join bd_customer d on d.id=e.customer_id
-         WHERE  a.dr=0  and a.order_status  not in('1','4')
+         WHERE  a.dr=0
         <if test="shopId != null and shopId !=''">
             and a.shop_id=#{shopId,jdbcType=VARCHAR}
         </if>
         <if test="companyId != null and companyId !=''">
             and a.company_id=#{companyId,jdbcType=VARCHAR}
         </if>
-        <if test="dispatchman != null and dispatchman !=''">
-            and a.dispatchman=#{dispatchman,jdbcType=VARCHAR}
+        <if test="isstaff != null and isstaff !='' and isstaff=='true' ">
+            and a.order_status not in ('1','4')
         </if>
         <if test="orderstatus != null and orderstatus !=''">
             and a.order_status=#{orderstatus,jdbcType=VARCHAR}
