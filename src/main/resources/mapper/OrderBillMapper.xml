@@ -63,6 +63,9 @@
         <if test="dispatchman != null and dispatchman !=''">
             and a.dispatchman=#{dispatchman,jdbcType=VARCHAR}
         </if>
+        <if test="orderstatus != null and orderstatus !=''">
+            and a.order_status=#{orderstatus,jdbcType=VARCHAR}
+        </if>
         <if test="orderSn != null and orderSn !=''">
             and a.order_sn LIKE '%${orderSn}%'
         </if>

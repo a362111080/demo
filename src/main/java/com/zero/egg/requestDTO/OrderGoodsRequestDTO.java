@@ -40,4 +40,7 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
 
     @ApiModelProperty(value="订单编号")
     private String orderSn;
+
+    @ApiModelProperty(value="订单状态")
+    private String orderstatus;
 }
