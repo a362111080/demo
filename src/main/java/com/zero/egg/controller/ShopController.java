@@ -451,15 +451,15 @@ public class ShopController {
 			try {
                 //判断类目名称是否重复
                 List<OrderCategory> res =shopService.getCategoryInfo(model);
-                if (res.size()>0) {
-                    if (res.get(0).getId()==model.getId()) {
+                if (res.size()>0 && model.getDr()==null) {
+                    if (res.size()==1 && res.get(0).getId().equals(model.getId())) {
                         int strval = shopService.editrdercategory(model);
                         if (strval > 0) {
                             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                         } else {
                             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                            message.setMessage("操作失败");
+							message.setMessage("操作失败");
                         }
                     }
                     else
@@ -468,6 +468,16 @@ public class ShopController {
                         message.setMessage("类目名称重复！");
                     }
                 }
+                else{
+					int strval = shopService.editrdercategory(model);
+					if (strval > 0) {
+						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+					} else {
+						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+						message.setMessage("操作失败");
+					}
+				}
 			}
 			catch (Exception e) {
 				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
