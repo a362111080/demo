@@ -150,7 +150,7 @@
 
     <select id="getCategoryInfo"  resultType="com.zero.egg.model.OrderCategory">
         SELECT * FROM order_category a
-        where 1=1
+        where 1=1  and a.dr=0
         <if test="shopId != null and shopId !=''">
             and a.shop_id=#{shopId,jdbcType=VARCHAR}
         </if>
