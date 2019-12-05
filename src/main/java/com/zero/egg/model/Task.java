@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Hhaifeng
@@ -72,7 +72,7 @@ public class Task implements Serializable {
 
     @ApiModelProperty(value = "状态( 0:执行中  1：已取消  2：已完成   3：已暂停)", required = false)
     private String status;
-    
+
     @ApiModelProperty(value = "类型",hidden=true)
     private String type;
 
@@ -94,11 +94,11 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
-    
+
     public String getStatusName() {
 		return TaskEnums.Status.note(Integer.parseInt(this.status));
 	}
-    
+
     public String  getTypeName() {
 		return TaskEnums.Type.note(Integer.parseInt(this.type));
 	}
@@ -124,5 +124,18 @@ public class Task implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "操作前任务状态",hidden=true)
     private String statusBefore;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "订货平台订单id",hidden=true)
+    private String  orderId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "订货平台订单编号",hidden=true)
+    private String  orderSn;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "订货平台用户id",hidden=true)
+    private String  orderUserId;
+
 
 }

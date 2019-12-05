@@ -3,6 +3,7 @@ package com.zero.egg.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.egg.model.Bill;
 import com.zero.egg.model.BillDetails;
+import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Task;
@@ -58,4 +59,5 @@ public interface TaskMapper extends BaseMapper<Task> {
 
     List<UnloadReport> GetUnloadReport(String taskid);
 
+    Customer selectOrderCustomer(String orderUserId);
 }

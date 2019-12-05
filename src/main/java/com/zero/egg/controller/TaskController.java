@@ -356,6 +356,35 @@ public class TaskController {
         return message;
     }
 
+    @LoginToken
+    @ApiOperation(value = "新增订货平台出货任务")
+    @RequestMapping(value = "/ordershipmenttaskadd", method = RequestMethod.POST)
+    public Message orderShipmentTaskAdd(@RequestBody Task task) {
+        Message message;
+        try {
+            //非空判断
+            if (null == task || null == task.getOrderUserId() ||null ==task.getOrderId()) {
+                message = new Message();
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
+                return message;
+            }
+            //当前登录用户
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            task.setModifier(loginUser.getId());
+            task.setCreator(loginUser.getId());
+            task.setCompanyId(loginUser.getCompanyId());
+            task.setShopId(loginUser.getShopId());
+            message = taskService.addOrderShipmentTask(task);
+
+        } catch (Exception e) {
+            message = new Message();
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage(e.getMessage());
+        }
+        return message;
+    }
+
 
     /**
      * @Description 卸货任务结束/取消

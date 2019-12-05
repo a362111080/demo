@@ -101,4 +101,12 @@ public interface ITaskService extends IService<Task> {
      * @return
      */
     Message finishUnloadTask();
+
+    /**
+     * 新增订货平台出货任务
+     * @param task
+     * @return
+     * @throws ServiceException
+     */
+    Message addOrderShipmentTask(Task task) throws ServiceException;
 }

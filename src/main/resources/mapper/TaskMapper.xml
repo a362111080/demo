@@ -141,6 +141,9 @@
         values(#{id},#{shopId},#{companyId},(select a.spcode from(SELECT CONCAT('BL',LPAD((SELECT COUNT(1)+1 from bd_bill),8,'0')) as spcode FROM DUAL) a),
                #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskId})
     </insert>
+    <select id="selectOrderCustomer" resultType="com.zero.egg.model.Customer">
+
+    </select>
 
 
 </mapper>

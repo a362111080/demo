@@ -596,5 +596,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
         return null;
     }
 
+    @Override
+    public Message addOrderShipmentTask(Task task) throws ServiceException {
+        /**
+         * 1.根据订货平台用户id查询合作商id
+         * 2.根据合作商id查询是否存在有效的(正在执行或者暂停)任务
+         * 3.如果存在活动任务,则创建失败,并返回已有活动任务的提示
+         * 4.如果不存在活动任务,则创建任务
+         */
+        Message message = new Message();
+        try {
+            String orderUserId = task.getOrderUserId();
+            Customer customer = mapper.selectOrderCustomer(orderUserId);
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
 
 }
