@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
  **/
 @Data
 @TableName(value = "bd_wechat_auth")
+@Accessors(chain = true)
 public class WechatAuth {
 
     /**

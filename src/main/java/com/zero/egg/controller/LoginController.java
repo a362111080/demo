@@ -16,6 +16,7 @@ import com.zero.egg.model.SaasUser;
 import com.zero.egg.model.Shop;
 import com.zero.egg.model.User;
 import com.zero.egg.model.WechatAuth;
+import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.service.ICompanyService;
 import com.zero.egg.service.ICompanyUserService;
 import com.zero.egg.service.IUserService;
@@ -256,6 +257,29 @@ public class LoginController {
             response.setMsg("登录失败!，请联系管理员");
         }
         return response;
+    }
+
+    @PassToken
+    @ApiOperation(value = "订货平台获取合作的相关店铺列表")
+    @RequestMapping(value = "/ordershoplist", method = RequestMethod.POST)
+    public Message orderShopList(@RequestParam HttpServletRequest request) {
+        Message message;
+        try {
+            message = new Message();
+            //当前登录用户
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            List<Shop> shopList = wechatAuthService.getSecretBindInfo(new WechatAuth().setWechatAuthId(loginUser.getId()));
+            message.setData(shopList);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            return message;
+        } catch (Exception e) {
+            log.error("ordershoplist failed:", e);
+            message = new Message();
+            message.setState(UtilConstants.WXState.FAIL);
+            message.setMessage(UtilConstants.ResponseMsg.FAILED);
+            return message;
+        }
     }
 
 
