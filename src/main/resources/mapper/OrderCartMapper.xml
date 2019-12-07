@@ -47,7 +47,7 @@
     ogs.value,ogs.pic_url o_pic_url,ogs.modifier o_modifier,ogs.creator o_creator,ogs.createtime o_createtime,
     ogs.modifytime o_modifytime,ogs.dr o_dr
     FROM order_cart oc LEFT JOIN order_goods_specification ogs ON oc.goods_id = ogs.goods_id
-    WHERE oc.dr = false AND ogs.dr = false AND oc.shop_id = #{shopId} AND oc.user_id = #{userId}
+    WHERE oc.dr = false AND ogs.dr = false <!--AND oc.shop_id = #{shopId}--> AND oc.user_id = #{userId}
     ORDER BY oc.`checked` DESC, oc.`createtime` DESC
   </select>
 </mapper>
