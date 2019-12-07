@@ -500,7 +500,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             String customerName = customer.getName();
             //用户习惯计重模式
             String weightMode = customer.getWeightMode();
-            Bill bill = billMapper.selectOne(new QueryWrapper<Bill>().select("id,bill_no")
+            Bill bill = billMapper.selectOne(new QueryWrapper<Bill>()
                     .eq("task_id", requestDTO.getTaskId())
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("company_id", requestDTO.getCompanyId()));
@@ -597,6 +597,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 }
             }
             blankBillResponseDTO.setWeightMode(weightMode);
+            blankBillResponseDTO.setBillId(bill.getId());
+            blankBillResponseDTO.setBillNo(bill.getBillNo());
+            blankBillResponseDTO.setOrderSn(bill.getOrderSn());
             blankBillResponseDTO.setBlankBillDTOList(blankBillDTOList);
 
             message.setData(blankBillResponseDTO);
