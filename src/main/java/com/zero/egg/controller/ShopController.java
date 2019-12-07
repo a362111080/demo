@@ -468,14 +468,20 @@ public class ShopController {
                         message.setMessage("类目名称重复！");
                     }
                 }
-                else{
-					int strval = shopService.editrdercategory(model);
-					if (strval > 0) {
-						message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-						message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
-					} else {
+                else {
+					List<OrderGoods> goodsList = shopService.GetOrderGoodsList(model);
+					if (goodsList.size() > 0) {
 						message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-						message.setMessage("操作失败");
+						message.setMessage("类目下已存在商品，无法删除！");
+					} else {
+						int strval = shopService.editrdercategory(model);
+						if (strval > 0) {
+							message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+							message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+						} else {
+							message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+							message.setMessage("操作失败");
+						}
 					}
 				}
 			}

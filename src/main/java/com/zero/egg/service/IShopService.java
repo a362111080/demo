@@ -62,4 +62,6 @@ public interface IShopService extends IService<Shop> {
     List<OrderCategory> getCategoryInfo(OrderCategory model);
 
     List<User> getUserList(User user);
+
+    List<OrderGoods> GetOrderGoodsList(OrderCategory model);
 }

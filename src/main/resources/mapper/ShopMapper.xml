@@ -163,6 +163,22 @@
     </select>
 
 
+    <select id="GetOrderGoodsList"  resultType="com.zero.egg.model.OrderGoods">
+        SELECT * FROM order_goods a
+        where 1=1  and a.dr=0
+        <if test="shopId != null and shopId !=''">
+            and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="id != null and id !=''">
+            and  a.category_id=#{id,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+
     <select id="getUserList"  resultType="com.zero.egg.model.User">
         SELECT * FROM bd_user a
         where 1=1
