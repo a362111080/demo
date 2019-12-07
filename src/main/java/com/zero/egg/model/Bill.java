@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Hhaifeng
@@ -112,5 +112,10 @@ public class Bill implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "勾选的账单id",hidden=true)
     private List<String> ids;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "订货平台订单编号",hidden=true)
+    private String orderSn;
+
 
 }

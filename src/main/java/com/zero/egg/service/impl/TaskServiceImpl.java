@@ -10,6 +10,7 @@ import com.zero.egg.dao.BrokenGoodsMapper;
 import com.zero.egg.dao.CategoryMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
+import com.zero.egg.dao.OrderBillMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.dao.SpecificationMapper;
 import com.zero.egg.dao.StockMapper;
@@ -22,6 +23,7 @@ import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Category;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
+import com.zero.egg.model.OrderBill;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Specification;
 import com.zero.egg.model.Stock;
@@ -40,6 +42,7 @@ import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,6 +111,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
     @Autowired
     private BrokenGoodsMapper brokenGoodsMapper;
+
+    @Autowired
+    private OrderBillMapper orderBillMapper;
 
 
     @Override
@@ -355,7 +361,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("dr", false)
                     .in("goods_no", goodsNoSet))
                     .stream()
-                    .map(v->v.getGoodsNo())
+                    .map(v -> v.getGoodsNo())
                     .collect(Collectors.toList());
             brokenGoods.removeAll(Collections.singleton(null));
             //需要被换的货物商品编号
@@ -365,7 +371,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("dr", false)
                     .in("change_goods_no", goodsNoSet))
                     .stream()
-                    .map(v->v.getChangeGoodsNo())
+                    .map(v -> v.getChangeGoodsNo())
                     .collect(Collectors.toList());
             chageGoods.removeAll(Collections.singleton(null));
             List<String> collect = Stream.of(brokenGoods, chageGoods)
@@ -421,13 +427,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("id", customerId))
                     .getIsRetail();
             int shipmentBillCount = billMapper.selectCount(new QueryWrapper<Bill>()
-                    .in("type", TaskEnums.Type.Shipment.index().toString(),TaskEnums.Type.Retail.index().toString()));
+                    .in("type", TaskEnums.Type.Shipment.index().toString(), TaskEnums.Type.Retail.index().toString()));
             /**8位编码前面补0格式*/
-            String categoryName = String.join("/", categoryNameSet);
             DecimalFormat g1 = new DecimalFormat("00000000");
             Bill bill = new Bill();
+            String categoryName = String.join("/", categoryNameSet);
+            //查询订单编号
+            Task orderTask = mapper.selectOne(new QueryWrapper<Task>()
+                    .select("order_id")
+                    .eq("id", taskId)
+                    .eq("cussup_id", customerId));
+            if (orderTask != null && StringUtils.isNotBlank(orderTask.getOrderId())) {
+                String orderId = orderTask.getOrderId();
+                String orderSn = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
+                        .select("order_sn")
+                        .eq("id", orderId))
+                        .getOrderSn();
+                bill.setOrderSn(orderSn);
+            }
             bill.setQuantity(new BigDecimal(goodsResponseList.size()));
-            bill.setBillNo("BLS" + (g1.format(shipmentBillCount+1)));
+            bill.setBillNo("BLS" + (g1.format(shipmentBillCount + 1)));
             bill.setCategoryname(categoryName);
             bill.setTaskId(taskId);
             bill.setCussupId(customerId);
@@ -474,7 +493,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("company_id", requestDTO.getCompanyId()))
                     .getCussupId();
-            Customer customer = customerMapper.selectOne(new QueryWrapper<Customer>().select("name","weight_mode")
+            Customer customer = customerMapper.selectOne(new QueryWrapper<Customer>().select("name", "weight_mode")
                     .eq("id", customerId)
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("company_id", requestDTO.getCompanyId()));
@@ -562,7 +581,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         //如果mode为1(去皮),则需要做额外处理
                         if (blankBillDTO.getMode() == 1) {
                             //需要加上去皮值*数量
-                            BigDecimal needToSubtract = specification.getNumerical() .multiply(new BigDecimal(blankBillDTO.getQuantity())) ;
+                            BigDecimal needToSubtract = specification.getNumerical().multiply(new BigDecimal(blankBillDTO.getQuantity()));
                             totalWeight = totalWeight.add(needToSubtract);
                             blankBillDTO.setMarker("实重(" + specification.getWeightMin() + "~" + specification.getWeightMax() + ")");
                             blankBillDTO.setTotalWeight(totalWeight);
@@ -606,7 +625,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
          */
         Message message = new Message();
         try {
-            Customer customer = mapper.selectOrderCustomer(task.getOrderUserId(),task.getOrderId());
+            Customer customer = mapper.selectOrderCustomer(task.getOrderUserId(), task.getOrderId());
             Task tempTask = mapper.selectOne(new QueryWrapper<Task>()
                     .eq("dr", 0)
                     .eq("shop_id", task.getShopId())
@@ -626,6 +645,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 task.setDr(false);
                 mapper.insert(task);
                 String taskId = task.getId();
+                String orderSn = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
+                        .select("order_sn")
+                        .eq("id", task.getOrderId())
+                        .eq("user_id", task.getOrderUserId()))
+                        .getOrderSn();
+                task.setOrderSn(orderSn);
                 task.setCussupName(customer.getName());
                 /**
                  * 把任务状态存入redis,用作出货前判断是否还能出货
