@@ -107,7 +107,7 @@ public interface UtilConstants {
         /**
          * 有活动中的任务
          */
-        public static final String TAST_EXIST = "有活动中的任务";
+        public static final String TAST_EXIST = "该合作商有活动中的任务";
         /**
          * 查无此货
          */
@@ -167,6 +167,10 @@ public interface UtilConstants {
          * 没有此秘钥信息
          */
         public static final String NO_SUCH_SECRET = "没有此秘钥信息";
+        /**
+         * 用户在该店铺下已经绑定过,不用重复绑定
+         */
+        public static final String SHOP_BINDED = "用户在该店铺下已经绑定过,不用重复绑定";
         /**
          * 秘钥已经被使用
          */

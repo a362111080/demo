@@ -143,6 +143,12 @@ public class Customer {
     @ApiModelProperty(value = "省市区二级id",required=false)
     @TableField(exist = false)
     private String city2;
+    /**
+     * 订货平台订单id(接单建出货任务用)
+     */
+    @ApiModelProperty(value = "订货平台订单id(接单建出货任务用)",required=false)
+    @TableField(exist = false)
+    private String orderId;
 
     @ApiModelProperty(value ="是否零售商(0:否,1:是)")
     private Integer isRetail = 0;

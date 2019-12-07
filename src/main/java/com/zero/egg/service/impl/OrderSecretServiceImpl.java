@@ -49,6 +49,7 @@ public class OrderSecretServiceImpl implements OrderSecretService {
     @Transactional
     public Message bindSecret(String secret, LoginUser user) throws ServiceException {
         /**
+         * pre:查询改用户是否在对应店铺下有绑定关系
          * 1.根据secret查询order_secret获取id(secret已建立唯一索引)
          * 2.根据id查询是否已经被绑定
          * 3.绑定
@@ -62,6 +63,14 @@ public class OrderSecretServiceImpl implements OrderSecretService {
                 log.error("=======no such secret=======");
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NO_SUCH_SECRET);
+                return message;
+            }
+            String shopId = orderSecret.getShopid();
+            Integer bindCount = orderSecretMapper.getCountOfShopBind(shopId, user.getId());
+            if (bindCount != null && bindCount > 0) {
+                log.error("=======用户已经绑定该店铺,不用重复绑定=======");
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SHOP_BINDED);
                 return message;
             }
             if (orderSecret.getStatus()) {
