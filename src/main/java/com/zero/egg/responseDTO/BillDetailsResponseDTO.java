@@ -29,4 +29,21 @@ public class BillDetailsResponseDTO implements Serializable {
      * 应收金额
      */
     private BigDecimal amount;
+
+    /**
+     * 账单id
+     */
+    private String billId;
+    /**
+     * 账单编号
+     */
+    private String billNo;
+    /**
+     * 订单id
+     */
+    private String orderId;
+    /**
+     * 订单编号
+     */
+    private String orderSn;
 }

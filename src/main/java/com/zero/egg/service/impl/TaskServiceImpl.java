@@ -616,6 +616,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     }
 
     @Override
+    @Transactional
     public Message addOrderShipmentTask(Task task) throws ServiceException {
         /**
          * 1.根据订货平台用户id查询合作商id

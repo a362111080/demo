@@ -46,6 +46,9 @@ public class BillDetailsServiceImpl extends ServiceImpl<BillDetailsMapper, BillD
                 billDetailsResponseDTO.setRealAmount(actualBill.getRealAmount());
                 List<BillDetails> billDetailsList = mapper.getbilldetsils(bill);
                 billDetailsResponseDTO.setBillDetailsList(billDetailsList);
+                billDetailsResponseDTO.setBillId(actualBill.getId());
+                billDetailsResponseDTO.setBillNo(actualBill.getBillNo());
+                billDetailsResponseDTO.setOrderSn(actualBill.getOrderSn());
                 message.setData(billDetailsResponseDTO);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
