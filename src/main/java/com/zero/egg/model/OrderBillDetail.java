@@ -136,6 +136,9 @@ public class OrderBillDetail implements Serializable {
     @ApiModelProperty(value = "计重方式",required=false)
     private String weightMode;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "规格图片",required=false)
+    private String picUrl;
 
     private static final long serialVersionUID = 1L;
 }
