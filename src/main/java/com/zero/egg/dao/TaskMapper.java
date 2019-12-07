@@ -10,6 +10,7 @@ import com.zero.egg.model.Task;
 import com.zero.egg.model.UnloadGoods;
 import com.zero.egg.requestDTO.TaskRequest;
 import com.zero.egg.responseDTO.UnloadReport;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -59,5 +60,5 @@ public interface TaskMapper extends BaseMapper<Task> {
 
     List<UnloadReport> GetUnloadReport(String taskid);
 
-    Customer selectOrderCustomer(String orderUserId);
+    Customer selectOrderCustomer(@Param("orderUserId") String orderUserId,@Param("orderId") String orderId);
 }

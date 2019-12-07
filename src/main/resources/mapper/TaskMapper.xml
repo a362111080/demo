@@ -142,7 +142,23 @@
                #{cussupId},#{billDate},#{type},#{quantity},#{amount},1,#{creator},#{createtime},#{modifier},#{modifytime},0,#{amount},#{categoryname},#{taskId})
     </insert>
     <select id="selectOrderCustomer" resultType="com.zero.egg.model.Customer">
-
+        SELECT
+            c.id,
+            c.`name`,
+            oo.id AS orderId
+        FROM
+            order_order oo
+            INNER JOIN bd_wechat_auth wa ON oo.user_id = wa.wechat_auth_id
+            INNER JOIN order_user_secret ous ON ous.user_id = oo.user_id
+            AND ous.dr = 0
+            INNER JOIN order_secret os ON os.id = ous.secret_id
+            AND os.shop_id = oo.shop_id
+            INNER JOIN bd_customer c ON c.id = os.customer_id
+        WHERE
+            oo.user_id = 'a41e1d1630f06342c9459f9e2be8dc2b'
+            AND oo.id = 'f16af401c03a2b3ecd83848db33662f2'
+            AND oo.shop_id = c.shop_id
+            AND oo.shop_id = os.shop_id;
     </select>
 
 

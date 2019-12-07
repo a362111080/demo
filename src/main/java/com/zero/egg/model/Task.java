@@ -94,6 +94,8 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "删除标识",hidden=true)
     private Boolean dr;
 
+    @ApiModelProperty(value = "订货平台订单id",hidden=true)
+    private String  orderId;
 
     public String getStatusName() {
 		return TaskEnums.Status.note(Integer.parseInt(this.status));
@@ -124,10 +126,6 @@ public class Task implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "操作前任务状态",hidden=true)
     private String statusBefore;
-
-    @TableField(exist = false)
-    @ApiModelProperty(value = "订货平台订单id",hidden=true)
-    private String  orderId;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "订货平台订单编号",hidden=true)

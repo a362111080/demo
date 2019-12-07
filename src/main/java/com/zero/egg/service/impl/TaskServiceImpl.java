@@ -606,12 +606,42 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
          */
         Message message = new Message();
         try {
-            String orderUserId = task.getOrderUserId();
-            Customer customer = mapper.selectOrderCustomer(orderUserId);
+            Customer customer = mapper.selectOrderCustomer(task.getOrderUserId(),task.getOrderId());
+            Task tempTask = mapper.selectOne(new QueryWrapper<Task>()
+                    .eq("dr", 0)
+                    .eq("shop_id", task.getShopId())
+                    .eq("company_id", task.getCompanyId())
+                    .eq("cussup_id", customer.getId())
+                    .in("status", TaskEnums.Status.Execute.index().toString()
+                            , TaskEnums.Status.Unexecuted.index().toString()));
+            if (null != tempTask) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.TAST_EXIST);
+                message.setData(tempTask);
+            } else {
+                task.setCreatetime(new Date());
+                task.setModifytime(new Date());
+                task.setStatus(TaskEnums.Status.Execute.index().toString());
+                task.setType(TaskEnums.Type.Shipment.index().toString());
+                task.setDr(false);
+                mapper.insert(task);
+                String taskId = task.getId();
+                task.setCussupName(customer.getName());
+                /**
+                 * 把任务状态存入redis,用作出货前判断是否还能出货
+                 */
+                jedisStrings.set(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK + task.getCompanyId() + ":" + task.getShopId()
+                                + ":" + task.getCussupId() + ":" + taskId + ":" + "status"
+                        , TaskEnums.Status.Execute.index().toString());
+                message.setData(task);
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            }
+            return message;
         } catch (Exception e) {
-
+            log.error("订货平台订单新建任务失败:" + e);
+            throw new ServiceException("订货平台订单新建任务失败");
         }
-        return null;
     }
 
 
