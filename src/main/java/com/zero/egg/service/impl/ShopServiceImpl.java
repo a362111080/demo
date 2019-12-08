@@ -224,4 +224,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         return mapper.getUserList(user);
     }
 
+    @Override
+    public List<OrderGoods> GetOrderGoodsList(OrderCategory model) {
+        return mapper.GetOrderGoodsList(model);
+    }
+
 }
