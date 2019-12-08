@@ -647,6 +647,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 task.setStatus(TaskEnums.Status.Execute.index().toString());
                 task.setType(TaskEnums.Type.Shipment.index().toString());
                 task.setDr(false);
+                task.setCussupId(customer.getId());
                 mapper.insert(task);
                 String taskId = task.getId();
                 String orderSn = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
