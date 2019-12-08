@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.OrderCartMapper;
 import com.zero.egg.dao.OrderGoodsMapper;
 import com.zero.egg.dao.OrderGoodsSpecificationMapper;
+import com.zero.egg.dao.OrderUserSecretMapper;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.CompanyUserEnums;
 import com.zero.egg.model.*;
@@ -42,6 +43,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
     @Autowired
     private OrderGoodsSpecificationMapper orderGoodsSpecificationMapper;
+
+    @Autowired
+    private OrderUserSecretMapper orderUserSecretMapper;
 
     @Override
     public boolean save(Shop shop) {
@@ -183,7 +187,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     }
 
     @Override
+    @Transactional
     public int editsecret(OrderSecret model) {
+        //也要删除关联表数据
+        orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
+                .eq("secret_id", model.getId()));
         return mapper.editsecret(model);
     }
 
