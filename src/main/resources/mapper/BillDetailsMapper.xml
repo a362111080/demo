@@ -15,7 +15,7 @@
         left join bd_specification_program c on c.id=a.program_id
         left join bd_specification d on d.id=a.specification_id
         left join  bd_user  bu  on bu.id=a.creator
-        where  a.bill_id=#{id,jdbcType=INTEGER}
+        where  a.bill_id=#{id,jdbcType=INTEGER} ORDER BY b.name
     </select>
     <update id="updateDetails" parameterType="BillDetails">update bd_bill_details
         <set>
