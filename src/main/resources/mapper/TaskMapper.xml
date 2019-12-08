@@ -113,7 +113,7 @@
             t.`status`,
             t.type,
             c.`name` AS cussupName,
-            oo.id,
+            oo.id AS orderId,
             oo.order_sn
         FROM
             bd_task t
