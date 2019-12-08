@@ -124,7 +124,8 @@ public class OrderSecretServiceImpl implements OrderSecretService {
             WechatAuth wechatAuth = wechatAuthMapper.selectById(user.getId());
             List<OrderUserSecret> orderUserSecrets = orderUserSecretMapper.selectList(new QueryWrapper<OrderUserSecret>()
                     .eq("user_id", wechatAuth.getWechatAuthId())
-                    .eq("dr", 0));
+                    .eq("dr", 0)
+                    .eq("status", 1));
             //如果没有有效的绑定秘钥信息,则返回空
             if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
