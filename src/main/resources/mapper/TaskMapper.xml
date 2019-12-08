@@ -113,8 +113,8 @@
             t.`status`,
             t.type,
             c.`name` AS cussupName,
-            t.order_id,
-            t.order_sn
+            oo.order_id,
+            oo.order_sn
         FROM
             bd_task t
         LEFT JOIN bd_customer c ON t.cussup_id = c.id
