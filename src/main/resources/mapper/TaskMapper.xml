@@ -160,8 +160,8 @@
             AND os.shop_id = oo.shop_id
             INNER JOIN bd_customer c ON c.id = os.customer_id
         WHERE
-            oo.user_id = 'a41e1d1630f06342c9459f9e2be8dc2b'
-            AND oo.id = 'f16af401c03a2b3ecd83848db33662f2'
+            oo.user_id = #{orderUserId,jdbcType=VARCHAR}
+            AND oo.id = #{orderId,jdbcType=VARCHAR}
             AND oo.shop_id = c.shop_id
             AND oo.shop_id = os.shop_id;
     </select>
