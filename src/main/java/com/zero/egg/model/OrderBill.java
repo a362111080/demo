@@ -153,14 +153,16 @@ public class OrderBill implements Serializable {
     private Boolean dr = false;
 
 
-
     @TableField(exist = false)
-    @ApiModelProperty(value = "订单明细",required=false)
+    @ApiModelProperty(value = "订单明细", required = false)
     private List<OrderBillDetail> OrderDetlList;
 
 
     @TableField(value = "accept_status")
-    @ApiModelProperty(value = "受理状态",required=false)
+    @ApiModelProperty(value = "受理状态", required = false)
     private String acceptStatus;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "客户名", required = false)
+    private String customerName;
 }
