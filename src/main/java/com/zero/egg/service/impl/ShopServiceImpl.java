@@ -189,10 +189,15 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     @Override
     @Transactional
     public int editsecret(OrderSecret model) {
-        //也要删除关联表数据
-        orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
-                .eq("secret_id", model.getId()));
-        return mapper.editsecret(model);
+        try {
+            //也要删除关联表数据
+            orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
+                    .eq("secret_id", model.getId()));
+            return mapper.editsecret(model);
+        } catch (Exception e) {
+            log.error("编辑秘钥信息失败" + e);
+            throw new ServiceException("编辑秘钥信息失败" + e);
+        }
     }
 
     @Override
