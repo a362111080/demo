@@ -46,4 +46,13 @@ public class OrderGoodsRequestDTO extends PageDTO implements Serializable {
 
     @ApiModelProperty(value="是否员工端")
     private String isstaff;
+
+    @ApiModelProperty(value="合作商名称")
+    private String queryname;
+
+    @ApiModelProperty(value = "开始时间")
+    private String begintime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endtime;
 }

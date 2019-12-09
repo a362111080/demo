@@ -69,6 +69,15 @@
         <if test="orderSn != null and orderSn !=''">
             and a.order_sn LIKE '%${orderSn}%'
         </if>
+        <if test="queryname != null and queryname !=''">
+            and d.name LIKE '%${queryname}%'
+        </if>
+        <if test="begintime != null  and begintime !=''">
+            and a.createtime <![CDATA[ >= ]]> #{begintime,jdbcType=VARCHAR}
+        </if>
+        <if test="endtime != null  and endtime !=''">
+            and a.createtime <![CDATA[ <= ]]> #{endtime,jdbcType=VARCHAR}
+        </if>
     </select>
 
 
