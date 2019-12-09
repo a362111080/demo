@@ -192,6 +192,8 @@ public class OrderBillController {
         Message<Object> message = new Message<Object>();
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         model.setShopId(loginUser.getShopId());
         model.setCompanyId(loginUser.getCompanyId());
@@ -223,6 +225,8 @@ public class OrderBillController {
         Message<Object> message = new Message<Object>();
         //当前登录用户
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         if (loginUser.getCompanyId() != null) {
             List<OrderBill> ResponseDTO = orderBillService.queryshoporder(model);
