@@ -168,7 +168,6 @@ public class OrderBillController {
     public Message editorderstatus(@RequestBody OrderBill model) {
         Message<Object> message = new Message<Object>();
         //当前登录用户
-        model.setOrderStatus(BillEnums.OrderStatus.Received.index());
         LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         model.setShopId(loginUser.getShopId());
         model.setCompanyId(loginUser.getCompanyId());
