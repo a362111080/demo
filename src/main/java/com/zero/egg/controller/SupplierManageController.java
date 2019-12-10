@@ -154,6 +154,7 @@ public class SupplierManageController {
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
         model.setCompanyId(user.getCompanyId());
+        model.setShopId(user.getShopId());
         List<Supplier> Supplier = supplierService.GetSupplierList(model);
         PageInfo<Supplier> pageInfo = new PageInfo<>(Supplier);
         ms.setData(pageInfo);
