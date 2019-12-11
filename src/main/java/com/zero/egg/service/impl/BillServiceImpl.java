@@ -159,6 +159,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 billDetails.setProgramId(blankBillDTO.getProgramId());
                 billDetails.setGoodsCategoryId(categoryId);
                 billDetails.setSpecificationId(blankBillDTO.getSpecificationId());
+                billDetails.setTotalWeightBefore(blankBillDTO.getTotalWeightBefore());
                 //前端新输入的单价
                 BigDecimal price = blankBillDTO.getPrice();
                 BigDecimal quantity = new BigDecimal(blankBillDTO.getQuantity());
