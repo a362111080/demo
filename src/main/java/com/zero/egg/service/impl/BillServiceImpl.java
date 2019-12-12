@@ -159,6 +159,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 billDetails.setProgramId(blankBillDTO.getProgramId());
                 billDetails.setGoodsCategoryId(categoryId);
                 billDetails.setSpecificationId(blankBillDTO.getSpecificationId());
+                billDetails.setTotalWeightBefore(blankBillDTO.getTotalWeightBefore());
                 //前端新输入的单价
                 BigDecimal price = blankBillDTO.getPrice();
                 BigDecimal quantity = new BigDecimal(blankBillDTO.getQuantity());
@@ -181,13 +182,14 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                         if (null == blankBillDTO.getNumberical()) {
                             subTotal = price.multiply(blankBillDTO.getTotalWeight());
                         } else {
-                            subTotal = price.multiply(blankBillDTO.getTotalWeightBefore().subtract(quantity.multiply(blankBillDTO.getNumberical())));
+                            subTotal = price.multiply(blankBillDTO.getTotalWeightBefore().add(quantity.multiply(blankBillDTO.getNumberical())));
+                            billDetails.setNumberical(blankBillDTO.getNumberical());
                         }
                     } else if (2 == blankBillDTO.getMode()) {
                         billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                         billDetails.setNumberical(blankBillDTO.getNumberical());
                         /* 包进,按斤出 */
-                        subTotal = price.multiply(blankBillDTO.getTotalWeight().subtract(quantity.multiply(blankBillDTO.getNumberical())));
+                        subTotal = price.multiply(blankBillDTO.getTotalWeight().add(quantity.multiply(blankBillDTO.getNumberical())));
                     } else {
                         log.error("param Exception,oriMode or currentMode is dissatisfied");
                         throw new ServiceException("param Exception,oriMode or currentMode is dissatisfied");
