@@ -51,7 +51,7 @@
         a.message,a.consignee,a.accept_status,a.user_id
         FROM order_order a
          left join  order_user_secret  c on c.user_id=a.user_id
-         left join  order_secret e on e.id=c.secret_id
+         inner join  order_secret e on e.id=c.secret_id and e.shop_id=a.shop_id  and e.status=1
          left join bd_customer d on d.id=e.customer_id
          WHERE  a.dr=0
         <if test="shopId != null and shopId !=''">
