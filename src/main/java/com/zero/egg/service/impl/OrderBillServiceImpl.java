@@ -159,8 +159,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                         .select("name")
                         .eq("id", categoryId)
                         .eq("company_id", companyId)
-                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
-                        .eq("dr", false))
+                        .eq("shop_id", addOrderBillRequestDTO.getShopId()))
                         .getName();
                 orderBillDetail.setOrderCategoryId(categoryId);
                 orderBillDetail.setOrderCategoryName(categoryName);
