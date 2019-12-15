@@ -63,14 +63,22 @@ public class OrderCartServiceImpl implements OrderCartService {
                     .eq("goods_id", orderGoods.getId())
                     .eq("dr", false));
             //如果相同规格的商品已经存在于购物车中,则直接改变数量
-            Integer existCount = orderCartMapper.selectCount(new QueryWrapper<OrderCart>()
+            Integer isExist = orderCartMapper.selectCount(new QueryWrapper<OrderCart>()
                     .eq("shop_id", addCartGoodRequestDTO.getShopId())
                     .eq("user_id", loginUser.getId())
                     .eq("goods_id", addCartGoodRequestDTO.getGoodsId())
                     .eq("good_specification_id", orderGoodsSpecification.getId())
                     .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
                     .eq("dr", false));
-            if (existCount > 0) {
+            if (isExist == 1) {
+                Integer existCount = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
+                        .select("number")
+                        .eq("shop_id", addCartGoodRequestDTO.getShopId())
+                        .eq("user_id", loginUser.getId())
+                        .eq("goods_id", addCartGoodRequestDTO.getGoodsId())
+                        .eq("good_specification_id", orderGoodsSpecification.getId())
+                        .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
+                        .eq("dr", false)).getNumber();
                 Integer updateCount = existCount + addCartGoodRequestDTO.getNumber();
                 orderCartMapper.update(orderCart.setNumber(updateCount), new UpdateWrapper<OrderCart>()
                         .eq("shop_id", addCartGoodRequestDTO.getShopId())
@@ -79,9 +87,11 @@ public class OrderCartServiceImpl implements OrderCartService {
                         .eq("good_specification_id", orderGoodsSpecification.getId())
                         .eq("weight_mode", addCartGoodRequestDTO.getWeightMode())
                         .eq("dr", false));
-            } else {
+            } else if (isExist == 0) {
                 orderCart = compactToOrderCartGood(orderGoods, addCartGoodRequestDTO, orderGoodsSpecification, loginUser);
                 orderCartMapper.insert(orderCart);
+            } else {
+                throw new ServiceException("数据异常,请联系管理员");
             }
         } catch (Exception e) {
             log.error("addProductToCart failed" + e);
