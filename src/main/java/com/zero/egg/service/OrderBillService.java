@@ -4,6 +4,7 @@ package com.zero.egg.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zero.egg.model.OrderBill;
 import com.zero.egg.model.OrderBillDetail;
+import com.zero.egg.model.Task;
 import com.zero.egg.requestDTO.*;
 import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
@@ -57,4 +58,6 @@ public interface OrderBillService {
     List<OrderBill> queryshoporder(OrderGoodsRequestDTO model);
 
     List<OrderBillDetail> GetOrderGoodDelList(OrderBill orderBill);
+
+    List<OrderBill> queryshipmentorder(Task model);
 }

@@ -7,10 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.zero.egg.annotation.LoginToken;
 import com.zero.egg.api.ApiConstants;
 import com.zero.egg.enums.BillEnums;
-import com.zero.egg.model.OrderBill;
-import com.zero.egg.model.OrderBillDetail;
-import com.zero.egg.model.OrderGoodSpecification;
-import com.zero.egg.model.OrderGoods;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.*;
 import com.zero.egg.service.OrderBillService;
 import com.zero.egg.tool.BeanValidator;
@@ -247,5 +244,33 @@ public class OrderBillController {
         return message;
     }
 
+    @LoginToken
+    @ApiOperation(value = "查询出货任务订单")
+    @RequestMapping(value = "/queryshipmentorder", method = RequestMethod.POST)
+    public Message<Object> queryshipmentorder(@RequestBody Task model) {
+        Message<Object> message = new Message<Object>();
+        //当前登录用户
+        LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+        model.setShopId(loginUser.getShopId());
+        model.setCompanyId(loginUser.getCompanyId());
 
+        if (loginUser.getCompanyId() != null) {
+            List<OrderBill> ResponseDTO = orderBillService.queryshipmentorder(model);
+            if (ResponseDTO.size() > 0) {
+                for (int m = 0; m < ResponseDTO.size(); m++) {
+                    List<OrderBillDetail> spec = orderBillService.GetOrderGoodDelList(ResponseDTO.get(m));
+                    ResponseDTO.get(m).setOrderDetlList(spec);
+                }
+            }
+
+            message.setData(ResponseDTO);
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+
+        } else {
+            message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            message.setMessage("操作失败，无企业信息");
+        }
+        return message;
+    }
 }

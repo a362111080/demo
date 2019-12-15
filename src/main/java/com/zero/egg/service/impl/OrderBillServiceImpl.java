@@ -13,14 +13,7 @@ import com.zero.egg.dao.OrderCategoryMapper;
 import com.zero.egg.dao.OrderGoodsMapper;
 import com.zero.egg.dao.ShopMapper;
 import com.zero.egg.enums.BillEnums;
-import com.zero.egg.model.BdCity;
-import com.zero.egg.model.OrderAddress;
-import com.zero.egg.model.OrderBill;
-import com.zero.egg.model.OrderBillDetail;
-import com.zero.egg.model.OrderCart;
-import com.zero.egg.model.OrderCategory;
-import com.zero.egg.model.OrderGoods;
-import com.zero.egg.model.Shop;
+import com.zero.egg.model.*;
 import com.zero.egg.requestDTO.*;
 import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
 import com.zero.egg.responseDTO.OrderBillListResponseDTO;
@@ -335,6 +328,12 @@ public class OrderBillServiceImpl implements OrderBillService {
     @Override
     public List<OrderBillDetail> GetOrderGoodDelList(OrderBill orderBill) {
         return orderBillMapper.GetOrderGoodDelList(orderBill);
+    }
+
+    @Override
+    public List<OrderBill> queryshipmentorder(Task model) {
+
+        return orderBillMapper.queryshipmentorder(model);
     }
 
     /**

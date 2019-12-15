@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zero.egg.model.OrderBill;
 import com.zero.egg.model.OrderBillDetail;
+import com.zero.egg.model.Task;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
 import com.zero.egg.responseDTO.OrderBillDetailResponseDTO;
 import com.zero.egg.responseDTO.OrderBillListResponseDTO;
@@ -30,4 +31,6 @@ public interface OrderBillMapper extends BaseMapper<OrderBill> {
     List<OrderBill> queryshoporder(OrderGoodsRequestDTO model);
 
     List<OrderBillDetail> GetOrderGoodDelList(OrderBill orderBill);
+
+    List<OrderBill> queryshipmentorder(Task model);
 }

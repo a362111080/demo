@@ -47,9 +47,9 @@
 
 
     <select id="queryshoporder" resultType="OrderBill">
-        SELECT  a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name AS customerName,
-        a.message,a.consignee,a.accept_status,a.user_id
-        FROM order_order a
+         SELECT  a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name AS customerName,
+         a.message,a.consignee,a.accept_status,a.user_id
+         FROM order_order a
          left join  order_user_secret  c on c.user_id=a.user_id
          inner join  order_secret e on e.id=c.secret_id and e.shop_id=a.shop_id  and e.status=1
          left join bd_customer d on d.id=e.customer_id
@@ -90,7 +90,25 @@
     </select>
 
 
-
+    <select id="queryshipmentorder" resultType="OrderBill">
+         SELECT  a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name AS customerName,
+         a.message,a.consignee,a.accept_status,a.user_id
+         FROM order_order a
+         left join  order_user_secret  c on c.user_id=a.user_id
+         inner join  order_secret e on e.id=c.secret_id and e.shop_id=a.shop_id  and e.status=1
+         left join bd_customer d on d.id=e.customer_id
+         inner join  bd_task  tk on tk.order_id=a.id
+         WHERE  a.dr=0
+        <if test="shopId != null and shopId !=''">
+            and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+        <if test="id != null and id !=''">
+            and tk.id=#{id,jdbcType=VARCHAR}
+        </if>
+    </select>
 
     <resultMap id="GetBillDetailMap" type="com.zero.egg.responseDTO.OrderBillDetailResponseDTO">
         <id column="id" jdbcType="VARCHAR" property="id"/>
