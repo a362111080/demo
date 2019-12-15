@@ -47,7 +47,7 @@
 
 
     <select id="queryshoporder" resultType="OrderBill">
-         SELECT  a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name AS customerName,
+         SELECT  a.order_status,a.createtime,a.address,a.id,a.mobile,a.order_sn ,d.name AS customerName,d.id AS customerId
          a.message,a.consignee,a.accept_status,a.user_id
          FROM order_order a
          left join  order_user_secret  c on c.user_id=a.user_id
