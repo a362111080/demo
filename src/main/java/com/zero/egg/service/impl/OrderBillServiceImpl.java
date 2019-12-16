@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author lym
@@ -208,7 +209,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             queryWrapper.eq("oo.user_id", orderBillListReqeustDTO.getUserId())
                     .eq("oo.dr", false)
                     .eq(null != orderBillListReqeustDTO.getStatus(), "oo.order_status", orderBillListReqeustDTO.getStatus());
-            IPage<OrderBillListResponseDTO> orderBillList = orderBillMapper.selectBillList(page,queryWrapper);
+            IPage<OrderBillListResponseDTO> orderBillList = orderBillMapper.selectBillList(page, queryWrapper);
             for (OrderBillListResponseDTO orderBillListResponseDTO : orderBillList.getRecords()) {
                 List<String> pics = orderBillMapper.selectBillListPics(orderBillListReqeustDTO.getUserId(), orderBillListResponseDTO.getId());
                 orderBillListResponseDTO.setPics(pics);
@@ -269,8 +270,11 @@ public class OrderBillServiceImpl implements OrderBillService {
                     .eq("user_id", deleteCompletedBillReqeustDTO.getUserId()))
                     .getOrderStatus();
             //如果该账单不为已完成状态,则不允许删除
-            if (!orderStatus.equals(BillEnums.OrderStatus.Completed.index())||!orderStatus.equals(BillEnums.OrderStatus.Canceld.index())) {
-                throw new ServiceException("该账单状态不为已完成或者已取消状态,无法删除!");
+            if (!orderStatus.equals(BillEnums.OrderStatus.Canceld.index())) {
+                throw new ServiceException("该账单状态不为已取消状态,无法删除!");
+            }
+            if (!orderStatus.equals(BillEnums.OrderStatus.Completed.index())) {
+                throw new ServiceException("该账单状态不为已完成状态,无法删除!");
             }
             orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
                     .eq("id", deleteCompletedBillReqeustDTO.getOrderId())
@@ -290,7 +294,7 @@ public class OrderBillServiceImpl implements OrderBillService {
         Message message = new Message();
         try {
             OrderBillDetailResponseDTO orderBillDetailResponseDTO;
-            orderBillDetailResponseDTO = orderBillMapper.getOrderBillDetail(orderBillDetailsRequestDTO.getUserId(),orderBillDetailsRequestDTO.getOrderId());
+            orderBillDetailResponseDTO = orderBillMapper.getOrderBillDetail(orderBillDetailsRequestDTO.getUserId(), orderBillDetailsRequestDTO.getOrderId());
             message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
             message.setData(orderBillDetailResponseDTO);
@@ -310,7 +314,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             orderBillMapper.update(new OrderBill().setOrderStatus(model.getOrderStatus()).setEndTime(new Date()).setAcceptStatus(model.getAcceptStatus()), new UpdateWrapper<OrderBill>()
                     .eq("id", model.getId())
                     .eq("shop_id", model.getShopId()));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("deleteCompletedBill failed" + e);
             if (e instanceof ServiceException) {
                 throw e;
