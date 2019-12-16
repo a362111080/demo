@@ -177,16 +177,17 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 if (1 == blankBillDTO.getCurrentMode()) {
                     billDetails.setCurrentMode(1);
                     if (1 == blankBillDTO.getMode()) {
-                        billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                         /* 去皮进,按斤出 */
                         if (null == blankBillDTO.getNumberical()) {
+                            billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
                             subTotal = price.multiply(blankBillDTO.getTotalWeight());
                         } else {
+                            billDetails.setTotalWeight(blankBillDTO.getTotalWeightBefore().add(quantity.multiply(blankBillDTO.getNumberical())));
                             subTotal = price.multiply(blankBillDTO.getTotalWeightBefore().add(quantity.multiply(blankBillDTO.getNumberical())));
                             billDetails.setNumberical(blankBillDTO.getNumberical());
                         }
                     } else if (2 == blankBillDTO.getMode()) {
-                        billDetails.setTotalWeight(blankBillDTO.getTotalWeight());
+                        billDetails.setTotalWeight(blankBillDTO.getTotalWeight().add(quantity.multiply(blankBillDTO.getNumberical())));
                         billDetails.setNumberical(blankBillDTO.getNumberical());
                         /* 包进,按斤出 */
                         subTotal = price.multiply(blankBillDTO.getTotalWeight().add(quantity.multiply(blankBillDTO.getNumberical())));
