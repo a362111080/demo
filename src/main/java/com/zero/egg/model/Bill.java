@@ -116,5 +116,8 @@ public class Bill implements Serializable {
     @ApiModelProperty(value = "订货平台订单编号",hidden=true)
     private String orderSn;
 
+    @ApiModelProperty(value = "订货平台订单id",hidden=true)
+    private String orderId;
+
 
 }
