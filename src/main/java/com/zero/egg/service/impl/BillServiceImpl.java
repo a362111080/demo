@@ -7,6 +7,7 @@ import com.zero.egg.dao.BillDetailsMapper;
 import com.zero.egg.dao.BillMapper;
 import com.zero.egg.dao.BrokenGoodsMapper;
 import com.zero.egg.dao.GoodsMapper;
+import com.zero.egg.dao.OrderBillMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
 import com.zero.egg.dao.StockMapper;
 import com.zero.egg.dao.TaskMapper;
@@ -17,6 +18,7 @@ import com.zero.egg.model.BillDetails;
 import com.zero.egg.model.BrokenGoods;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
+import com.zero.egg.model.OrderBill;
 import com.zero.egg.model.ShipmentGoods;
 import com.zero.egg.model.Stock;
 import com.zero.egg.model.Supplier;
@@ -83,6 +85,9 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     @Autowired
     private BrokenGoodsMapper brokenGoodsMapper;
 
+    @Autowired
+    private OrderBillMapper orderBillMapper;
+
 
     @Override
     public List<Supplier> GetSupplierList(SupplierRequestDTO model) {
@@ -120,26 +125,29 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             //实收金额
             BigDecimal realAmount = blankBillRequestDTO.getRealAmount();
             //如果账单是零售账单,则不能更新实收金额
-            String type = mapper.selectOne(new QueryWrapper<Bill>()
-                    .select("type")
-                    .eq("id", billId))
-                    .getType();
-            if (TaskEnums.Type.Retail.index() == Integer.parseInt(type)) {
-                realAmount = BigDecimal.ZERO;
-            }
-            String currentsStutus = mapper.selectOne(new QueryWrapper<Bill>()
-                    .select("status")
+            Bill currentBill = mapper.selectOne(new QueryWrapper<Bill>()
                     .eq("id", billId)
                     .eq("shop_id", loginUser.getShopId())
                     .eq("company_id", loginUser.getCompanyId())
-                    .eq("dr", 0))
-                    .getStatus();
+                    .eq("dr", 0));
+            String type = currentBill.getType();
+            if (TaskEnums.Type.Retail.index() == Integer.parseInt(type)) {
+                realAmount = BigDecimal.ZERO;
+            }
+            String currentsStutus = currentBill.getStatus();
             if (BillEnums.Status.Not_Generated.index() != Integer.parseInt(currentsStutus)) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.NOT_BLANK_BILL);
                 return message;
             }
-
+            //如果当前账单存在关联的订活平台订单,则到这一步,订单的状态应该变成已完成
+            if (null != currentBill.getOrderId()) {
+                orderBillMapper.update(new OrderBill().setOrderStatus(BillEnums.OrderStatus.Completed.index()), new UpdateWrapper<OrderBill>()
+                        .eq("id", currentBill.getOrderId())
+                        .eq("order_sn", currentBill.getOrderSn())
+                        .eq("shop_id", loginUser.getShopId())
+                        .eq("company_id", loginUser.getCompanyId()));
+            }
             String creator = loginUser.getId();
             String companyId = loginUser.getCompanyId();
             String shopId = loginUser.getShopId();
