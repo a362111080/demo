@@ -270,11 +270,8 @@ public class OrderBillServiceImpl implements OrderBillService {
                     .eq("user_id", deleteCompletedBillReqeustDTO.getUserId()))
                     .getOrderStatus();
             //如果该账单不为已完成状态,则不允许删除
-            if (!orderStatus.equals(BillEnums.OrderStatus.Canceld.index())) {
-                throw new ServiceException("该账单状态不为已取消状态,无法删除!");
-            }
-            if (!orderStatus.equals(BillEnums.OrderStatus.Completed.index())) {
-                throw new ServiceException("该账单状态不为已完成状态,无法删除!");
+            if (!orderStatus.equals(BillEnums.OrderStatus.Canceld.index())&&!orderStatus.equals(BillEnums.OrderStatus.Completed.index())) {
+                throw new ServiceException("该账单状态不为已取消状态或已完成状态,无法删除!");
             }
             orderBillMapper.update(new OrderBill().setDr(true).setEndTime(new Date()), new UpdateWrapper<OrderBill>()
                     .eq("id", deleteCompletedBillReqeustDTO.getOrderId())
