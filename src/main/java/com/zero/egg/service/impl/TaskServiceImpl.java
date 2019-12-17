@@ -444,6 +444,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                         .eq("id", orderId))
                         .getOrderSn();
                 bill.setOrderSn(orderSn);
+                bill.setOrderId(orderId);
             }
             bill.setQuantity(new BigDecimal(goodsResponseList.size()));
             bill.setBillNo("BLS" + (g1.format(shipmentBillCount + 1)));
