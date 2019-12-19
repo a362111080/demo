@@ -3,7 +3,6 @@ package com.zero.egg.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zero.egg.dao.OrderCartMapper;
-import com.zero.egg.dao.OrderGoodsMapper;
 import com.zero.egg.dao.OrderGoodsSpecificationMapper;
 import com.zero.egg.dao.OrderUserSecretMapper;
 import com.zero.egg.dao.ShopMapper;
@@ -240,6 +239,11 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     @Override
     public List<OrderGoods> GetOrderGoodsList(OrderCategory model) {
         return mapper.GetOrderGoodsList(model);
+    }
+
+    @Override
+    public List<OrderCategory> GetOrderCateGoryList(OrderGoodsRequestDTO model) {
+        return mapper.GetOrderCateGoryList(model);
     }
 
 }

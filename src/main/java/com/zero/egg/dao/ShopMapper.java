@@ -61,4 +61,7 @@ public interface ShopMapper extends BaseMapper<Shop> {
     List<User> getUserList(User user);
 
     List<OrderGoods> GetOrderGoodsList(OrderCategory model);
+
+    List<OrderCategory> GetOrderCateGoryList(OrderGoodsRequestDTO model);
+
 }

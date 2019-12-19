@@ -162,6 +162,17 @@
         </if>
     </select>
 
+    <select id="GetOrderCateGoryList"  resultType="com.zero.egg.model.OrderCategory">
+        SELECT * FROM order_category a
+        where 1=1  and a.dr=0 and a.level>1
+        <if test="shopId != null and shopId !=''">
+            and a.shop_id=#{shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="companyId != null and companyId !=''">
+            and a.company_id=#{companyId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
 
     <select id="GetOrderGoodsList"  resultType="com.zero.egg.model.OrderGoods">
         SELECT * FROM order_goods a

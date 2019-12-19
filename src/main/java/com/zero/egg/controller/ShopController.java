@@ -772,19 +772,17 @@ public class ShopController {
 		model.setShopId(loginUser.getShopId());
 		model.setCompanyId(loginUser.getCompanyId());
 		if (loginUser.getCompanyId()!=null) {
-			List<OrderGoods>  ResponseDTO=shopService.GetOrderGoods(model);
-			if (ResponseDTO.size()>0) {
-
-				for (int m = 0; m < ResponseDTO.size(); m++) {
-
-					List<OrderGoodSpecification> spec = shopService.GetOrderGoodSpecList(ResponseDTO.get(m));
-					ResponseDTO.get(m).setSepcificationList(spec);
+			List<OrderGoods> ResponseDTO = shopService.GetOrderGoods(model);
+				if (ResponseDTO.size() > 0) {
+					for (int m = 0; m < ResponseDTO.size(); m++) {
+						List<OrderGoodSpecification> spec = shopService.GetOrderGoodSpecList(ResponseDTO.get(m));
+						ResponseDTO.get(m).setSepcificationList(spec);
+					}
 				}
-			}
-			PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
-			message.setData(pageInfo);
-			message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
-			message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+				PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);
+				message.setData(pageInfo);
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
 
 		}
 		else
@@ -794,6 +792,40 @@ public class ShopController {
 		}
 		return message;
 	}
+
+	@LoginToken
+	@ApiOperation(value="查询店铺有效类目")
+	@RequestMapping(value="/queryshopcategory",method=RequestMethod.POST)
+	public Message<Object> queryshopcategory(@RequestBody OrderGoodsRequestDTO model) {
+		Message<Object> message = new Message<Object>();
+		//当前登录用户
+		LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+		model.setShopId(loginUser.getShopId());
+		model.setCompanyId(loginUser.getCompanyId());
+		if (loginUser.getCompanyId()!=null) {
+			//判断是否存在有效类目选择
+			List<OrderCategory> child=shopService.GetOrderCateGoryList(model);
+			if (child.size()>0) {
+				message.setData(child.get(0));
+				message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+				message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+			}
+			else
+			{
+				message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+				message.setMessage("未找到可用的二级类目，请完善类目后再操作");
+			}
+		}
+		else
+		{
+			message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+			message.setMessage("操作失败，无企业信息");
+		}
+		return message;
+	}
+
+
+
 
 
 	@LoginToken
