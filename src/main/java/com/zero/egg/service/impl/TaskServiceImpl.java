@@ -642,9 +642,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                     .eq("cussup_id", customer.getId())
                     .in("status", TaskEnums.Status.Execute.index().toString()
                             , TaskEnums.Status.Unexecuted.index().toString()));
-            if (null != tempTask) {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (null != tempTask && null == tempTask.getOrderId()) {
+                message.setState(UtilConstants.ResponseCode.NORMAL_TAST_EXIST);
                 message.setMessage(UtilConstants.ResponseMsg.TAST_EXIST);
+                message.setData(tempTask);
+            } else if (null != tempTask && null != tempTask.getOrderId()) {
+                message.setState(UtilConstants.ResponseCode.ORDER_TAST_EXIST);
+                message.setMessage(UtilConstants.ResponseMsg.ORDER_TAST_EXIST);
                 message.setData(tempTask);
             } else {
                 task.setCreatetime(new Date());
