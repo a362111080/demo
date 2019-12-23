@@ -265,18 +265,10 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             for (BillDetails billDetails : details) {
                 IDetails.setId(billDetails.getId());
                 IDetails.setPrice(billDetails.getPrice());
-                //如果当前计重方式为去皮,小计=单价*(重量-去皮值*数量)
+                //如果当前计重方式为去皮,小计=单价*重量
                 if (1 == billDetails.getCurrentMode()) {
-                    //去皮值可能为null
-                    if (null == billDetails.getNumberical() || billDetails.getNumberical().compareTo(BigDecimal.ZERO) == 0) {
-                        numberical = BigDecimal.ZERO;
-                    } else {
-                        numberical = billDetails.getNumberical();
-                    }
                     subTotal = billDetails.getPrice()
-                            .multiply(billDetails.getTotalWeight()
-                                    .subtract(billDetails.getQuantity()
-                                            .multiply(numberical)));
+                            .multiply(billDetails.getTotalWeight());
                 } else if (2 == billDetails.getCurrentMode()) {
                     subTotal = billDetails.getPrice().multiply(billDetails.getQuantity());
                     numberical = BigDecimal.ZERO;
@@ -288,7 +280,6 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                 }
                 amount = amount.add(subTotal);
                 IDetails.setCurrentMode(billDetails.getCurrentMode());
-                IDetails.setNumberical(numberical);
                 IDetails.setAmount(subTotal);
                 billDetailsMapper.updateDetails(IDetails);
             }
