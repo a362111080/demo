@@ -49,7 +49,14 @@ public interface UtilConstants {
          * 任务已经完成
          */
         public static final int TASK_FINISHED = -5;
-
+        /**
+         * 正常出货任务已经存在
+         */
+        public static final int NORMAL_TAST_EXIST = -6;
+        /**
+         * 订货平台出货任务已经存在
+         */
+        public static final int ORDER_TAST_EXIST = -7;
 
     }
 
@@ -108,6 +115,11 @@ public interface UtilConstants {
          * 有活动中的任务
          */
         public static final String TAST_EXIST = "该合作商有活动中的任务";
+
+        /**
+         * 有活动中的任务
+         */
+        public static final String ORDER_TAST_EXIST = "该合作商有活动中的订货任务";
         /**
          * 查无此货
          */
