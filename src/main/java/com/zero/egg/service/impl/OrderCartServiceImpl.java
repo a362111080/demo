@@ -163,6 +163,8 @@ public class OrderCartServiceImpl implements OrderCartService {
             boolean changeNumberFlag = false;
             //只需要改变数量的cartId
             String changeNumberCartId = null;
+            //只需要改变数量的购物车商品的数量
+            Integer changeNumber = null;
             //查询购物车里面的所有商品,循环判断
             List<OrderCart> cartList = orderCartMapper.getCartList(updateCartGoodsSpecificationRequestDTO.getShopId(), updateCartGoodsSpecificationRequestDTO.getUserId());
             for (OrderCart orderCart : cartList) {
@@ -170,17 +172,19 @@ public class OrderCartServiceImpl implements OrderCartService {
                 if (orderCart.getGoodsId().equals(orderGoodsSpecification.getGoodsId()) && orderCart.getGoodSpecificationId().equals(orderGoodsSpecification.getId())) {
                     changeNumberFlag = true;
                     changeNumberCartId = orderCart.getId();
+                    changeNumber = orderCart.getNumber();
                     break;
                 }
             }
             if (changeNumberFlag) {
+                //需要加上去的数量
                 Integer number = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
                         .select("number")
                         .eq("id", updateCartGoodsSpecificationRequestDTO.getCartId())
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
                         .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId())
                         .eq("dr", false)).getNumber();
-                orderCartMapper.update(new OrderCart().setNumber(number), new UpdateWrapper<OrderCart>()
+                orderCartMapper.update(new OrderCart().setNumber(number+changeNumber), new UpdateWrapper<OrderCart>()
                         .eq("id", changeNumberCartId)
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
                         .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
