@@ -515,8 +515,17 @@ public class ShopController {
 			if (ResponseDTO.size()>0) {
 				if ( model.getIsQueryChild()==true) {
 					for (int m = 0; m < ResponseDTO.size(); m++) {
+						if (ResponseDTO.get(m).getPicUrl()==null)
+						{
+							ResponseDTO.get(m).setPicUrl("upload/zero.png");
+						}
 						model.setPid(ResponseDTO.get(m).getId());
 						List<OrderCategory> child = shopService.GetOrderCateGoryChild(model);
+						for (int n=0;n<child.size();n++) {
+							if (child.get(n).getPicUrl() == null) {
+								child.get(n).setPicUrl("upload/zero.png");
+							}
+						}
 						ResponseDTO.get(m).setOrderCategoryList(child);
 
 					}
