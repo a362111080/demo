@@ -169,4 +169,8 @@ public class OrderBill implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "客户id", required = false)
     private String customerId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "账单编码", required = false)
+    private String billno;
 }
