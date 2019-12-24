@@ -184,6 +184,10 @@ public class OrderCartServiceImpl implements OrderCartService {
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
                         .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId())
                         .eq("dr", false)).getNumber();
+                orderCartMapper.update(new OrderCart().setDr(true), new UpdateWrapper<OrderCart>()
+                        .eq("id", changeNumberCartId)
+                        .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
+                        .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
                 orderCartMapper.update(new OrderCart().setNumber(number+changeNumber), new UpdateWrapper<OrderCart>()
                         .eq("id", changeNumberCartId)
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
