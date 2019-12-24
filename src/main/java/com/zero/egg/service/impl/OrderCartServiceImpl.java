@@ -22,6 +22,7 @@ import com.zero.egg.tool.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -143,11 +144,13 @@ public class OrderCartServiceImpl implements OrderCartService {
     }
 
     @Override
+    @Transactional
     public void updateCartGoodsSpecifacation(UpdateCartGoodsSpecificationRequestDTO updateCartGoodsSpecificationRequestDTO) throws ServiceException {
         try {
             /**
              * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
-             * 2.更新该用户在该店铺下的指定商品规格信息
+             * 2.查询购物车是否有更改后的规格商品,如果有,数量+1
+             * 3.否则更新该用户在该店铺下的指定商品规格信息
              */
             OrderGoodsSpecification orderGoodsSpecification = orderGoodsSpecificationMapper.selectOne(new QueryWrapper<OrderGoodsSpecification>()
                     .eq("id", updateCartGoodsSpecificationRequestDTO.getGoodSpecificationId())
@@ -156,16 +159,44 @@ public class OrderCartServiceImpl implements OrderCartService {
             if (null == orderGoodsSpecification) {
                 throw new ServiceException("所选新规格为空");
             }
-            OrderCart orderCart = new OrderCart();
-            orderCart.setWeightMode(updateCartGoodsSpecificationRequestDTO.getWeightMode());
-            orderCart.setGoodSpecificationId(updateCartGoodsSpecificationRequestDTO.getGoodSpecificationId());
-            orderCart.setGoodSpecificationName(orderGoodsSpecification.getSpecification());
-            orderCart.setGoodSpecificationValue(orderGoodsSpecification.getValue());
-            orderCart.setPrice(orderGoodsSpecification.getPrice());
-            orderCartMapper.update(orderCart, new UpdateWrapper<OrderCart>()
-                    .eq("id", updateCartGoodsSpecificationRequestDTO.getCartId())
-                    .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
-                    .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
+            //是否只需要改变数量
+            boolean changeNumberFlag = false;
+            //只需要改变数量的cartId
+            String changeNumberCartId = null;
+            //查询购物车里面的所有商品,循环判断
+            List<OrderCart> cartList = orderCartMapper.getCartList(updateCartGoodsSpecificationRequestDTO.getShopId(), updateCartGoodsSpecificationRequestDTO.getUserId());
+            for (OrderCart orderCart : cartList) {
+                //如果要换的规格在与购物车中存在
+                if (orderCart.getGoodsId().equals(orderGoodsSpecification.getGoodsId()) && orderCart.getGoodSpecificationId().equals(orderGoodsSpecification.getId())) {
+                    changeNumberFlag = true;
+                    changeNumberCartId = orderCart.getId();
+                    break;
+                }
+            }
+            if (changeNumberFlag) {
+                Integer number = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
+                        .select("number")
+                        .eq("id", updateCartGoodsSpecificationRequestDTO.getCartId())
+                        .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
+                        .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId())
+                        .eq("dr", false)).getNumber();
+                orderCartMapper.update(new OrderCart().setNumber(number), new UpdateWrapper<OrderCart>()
+                        .eq("id", changeNumberCartId)
+                        .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
+                        .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
+            } else {
+                OrderCart orderCart = new OrderCart();
+                orderCart.setWeightMode(updateCartGoodsSpecificationRequestDTO.getWeightMode());
+                orderCart.setGoodSpecificationId(updateCartGoodsSpecificationRequestDTO.getGoodSpecificationId());
+                orderCart.setGoodSpecificationName(orderGoodsSpecification.getSpecification());
+                orderCart.setGoodSpecificationValue(orderGoodsSpecification.getValue());
+                orderCart.setPrice(orderGoodsSpecification.getPrice());
+                orderCart.setPicUrl(orderGoodsSpecification.getPicUrl());
+                orderCartMapper.update(orderCart, new UpdateWrapper<OrderCart>()
+                        .eq("id", updateCartGoodsSpecificationRequestDTO.getCartId())
+                        .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
+                        .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
+            }
         } catch (Exception e) {
             log.error("updateCartGoodsSpecifacation failed" + e);
             if (e instanceof ServiceException) {
