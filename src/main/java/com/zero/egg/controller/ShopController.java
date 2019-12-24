@@ -558,10 +558,15 @@ public class ShopController {
 			try {
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
 					int  checkval=0;
+					if (model.getCategoryId().contains(","))
+					{
+						model.setCategoryId(model.getCategoryId().split(",")[1]);
+					}
 					//验证重名
 					OrderGoods  checkModel=new OrderGoods();
 					checkModel.setName(model.getName());
 					checkModel.setCategoryId(model.getCategoryId());
+
 					OrderGoods  checkname=shopService.getOrderGoodsForCheck(checkModel);
 					if (null!=checkname)
 					{
@@ -653,6 +658,10 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			try {
 				if (null!=model.getCategoryId() && null !=model.getShopId()) {
+					if (model.getCategoryId().contains(","))
+					{
+						model.setCategoryId(model.getCategoryId().split(",")[1]);
+					}
 					//验证重名
 					int checkval=0;
 					OrderGoods  checkModel=new OrderGoods();
