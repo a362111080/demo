@@ -180,8 +180,7 @@ public class ShipmentGoodsServiceImpl extends ServiceImpl<ShipmentGoodsMapper, S
                                         .select("weight_min", "weight_max", "mode")
                                         .eq("id", temp.getSpecificationId())
                                         .eq("shop_id", temp.getShopId())
-                                        .eq("company_id", temp.getCompanyId())
-                                        .eq("dr", 0));
+                                        .eq("company_id", temp.getCompanyId()));
                                 if (1==specification.getMode()) {
                                     count = map.get("实重("+specification.getWeightMin()+"~"+specification.getWeightMax()+")");
                                     map.put("实重("+specification.getWeightMin()+"~"+specification.getWeightMax()+")"
