@@ -134,6 +134,9 @@ public class OrderBillServiceImpl implements OrderBillService {
                     sb.append("购物车存在异常商品,商品名为" + orderCart.getGoodsName());
                     continue;
                 }
+                if (!orderCart.getEffectFlag()) {
+                    throw new ServiceException("订单存在失效商品,确认后提交");
+                }
                 orderBillDetail = new OrderBillDetail();
                 orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                 if (totalPriceFlag) {
