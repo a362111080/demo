@@ -482,8 +482,6 @@ public class TaskController {
                                         if (null != Categoryname) {
                                             if (!Billcategoryname.contains(Categoryname) && Billcategoryname != "") {
                                                 Billcategoryname = Billcategoryname + "/" + Categoryname;
-                                            } else {
-                                                Billcategoryname = Categoryname;
                                             }
                                         }
 
