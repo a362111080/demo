@@ -138,7 +138,7 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
              * 2.将商品信息加入购物车,获取购物车商品id
              * 3.确认订单
              */
-            OrderCart orderCart ;
+            OrderCart orderCart;
             OrderGoods orderGoods = orderGoodsMapper.selectOne(new QueryWrapper<OrderGoods>()
                     .eq("id", orderDirectPurchaseRequestDTO.getGoodsId())
                     .eq("shop_id", orderDirectPurchaseRequestDTO.getShopId())
@@ -272,6 +272,9 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
     private boolean checkBigDecimal(String targetString) {
         BigDecimal tmp = null;
         try {
+            if (null == targetString) {
+                return false;
+            }
             tmp = new BigDecimal(targetString);
         } catch (NumberFormatException e) {
 
