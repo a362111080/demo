@@ -795,6 +795,7 @@ public class ShopController {
 					for (int m = 0; m < ResponseDTO.size(); m++) {
 						List<OrderGoodSpecification> spec = shopService.GetOrderGoodSpecList(ResponseDTO.get(m));
 						ResponseDTO.get(m).setSepcificationList(spec);
+						ResponseDTO.get(m).setCategoryId(ResponseDTO.get(m).getPid()+","+ResponseDTO.get(m).getCategoryId());
 					}
 				}
 				PageInfo<OrderGoods> pageInfo = new PageInfo<>(ResponseDTO);

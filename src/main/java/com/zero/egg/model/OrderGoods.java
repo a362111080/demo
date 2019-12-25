@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -88,4 +87,7 @@ public class OrderGoods implements Serializable {
     @ApiModelProperty(value = "企业店铺信息",hidden=true)
     private List<OrderGoodSpecification> sepcificationList;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "类目一级id",hidden=true)
+    private String pid;
 }
