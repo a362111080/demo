@@ -110,7 +110,7 @@ public class OrderCartServiceImpl implements OrderCartService {
              * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
              * 2.查询该用户在该店铺下的所有购物车信息(包括规格列表)
              */
-            PageHelper.startPage(orderCartListRequestDTO.getCurrent().intValue(), 999);
+            PageHelper.startPage(orderCartListRequestDTO.getCurrent().intValue(), orderCartListRequestDTO.getSize().intValue());
             List<OrderCart> cartList = orderCartMapper.getCartList(orderCartListRequestDTO.getShopId(), orderCartListRequestDTO.getUserId());
             PageInfo pageInfo = new PageInfo(cartList);
             return pageInfo;
