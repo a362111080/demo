@@ -8,6 +8,7 @@ import com.zero.egg.requestDTO.AddCartGoodRequestDTO;
 import com.zero.egg.requestDTO.DeleteCartGoodsRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderCartListRequestDTO;
+import com.zero.egg.requestDTO.OrderCartSpecificationRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsCheckRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsNumRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsSpecificationRequestDTO;
@@ -90,6 +91,28 @@ public class OrderCartController {
             msg.setData(pageInfo);
             msg.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
             msg.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+        } catch (Exception e) {
+            log.error("cartlists controller error:" + e);
+            msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+            if (e instanceof ServiceException) {
+                msg.setMessage(e.getMessage());
+            }
+            msg.setMessage((UtilConstants.ResponseMsg.FAILED));
+        }
+        return msg;
+    }
+
+    @PostMapping(value = "/getcartspecificationlist")
+    @LoginToken
+    @ApiOperation("获取购物车商品的规格列表")
+    public Message getCartSpecificationList(@RequestBody OrderCartSpecificationRequestDTO orderCartSpecificationRequestDTO) {
+        //参数校验
+        BeanValidator.check(orderCartSpecificationRequestDTO);
+        Message msg = new Message();
+        try {
+            LoginUser loginUser = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
+            orderCartSpecificationRequestDTO.setUserId(loginUser.getId());
+            msg  = orderCartService.specificationList(orderCartSpecificationRequestDTO);
         } catch (Exception e) {
             log.error("cartlists controller error:" + e);
             msg.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);

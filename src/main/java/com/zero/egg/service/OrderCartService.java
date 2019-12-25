@@ -5,9 +5,11 @@ import com.zero.egg.requestDTO.AddCartGoodRequestDTO;
 import com.zero.egg.requestDTO.DeleteCartGoodsRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderCartListRequestDTO;
+import com.zero.egg.requestDTO.OrderCartSpecificationRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsCheckRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsNumRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsSpecificationRequestDTO;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
 
 /**
@@ -55,4 +57,12 @@ public interface OrderCartService {
      * @param updateCartGoodsCheckRequestDTO
      */
     void updateCartGoodsCheck(UpdateCartGoodsCheckRequestDTO updateCartGoodsCheckRequestDTO) throws ServiceException;
+
+    /**
+     * 获取购物车商品规格列表
+     * @param orderCartSpecificationRequestDTO
+     * @return
+     * @throws ServiceException
+     */
+    Message specificationList(OrderCartSpecificationRequestDTO orderCartSpecificationRequestDTO)throws ServiceException;
 }

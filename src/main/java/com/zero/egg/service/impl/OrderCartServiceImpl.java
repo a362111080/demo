@@ -14,11 +14,14 @@ import com.zero.egg.requestDTO.AddCartGoodRequestDTO;
 import com.zero.egg.requestDTO.DeleteCartGoodsRequestDTO;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderCartListRequestDTO;
+import com.zero.egg.requestDTO.OrderCartSpecificationRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsCheckRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsNumRequestDTO;
 import com.zero.egg.requestDTO.UpdateCartGoodsSpecificationRequestDTO;
 import com.zero.egg.service.OrderCartService;
+import com.zero.egg.tool.Message;
 import com.zero.egg.tool.ServiceException;
+import com.zero.egg.tool.UtilConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -169,7 +172,10 @@ public class OrderCartServiceImpl implements OrderCartService {
             List<OrderCart> cartList = orderCartMapper.getCartList(updateCartGoodsSpecificationRequestDTO.getShopId(), updateCartGoodsSpecificationRequestDTO.getUserId());
             for (OrderCart orderCart : cartList) {
                 //如果要换的规格在与购物车中存在
-                if (orderCart.getGoodsId().equals(orderGoodsSpecification.getGoodsId()) && orderCart.getGoodSpecificationId().equals(orderGoodsSpecification.getId())) {
+                if (orderCart.getGoodsId().equals(orderGoodsSpecification.getGoodsId())
+                        && orderCart.getGoodSpecificationId().equals(orderGoodsSpecification.getId())
+                        && orderCart.getWeightMode().equals(updateCartGoodsSpecificationRequestDTO.getWeightMode())
+                        && !orderCart.getId().equals(updateCartGoodsSpecificationRequestDTO.getCartId())) {
                     changeNumberFlag = true;
                     changeNumberCartId = orderCart.getId();
                     changeNumber = orderCart.getNumber();
@@ -188,7 +194,7 @@ public class OrderCartServiceImpl implements OrderCartService {
                         .eq("id", updateCartGoodsSpecificationRequestDTO.getCartId())
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
                         .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
-                orderCartMapper.update(new OrderCart().setNumber(number+changeNumber), new UpdateWrapper<OrderCart>()
+                orderCartMapper.update(new OrderCart().setNumber(number + changeNumber), new UpdateWrapper<OrderCart>()
                         .eq("id", changeNumberCartId)
                         .eq("shop_id", updateCartGoodsSpecificationRequestDTO.getShopId())
                         .eq("user_id", updateCartGoodsSpecificationRequestDTO.getUserId()));
@@ -255,6 +261,28 @@ public class OrderCartServiceImpl implements OrderCartService {
                 throw e;
             }
             throw new ServiceException("updateCartGoodsCheck failed" + e);
+        }
+    }
+
+    @Override
+    public Message specificationList(OrderCartSpecificationRequestDTO orderCartSpecificationRequestDTO) throws ServiceException {
+        Message message = new Message();
+        try {
+            /**
+             * TODO 1. 根据loginUser的user_id查询绑定的shopId列表包不包括前端shopId
+             * 2.查询该用户在该店铺下的所有购物车信息(包括规格列表)
+             */
+            List<OrderGoodsSpecification> orderGoodsSpecifications = orderCartMapper.getSpecificationList(orderCartSpecificationRequestDTO.getShopId(), orderCartSpecificationRequestDTO.getGoodsId());
+            message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+            message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
+            message.setData(orderGoodsSpecifications);
+            return message;
+        } catch (Exception e) {
+            log.error("specificationList failed" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
+            throw new ServiceException("specificationList failed" + e);
         }
     }
 
