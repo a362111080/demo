@@ -119,11 +119,7 @@ public class OrderBillServiceImpl implements OrderBillService {
             List<OrderBillDetail> orderBillDetailList = new ArrayList<>();
             BigDecimal total = BigDecimal.ZERO;
             for (String cartId : addOrderBillRequestDTO.getCartIds()) {
-                OrderCart orderCart = orderCartMapper.selectOne(new QueryWrapper<OrderCart>()
-                        .eq("id", cartId)
-                        .eq("shop_id", addOrderBillRequestDTO.getShopId())
-                        .eq("user_id", addOrderBillRequestDTO.getUserId())
-                        .eq("dr", false));
+                OrderCart orderCart = orderCartMapper.getOneCartGoodForBill(addOrderBillRequestDTO.getShopId(),addOrderBillRequestDTO.getUserId(),cartId);
                 //删除购物车商品信息
                 orderCartMapper.update(new OrderCart().setDr(true), new UpdateWrapper<OrderCart>()
                         .eq("id", cartId)
