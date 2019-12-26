@@ -480,6 +480,10 @@ public class TaskController {
                                         //拼接账单品种
                                         String Categoryname = UnloadReport.get(u).getCategoryname();
                                         if (null != Categoryname) {
+                                            if (Billcategoryname=="")
+                                            {
+                                                Billcategoryname=Categoryname;
+                                            }
                                             if (!Billcategoryname.contains(Categoryname) && Billcategoryname != "") {
                                                 Billcategoryname = Billcategoryname + "/" + Categoryname;
                                             }
