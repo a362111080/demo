@@ -43,8 +43,12 @@
   </sql>
 
   <select id="getCartList" resultType="com.zero.egg.model.OrderCart">
-    SELECT <include refid="Base_Column_List"></include>
+    SELECT oc.id, oc.shop_id, oc.user_id, oc.good_specification_id,ogs.specification,ogs.value,oc.goods_id, og.goods_sn,
+    og.name, ogs.price,
+    oc.`number`,oc.`checked`,ogs.pic_url,oc.createtime, oc.modifytime,oc.dr,oc.weight_mode,oc.effect_flag
     FROM order_cart oc
+    INNER Join order_goods og ON oc.goods_id = og.id
+    INNER Join order_goods_specification ogs ON ogs.goods_id = oc.goods_id
     WHERE oc.dr = false AND oc.shop_id = #{shopId} AND oc.user_id = #{userId}
     ORDER BY oc.`checked` DESC, oc.`createtime` DESC
   </select>
