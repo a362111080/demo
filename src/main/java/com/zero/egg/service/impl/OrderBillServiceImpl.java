@@ -137,7 +137,7 @@ public class OrderBillServiceImpl implements OrderBillService {
                 orderBillDetail.setQuantity(BigDecimal.valueOf(orderCart.getNumber()));
                 if (totalPriceFlag) {
                     //如果单价不能转换成BigDecimal,则小计总价都为null
-                    if (!checkBigDecimal(orderCart.getPrice())) {
+                    if (null==orderCart.getPrice()||!checkBigDecimal(orderCart.getPrice())) {
                         totalPriceFlag = false;
                     } else {
                         orderBillDetail.setGoodsPrice(new BigDecimal(orderCart.getPrice()));
