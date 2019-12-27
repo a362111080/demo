@@ -61,6 +61,9 @@ public class OrderGoods implements Serializable {
     @ApiModelProperty(value = "是否上架",required=false)
     private  Boolean isOnSale;
 
+    @ApiModelProperty(value = "是否推荐",required=false)
+    private  Boolean isRecommend;
+
     @ApiModelProperty(value = "排序",required=false)
     private  int sortOrder;
 

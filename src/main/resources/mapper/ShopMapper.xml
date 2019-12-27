@@ -66,9 +66,9 @@
 
 
     <insert id="addordergood" parameterType="OrderGoods">
-        insert into order_goods(id,company_id,shop_id,goods_sn,name,category_id,gallery,keywords,brief,is_on_sale,sort_order,
+        insert into order_goods(id,company_id,shop_id,goods_sn,name,category_id,gallery,keywords,brief,is_on_sale,is_recommend,sort_order,
                                 pic_url,detail,createtime,modifytime,dr)
-        values(#{id},#{companyId},#{shopId},#{goodsSn},#{name},#{categoryId},#{gallery},#{keywords},#{brief},#{isOnSale},
+        values(#{id},#{companyId},#{shopId},#{goodsSn},#{name},#{categoryId},#{gallery},#{keywords},#{brief},#{isOnSale},#{isRecommend},
                #{sortOrder},#{picUrl},#{detail},#{createtime},#{modifytime},#{dr})
     </insert>
 
@@ -126,6 +126,7 @@
             <if test="gallery!= null">gallery= #{gallery,jdbcType=VARCHAR},</if>
             <if test="brief!= null">brief= #{brief,jdbcType=VARCHAR},</if>
             <if test="isOnSale!= null">is_on_sale= #{isOnSale,jdbcType=VARCHAR},</if>
+            <if test="isRecommend!= null">is_recommend= #{isRecommend,jdbcType=VARCHAR},</if>
             <if test="picUrl!= null">pic_url= #{picUrl,jdbcType=VARCHAR},</if>
             <if test="detail!= null">detail= #{detail,jdbcType=VARCHAR},</if>
             <if test="modifytime!= null">modifytime= #{modifytime,jdbcType=DATE},</if>
