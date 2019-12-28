@@ -51,11 +51,11 @@
          a.message,a.consignee,a.accept_status,a.user_id,bl.bill_no as billno
          FROM order_order a
          left join bd_task  tk on tk.order_id=a.id and tk.dr=0 and tk.status not in (1)
-         left join bd_bill  bl on bl.task_id=tk.id and bl.dr = 0
+         left join bd_bill  bl on bl.task_id=tk.id
          left join  order_user_secret  c on c.user_id=a.user_id
          inner join  order_secret e on e.id=c.secret_id and e.shop_id=a.shop_id  and e.status=1
          left join bd_customer d on d.id=e.customer_id
-         WHERE  a.dr=0
+         WHERE  a.dr=0  and bl.dr = 0
         <if test="shopId != null and shopId !=''">
             and a.shop_id=#{shopId,jdbcType=VARCHAR}
         </if>
