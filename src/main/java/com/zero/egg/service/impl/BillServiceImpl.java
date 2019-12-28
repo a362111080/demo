@@ -304,6 +304,7 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
     public Message cancelShipmentBill(CancelShipmentBillRequestDTO requestDTO) throws ServiceException {
         Message message = new Message();
         /**
+         * pre:如果要取消的账单和订单相关联,则将订单的状态变为已接单
          * 如果账单已经存在报损任务,则不能取消账单
          * 1.根据账单id查出该账单信息,主要是相关联的出货任务id,逻辑删除该账单信息(包括账单细节表里的关联信息)
          * 2.根据任务id查询出货商品表相关已出货物信息,主要是商品编号,方案细节(规格)id,并将dr置位1
@@ -312,11 +313,18 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
          */
         try {
             Bill bill = mapper.selectOne(new QueryWrapper<Bill>()
-                    .select("id,cussup_id,task_id")
                     .eq("company_id", requestDTO.getCompanyId())
                     .eq("shop_id", requestDTO.getShopId())
                     .eq("id", requestDTO.getBillId())
                     .eq("dr", 0));
+            if (null == bill) {
+                throw new ServiceException("查无此单");
+            }
+            if (null != bill.getOrderId()) {
+                orderBillMapper.update(new OrderBill().setOrderStatus(BillEnums.OrderStatus.Received.index()), new UpdateWrapper<OrderBill>()
+                        .eq("id", bill.getOrderId())
+                        .eq("dr", false));
+            }
             //合作商id
             String customerId = bill.getCussupId();
             //出货任务id

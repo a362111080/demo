@@ -627,6 +627,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     @Transactional
     public Message addOrderShipmentTask(Task task) throws ServiceException {
         /**
+         * pre:如果已经有和订单id相关联的账单,则不允许新建出货任务
          * 1.根据订货平台用户id查询合作商id
          * 2.根据合作商id查询是否存在有效的(正在执行或者暂停)任务
          * 3.如果存在活动任务,则创建失败,并返回已有活动任务的提示
@@ -634,6 +635,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
          */
         Message message = new Message();
         try {
+            Bill bill = billMapper.selectOne(new QueryWrapper<Bill>()
+                    .eq("order_id", task.getOrderId())
+                    .eq("dr", false)
+                    .eq("type", 2));
+            if (null != bill) {
+                throw new ServiceException("该合作商存在相关联的订单,编号为" + bill.getBillNo() + ",无法再新建出货任务");
+            }
             Customer customer = mapper.selectOrderCustomer(task.getOrderUserId(), task.getOrderId());
             Task tempTask = mapper.selectOne(new QueryWrapper<Task>()
                     .eq("dr", 0)
