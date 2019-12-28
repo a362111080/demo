@@ -55,7 +55,7 @@
 
   <select id="getSpecificationList" resultType="com.zero.egg.model.OrderGoodsSpecification">
     SELECT ogs.id,ogs.goods_id,ogs.specification,
-    ogs.value,ogs.pic_url,ogs.modifier,ogs.creator,ogs.createtime,
+    ogs.value,ogs.pic_url,ogs.modifier,ogs.creator,ogs.createtime,ogs.price,
     ogs.modifytime,ogs.dr FROM order_goods_specification ogs
     Inner JOIN order_goods og ON ogs.goods_id = og.id
     WHERE ogs.dr = false AND og.shop_id = #{shopId} AND ogs.goods_id = #{goodsId}
