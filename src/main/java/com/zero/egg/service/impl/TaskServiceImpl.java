@@ -687,6 +687,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             return message;
         } catch (Exception e) {
             log.error("订货平台订单新建任务失败:" + e);
+            if (e instanceof ServiceException) {
+                throw new ServiceException(e.getMessage());
+            }
             throw new ServiceException("订货平台订单新建任务失败");
         }
     }
