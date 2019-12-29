@@ -655,6 +655,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 message.setMessage(UtilConstants.ResponseMsg.TAST_EXIST);
                 message.setData(tempTask);
             } else if (null != tempTask && null != tempTask.getOrderId()) {
+                String orderSn = orderBillMapper.selectOne(new QueryWrapper<OrderBill>()
+                        .select("order_sn")
+                        .eq("id", tempTask.getOrderId())
+                        .eq("dr", 0)).getOrderSn();
+                tempTask.setOrderSn(orderSn);
                 message.setState(UtilConstants.ResponseCode.ORDER_TAST_EXIST);
                 message.setMessage(UtilConstants.ResponseMsg.ORDER_TAST_EXIST);
                 message.setData(tempTask);
