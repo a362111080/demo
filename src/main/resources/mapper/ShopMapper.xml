@@ -245,7 +245,7 @@
         <if test="isOnSale != null and isOnSale !='' or 0 == isOnSale">
             and  a.is_on_sale=#{isOnSale,jdbcType=VARCHAR}
         </if>
-
+        order by  a.category_id
     </select>
 
     <select id="GetOrderGoodSpecList"  resultType="com.zero.egg.model.OrderGoodSpecification" parameterType="OrderGoods">
