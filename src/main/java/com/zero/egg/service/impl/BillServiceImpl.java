@@ -250,11 +250,18 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             BigDecimal amount = BigDecimal.ZERO;
             //账单细节列表
             List<BillDetails> details = bill.getUnloadDetails();
+
+            Bill currentBill = mapper.selectOne(new QueryWrapper<Bill>()
+                    .eq("id", bill.getId()));
+            if (null == currentBill) {
+                throw new ServiceException("billId传入错误,查询不到相关订单");
+            }
+            //将该账单关联的任务状态变成已取消
+            taskMapper.update(new Task().setStatus(TaskEnums.Status.CANCELED.index().toString())
+                    , new UpdateWrapper<Task>()
+                    .eq("id", currentBill.getTaskId()));
             //如果账单是零售账单,则不能更新实收金额
-            String type = mapper.selectOne(new QueryWrapper<Bill>()
-                    .select("type")
-                    .eq("id", bill.getId()))
-                    .getType();
+            String type = currentBill.getType();
             if (TaskEnums.Type.Retail.index() == Integer.parseInt(type) && null != bill.getRealAmount()) {
                 bill.setRealAmount(null);
             }
