@@ -89,6 +89,7 @@
         left join order_cart d on m.cart_id=d.id
         where m.order_id=#{id}
         and m.dr=0
+        order by m.specification_id
     </select>
 
 
