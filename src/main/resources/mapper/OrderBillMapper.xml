@@ -158,7 +158,7 @@
     <sql id="Detail_Sql">
       ood.id AS did, order_id AS dorder_id, ood.company_id AS dcompany_id, ood.shop_id AS dshop_id, ood.cart_id AS dcart_id,
       ood.order_category_id AS dorder_category_id, ood.order_category_name AS dorder_category_name, ood.specification_id AS dspecification_id,
-      ood.specification_name AS dspecification_name, ood.specification_value AS dspecification_value, ogs AS dgoods_price,
+      ood.specification_name AS dspecification_name, ood.specification_value AS dspecification_value, ogs.price AS dgoods_price,
       ood.quantity AS dquantity, ood.subtotal AS dsubtotal, ood.createtime AS dcreatetime, ood.modifytime AS dmodifytime ,ood.dr AS ddr
     </sql>
 
