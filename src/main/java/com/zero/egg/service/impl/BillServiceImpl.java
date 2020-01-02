@@ -256,10 +256,6 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
             if (null == currentBill) {
                 throw new ServiceException("billId传入错误,查询不到相关订单");
             }
-            //将该账单关联的任务状态变成已取消
-            taskMapper.update(new Task().setStatus(TaskEnums.Status.CANCELED.index().toString())
-                    , new UpdateWrapper<Task>()
-                    .eq("id", currentBill.getTaskId()));
             //如果账单是零售账单,则不能更新实收金额
             String type = currentBill.getType();
             if (TaskEnums.Type.Retail.index() == Integer.parseInt(type) && null != bill.getRealAmount()) {
@@ -332,6 +328,10 @@ public class BillServiceImpl extends ServiceImpl<BillMapper, Bill> implements IB
                         .eq("id", bill.getOrderId())
                         .eq("dr", false));
             }
+            //将该账单关联的任务状态变成已取消
+            taskMapper.update(new Task().setStatus(TaskEnums.Status.CANCELED.index().toString())
+                    , new UpdateWrapper<Task>()
+                            .eq("id", bill.getTaskId()));
             //合作商id
             String customerId = bill.getCussupId();
             //出货任务id
