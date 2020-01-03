@@ -71,11 +71,16 @@ public class BarCodeServiceImpl implements BarCodeService {
                     .eq("company_id", barCode.getCompanyId())
                     .eq("shop_id", barCode.getShopId())
                     .eq("supplier_id", barCode.getSupplierId())
-                    .eq("category_id", barCode.getCategoryId())
-                    .eq("dr", 0));
+                    .eq("category_id", barCode.getCategoryId()));
             if (count > 0) {
-                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-                message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
+                log.info("复用二维码");
+                mapper.update(new BarCode().setDr(false), new UpdateWrapper<BarCode>()
+                        .eq("company_id", barCode.getCompanyId())
+                        .eq("shop_id", barCode.getShopId())
+                        .eq("supplier_id", barCode.getSupplierId())
+                        .eq("category_id", barCode.getCategoryId()));
+                message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
                 return message;
             }
 //            BarCodeInfoDTO infoDTO = compactBarInfo(barCode);
