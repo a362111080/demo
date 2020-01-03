@@ -345,7 +345,7 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
                 throw new ServiceException(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
             }
-            List<Shop> shops = new ArrayList<>();
+            List<String> shops = new ArrayList<>();
             Shop shop;
             OrderSecret orderSecret;
             for (OrderUserSecret orderUserSecret : orderUserSecrets) {
@@ -358,8 +358,7 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
                         .eq("id", orderSecret.getShopid())
                         .eq("company_id", orderSecret.getCompanyid())
                         .eq("dr", 0));
-                shop.setSecret(orderSecret.getSecretKey());
-                shops.add(shop);
+                shops.add(shop.getId());
             }
             if (shops.contains(shopId)) {
                 return true;
