@@ -11,7 +11,10 @@ import com.zero.egg.dao.OrderCartMapper;
 import com.zero.egg.dao.OrderCategoryMapper;
 import com.zero.egg.dao.OrderGoodsMapper;
 import com.zero.egg.dao.OrderGoodsSpecificationMapper;
+import com.zero.egg.dao.OrderSecretMapper;
+import com.zero.egg.dao.OrderUserSecretMapper;
 import com.zero.egg.dao.ShopMapper;
+import com.zero.egg.dao.WechatAuthMapper;
 import com.zero.egg.enums.BillEnums;
 import com.zero.egg.model.BdCity;
 import com.zero.egg.model.OrderAddress;
@@ -21,7 +24,10 @@ import com.zero.egg.model.OrderCart;
 import com.zero.egg.model.OrderCategory;
 import com.zero.egg.model.OrderGoods;
 import com.zero.egg.model.OrderGoodsSpecification;
+import com.zero.egg.model.OrderSecret;
+import com.zero.egg.model.OrderUserSecret;
 import com.zero.egg.model.Shop;
+import com.zero.egg.model.WechatAuth;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.OrderDirectPurchaseRequestDTO;
 import com.zero.egg.requestDTO.OrderGoodsRequestDTO;
@@ -37,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,14 +83,30 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
     @Autowired
     private OrderBillDetailMapper orderBillDetailMapper;
 
+    @Autowired
+    private OrderUserSecretMapper orderUserSecretMapper;
+
+    @Autowired
+    private OrderSecretMapper orderSecretMapper;
+
+    @Autowired
+    private WechatAuthMapper wechatAuthMapper;
+
+
     @Override
     public Message getGoodsList(OrderGoodsRequestDTO model, LoginUser loginUser) throws ServiceException {
         Message message = new Message();
         try {
             /**
-             * TODO 1.判断传入的店铺id在不在用户绑定的店铺id之中
+             * 1.判断传入的店铺id在不在用户绑定的店铺id之中
              * 2.查询上架且未删除的商品信息,可以根据商品名模糊查询
              */
+            boolean flag = checkShopInUser(model.getShopId(), loginUser.getId());
+            if (!flag) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+                return message;
+            }
             PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
             List<OrderGoods> orderGoods = orderGoodsMapper.getAllByShopId(model);
             if (orderGoods.size() < 1) {
@@ -98,6 +121,9 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             return message;
         } catch (Exception e) {
             log.error("getGoodsList service error" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             throw new ServiceException("getGoodsList service error");
         }
     }
@@ -107,9 +133,15 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
         Message message = new Message();
         try {
             /**
-             * TODO 1.判断传入的店铺id在不在用户绑定的店铺id之中
+             * 1.判断传入的店铺id在不在用户绑定的店铺id之中
              * 2.查询上架且未删除的商品信息,可以根据商品名模糊查询
              */
+            boolean flag = checkShopInUser(model.getShopId(), loginUser.getId());
+            if (!flag) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+                return message;
+            }
             PageHelper.startPage(model.getCurrent().intValue(), model.getSize().intValue());
             List<OrderGoods> orderGoods = orderGoodsMapper.getAllByShopIdAndCategoryId(model);
             if (orderGoods.size() < 1) {
@@ -123,6 +155,9 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             message.setData(pageInfo);
             return message;
         } catch (Exception e) {
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             log.error("getGoodsList service error" + e);
             throw new ServiceException("getGoodsList service error");
         }
@@ -134,10 +169,16 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
         Message message = new Message();
         try {
             /**
-             * TODO 1.判断传入的店铺id在不在用户绑定的店铺id之中
+             * 1.判断传入的店铺id在不在用户绑定的店铺id之中
              * 2.将商品信息加入购物车,获取购物车商品id
              * 3.确认订单
              */
+            boolean flag = checkShopInUser(orderDirectPurchaseRequestDTO.getShopId(), orderDirectPurchaseRequestDTO.getUserId());
+            if (!flag) {
+                message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+                message.setMessage(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+                return message;
+            }
             OrderCart orderCart;
             OrderGoods orderGoods = orderGoodsMapper.selectOne(new QueryWrapper<OrderGoods>()
                     .eq("id", orderDirectPurchaseRequestDTO.getGoodsId())
@@ -231,6 +272,9 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             return message;
         } catch (Exception e) {
             log.error("directToPurchase service error" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             throw new ServiceException("directToPurchase service error");
         }
     }
@@ -283,5 +327,52 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 判断传入的店铺id在不在用户绑定的店铺id之中
+     * @param shopId
+     * @param userId
+     * @return
+     */
+    private boolean checkShopInUser(String shopId,String userId) {
+        try {
+            WechatAuth wechatAuth = wechatAuthMapper.selectById(userId);
+            List<OrderUserSecret> orderUserSecrets = orderUserSecretMapper.selectList(new QueryWrapper<OrderUserSecret>()
+                    .eq("user_id", wechatAuth.getWechatAuthId())
+                    .eq("dr", 0));
+            //如果没有有效的绑定秘钥信息,则返回空
+            if (orderUserSecrets.size() < 1 || null == orderUserSecrets) {
+                throw new ServiceException(UtilConstants.ResponseMsg.NO_COOPERATE_SHOP);
+            }
+            List<Shop> shops = new ArrayList<>();
+            Shop shop;
+            OrderSecret orderSecret;
+            for (OrderUserSecret orderUserSecret : orderUserSecrets) {
+                orderSecret = orderSecretMapper.selectOne(new QueryWrapper<OrderSecret>()
+                        .select("shop_id", "company_id", "secret_key")
+                        .eq("id", orderUserSecret.getSecretId())
+                        .eq("dr", 0)
+                        .eq("status", 1));
+                shop = shopMapper.selectOne(new QueryWrapper<Shop>()
+                        .eq("id", orderSecret.getShopid())
+                        .eq("company_id", orderSecret.getCompanyid())
+                        .eq("dr", 0));
+                shop.setSecret(orderSecret.getSecretKey());
+                shops.add(shop);
+            }
+            if (shops.contains(shopId)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("checkShopInUser error:" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            } else {
+                throw new ServiceException("checkShopInUser error:" + e);
+            }
+        }
     }
 }
