@@ -354,6 +354,9 @@ public class OrderGoodsServiceImpl implements OrderGoodsService {
                         .eq("id", orderUserSecret.getSecretId())
                         .eq("dr", 0)
                         .eq("status", 1));
+                if (null == orderSecret) {
+                    continue;
+                }
                 shop = shopMapper.selectOne(new QueryWrapper<Shop>()
                         .eq("id", orderSecret.getShopid())
                         .eq("company_id", orderSecret.getCompanyid())
