@@ -31,11 +31,12 @@
         oo.modifytime,
         oo.dr
     </sql>
+    <!--    FIND_IN_SET(oo.order_status,'0,1,-1'),-->
     <select id="selectBillList" resultType="com.zero.egg.responseDTO.OrderBillListResponseDTO">
         SELECT
         <include refid="Base_Column_List"/>
         FROM order_order oo
-        ${ew.customSqlSegment} ORDER BY FIND_IN_SET(oo.order_status,'0,1,-1'),oo.createtime DESC
+        ${ew.customSqlSegment} ORDER BY oo.createtime DESC
     </select>
 
     <select id="selectBillListPics" resultType="string">
