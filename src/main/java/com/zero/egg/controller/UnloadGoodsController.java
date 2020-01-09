@@ -87,8 +87,7 @@ public class UnloadGoodsController {
 			model.setModifytime(new Date());
 			//根据二维码id 获取相关信息
 			BarCode  bar=unloadGoodsService.GetBarCodeInfo(model.getQrCode());
-			if (null !=bar) {
-
+			if (null !=bar && bar.getShopId().equals(user.getShopId())) {
 				//判断商品码是否存在
 				if (unloadGoodsService.GoodNoIsExists(bar.getCurrentCode())>0)
 				{
