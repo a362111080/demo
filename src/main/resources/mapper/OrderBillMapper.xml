@@ -151,6 +151,7 @@
             <result column="dcreatetime" property="createtime"/>
             <result column="dmodifytime" property="modifytime"/>
             <result column="weightMode" property="weightMode"/>
+            <result column="goodsName" property="goodsName"/>
             <result column="ddr" property="dr"/>
             <result column="pic_url" property="picUrl"/>
         </collection>
@@ -164,7 +165,7 @@
     </sql>
 
     <select id="getOrderBillDetail" resultMap="GetBillDetailMap">
-        SELECT <include refid="Base_Column_List"/>, <include refid="Detail_Sql"/>,oc.weight_mode AS weightMode,ogs.pic_url FROM order_order oo
+        SELECT <include refid="Base_Column_List"/>, <include refid="Detail_Sql"/>,oc.weight_mode AS weightMode,ogs.pic_url,oc.goods_name AS goodsName FROM order_order oo
         LEFT JOIN order_order_detail ood ON oo.id = ood.order_id
         LEFT JOIN order_cart oc ON oc.id = ood.cart_id
         LEFT JOIN order_goods_specification ogs ON  ogs.id = ood.specification_id
