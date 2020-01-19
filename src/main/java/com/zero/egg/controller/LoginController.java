@@ -190,6 +190,18 @@ public class LoginController {
                 wechatAuthService.bindWechatAuth(wechatAuth);
 
             }
+            else
+            {
+                //小程序端账户不能登录PC端
+                map = (Map<String, Object>) response.getData();
+                String userTypeName = (String) map.get("userTypeName");
+                if (UserEnums.Type.Boss.note().equals(userTypeName) || UserEnums.Type.Device.note().equals(userTypeName)|| UserEnums.Type.Staff.note().equals(userTypeName)
+                    || UserEnums.Type.Order.note().equals(userTypeName)) {
+                    response = new BaseResponse<>(ApiConstants.ResponseCode.EXECUTE_ERROR, ApiConstants.ResponseMsg.EXECUTE_ERROR);
+                    response.setMsg("非企业用户和PC端账号无法访问");
+                    return response;
+                }
+            }
             return response;
 
         } catch (Exception e) {
