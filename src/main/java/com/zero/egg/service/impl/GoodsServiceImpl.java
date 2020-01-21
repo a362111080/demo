@@ -96,7 +96,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             }
             goods.setEmployeeId(employeeId);
             goods.setEmployeeName(employeeName);
-            //如果合作商是零售,查询当前sortedSet里面的数量,限制出货数量为1
+/*            //如果合作商是零售,查询当前sortedSet里面的数量,限制出货数量为1
             Customer customer = customerMapper.getOneById(customerId);
             if (1 == customer.getIsRetail()) {
                 long shipedNum = sortSets.zcard(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
@@ -104,7 +104,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 if (shipedNum >= 1) {
                     throw new ServiceException(UtilConstants.ResponseMsg.RETAIL_ONE_ONLY);
                 }
-            }
+            }*/
             // 存redis
             long effectiveNum = sortSets.zaddNx(UtilConstants.RedisPrefix.SHIPMENTGOOD_TASK
                             + loginUser.getCompanyId() + ":" + loginUser.getShopId() + ":" + customerId + ":" + taskId
