@@ -190,7 +190,7 @@ public class LoginController {
                 wechatAuthService.bindWechatAuth(wechatAuth);
 
             }
-            else
+/**            else
             {
                 //小程序端账户不能登录PC端
                 map = (Map<String, Object>) response.getData();
@@ -201,7 +201,7 @@ public class LoginController {
                     response.setMsg("非企业用户和PC端账号无法访问");
                     return response;
                 }
-            }
+            }*/
             return response;
 
         } catch (Exception e) {
