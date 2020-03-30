@@ -403,6 +403,7 @@ public class ShopController {
 		if (loginUser.getCompanyId()!=null) {
 			try {
 			    //判断类目名称是否重复
+				model.setShopId(loginUser.getShopId());
                 List<OrderCategory> res =shopService.getCategoryInfo(model);
                 if (res.size()>0) {
                     message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
