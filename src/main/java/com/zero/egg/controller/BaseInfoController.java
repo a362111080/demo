@@ -263,7 +263,8 @@ public class BaseInfoController {
             if (null != specificationProgramRequestDTO && null != specificationProgramRequestDTO.getName()
                     && !"".equals(specificationProgramRequestDTO.getName())
                     && null != specificationProgramRequestDTO.getCategoryId()
-                    && checkShopAndCompanyExist(user, specificationProgramRequestDTO)) {
+                    && checkShopAndCompanyExist(user, specificationProgramRequestDTO)
+                    && null != specificationProgramRequestDTO.getIsWeight()) {
                 specificationProgramRequestDTO.setCreator(user.getName());
                 specificationProgramRequestDTO.setCreatetime(new Date());
                 message = specificationProgramService.addStandardData(specificationProgramRequestDTO);

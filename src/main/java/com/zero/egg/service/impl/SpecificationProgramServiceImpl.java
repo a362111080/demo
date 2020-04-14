@@ -54,6 +54,9 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
+                if (specificationProgramRequestDTO.getIsWeight() > 1 || specificationProgramRequestDTO.getIsWeight() < 0) {
+                    throw new ServiceException("addStandardData error:是否称重参数异常");
+                }
                 specificationProgramMapper.insert(specificationProgram);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -61,6 +64,9 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             return message;
         } catch (Exception e) {
             log.error("addStandardData error", e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             throw new ServiceException("addStandardData error");
         }
     }
