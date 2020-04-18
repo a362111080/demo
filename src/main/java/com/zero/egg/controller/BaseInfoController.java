@@ -288,18 +288,19 @@ public class BaseInfoController {
      * @param specificationProgramRequestDTO
      * @return
      */
-    @ApiOperation(value = "修改方案名")
+    @ApiOperation(value = "修改方案名和方案属性")
     @RequestMapping(value = "/standard/updatespecificationprogram", method = RequestMethod.POST)
     @LoginToken
     public Message updateStandard(@RequestBody @ApiParam(required = true,
             name = "specificationProgramRequestDTO",
-            value = " 1.品种id 2.方案名称") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+            value = " 1.品种id 2.方案名称 3是否称重") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
             if (null != specificationProgramRequestDTO
                     && null != specificationProgramRequestDTO.getName()
                     && null != specificationProgramRequestDTO.getCategoryId()
+                    && null != specificationProgramRequestDTO.getIsWeight()
                     && checkShopAndCompanyExist(user, specificationProgramRequestDTO)) {
                 message = specificationProgramService.updateSpecificationProgram(specificationProgramRequestDTO);
             } else {

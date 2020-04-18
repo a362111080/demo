@@ -197,6 +197,9 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                     message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                     message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
                 } else {
+                    if (specificationProgramRequestDTO.getIsWeight() > 1 || specificationProgramRequestDTO.getIsWeight() < 0) {
+                        throw new ServiceException("addStandardData error:是否称重参数异常");
+                    }
                     specificationProgramMapper.updateById(specificationProgram);
                     message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                     message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
