@@ -58,6 +58,11 @@ public interface UtilConstants {
          */
         public static final int ORDER_TAST_EXIST = -7;
 
+        /**
+         * 订货平台出货任务已经存在
+         */
+        public static final int UNLOAD_TYPE_ERROR = -8;
+
     }
 
     /**
