@@ -293,7 +293,7 @@ public class BaseInfoController {
     @LoginToken
     public Message updateStandard(@RequestBody @ApiParam(required = true,
             name = "specificationProgramRequestDTO",
-            value = " 1.品种id 2.方案名称 3是否称重") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
+            value = " 1.品种id 2.方案名称 3是否称重 4.方案id") SpecificationProgramRequestDTO specificationProgramRequestDTO) {
         Message message = null;
         LoginUser user = (LoginUser) request.getAttribute(ApiConstants.LOGIN_USER);
         try {
@@ -301,6 +301,7 @@ public class BaseInfoController {
                     && null != specificationProgramRequestDTO.getName()
                     && null != specificationProgramRequestDTO.getCategoryId()
                     && null != specificationProgramRequestDTO.getIsWeight()
+                    && null != specificationProgramRequestDTO.getId()
                     && checkShopAndCompanyExist(user, specificationProgramRequestDTO)) {
                 message = specificationProgramService.updateSpecificationProgram(specificationProgramRequestDTO);
             } else {
