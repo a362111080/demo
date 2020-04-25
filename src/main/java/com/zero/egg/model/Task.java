@@ -135,5 +135,7 @@ public class Task implements Serializable {
     @ApiModelProperty(value = "订货平台用户id",hidden=true)
     private String  orderUserId;
 
-
+    @TableField(exist = true)
+    @ApiModelProperty(value = "是否称重 0:不称重 1:称重",hidden=true)
+    private Integer isWeight ;
 }

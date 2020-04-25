@@ -8,10 +8,12 @@ import com.zero.egg.dao.BarCodeMapper;
 import com.zero.egg.dao.CustomerMapper;
 import com.zero.egg.dao.GoodsMapper;
 import com.zero.egg.dao.ShipmentGoodsMapper;
+import com.zero.egg.dao.TaskMapper;
 import com.zero.egg.model.BarCode;
 import com.zero.egg.model.Customer;
 import com.zero.egg.model.Goods;
 import com.zero.egg.model.ShipmentGoods;
+import com.zero.egg.model.Task;
 import com.zero.egg.requestDTO.LoginUser;
 import com.zero.egg.requestDTO.RemShipmentGoodsRequestDTO;
 import com.zero.egg.requestDTO.ShipmentGoodBarCodeRequestDTO;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +53,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Autowired
     private JedisUtil.SortSets sortSets;
+
+    @Autowired
+    private TaskMapper taskMapper;
 
     @Autowired
     private ShipmentGoodsMapper shipmentGoodsMapper;
@@ -93,6 +99,31 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                     .eq("dr", 0));
             if (shipmentFlag > 0) {
                 throw new ServiceException(UtilConstants.ResponseMsg.IN_OTHER_TASK);
+            }
+            //如果重量为0，则表示之前是不过称卸货，那出货一定要称重
+            if (goods.getWeight().compareTo(BigDecimal.ZERO)==0) {
+                if (null==shipmentGoodRequestDTO.getWeight()
+                        ||shipmentGoodRequestDTO.getWeight().compareTo(BigDecimal.ZERO)<0) {
+                    throw new ServiceException("未称重货物，请接连蓝牙称称重后出货");
+                }
+            }
+            Task temptask = taskMapper.selectOne(new QueryWrapper<Task>()
+                    .select("is_weight")
+                    .eq("company_id", loginUser.getCompanyId())
+                    .eq("shop_id", loginUser.getShopId())
+                    .eq("id", taskId)
+                    .eq("dr", 0)
+            );
+            if (null == temptask || null == temptask.getIsWeight()) {
+                throw new ServiceException("出货任务不存在或任务属性出错，请取消后重新创建");
+            }
+            //如果任务类型是需要称重的，则也需要重新称重
+            if (1==temptask.getIsWeight()) {
+                if (null==shipmentGoodRequestDTO.getWeight()
+                        ||shipmentGoodRequestDTO.getWeight().compareTo(BigDecimal.ZERO)<0) {
+                    throw new ServiceException("称重出货任务，请接连蓝牙称称重后出货，原重量为："+goods.getWeight());
+                }
+                goods.setWeight(shipmentGoodRequestDTO.getWeight());
             }
             goods.setEmployeeId(employeeId);
             goods.setEmployeeName(employeeName);
