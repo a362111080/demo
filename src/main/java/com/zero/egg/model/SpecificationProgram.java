@@ -80,4 +80,9 @@ public class SpecificationProgram {
      */
     @ApiModelProperty(value = "修改时间",required=false)
     private Date modifytime;
+
+    /**
+     * 是否称重 0:不称重 1:称重
+     */
+    private Integer isWeight ;
 }

@@ -87,8 +87,7 @@ public class UnloadGoodsController {
 			model.setModifytime(new Date());
 			//根据二维码id 获取相关信息
 			BarCode  bar=unloadGoodsService.GetBarCodeInfo(model.getQrCode());
-			if (null !=bar) {
-
+			if (null !=bar && bar.getShopId().equals(user.getShopId())) {
 				//判断商品码是否存在
 				if (unloadGoodsService.GoodNoIsExists(bar.getCurrentCode())>0)
 				{
@@ -112,6 +111,7 @@ public class UnloadGoodsController {
                         String status = StringTool.splitToList(info, ",").get(0);
                         String Programid = StringTool.splitToList(info, ",").get(2);
                         String category_id=StringTool.splitToList(info, ",").get(3);
+						String isWeight=StringTool.splitToList(info, ",").get(4);
                         model.setProgramId(Programid);
                         if (bar.getCategoryId().equals(category_id)) {
 							if (status.equals(TaskEnums.Status.Unexecuted.index().toString())) {
@@ -120,7 +120,7 @@ public class UnloadGoodsController {
 								message.setMessage("当前任务已暂停，请稍后再操作");
 							} else {
 								//根据重量对应规程方案判断是否预警
-								if (null != model.getWeight() && null != model.getProgramId() && model.getWeight().floatValue() > 1) {
+								if (null != model.getProgramId()  && ( isWeight.equals("0")||(model.getWeight().floatValue() > 1 && isWeight.equals("1")))) {
 									//小于方案最小称重则预警，返回标识以及是否预警结果
 									UnLoadResponseDto res = unloadGoodsService.CheckWeight(model.getWeight(), model.getProgramId());
 									if (null != res) {
@@ -167,8 +167,15 @@ public class UnloadGoodsController {
 									}
 
 								} else {
-									message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
-									message.setMessage("货位重量无效，请重新扫描！");
+									if (isWeight.equals("1") && model.getWeight().floatValue()<=0)
+									{
+										message.setState(UtilConstants.ResponseCode.UNLOAD_TYPE_ERROR);
+										message.setMessage("卸货称重模式需要连接蓝牙！");
+									}
+									else {
+										message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
+										message.setMessage("货位重量无效，请重新扫描！");
+									}
 								}
 
 							}

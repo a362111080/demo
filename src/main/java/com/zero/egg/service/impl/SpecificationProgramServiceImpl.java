@@ -50,10 +50,13 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
         try {
             TransferUtil.copyProperties(specificationProgram, specificationProgramRequestDTO);
             /** 查重 */
-            if (checkByName(resultList, specificationProgram) > 0) {
+            if (checkByName(resultList, specificationProgram)) {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
             } else {
+                if (specificationProgramRequestDTO.getIsWeight() > 1 || specificationProgramRequestDTO.getIsWeight() < 0) {
+                    throw new ServiceException("addStandardData error:是否称重参数异常");
+                }
                 specificationProgramMapper.insert(specificationProgram);
                 message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -61,6 +64,9 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
             return message;
         } catch (Exception e) {
             log.error("addStandardData error", e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             throw new ServiceException("addStandardData error");
         }
     }
@@ -187,10 +193,14 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
                 /**
                  * 查重
                  */
-                if (checkByName(resultList, specificationProgram) > 0) {
+                if (checkByName(resultList, specificationProgram)) {
                     message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                     message.setMessage(UtilConstants.ResponseMsg.DUPLACTED_DATA);
                 } else {
+                    /** 是否称重参数值只能为0或1 */
+                    if (specificationProgramRequestDTO.getIsWeight() > 1 || specificationProgramRequestDTO.getIsWeight() < 0) {
+                        throw new ServiceException("addStandardData error:是否称重参数异常");
+                    }
                     specificationProgramMapper.updateById(specificationProgram);
                     message.setState(UtilConstants.ResponseCode.SUCCESS_HEAD);
                     message.setMessage(UtilConstants.ResponseMsg.SUCCESS);
@@ -232,15 +242,38 @@ public class SpecificationProgramServiceImpl implements SpecificationProgramServ
      *
      * @param resultList
      * @param specificationProgram
-     * @return 查重得到的集合大小
+     * @return 是否有重复数据，true：有重复数据
      */
-    private int checkByName(List<SpecificationProgram> resultList, SpecificationProgram specificationProgram) {
+    private boolean checkByName(List<SpecificationProgram> resultList, SpecificationProgram specificationProgram) {
         resultList = specificationProgramMapper.selectList(new QueryWrapper<SpecificationProgram>()
                 .eq("category_id", specificationProgram.getCategoryId())
                 .eq("name", specificationProgram.getName())
                 .eq("shop_id", specificationProgram.getShopId())
                 .eq("company_id", specificationProgram.getCompanyId())
                 .eq("dr", 0));
-        return resultList.size();
+
+        if (null == resultList || 0 > resultList.size()) {
+            throw new ServiceException("方案名查重结果集异常");
+        }
+        switch (resultList.size()) {
+            case 0 :
+                return false;
+            case 1:
+                //如果传了id，则认为是修改查重操作，否则是新增查重，Controller有判断是否必传
+                if (null != specificationProgram.getId()) {
+                    //如果查重结果集合的大小为1，则判断前端传来的值是否和原来的值一样（即没有修改原有值），如果没有修改，返回false
+                    if (resultList.get(0).getName().equals(specificationProgram.getName())) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            default:
+                return true;
+
+        }
+
     }
 }

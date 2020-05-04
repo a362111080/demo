@@ -212,6 +212,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
                 message.setMessage(UtilConstants.ResponseMsg.ORDER_TAST_EXIST);
                 message.setData(tempTask);
             } else {
+                //不允许为零售商创建出货称重的任务
+                if (task.getIsWeight() == 1) {
+                    Customer customer = customerMapper.selectOne(new QueryWrapper<Customer>()
+                            .select("is_retail")
+                            .eq("dr", 0)
+                            .eq("shop_id", task.getShopId())
+                            .eq("company_id", task.getCompanyId())
+                            .eq("id", task.getCussupId()));
+                    if (null == customer) {
+                        throw new ServiceException("合作商不存在或已经被删除！");
+                    } else if (null != customer & customer.getIsRetail() == 1) {
+                        throw new ServiceException("零售商不能创建出货称重任务！");
+                    }
+
+                }
                 task.setCreatetime(new Date());
                 task.setModifytime(new Date());
                 task.setStatus(TaskEnums.Status.Execute.index().toString());
@@ -237,8 +252,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
             return message;
         } catch (Exception e) {
             log.error("addShipmentTask failed:" + e);
+            if (e instanceof ServiceException) {
+                throw e;
+            }
             throw new ServiceException("addShipmentTask failed");
         }
+
     }
 
     @Override

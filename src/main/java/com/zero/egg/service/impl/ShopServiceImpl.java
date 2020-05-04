@@ -189,9 +189,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     @Transactional
     public int editsecret(OrderSecret model) {
         try {
-            //也要删除关联表数据
-            orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
-                    .eq("secret_id", model.getId()));
+            //也要删除关联表数据,因为没有删除秘钥的功能,所以不用删除
+//            orderUserSecretMapper.update(new OrderUserSecret().setDr(true), new UpdateWrapper<OrderUserSecret>()
+//                    .eq("secret_id", model.getId()));
             return mapper.editsecret(model);
         } catch (Exception e) {
             log.error("编辑秘钥信息失败" + e);

@@ -334,7 +334,8 @@ public class TaskController {
         Message message;
         try {
             //非空判断
-            if (null == task || null == task.getCussupId() || "".equals(task.getCussupId())) {
+            if (null == task || null == task.getCussupId() || "".equals(task.getCussupId())
+                    || null == task.getIsWeight()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
@@ -346,8 +347,12 @@ public class TaskController {
             task.setCreator(loginUser.getId());
             task.setCompanyId(loginUser.getCompanyId());
             task.setShopId(loginUser.getShopId());
-            message = taskService.addShipmentTask(task);
-
+            Integer isWeight = task.getIsWeight();
+            if (task.getIsWeight() == 0 || task.getIsWeight() == 1) {
+                message = taskService.addShipmentTask(task);
+            } else {
+                throw new ServiceException("isWeight 参数错误");
+            }
         } catch (Exception e) {
             message = new Message();
             message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
@@ -363,7 +368,7 @@ public class TaskController {
         Message message;
         try {
             //非空判断
-            if (null == task || null == task.getOrderUserId() ||null ==task.getOrderId()) {
+            if (null == task || null == task.getOrderUserId() || null == task.getOrderId()) {
                 message = new Message();
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage(UtilConstants.ResponseMsg.PARAM_MISSING);
@@ -400,7 +405,7 @@ public class TaskController {
             model.setModifier(user.getId());
             model.setModifytime(new Date());
             //获取当前任务状态
-            TaskRequest ckdto=new TaskRequest();
+            TaskRequest ckdto = new TaskRequest();
             ckdto.setId(model.getId());
             ckdto.setType(TaskEnums.Type.Unload.index().toString());
             List<Task> res = taskService.QueryTaskList(ckdto);
@@ -480,9 +485,8 @@ public class TaskController {
                                         //拼接账单品种
                                         String Categoryname = UnloadReport.get(u).getCategoryname();
                                         if (null != Categoryname) {
-                                            if (Billcategoryname=="")
-                                            {
-                                                Billcategoryname=Categoryname;
+                                            if (Billcategoryname == "") {
+                                                Billcategoryname = Categoryname;
                                             }
                                             if (!Billcategoryname.contains(Categoryname) && Billcategoryname != "") {
                                                 Billcategoryname = Billcategoryname + "/" + Categoryname;
@@ -576,9 +580,7 @@ public class TaskController {
                     message.setMessage(UtilConstants.ResponseMsg.FAILED);
                 }
 
-            }
-            else
-            {
+            } else {
                 message.setState(UtilConstants.ResponseCode.EXCEPTION_HEAD);
                 message.setMessage("任务状态异常，请刷新后再操作！");
             }

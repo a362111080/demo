@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @ClassName ShipmentGoodBarCodeRequestDTO
@@ -29,4 +30,7 @@ public class ShipmentGoodBarCodeRequestDTO implements Serializable {
 
     @ApiModelProperty(value = "客户主键")
     private String customerId;
+
+    @ApiModelProperty(value = "重量")
+    private BigDecimal weight;
 }
