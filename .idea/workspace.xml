@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="223343c5-bcac-47d5-b624-2b50c61310c7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,6 +107,14 @@
       <workItem from="1588148276180" duration="644000" />
       <workItem from="1588602350309" duration="574000" />
     </task>
+    <task id="LOCAL-00001" summary="tij">
+      <created>1588607365203</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1588607365203</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,15 +131,19 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="tij" />
+    <option name="LAST_COMMIT_MESSAGE" value="tij" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="283" y="0" key="CommitChangelistDialog2" timestamp="1588603872091">
+    <state x="283" y="0" key="CommitChangelistDialog2" timestamp="1588607364340">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="283" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1588603872091" />
-    <state x="463" y="105" key="FileChooserDialogImpl" timestamp="1588603782291">
+    <state x="283" y="0" key="CommitChangelistDialog2/0.0.1366.728@0.0.1366.728" timestamp="1588607364340" />
+    <state x="463" y="105" key="FileChooserDialogImpl" timestamp="1588607795074">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="463" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1588603782291" />
+    <state x="463" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1588607795074" />
     <state x="184" y="6" key="SettingsEditor" timestamp="1588607273300">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
